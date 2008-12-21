@@ -1,6 +1,6 @@
 ---
 layout: post
-title: test
+title: WEP sucks
 ---
 
 All due to my own stupidity, but WEP led to several hours of frustration today connecting various devices to a Qwest M1000/W1000 modem/gateway:
