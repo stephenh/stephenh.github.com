@@ -1,0 +1,15 @@
+---
+layout: post
+title: test
+---
+
+All due to my own stupidity, but WEP led to several hours of frustration today connecting various devices to a Qwest M1000/W1000 modem/gateway:
+
+1. 64-bit hex keys make it all too easy to transpose digits--I would have noticed a transposed passwrod a lot sooner.
+
+2. While typing in the WEP key, I mistakenly thought this constituted a "shared key" and selected as such from the Authorization Type menu. Turns out, no, the correct Authorization Type is "Open System". "Open System" even though I'm using a key? Hm. Okay.
+
+That had me stuck for quite awhile until I hit the "flip random settings until it works" stage.
+
+Especially so because I was configuring a PhotoVu that requires 2 reboots for every settings change. 1st reboot is with a CAT5 plugged into the router to change the settings via its web admin interface, 2nd reboot is without the CAT5 to kick it into wireless mode and see what happens. When it doesn't work, repeat. The PhotoVu is slick, but a "test wireless connection" button would be very, very helpful.
+
