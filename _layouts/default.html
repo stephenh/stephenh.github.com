@@ -16,18 +16,28 @@
 </head>
 <body>
 
-<div class="site">
-  <div class="title">
-    <a href="/">Draconian Overlord</a>
-  </div>
-
-  {{ content }}
-
-  <div class="footer">
-    <div class="rss">
-      <a href="http://feeds.feedburner.com/draconianoverlord"><img src="/images/rss.png" alt="Subscribe to RSS Feed" /></a>
+<div id="title-outer">
+    <div id="title-inner">
+        <a id="blog-title" href="/">Draconian Overlord</a>
+        <div id="blog-description">Oppressing software entropy</div>
     </div>
-  </div>
+</div>
+
+<div class="site-outer">
+    <div id="site-inner">
+        {{ content }}
+    </div>
+</div>
+
+<div id="footer-outer">
+    <div id="footer-inner">
+        <div class="rss">
+            <a href="http://feeds.feedburner.com/draconianoverlord">Subscribe via RSS</a>
+        </div>
+        <div class="email">
+            <a href="http://www.feedburner.com/fb/a/emailverifySubmit?feedId=2695477&loc=en_US">Subscribe via Email</a>
+        </div>
+    </div>
 </div>
 
 </body>
