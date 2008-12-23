@@ -4,18 +4,6 @@
   padding: 0;
 }
 
-/*****************************************************************************/
-/*
-/* Home
-/*
-/*****************************************************************************/
-
-/*****************************************************************************/
-/*
-/* Site
-/*
-/*****************************************************************************/
-
 #title-outer {
     background-color: #0A0A0A;
 }
@@ -39,7 +27,6 @@
 #site-inner {
     width: 40em;
     margin: 2em auto 2em auto;
-    line-height: 1.5em;
     text-align: justify;
 }
 
@@ -54,17 +41,8 @@
     border-top: 1px solid white;
 }
 
-body {
-    background-color: white;
-    color: black;
-    font-size: 0.75em;
-}
-
-h1 {
-    color: white;
-    font-family: Helvetica,Arial,sans-serif;
-    font-size: 1.5em;
-    padding: 0.8em 0em 0.2em 0em;
+h1, h2, h3 {
+    font-family: Helvetica, Arial, sans-serif;
 }
 
 code  {
@@ -72,11 +50,15 @@ code  {
     font-size: 0.7em;
 }
 
+p {
+    line-height: 1.5em;
+}
+
 pre {
     overflow: auto;
     margin: 2em 1em 2em 1em;
+    padding: 0.5em;
     background-color: #222;
     color: white;
-    padding: 0.5em;
 }
 
