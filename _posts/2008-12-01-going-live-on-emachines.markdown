@@ -15,5 +15,5 @@ Cool--I agree on the development vs. hardware cost trade off.
 
 But who deploys webapps on $298 eMachines desktops?
 
-Pick a real server company and his point still applies, so no problem there--I'm just being an ass and pointing out the irony.
+Pick a real server company and his point still applies, so no problem there--I'm just being an ass.
 
