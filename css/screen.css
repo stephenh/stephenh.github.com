@@ -10,38 +10,11 @@
 /*
 /*****************************************************************************/
 
-ul.posts {
-  list-style-type: none;
-  margin-bottom: 2em;
-}
-
-ul.posts li {
-  line-height: 1.75em;
-}
-
-ul.posts span {
-  color: #aaa;
-  font-family: Monaco, "Courier New", monospace;
-  font-size: 80%;
-}
-
 /*****************************************************************************/
 /*
 /* Site
 /*
 /*****************************************************************************/
-
-body {
-    background-color: #222;
-    font-size: 0.8em;
-}
-
-h1 {
-    color: white;
-    font-family: Helvetica,Arial,sans-serif;
-    font-size: 1.5em;
-    padding: 0.8em 0em 0.2em 0em;
-}
 
 #title-outer {
     background-color: #0A0A0A;
@@ -56,6 +29,7 @@ h1 {
 #blog-title {
     display: block;
     text-decoration: none;
+    color: white;
 }
 
 #blog-description {
@@ -67,7 +41,10 @@ h1 {
     margin: 2em auto 2em auto;
     line-height: 1.5em;
     text-align: justify;
-    color: #DDDDDD;
+}
+
+#site-inner p {
+    margin-bottom: 1em;
 }
 
 #footer-inner {
@@ -77,6 +54,29 @@ h1 {
     border-top: 1px solid white;
 }
 
-a {
-    color: white;
+body {
+    background-color: white;
+    color: black;
+    font-size: 0.75em;
 }
+
+h1 {
+    color: white;
+    font-family: Helvetica,Arial,sans-serif;
+    font-size: 1.5em;
+    padding: 0.8em 0em 0.2em 0em;
+}
+
+code  {
+    font-family: consolas, monospace;
+    font-size: 0.7em;
+}
+
+pre {
+    overflow: auto;
+    margin: 2em 1em 2em 1em;
+    background-color: #222;
+    color: white;
+    padding: 0.5em;
+}
+
