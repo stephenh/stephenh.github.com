@@ -3,13 +3,13 @@ layout: post
 title: Going Live on eMachines
 ---
 
-I was looking at Wicket again tonight, and came across:
+I was looking at Wicket again tonight, and [came across][1]:
 
-    For many applications, it will be worth trading off the increased server load of extra server-side state for decreased development costs, lower maintenance costs, quicker time-to-market and generally higher quality software.
+"For many applications, it will be worth trading off the increased server load of extra server-side state for decreased development costs, lower maintenance costs, quicker time-to-market and generally higher quality software.
 
-    The basic observation here is that software is expensive and complex while servers from companies like E-machines and Dell are relatively dirt cheap.
+The basic observation here is that software is expensive and complex while servers from companies like E-machines and Dell are relatively dirt cheap."
 
-http://wicket.apache.org/introduction.html
+[1]: http://wicket.apache.org/introduction.html
 
 Cool--I agree on the development vs. hardware cost trade off.
 
