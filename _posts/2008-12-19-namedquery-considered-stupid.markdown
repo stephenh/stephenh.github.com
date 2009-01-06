@@ -31,7 +31,7 @@ If pulling queries out of methods is a must, I would opt for a static final Stri
 
 * Compile time enforcement of the `findAllEmployeesByFirstName` variable
 * Ctrl-Shift-G find references in Eclipse
-* Ability to add a 'private' accessor to limit scope of the string
+* Ability to add a `private` scope to limit scope of the string
 
 All of these, to me, are huge pros.
 
@@ -53,4 +53,6 @@ But, alas, JPA and NamedQueries are a standard, and so countless Java programmer
 (Sun, if you're reading this, can you please work on something more constructive than JPA...like catching Java up to C#? I don't even need LINQ...just lambdas and static extension methods, that's all I ask.)
 
 To me this is just yet another example of annotations being abused as a non-XML configuration panacea where pure Java constructs would work just fine.
+
+**Update:** Turns out I'm uneducated, named queries can be on-startup verified against the database--cool, but that's [/2009-01-06/namedquery-proposal.html][still wrong].
 
