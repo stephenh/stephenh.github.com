@@ -23,7 +23,7 @@ Then somewhere else, you can do:
     queryEmployeeByFirstName.setParameter("firstName", "John");
     Collection employees = queryEmployessByFirstName.getResultList();
 
-(I'm using the <a href="http://download.oracle.com/docs/cd/B32110_01/web.1013/b28221/ent30qry001.htm">first google hit</a> for "JPA @NamedQuery" for the examples.)
+(I'm using the [first google hit](http://download.oracle.com/docs/cd/B32110_01/web.1013/b28221/ent30qry001.htm) for "JPA @NamedQuery" for the examples.)
 
 I'm confused about the benefits of this annotation-based approach.
 
@@ -54,5 +54,5 @@ But, alas, JPA and NamedQueries are a standard, and so countless Java programmer
 
 To me this is just yet another example of annotations being abused as a non-XML configuration panacea where pure Java constructs would work just fine.
 
-**Update:** Turns out I'm uneducated, named queries can be on-startup verified against the database--cool, but that's [/2009-01-06/namedquery-proposal.html][still wrong].
+**Update:** Turns out I'm uneducated, named queries can be on-startup verified against the database--cool, but that's [still wrong](/2009-01-06/namedquery-proposal.html).
 
