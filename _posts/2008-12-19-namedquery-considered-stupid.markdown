@@ -54,5 +54,5 @@ But, alas, JPA and NamedQueries are a standard, and so countless Java programmer
 
 To me this is just yet another example of annotations being abused as a non-XML configuration panacea where pure Java constructs would work just fine.
 
-**Update:** Turns out I'm uneducated, named queries can be on-startup verified against the database--cool, but that's [still wrong](/2009-01-06/namedquery-proposal.html).
+**Update:** Turns out I'm uneducated, named queries can be on-startup verified against the database--cool, but that's [still wrong](/2009/01/06/namedquery-proposal.html).
 
