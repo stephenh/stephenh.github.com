@@ -3,9 +3,7 @@ layout: post
 title: More Evil Than Spring
 ---
 
-As if Spring does not give us enough interfaces:
-
-<a href="http://www.qi4j.org/">http://www.qi4j.org</a>
+As if Spring does not give us enough interfaces: [Qi4j](http://www.qi4j.org).
 
 And one of its core principles: "Classes are dead, long live interfaces".
 
@@ -19,5 +17,5 @@ You never know when our `Employee` class is going to need to mixin some `Claim` 
 
 Rather than throwing a bunch of interfaces around up front, I propose we wait until the reuse/proxy/whatever scenario actually happens, and then we'll deal with it. And when it doesn't 90% of the time, we all win.
 
-That being said, qi4j looks technically spiffy. And I'm sure the author makes very judicious use of interfaces. I just don't look forward to working on any qi4j codebase that isn't written by him.
+That being said, Qi4j looks technically spiffy. And I'm sure the author makes very judicious use of interfaces. I just don't look forward to working on any Qi4j codebase that isn't written by him.
 
