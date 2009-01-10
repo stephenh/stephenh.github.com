@@ -76,7 +76,7 @@ Now if only Sun would fix hot code replacement to not blow up when you change cl
 Also, if you need JNDI resources, you have a few alternatives. One app I worked on did not rely on the container for anything (it used its own c3p0 pool), so this was no problem. Another app did want the DataSource in JNDI, so we wrote a `FakeJndiFactory` that returned a `FakeContext`--it's kind of stupid, `FakeContext` has a 10-15 methods in it, but only `lookup` ever seems to be called, so we left most of `FakeContext`'s methods as no-op and had `lookup` use a static `HashMap`. Then the project-specific Jetty class just did:
 
 		System.setProperty("java.naming.factory.initial", FakeJndiFactory.class.getName());
-		FakeJndiFactory.properties.put("java:comp/env/jdbc/proxibid", FakeDataSource.getDataSource());
+		FakeJndiFactory.properties.put("java:comp/env/jdbc/yourapp", FakeDataSource.getDataSource());
 
 Where `FakeDataSource` was a c3p0-backed data source. If you need more container resources than a DataSource, you'll have to invent your own ways to mount them in Jetty or else just stay in the container.
 
