@@ -12,7 +12,7 @@ However, I would propose a different implementation: instead of the "name" part 
 
 <pre name="code" class="java">
     @Sql
-    private static final FIND_FOO = "select * from foo ...";
+    private static final String FIND_FOO = "select * from foo ...";
 
     public List<Foo> findFoo() {
         Query q = em.createQuery(FIND_FOO);

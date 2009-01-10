@@ -15,7 +15,6 @@ A few examples from Google show the basic syntax:
         name="findAllEmployeesByFirstName",
         queryString="SELECT OBJECT(e) FROM Employee e WHERE e.firstName = :firstName")
     public class Employee {
-    ...
     }
 </pre>
 
