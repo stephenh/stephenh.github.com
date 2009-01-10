@@ -9,6 +9,7 @@ I was recently exposed to JPA's NamedQuery annotation. I cannot imagine a more u
 
 A few examples from Google show the basic syntax:
 
+<pre name="code" class="java">
     @Entity
     @NamedQuery(
         name="findAllEmployeesByFirstName",
@@ -16,12 +17,15 @@ A few examples from Google show the basic syntax:
     public class Employee {
     ...
     }
+</pre>
 
 Then somewhere else, you can do:
 
+<pre name="code" class="java">
     Query queryEmployeesByFirstName = em.createNamedQuery("findAllEmployeesByFirstName");
     queryEmployeeByFirstName.setParameter("firstName", "John");
     Collection employees = queryEmployessByFirstName.getResultList();
+</pre>
 
 (I'm using the [first google hit](http://download.oracle.com/docs/cd/B32110_01/web.1013/b28221/ent30qry001.htm) for "JPA @NamedQuery" for the examples.)
 
@@ -39,12 +43,14 @@ Instead, with the annotation, it's not compile-type checked, you can't easily fi
 
 The only benefit I can guess about this approach is that you'd get to reuse the `findAllEmployeesByFirstName` in multiple places without retyping the SQL query. But I fail to see how this is even worth accomplishing--my personal preference is to isolate the query in its own method and then just have multiple people call the method:
 
+<pre name="code" class="java">
     public Collection findAllEmployeesByFirstName(String firstName) {
         Query queryEmployeesByFirstName = em.createQuery(
             "SELECT OBJECT(e) FROM Employee e WHERE e.firstName = :firstName");
         queryEmployeeByFirstName.setParameter("firstName", "John");
         return queryEmployessByFirstName.getResultList();
     }
+</pre>
 
 And there you go, reuse and encapsulation all in one go, and all Plain Old Java.
 

@@ -10,6 +10,7 @@ queries seems like an admirable goal.
 
 However, I would propose a different implementation: instead of the "name" part of the query being in an non-referrable annotation, the annotation should be used solely as a marker on an otherwise pure Java construct. For example:
 
+<pre name="code" class="java">
     @Sql
     private static final FIND_FOO = "select * from foo ...";
 
@@ -18,6 +19,7 @@ However, I would propose a different implementation: instead of the "name" part 
         q.setParameter(...);
         return q.getResultList();
     }
+</pre>
 
 This would alleviate my concerns about type-safety and SQL encapsulation, but still allow the `EntityManager` to find all of the annotated queries on startup for validation.
 
