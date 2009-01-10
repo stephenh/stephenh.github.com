@@ -23,7 +23,7 @@ If for whatever reason your project's source tree doesn't match this, or needs s
 
 Instead of a standard jetty script, I typically create a `Jetty` wrapper class directly in the project (either `src/main` or `src/bootstrap`) that resembles:
 
-<pre><code class="java">
+<pre name="code" class="java"><code>
     public class Jetty {
         private static final Server SERVER = new Server();
 
