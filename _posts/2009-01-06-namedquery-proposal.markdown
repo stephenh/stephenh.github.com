@@ -13,6 +13,12 @@ However, I would propose a different implementation: instead of the "name" part 
 <pre name="code" class="java">
     @Sql
     private static final String FIND_FOO = "select * from foo ...";
+
+    public List&lt;Foo&gt; findFoo() {
+        Query q = em.createQuery(FIND_FOO);
+        q.setParameter(...);
+        return q.getResultList();
+    }
 </pre>
 
 This would alleviate my concerns about type-safety and SQL encapsulation, but still allow the `EntityManager` to find all of the annotated queries on startup for validation.
