@@ -127,3 +127,4 @@ My current rule of thumb: if you can decompile a "Java++" contender's code into 
 [2]: http://github.com/stephenh/bindgen
 [3]: http://www.kpdus.com/jad.html
 
+
