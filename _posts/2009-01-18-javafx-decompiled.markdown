@@ -19,7 +19,6 @@ Tutorials only go so far though, so I downloaded the JavaFX SDK, made sure I sti
 
 After a few tests, I ended up with `foo.fx`:
 
-<pre name="code">
     var num = 1;
     var x = bind f(num);
 
@@ -31,7 +30,6 @@ After a few tests, I ended up with `foo.fx`:
     function f(arg:Integer) {
         return arg + 1;
     }
-</pre>
 
 Running `javafxc foo.fx` to compile it and then `javafx foo` to run it produces this output:
 
