@@ -128,7 +128,7 @@ It seems like all of the "Java++" contenders (JavaFX, Groovy, and Scala) add the
 
 Enterprise software is hard enough and bad enough as it is--I can't imagine the average programmer also having to deal with, say, Scala's case classes, or traits, or whatever other nifty tricks the current "Java++" contenders layer on top of Java.
 
-The simplicity of Java is a real virtue. Further, I assert that any language that adds its own "meta-level semantics" on top of Java is not going to replace it.
+The simplicity of Java is a real virtue. I assert that any language that adds its own "meta-level semantics" on top of Java is not going to replace it.
 
 My current rule of thumb: if you can decompile a "Java++" contender's code into the regular Java syntax, and have it look pretty darn close to what you'd type out by hand, then you've found your true "Java++" language.
 
