@@ -1,3 +1,8 @@
+---
+layout: post
+title: JavaFX Decompiled
+---
+
 While lamenting the lack of BGGA closures in Java, I came across a [poll][1] that had some interesting JavaFX comments from a guy named Bryan: 
 
     JavaFX Script is Java++ ... as general purpose as Java itself ... type inference ... closures
