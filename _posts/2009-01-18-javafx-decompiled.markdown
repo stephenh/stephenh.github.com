@@ -5,7 +5,11 @@ title: JavaFX Decompiled
 
 While lamenting the lack of BGGA closures in Java, I came across a [poll][1] that had some interesting JavaFX comments from a guy named Bryan: 
 
-    JavaFX Script is Java++ ... as general purpose as Java itself ... type inference ... closures
+<blockquote>
+    JavaFX Script is Java++ ... as general purpose as Java itself ... type inference ... closures ...
+
+    The primary language on the JVM in the future will be JavaFX Script. New language features will go there. Java will not accept new features.
+</blockquote>
 
 Okay, my interest was piqued. Besides JavaFX being a UI toolkit, turns out JavaFX Script is a new programming language as well. Would Sun really choose an entirely different language to evolve Java? They've done sillier things, I suppose, so, maybe?
 
@@ -119,6 +123,8 @@ What is also surprising is all of the `addTriggers`, `postInit`, `userInit`, etc
 I'm not sure what to make of this. This is where I start doubting JavaFX Script as the next general purpose language.
 
 This is a bit hypocritical of me--I pine for the "good" magic of extension methods, local variable type inference, and BGGA closures, but I start to cringe and label it "bad" magic when `int` is now an `IntVariable` and my class has a bunch of cruft it in. It seems like meta-level semantics that I was not expecting.
+
+I trust these meta-level semantics are perfect for leveraging JavaFX Script in the JavaFX UI framework, but to me it disqualifies JavaFX as a "Java++" contender.
 
 It seems like all of the "Java++" contenders (JavaFX, Groovy, and Scala) add their own meta-level semantics on top of Java. They need the meta-level to do the dynamic, trait, etc., cool features, but, to me, it just adds complexity and a leaky abstraction that I'd rather not deal with.
 
