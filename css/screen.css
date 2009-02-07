@@ -5,7 +5,7 @@
 }
 
 #title-outer {
-    background-color: #0A0A0A;
+    background-color: #1E1E1E;
 }
 
 #title-inner {
@@ -14,7 +14,12 @@
     padding: 0.5em;
 }
 
-#blog-title {
+h1#blog-title {
+    letter-spacing: 0.05em;
+    margin-bottom: 0.1em;
+}
+
+h1#blog-title a {
     display: block;
     text-decoration: none;
     color: white;
@@ -47,6 +52,7 @@ body {
 
 h1, h2, h3 {
     font-family: Helvetica, Arial, sans-serif;
+    margin-bottom: 0.5em;
 }
 
 p {
