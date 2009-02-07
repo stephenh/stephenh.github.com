@@ -3,6 +3,8 @@ layout: post
 title: More Evil Than Spring
 ---
 
+<h2>{{ page.title }}</h2>
+
 As if Spring does not give us enough interfaces: [Qi4j](http://www.qi4j.org).
 
 And one of its core principles: "Classes are dead, long live interfaces".

@@ -3,6 +3,8 @@ layout: post
 title: NamedQuery Proposal
 ---
 
+<h2>{{ page.title }}</h2>
+
 Recently I [ranted](/2008/12/19/namedquery-considered-stupid) about EJB3 `@NamedQuery` annotations as being a bad use of annotations.
 
 Turns out I was mistaken about the lack of pros--startup-time validation of

@@ -3,6 +3,8 @@ layout: post
 title: War-less Development with Jetty
 ---
 
+<h2>{{ page.title }}</h2>
+
 Reviewing my posts, most of them are negative rants, so I figured I should contribute something positive every now and then.
 
 One of my favorite hacks for Java web development is using Jetty for a war-less development environment to get automatic updating of classes/JSPs while debugging your app. Although limited by the usual JVM limitation of no hot reloading class declaration changes, I've nonetheless found this approach to be quick and useful.
