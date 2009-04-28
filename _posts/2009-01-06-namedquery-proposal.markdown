@@ -25,7 +25,7 @@ However, I would propose a different implementation: instead of the "name" part 
 
 This would alleviate my concerns about type-safety and SQL encapsulation, but still allow the `EntityManager` to find all of the annotated queries on startup for validation.
 
-Until my proposal makes it into EJB4, I also came across [this comment][1], which seems like an acceptable, though verbose, compromise with the current annotation.
+Until my proposal makes it into EJB4 (haha), I also came across [this comment][1], which seems like an acceptable, though verbose, compromise with the current annotation.
 
 [1]: http://freddy33.blogspot.com/2007/07/jpa-namedqueries-and-jdbc-40.html?showComment=1203615720000#c9040118016780285760 
 
