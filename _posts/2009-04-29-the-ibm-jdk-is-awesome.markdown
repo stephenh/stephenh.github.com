@@ -8,6 +8,8 @@ The IBM JDK is Awesome
 
 Insofar as its [J9](http://en.wikipedia.org/wiki/IBM_J9) JRE supports adding methods to classes at runtime. For me, this is a real boon for productivity.
 
+(Edit: To clarify, I'm talking about editing source code while debugging and having changes applied by "hot swapping" classes in the running JVM without having to restart. Not the Ruby-style meta-programming of modifying classes at runtime.)
+
 I don't understand why Sun has not fixed this in their JREs, see bug [4910812](http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4910812), to bring Java development that much closer to the Smalltalk "always-running" ideal I've heard Smalltalkers wax poetic about.
 
 If you haven't voted for 4910812, please go do so. It has only 379 votes, which seems surprisingly low for the number of developers whose productivity would be positively effected by it being implemented. I remember seeing a "vote 4910812" meme go around awhile ago, but it must not have caught on.
