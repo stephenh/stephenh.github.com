@@ -70,7 +70,7 @@ Both can run into problems that you want to have handled nicely.
 Sending Email
 -------------
 
-The first time I wrote email processing for the client's app, it felt dirty--here within a nice Unit Of Work, doing some business logic was an ugly `Transport.send` dropping an email onto the wire. Who knew what that would do if it failed. For example:
+The first time I wrote email processing for the client's app, it felt dirty--here within a nice Unit Of Work, doing some business logic, was an ugly `Transport.send` dropping an email onto the wire. Who knew what that would do if it failed. For example:
 
 * The email goes out because the `Transport.send` succeeds, but the transaction fails to commit--we've told the user about some action we thought we performed but didn't actually get committed
 * The `Transport.send` fails because our mail server is being dumb, but then the entire Unit Of Work fails and we don't get any work done for the day until the mail server is back up
