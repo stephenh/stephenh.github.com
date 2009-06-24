@@ -3,8 +3,8 @@ layout: post
 title: Achieving Durability
 ---
 
-Achieving Durability
-====================
+Achieving Durability in Enterprise Systems
+==========================================
 
 Introduction
 ------------
