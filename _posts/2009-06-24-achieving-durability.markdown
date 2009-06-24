@@ -24,7 +24,7 @@ Atomicity
 
 One fundamental concept to durability is atomicity--if you want to continue where you left off before, you can't redo previous work.
 
-If your tasks are idempotent, you're in luck. Being idempotent means you can "retry" a task as many times as you want, and the task is smart enough to not cause funky behavior (like double-/triple-processing). For example, it's a debit card transaction with a unique transaction id that, if you find the id already in your system, you know not to enter it again. If your tasks are idempotent, you can just retry everything and what was already done will not cause duplicates.
+If your tasks are idempotent, you're in luck. Being idempotent means you can "retry" a task as many times as you want, and the task is smart enough to not cause funky behavior (like double-/triple-processing). For example, it's a transaction with a unique id that, if you find the id already in your system, you know not to enter it again. If your tasks are idempotent, you can just retry everything and what was already done will not cause duplicates.
 
 However, if your tasks are not idempotent, you'll have to explicitly mark tasks as pending and then done.
 
@@ -72,8 +72,8 @@ Sending Email
 
 The first time I wrote email processing for the client's app, it felt dirty--here within a nice Unit Of Work, doing some business logic, was an ugly `Transport.send` dropping an email onto the wire. Who knew what that would do if it failed. For example:
 
-* The email goes out because the `Transport.send` succeeds, but the transaction fails to commit--we've told the user about some action we thought we performed but didn't actually get committed
-* The `Transport.send` fails because our mail server is being dumb, but then the entire Unit Of Work fails and we don't get any work done for the day until the mail server is back up
+* The email goes out because the `Transport.send` succeeds, but the transaction fails to commit--we've told the user about some action we thought we performed but didn't actually get committed.
+* The `Transport.send` fails because our mail server is being dumb, but then the entire Unit Of Work fails and we don't get any work done for the day until the mail server is back up.
 
 There ended up being an obvious solution--a partner firm was storing their generated email in the database for CRM purposes (knowing what you've sent users), but I realized this was also the perfect way to solve the `Transport.send` problem--decouple generation of the email content within the business process from the actual sending of the email content out onto the network.
 
@@ -89,18 +89,18 @@ Note that we still have a window of opportunity for failure in the infrastructur
 Processing Data Files
 ---------------------
 
-Processing nightly batch files from the client's debit card provider was another big win for durability. The provider had a history of sending new and interesting transactions on a semi-regular basis. Not enough to be really annoying, but enough to burn a day screwing around with recovery every few months or so.
+Processing nightly batch files from one of the client's vendors was another big win for durability. The vendor had a history of sending new and interesting transactions on a semi-regular basis. Not enough to be really annoying, but enough to burn a day screwing around with recovery every few months or so.
 
-The original approach would retry entire files, and attempt to leverage an almost-idempotent transaction id. However, as I recall, the debit card provider was extra special so there were several heuristics to determine "is this really the same transaction". I'm fuzzy here though.
+The original approach would retry entire files, and attempted to leverage an almost-idempotent transaction id. However, as I recall, the debit card provider was extra special so there were several heuristics to determine "is this really the same transaction".
 
 So, when we were changing how the system handled files anyway, I refactored the process to be durable:
 
 * Upon finding a file, a `Document` is saved to the database, and then a `DocumentCursor` with `cursor.line=0` is stored as well.
 * An atomic parser then finds all open cursors in the database, and starts reading over their documents. It skips to line `x` if `line != 0`, so if a file is 80% done, it jumps right to the last 20%.
 * Each line is processed in its own transaction--if the business logic succeeds, the cursor's `line` is ticked within the same transaction.
-* If a line's transaction fails due to faulty parsing/business rules, the `DocumentCursor` is given a new `FailedLine` child row that stores that line's number. This will cause the cursor to stay open, and the `FailedLine` will be retried on the next process run. The idea is to keep retrying until it succeeds, e.g. by pushing out a fix it is critical.
+* If a line's transaction fails due to faulty parsing/business rules, the `DocumentCursor` is given a new `FailedLine` child row that stores that line's number. This will cause the cursor to stay open, and the `FailedLine` will be retried on the next process run (e.g. tomorrow). The idea is to keep retrying every morning until the line succeeds. If a fix is required, the line will be automatically retried and should work the morning after the fix is released to production.
 
-This code was reusable and later used to handle other incoming files with non-idempotent lines, so the durability was key there as well.
+Also, the cursor logic can work against multiple types of documents--it was later used to handle another vendor's incoming files with non-idempotent lines, so the durability was again necessary to avoid double processing in failure scenarios.
 
 Keep Things Simple: One Datasource
 ----------------------------------
@@ -109,16 +109,20 @@ The thing that made all of this doable was keeping business data and temporary i
 
 At first, I hesitated to do this, and was initially considering jury rigging some sort of two-phase commit with the primary database and a separate embedded/temporary database for the in-progress data. But, frankly, it's so much simpler to avoid JTA and just use 1 transaction that, empirically, the one-datasource approach has won me over.
 
-Having big wins like this with a single ACID data source makes me awfully curious about how people handle similar scenarios with DHTs. I love the sexiness of scaling to Amazon-size as much as the next guy, but doing recovery scenarios in application code on top of a DHT seems painful. Intra-source resolution (e.g. "merge carts") makes sense, but it is inter-source resolution that I haven't puzzled through yet.
+Having easy benefits like this with a single ACID data source makes me curious about how people handle similar scenarios with DHTs. I love the sexiness of scaling to Amazon-size as much as the next guy, but doing recovery scenarios in application code on top of a DHT seems complex--wouldn't it devolve into manual two-phase commit? I'm not sure. Intra-source resolution (e.g. "merge carts") makes sense, but it is inter-source resolution that I haven't puzzled through yet (e.g. "book order reduced in inventory + book removed from cart").
 
-I'm still a big fan of starting with a RDBMS for your first few versions and only switching to DHTs when it becomes painfully obvious you need it. Yes, this is going to involve a massive refactoring of your code to deal with the completely different semantics of a DHT, but I think that is worth the simpler development you'll get up-front. And, who knows, you may never need the DHT.
+I favor starting with a RDBMS for your first few versions and only switching to DHTs when it becomes painfully obvious you need it. Yes, this is going to involve a massive refactoring of your code to deal with the completely different semantics of a DHT, but I think that is worth the simpler development you'll get up-front. And, who knows, you may never need the DHT.
 
 Testing For Failures
 --------------------
 
-I don't trust myself to get failure scenarios correct the first time, so I also developed a way to test at least the known points of failure.
+I don't trust myself to get failure scenarios correct the first time, so I also developed a way to test the most likely points of failure. A different approach was required to solve two pain points of traditional approaches, such as setting up bad data or using mock objects:
 
-My solution was a class, `TestBreaker`, that was put into the production code to cause failures on demand, but only when in the testing environment, and only when enabled by a unit test.
+1. Causing business logic to purposefully fail was difficult because our domain model had lots of validation rules to keep invalid data from getting into the database. Making invalid vendor files was easy, but setting up bad data within the database required ugly hacks to turn off validation rules or do manual `INSERTs`/etc.
+
+2. Mock objects can only fail when going across API boundaries, e.g. into the email API. Several of the durability scenarios require testing what happens within an API boundary--e.g. you're in the middle of a method in the `CursorProcessor` class and the power goes out.
+
+My solution was a class, `TestBreaker`, that we made explicit calls to from specific vulnerability points in the production code. The `TestBreakers` calls did nothing in production, and in test would throw an exception if explicitly enabled by a unit test.
 
 So, the `CursorProcessor` had several of these `TestBreakers` declared as constants:
 
@@ -149,12 +153,12 @@ A JUnit test can then explicitly trigger the breakage:
     }
 </pre>
 
-Showing my bias, I also love that `BREAK_AFTER_CURSOR` is a static constant, because just I did a `Ctrl-Shift-G` on the constant in Eclipse and immediately saw which 1 test out of thousands was referencing it to trigger than failure condition. I'm not an IoC expert, but I anticipate you would lose this capability with dependency injection.
+Showing my bias, I also love that `BREAK_AFTER_CURSOR` is a static constant, because just I did a `Ctrl-Shift-G` on the constant in Eclipse and immediately saw which one test out of thousands was referencing it to trigger than failure condition. I'm not an IoC expert, but I anticipate you would lose this capability with dependency injection.
 
 Conclusion
 ----------
 
 I've shown several examples of leveraging your RDBMS to achieve business process durability. The approach has worked very well for me and I anticipate using it again in the future.
 
-I'm also interested in other approaches, e.g. when you can't leverage a single data source, but I have not spent as much time researching this. If you have pointers to different ways of solving this sort of problem, I'd appreciate links in the comments.
+I'm also interested in other approaches, e.g. when you can't leverage a single data source. I have done some googling on the topic, but I haven't found much yet. If you have pointers to different ways of solving this sort of problem, I'd appreciate links in the comments.
 
