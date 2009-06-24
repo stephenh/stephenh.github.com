@@ -9,15 +9,15 @@ Achieving Durability
 Intro
 -----
 
-At one of my last gigs, building a claims system for a employer benefits 3rd-party administrator, nightly batch processes were a way of life. Yeah, batch processes aren't sexy, but when you need thousands of checks to get mailed out every morning, you don't generate the PDFs from within the user's rich client Air application.
+At one of my last gigs, building a claims system for an employee benefits 3rd-party administrator, nightly batch processes were a way of life. Yeah, batch processes aren't sexy, but when you need to mail out thousands of checks every morning, you don't generate the PDFs from within the user's rich client Air application.
 
-The durability of these processes was important to their success, and we achieved it by simply leveraging our existing database.
+The durability of these processes was important, and we achieved it by simply leveraging our existing database.
 
-I felt strongly about durability while building the system--if something happened (which it would), things should just work. Power/network/whatever went out? Just restart the process. A vendor sent data that we've never seen before? The process continues and just tries the funky data again tomorrow.
+Durability was important because if something happened (which it always does), things should just work. Power/network/whatever went out? Just restart the process. A vendor sent data that we've never seen before? The process continues and just tries the funky data again tomorrow.
 
 Previously, these types of events would cause mini-catastrophes that required immediate attention from a developer. Developers would have to hand-edit the file to only retry the "bad" transactions, figure out where a process died and jury rig it to start from there, and just generally do a lot of manual leg-work and hand-holding for the system.
 
-Instead of constantly fighting fires, the goal should be for the system to expect failures, handle them gracefully, and continue on to the next task, either immediately if the error was recoverable or, at worst, after a system restart.
+Instead of constantly fighting fires, the goal was to expect failures, handle them gracefully, and continue on to the next task, either immediately if the error was recoverable or, at worst, after a system restart. This would free up resources from day-to-day fire-fighting and let devs focus on just fixing bugs, not fixing bugs while also finessing the system back into a good state.
 
 Of course, it is unlikely you'll have the time/desire to make the entire system fault tolerant to the Nth degree, but some basics will still take you a long way, in my experience.
 
