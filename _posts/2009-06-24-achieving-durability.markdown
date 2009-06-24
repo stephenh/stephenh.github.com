@@ -49,7 +49,7 @@ Embrace ACID
 
 The easiest way I've found to achieve durability is to realize you have an awesomely-durable resource at your disposal and you should leverage/abuse it as much as possible: your relational database server.
 
-The fundamental hack is to perform the business logic of the task *and* mark the task as done within the same transaction.
+The key is to perform the business logic of the task *and* mark the task as done within the same transaction.
 
 This means embedding in-progress data in your primary database instead of the JVM process (see the examples for details). A con is that if your database is already your bottleneck, even this small extra load may not be welcome. However, in the enterprise apps I've worked on, this was not the case. Also, a pro is that the in-progress data will be easily available for dashboards to report against.
 
@@ -60,7 +60,7 @@ Solving scenario 2) is fairly problem specific, so I'll defer to the examples, p
 Examples
 --------
 
-Two examples of hacking durability into a system are:
+Two examples of adding durability into a system are:
 
 * Sending emails
 * Processing 3rd party data files.
