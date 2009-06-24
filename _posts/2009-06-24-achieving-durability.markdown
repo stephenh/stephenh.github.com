@@ -9,9 +9,11 @@ Achieving Durability
 Intro
 -----
 
-At one of my last gigs, nightly batch processes were a way of life. Yeah, batch processes aren't sexy, but when you need thousands of checks to get mailed out every morning, you don't generate the PDFs from within the user's rich client Air application.
+At one of my last gigs, building a claims system for a employer benefits 3rd-party administrator, nightly batch processes were a way of life. Yeah, batch processes aren't sexy, but when you need thousands of checks to get mailed out every morning, you don't generate the PDFs from within the user's rich client Air application.
 
-One aspect I felt strong about while building these processes was ensuring durability--if something happened, which it would, things should just work. Power/network/whatever went out? Just restart the process. Third party sent in data that we've never seen before? The process continues and just tries the funky data again tomorrow.
+The durability of these processes was important to their success, and we achieved it by simply leveraging our existing database.
+
+I felt strongly about durability while building the system--if something happened (which it would), things should just work. Power/network/whatever went out? Just restart the process. A vendor sent data that we've never seen before? The process continues and just tries the funky data again tomorrow.
 
 Previously, these types of events would cause mini-catastrophes that required immediate attention from a developer. Developers would have to hand-edit the file to only retry the "bad" transactions, figure out where a process died and jury rig it to start from there, and just generally do a lot of manual leg-work and hand-holding for the system.
 
@@ -26,9 +28,9 @@ One fundamental concept to durability is atomicity--if you want to continue wher
 
 If your tasks are idempotent, you're in luck. Being idempotent means you can "retry" a task as many times as you want, and the task is smart enough to not cause funky behavior (like double-/triple-processing). For example, it's a transaction with a unique id that, if you find the id already in your system, you know not to enter it again. If your tasks are idempotent, you can just retry everything and what was already done will not cause duplicates.
 
-However, if your tasks are not idempotent, you'll have to explicitly mark tasks as pending and then done.
+However, if your tasks are not idempotent, you'll have to explicitly mark tasks as pending and then as done.
 
-Marking stuff "done" is pretty easy with in-memory lists/etc.--but its not atomic. Your process can't be:
+Marking tasks as done is pretty easy with in-memory lists/etc.--but its neither atomic nor durable. Your process can't be:
 
 1. Make an ArrayList of tasks
 2. Do task A
@@ -37,10 +39,10 @@ Marking stuff "done" is pretty easy with in-memory lists/etc.--but its not atomi
 
 There are two bad scenarios here:
 
-1. Failure happens between 2 and 3--you've done a task but not yet marked it done
-2. Failure happens after N tasks--on restart, the ArrayList will have those first N items in it again
+1. Failure happens between 2 and 3--you've done a task but not yet marked it done.
+2. Failure happens after N tasks--on restart, the ArrayList will have those first N items in it again.
 
-The key to scenario 1) is atomicity--you can't have a two step "do A", "mark A done", because if the box goes down in between those two, you're going to redo "A" when you come back up.
+The key to scenario 1) is atomicity--you can't have a two step "do A" then "mark A done", because if the box goes down in between those two, you're going to redo "A" when you come back up.
 
 The key to scenario 2) is to make your lookup of tasks take into account those that are already done.
 
@@ -89,7 +91,7 @@ Note that we still have a window of opportunity for failure in the infrastructur
 Processing Data Files
 ---------------------
 
-Processing nightly batch files from one of the client's vendors was another big win for durability. The vendor had a history of sending new and interesting transactions on a semi-regular basis. Not enough to be really annoying, but enough to burn a day screwing around with recovery every few months or so.
+Processing nightly batch files from one of the client's vendors was another big win for durability. The vendor has a history of sending new and interesting transactions on a semi-regular basis. Not enough to be really annoying, but enough to burn a day screwing around with recovery every few months or so.
 
 The original approach would retry entire files, and attempted to leverage an almost-idempotent transaction id. However, there was a heuristic involved that was not always accurate.
 
