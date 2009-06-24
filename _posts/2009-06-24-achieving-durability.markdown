@@ -6,8 +6,8 @@ title: Achieving Durability
 Achieving Durability
 ====================
 
-Intro
------
+Introduction
+------------
 
 At one of my last gigs, building a claims system for an employee benefits 3rd-party administrator, nightly batch processes were a way of life. Yeah, batch processes aren't sexy, but when you need to mail out thousands of checks every morning, you don't generate the PDFs from within the user's rich client Air application.
 
