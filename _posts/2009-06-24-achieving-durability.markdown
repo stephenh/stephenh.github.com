@@ -91,7 +91,7 @@ Processing Data Files
 
 Processing nightly batch files from one of the client's vendors was another big win for durability. The vendor had a history of sending new and interesting transactions on a semi-regular basis. Not enough to be really annoying, but enough to burn a day screwing around with recovery every few months or so.
 
-The original approach would retry entire files, and attempted to leverage an almost-idempotent transaction id. However, as I recall, the debit card provider was extra special so there were several heuristics to determine "is this really the same transaction".
+The original approach would retry entire files, and attempted to leverage an almost-idempotent transaction id. However, there was a heuristic involved that was not always accurate.
 
 So, when we were changing how the system handled files anyway, I refactored the process to be durable:
 
