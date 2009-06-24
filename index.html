@@ -5,10 +5,20 @@ title: Draconian Overlord
 
 <div id="home">
   <h2>Posts</h2>
-  <ul>
+
+	<table border="0">
     {% for post in site.posts %}
-      <li>{{ post.date | date_to_string }} &ndash; <a href="{{ post.url }}">{{ post.title }}</a></li>
+		<tr>
+			<td>{{ post.date | date_to_string }} </td><td> <a href="{{ post.url }}">{{ post.title }}</a> </td>
+		</tr>
     {% endfor %}
   </ul>
+	</table>
 </div>
+
+<h2>Disclaimer</h2>
+
+<p>I ranted a lot when I first started this blog--lately I'm working on biting
+my tongue and actually providing valuable content in my posts. We'll see how it
+goes.</p>
 
