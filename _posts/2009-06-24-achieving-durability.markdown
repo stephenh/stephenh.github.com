@@ -51,11 +51,11 @@ The easiest way I've found to achieve durability is to realize you have an aweso
 
 The fundamental hack is to perform the business logic of the task *and* mark the task as done within the same transaction.
 
-This means embedding in-progress data into your database (see the examples for details). A con is that if your database is already your bottleneck, this isn't good, but most enterprise apps I've worked on that has not been the case. The in-progress data is also a great way to build reports/dashboards against, given it's in the SQL database where anyone can get to it instead of being isolated in the JVM process.
+This means embedding in-progress data into your primary database instead of the JVM process (see the examples for details). A con is that if your database is already your bottleneck, even this small extra load may not be welcome. However, in the enterprise apps I've worked on, this has not been the case. Also, a pro is that the in-progress data will be easily available for dashboards to report against.
 
 So now scenario 1) is solved. Your database does all of the hard work ensuring that both task + marking either happen or not happen.
 
-Solving scenario 2) is fairly problem specific--so, see the specific examples, particularly the `DocumentCursor.line` attribute.
+Solving scenario 2) is fairly problem specific, so I'll defer to the examples, particularly the `DocumentCursor.line` attribute.
 
 Examples
 --------
