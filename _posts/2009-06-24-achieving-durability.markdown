@@ -24,9 +24,9 @@ Atomicity
 
 One fundamental concept to durability is atomicity--if you want to continue where you left off before, you can't redo previous work.
 
-If you're lucky enough to have tasks that are inherently idempotent, you're in luck. Being idempotent means you can "retry" a task as many times as you want, and the task is smart enough to not cause funky behavior. For example, it's a debit card transaction with a unique transaction id that, if you find the id already in your system, you know not to enter it again. If your tasks are idempotent, you can just retry everything and what was already done will not cause duplicates.
+If your tasks are idempotent, you're in luck. Being idempotent means you can "retry" a task as many times as you want, and the task is smart enough to not cause funky behavior (like double-/triple-processing). For example, it's a debit card transaction with a unique transaction id that, if you find the id already in your system, you know not to enter it again. If your tasks are idempotent, you can just retry everything and what was already done will not cause duplicates.
 
-However, if your tasks are not idempotent, this means you'll have to mark work as pending and then as done.
+However, if your tasks are not idempotent, you'll have to explicitly mark tasks as pending and then done.
 
 Marking stuff "done" is pretty easy with in-memory lists/etc.--but its not atomic. Your process can't be:
 
