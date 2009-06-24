@@ -51,7 +51,7 @@ The easiest way I've found to achieve durability is to realize you have an aweso
 
 The fundamental hack is to perform the business logic of the task *and* mark the task as done within the same transaction.
 
-This means embedding in-progress data into your primary database instead of the JVM process (see the examples for details). A con is that if your database is already your bottleneck, even this small extra load may not be welcome. However, in the enterprise apps I've worked on, this has not been the case. Also, a pro is that the in-progress data will be easily available for dashboards to report against.
+This means embedding in-progress data in your primary database instead of the JVM process (see the examples for details). A con is that if your database is already your bottleneck, even this small extra load may not be welcome. However, in the enterprise apps I've worked on, this was not the case. Also, a pro is that the in-progress data will be easily available for dashboards to report against.
 
 So now scenario 1) is solved. Your database does all of the hard work ensuring that both task + marking either happen or not happen.
 
