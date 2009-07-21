@@ -46,4 +46,5 @@ Checkout more at:
   * [Examples](http://joist.ws/bindgenExamples.html)
   * [Performance](http://joist.ws/bindgenPerformance.html)
   * [Screencasts](http://joist.ws/bindgenScreencasts.html)
+  * [Setup](http://joist.ws/bindgenSetup.html)
 
