@@ -26,7 +26,7 @@ Previously, a binding could only be bound to a 1 instance at a time, making them
     nb.get(); // returns "foo"
 </pre>
 
-But the gap between `fb.set` and `nb.get()` meant another thread could step in and interleave a `set` between your back.
+But the gap between `fb.set` and `nb.get()` meant another thread could step in and interleave a `set` behind your back.
 
 Now there are `getWithRoot` and `setWithRoot` methods that are stateless and so thread-safe:
 
