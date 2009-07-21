@@ -22,7 +22,7 @@ Previously, a binding could only be bound to a 1 instance at a time, making them
     StringBinding nb = fb.name();
     
     Foo foo = new Foo("foo");
-    fb.set(foo);
+    fb.set(foo); // binds fb to the foo instance
     nb.get(); // returns "foo"
 </pre>
 
