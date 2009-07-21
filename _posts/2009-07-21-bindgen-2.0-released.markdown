@@ -1,0 +1,49 @@
+---
+layout: post
+title: Bindgen 2.0 Released
+---
+
+Bindgen 2.0 Released
+====================
+
+My hobby project bindgen just got a new release: 2.0.
+
+Stateless Bindings
+------------------
+
+The biggest change is that bindings can now be stateless.
+
+Previously, a binding could only be used with 1 instance at a time, making them not safe for use across multiple threads. You could reuse them within a thread, with an idiom like:
+
+<pre name="code" class="java">
+    FooBinding fb = new FooBinding();
+    StringBinding nb = fb.name();
+    
+    Foo foo = new Foo("foo");
+    fb.set(foo);
+    nb.get(); // returns "foo"
+</pre>
+
+But the gap between `fb.set` and `nb.get()` meant another thread could step in and interleave a `set` between your back.
+
+Now there are `getWithRoot` and `setWithRoot` methods that are stateless and so thread-safe:
+
+<pre name="code" class="java">
+    FooBinding fb = new FooBinding();
+    StringBinding nb = fb.name();
+    
+    Foo foo = new Foo("foo");
+    nb.getWithRoot(foo); // returns "foo"
+</pre>
+
+Links
+-----
+
+Checkout more at:
+
+* [github](http://github.com/stephenh/bindgen)
+* Joist's bindgen pages:
+  * [Examples](http://joist.ws/bindgenExamples.html)
+  * [Performance](http://joist.ws/bindgenPerformance.html)
+  * [Screencasts](http://joist.ws/bindgenScreencasts.html)
+
