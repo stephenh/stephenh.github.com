@@ -38,6 +38,10 @@ Now there are `getWithRoot` and `setWithRoot` methods that are stateless and so 
     nb.getWithRoot(foo); // returns "foo"
 </pre>
 
+This means you can instantiate a binding just once and reuse it across many instances/threads.
+
+[Joist](http://joist.ws) is starting to use these stateless bindings for its validation rules. The iterative nature (e.g. `foo.employer().name()`) of bindgen is more flexible than Joist's previous approach.
+
 Links
 -----
 
