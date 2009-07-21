@@ -6,14 +6,16 @@ title: Bindgen 2.0 Released
 Bindgen 2.0 Released
 ====================
 
-My hobby project bindgen just got a new release: 2.0.
+My hobby project [bindgen](http://github.com/stephenh/bindgen) just got a new release: 2.0.
+
+bindgen provides expression language-like capabilities, but with type-safe method calls instead of opaque strings like OGNL.
 
 Stateless Bindings
 ------------------
 
 The biggest change is that bindings can now be stateless.
 
-Previously, a binding could only be used with 1 instance at a time, making them not safe for use across multiple threads. You could reuse them within a thread, with an idiom like:
+Previously, a binding could only be bound to a 1 instance at a time, making them not safe for use across multiple threads. You could reuse them within a thread, with a `set(instance)`-based idiom like:
 
 <pre name="code" class="java">
     FooBinding fb = new FooBinding();
