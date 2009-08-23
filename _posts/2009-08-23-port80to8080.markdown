@@ -3,6 +3,9 @@ layout: post
 title: Port 80 to Port 8080
 ---
 
+Serving Port 80 from 8080
+=========================
+
 Several times lately I've wanted to run a Jetty instance on port 8080 but have it available via port 80.
 
 What ended up being easiest for my Ubuntu 9.04 box was two firewall rules:
