@@ -8,6 +8,10 @@ Serving Port 80 from 8080
 
 Several times lately I've wanted to run a Jetty instance on port 8080 but have it available via port 80.
 
+On Unix boxes, this usually involves running as root, or at least starting as root and dropping down to a lower-privileged user.
+
+Given I wanted to quickly start/stop Jetty test instances from within Eclipse, I really wanted to keep running Jetty on 8080 but have it show up on 80.
+
 What ended up being easiest for my Ubuntu 9.04 box was two firewall rules:
 
 `/etc/network/if-up.d/port80to8080`:
