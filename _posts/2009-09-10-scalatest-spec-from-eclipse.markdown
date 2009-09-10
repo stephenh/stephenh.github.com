@@ -121,3 +121,8 @@ Turns out you can right click and run individual `it` tests too. I have no idea 
 
 Anyway, I haven't decided if I'll completely jump ship on traditional `TestCase`-extending tests for Scala projects. There is a warm familiarity that I like about it. But if I do start writing more spec-based ScalaTests, this `RunWith` hack will be very handy.
 
+**Update**
+----------
+
+Turns out this feature [already exists](http://www.artima.com/forums/flat.jsp?forum=284&thread=254074) in ScalaTest [trunk](https://scalatest.dev.java.net/source/browse/scalatest/trunk/app/src/main/scala/org/scalatest/junit/JUnitRunner.scala?rev=1789&view=markup) and should be in the next release as `org.scalatest.junit.JUnitRunner`.
+
