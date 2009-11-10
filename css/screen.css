@@ -50,9 +50,13 @@ h1, h2, h3 {
     margin-bottom: 0.5em;
 }
 
-#site-inner p, ul, ol {
+#site-inner p {
     line-height: 1.25em;
     margin-bottom: 1.45em;
+}
+
+#site-inner li {
+    margin-bottom: 1em;
 }
 
 code  {
