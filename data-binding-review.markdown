@@ -3,12 +3,14 @@ layout: post
 title: Data Binding Review
 ---
 
-Data Binding Review
-======================
+Data Binding Tools & Approaches
+===============================
 
 Data binding is interesting topic to me, mostly because of the large effect it can have on an application's view layer.
 
-A good data binding approach means your view layer is not wasting boilerplate LOC getting/setting data into/out of your domain model. Instead, ideally you succinctly bind `input <-> domain model` and, in 90% of the cases, be done with it.
+A good data binding approach means your view layer is not wasting boilerplate LOC getting and setting data between your UI components and your domain model.
+
+Instead, you succinctly bind `domain model <-> UI component` and, in 90% of the cases, be done with it.
 
 I've used and built several data binding options and was recently reconsidering property objects dressed up in some of Scala's magic as a potentially elegant approach.
 
@@ -20,10 +22,10 @@ While doing so, I also flushed out descriptions of other approaches I've used or
 * Scala Property Objects
 * Lift/Scala Functions
 
-Granted, these are all admittedly biased towards the Java platform.
+Granted, these are all admittedly very biased towards the Java platform.
 
-The Basic Idea
---------------
+The Basic Idea: Why Data Binding?
+---------------------------------
 
 Most data binding approaches I've worked with boil down to an interface that looks like:
 
@@ -35,35 +37,34 @@ Most data binding approaches I've worked with boil down to an interface that loo
     }
 </pre>
 
-The name is often different than "Binding", and it may/may not use the generic type parameter `T`, but that's the basic idea.
+The name is not necessarily "Binding", and it may/may not have a generic `T`, but that's the basic idea.
 
-At first blush, while rendering a value to the screen (or file or database), having a `Binding` to call `get()` on for its value is not much different than just passing the value itself.
+At first blush, while rendering a value to the screen (or file or database), having a `Binding` to call `get()` on for its value is not much different than just passing the value itself. If anything, its more overhead.
 
-But where a `Binding` proves handy is on taking input from the user (usually text-based, e.g. an HTML post), and putting data back into the domain object using the `set` method.
+However, where a `Binding` proves handy is when you have non-trivial display/processing logic that you'd like to have done on your data, but have done by a reusable library (e.g. UI components) instead of doing it yourself.
 
-In Java, you cannot pick up a `setName` setter and pass it into a library and say "call this when you have a value ready".
+For a concrete example, think of a UI component that would render an HTML calendar, then convert the HTTP POST `date` string parameter into a `java.util.Date`, etc.. The type of non-trivial stuff you don't want to type out each time you have a date field on a page.
 
-Being able to pass the setter around like this, in my experience, is the key to good domain object-based data binding.
+So, when this is the case, you want to pass the library something to get your data from *and* also put your data back in to.
 
-The `Binding` interface (or a functional equivalent), by providing the `getType` method, also facilitates frameworks auto-converting input into the appropriate domain model type, e.g. converting a String to a `Date`.
+However, in Java, you cannot pick up a `setName` setter, pass it into a library, and say "call this when you have a value ready".
 
-Without a `Binding`, you'll be stuck writing translation code like:
+So, that is what `Binding.get` and `Binding.set` are for.
 
-<pre name="code" class="java">
-    // somewhere inside rendering
-    out.write(domainObject.getDate());
-    
-    // somewhere inside posting
-    domainObject.setDate(
-      YourHelper.parseDate(request.getParameter("date")));
-</pre>
-
-Which is not bad for simple input/output, but if rendering or posting becomes more complex, it becomes harder to apply levels of abstraction because you're stuck not being able to pull the `setDate` call up into helper/library methods.
+The problem now is to just `Binding` implemented for all of the properties in your domain model.
 
 Data Binding with OGNL
 ----------------------
 
-I have had a lot of success with [OGNL](http://www.ognl.org) and integrating it with a [Click](http://click.sf.net)-based view layer. The basic idiom is:
+The easiest, and most common, approach to implementing `Binding.get/set`-style data binding is to just not implement the methods directly at all.
+
+Instead, use strings with reflection.
+
+There are several expression language implementations that do this: [Unified Expression Language](http://en.wikipedia.org/wiki/Unified_Expression_Language), [MVEL](http://mvel.codehaus.org/), and [OGNL](http://www.ognl.org).
+
+Their usage is all basically calling `Library.set(childObject, "parent.name")` to return `childObject.getParent().getName()`. The `Library.set` method can either be used directly or wrapped in your own `Binding.get` wrapper as needed.
+
+I had the most success with this approach by using OGNL and integrating it with a [Click](http://click.sf.net)-based view layer. The basic idiom is:
 
 <pre name="code" class="java">
     public class EmployeePage {
@@ -98,9 +99,9 @@ OGNL can also handle tables well. In the above `EmployeePage`, each OGNL string 
     }
 </pre>
 
-Here the table class gets the first `Employee` as `currentObject`, render the columns, with OGNL calling `currentObject.getFirstName()` and `currentObject.getLastName()`, then moves on the next `Employee` object and repeats.
+Here the table class gets the first `Employee` as `currentObject`, renders the columns, with each column calling `Ognl.get(currentObject, "firstName")` and `Ognl.get(currentObject, "lastName")`, respectively, and then the table moves on to the next `Employee` object and repeats.
 
-For lack of a better term, I'll call this ability "arbitrary instance" evaluation because a given String can be evaluated against any arbitrary "root" instance.
+For lack of a better term, I'll call this ability "arbitrary instance" evaluation because a given String can be evaluated against any arbitrary `currentObject` root instance. This is not a big deal if you're only binding against one instance, but if you want to bind against an iterative list of instances, then its nice to have.
 
 So, that's OGNL data binding. What's the big deal?
 
@@ -117,14 +118,16 @@ This would be it, except that OGNL's property language is string-based. This mea
 * Pro: arbitrary instance evaluation
 * Con: brittle--strings are opaque to the compiler and so break with refactoring
 
-Other than being brittle OGNL is a great data binding solution. It sets a high standard that is the basis of comparison for the following approaches I've tried.
+Other than being brittle, OGNL is a great data binding solution. It sets a high standard that is the basis of comparison for the following approaches I've tried.
 
 Data Binding with Bindgen
 -------------------------
 
 When building [Joist](http://joist.ws), I wanted to solve the string-based brittleness issue of OGNL, so I built [Bindgen](http://bindgen.org).
 
-Bindgen is a JDK6 annotation processor that hooks into the compiler's build cycle. It introspects any classes you annotate with `@Bindable` and generates type-safe binding classes for it.
+Instead of using strings and reflection, Bindgen scans for any classes you annotate with a `@Bindable` annotation and generates type-safe `Binding` classes for that class's properties. 
+
+To do this, Bindgen is implemented as a JDK6 annotation processor, so it can hook right into the compiler's build cycle and generate the code immediately (even on save in Eclipse).
 
 For example, if you have a class `Employee`, Bindgen will generate an `EmployeeBinding` class. If `Employee` has a `getName()` method that returns `String`, then `EmployeeBinding` will have a `name()` method that instead returns a `StringBinding`.
 
@@ -145,6 +148,8 @@ Using it looks something like:
       }
     }
 </pre>
+
+The only classes you create are `EmployeePage` and `Employee`, with the usual `getFirstName`, `setFirstName`, `getLastName`, and `setLastName` methods. Bindgen then generates the `EmployeePageBinding` class, an `employee()` method on it that returns an `EmployeeBinding`, and `firstName()` and `lastName()` methods on the `EmployeeBinding` that return `Binding<String>` instances for first name and last name, respectively.
 
 The big win here is that strings have gone away. If your `Employee` class changes, the `firstName()` and `lastName()` calls will fail to compile.
 
@@ -194,7 +199,7 @@ Into a single:
 
 * `public StringProperty name()`
 
-This makes a lot of sense, because now there is a single object representing and encapsulating the name concept, so it can be passed into a library, have `get`/`set` methods called on it, etc.
+This makes a lot of sense, because now there is a single object representing and encapsulating the name concept, so it can be passed into a library, have `get`/`set` methods called on it, etc. It's a `Binding`, just with a different name.
 
 But it does kind of suck when you have to do:
 
@@ -221,7 +226,7 @@ Normal Property Objects:
       p.name.set("Bob")
 </pre>
 
-With Scala implicit conversion and operator overloading:
+Fair enough. But, now with Scala implicit conversion and operator overloading, we can remove both the `.get` on line 2 and the `.set` on line 3:
 
 <pre name="code" class="scala">
       val p = new Parent
@@ -253,11 +258,13 @@ See this [gist](http://gist.github.com/245296) for the full code, but most of th
 
 Between the `:=` operator and the `p2value` implicit, we've basically made the Property Objects annoying extra `get()`/`set()` method calls go hide behind compiler syntax sugar.
 
-I like `:=` too--it is succinct and just different enough to hint that it isn't a real `=` operation.
+I like the `:=` operator too--it is succinct and just different enough to hint that it isn't a real `=` operation.
 
 Very cool. Makes me want to crank out some Scala domain objects.
 
-One thing to note is that Property Objects do not support arbitrary instance evaluation--the `parent.name` Property Object is intrinsically linked to the one `parent` instance and cannot be evaluated against other instances, e.g. for the table iterating over a row list example.
+However, unfortunately, Property Objects do not support arbitrary instance evaluation.
+
+The `parent.name` Property Object is intrinsically linked to its `parent` instance and cannot be evaluated against other instances, e.g. for the table iterating over a row list example.
 
 **Pros and Cons of Scala Property Objects**
 
@@ -271,7 +278,7 @@ List/Scala Functions
 
 One last Scala trick is taken from [Lift](http://liftweb.net/)'s form library. It does not directly use bindings, but instead simulates them with Scala's incredibly succinct function declaration syntax.
 
-A basic example:
+A basic example from [The Lift Book](http://groups.google.com/group/the-lift-book?pli=1):
 
 <pre name="code" class="scala">
     def login(xhtml : NodeSeq) : NodeSeq = {
@@ -284,7 +291,8 @@ A basic example:
     }
 </pre>
 
-I'm not a Lift expert (this example is from [The Lift Book](http://groups.google.com/group/the-lift-book?pli=1), but if you note the `SHtml.text` function, instead of taking 1 binding parameter (e.g. OGNL string, `Binding` instance, or Property Object), Lift passes two parameters. The first is just the String value `user`. The second is a `Function1[String, Unit]` that, when executed, will assign the value passed to it back to the `user` local variable. It's basically an 8-character anonymous inner class.
+
+I'm not a Lift expert, but if you note the `SHtml.text` function, instead of taking 1 binding parameter (e.g. an OGNL string, a `Binding` instance, or a Property Object), Lift passes two parameters. The first is just the String value `user`. The second is a `Function1[String, Unit]` that, when executed, will assign the value passed to it back to the `user` local variable. It's basically an 8-character anonymous inner class.
 
 These two parameters form a makeshift `get`/`set` duo that does well emulating a `Binding` instance.
 
@@ -301,5 +309,11 @@ Although, like property objects, it does not support arbitrary instance evaluati
 Conclusion
 ----------
 
-Stuff.
+This post ended differently than I thought I would--I was originally bullish about Scala being an awesome language to do data binding in.
+
+And, it basically is, with the syntax sugar making property objects more bearable, and Lift's form library highlighting a nice, simple approach.
+
+However, neither can handle the "arbitrary instance" evaluation that OGNL and Bindgen can do for UI elements like tables. Which, for non-iterative binding problems, is just fine. But, when you do start doing iterative binding, I think it would be missed.
+
+In the end, it doesn't so much matter what specific data binding approach you use. Nor do you have to use any of them, if you do not have a UI component/domain model gap to fill. But if your UI layer is getting verbose and repetitive, you might evaluate some of these data binding options and see which one can best fit your architecture and help integrate the UI and domain together.
 
