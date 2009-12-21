@@ -14,13 +14,15 @@ Instead, you succinctly bind `domain model <-> UI component` and, in 90% of the 
 
 I've used and built several data binding options and was recently reconsidering property objects dressed up in some of Scala's magic as a potentially elegant approach.
 
-While doing so, I also flushed out descriptions of other approaches I've used or seen before as well:
+While thinking about how they'd work, I decided to write up descriptions of other approaches I've used or seen before as well to compare against.
+
+So, in this post, I'll briefly compare data binding via:
 
 * OGNL
 * Bindgen
 * Property Objects
 * Scala Property Objects
-* Lift/Scala Functions
+* Lift/Scala Inline Functions
 
 Granted, these are all admittedly very biased towards the Java platform.
 
@@ -51,7 +53,7 @@ However, in Java, you cannot pick up a `setName` setter, pass it into a library,
 
 So, that is what `Binding.get` and `Binding.set` are for.
 
-The problem now is to just `Binding` implemented for all of the properties in your domain model.
+Assuming this approach works well for your UI layer, the problem now is to implement `Binding` (or some form of it) for all of the properties in your domain model.
 
 Data Binding with OGNL
 ----------------------
@@ -60,9 +62,9 @@ The easiest, and most common, approach to implementing `Binding.get/set`-style d
 
 Instead, use strings with reflection.
 
-There are several expression language implementations that do this: [Unified Expression Language](http://en.wikipedia.org/wiki/Unified_Expression_Language), [MVEL](http://mvel.codehaus.org/), and [OGNL](http://www.ognl.org).
+There are several expression language implementations that do this: [Unified Expression Language](http://en.wikipedia.org/wiki/Unified_Expression_Language), [MVEL](http://mvel.codehaus.org/), and [OGNL](http://www.opensymphony.com/ognl/).
 
-Their usage is all basically calling `Library.set(childObject, "parent.name")` to return `childObject.getParent().getName()`. The `Library.set` method can either be used directly or wrapped in your own `Binding.get` wrapper as needed.
+Their usage is all basically calling `Library.set(childObject, "parent.name", value)` to execute `childObject.getParent().setName(value)`. The `Library.set` method can either be used directly or wrapped in your own `Binding.set` wrapper as needed.
 
 I had the most success with this approach by using OGNL and integrating it with a [Click](http://click.sf.net)-based view layer. The basic idiom is:
 
@@ -78,11 +80,11 @@ I had the most success with this approach by using OGNL and integrating it with 
     }
 </pre>
 
-When the form rendered itself, the text boxes would use OGNL to evaluate the `employee.firstName` String against the page object, e.g. `page.employee.getFirstName()`. This value would then be included in the rendered HTML.
+When the form renders itself, the text boxes use OGNL to evaluate the `employee.firstName` String against the page object, e.g. `page.employee.getFirstName()`. This value is included in the rendered HTML.
 
-And then when the form post happened, the text boxes would again use OGNL to evaluate `employee.firstName = formFieldValue`, e.g. `page.employee.setFirstName(formFieldValue)`. The posted value would then be set back into the domain object.
+When a form POST happens, the text boxes again use OGNL to evaluate `employee.firstName = formFieldValue`, e.g. `page.employee.setFirstName(formFieldValue)`. The posted value is then set back into the domain object.
 
-OGNL also lets you introspect the property types (e.g. the `Binding.getType` method), so basic type conversion could take place if the incoming form String value needed to be, say, a `java.util.Date`.
+OGNL also lets you introspect the property types (e.g. equivalent to the `Binding.getType` method), so basic type conversion can take place if the incoming form String value needs to be, say, a `java.util.Date`.
 
 OGNL can also handle tables well. In the above `EmployeePage`, each OGNL string was evaluated against the current page object. But OGNL strings can also be evaluated against each object in a collection, e.g.:
 
@@ -101,7 +103,7 @@ OGNL can also handle tables well. In the above `EmployeePage`, each OGNL string 
 
 Here the table class gets the first `Employee` as `currentObject`, renders the columns, with each column calling `Ognl.get(currentObject, "firstName")` and `Ognl.get(currentObject, "lastName")`, respectively, and then the table moves on to the next `Employee` object and repeats.
 
-For lack of a better term, I'll call this ability "arbitrary instance" evaluation because a given String can be evaluated against any arbitrary `currentObject` root instance. This is not a big deal if you're only binding against one instance, but if you want to bind against an iterative list of instances, then its nice to have.
+For lack of a better term, I'll call this ability "arbitrary instance evaluation" because a given String can be evaluated against any arbitrary `currentObject` root instance. This is not a big deal if you're only binding against one instance, but if you want to bind against an iterative list of instances, then its nice to have.
 
 So, that's OGNL data binding. What's the big deal?
 
@@ -129,9 +131,9 @@ Instead of using strings and reflection, Bindgen scans for any classes you annot
 
 To do this, Bindgen is implemented as a JDK6 annotation processor, so it can hook right into the compiler's build cycle and generate the code immediately (even on save in Eclipse).
 
-For example, if you have a class `Employee`, Bindgen will generate an `EmployeeBinding` class. If `Employee` has a `getName()` method that returns `String`, then `EmployeeBinding` will have a `name()` method that instead returns a `StringBinding`.
+For example, if you have a class `Employee`, Bindgen will generate an `EmployeeBinding` class. If `Employee` has a `getName()` method that returns `String`, then `EmployeeBinding` will have a `name()` method that instead returns a `StringBinding` whose `Binding.get` and `Binding.set` methods are hooked up to `getName()` and `setName()`, respectively.
 
-Each `XxxBinding` instance has `get` and `set` methods on it, meaning you can pass the binding around into frameworks and they can get/convert/set your data.
+Given that each `XxxBinding` instance has `get` and `set` methods on it, you can pass the binding around into frameworks and they can get/convert/set your data.
 
 Using it looks something like:
 
@@ -313,7 +315,7 @@ This post ended differently than I thought I would--I was originally bullish abo
 
 And, it basically is, with the syntax sugar making property objects more bearable, and Lift's form library highlighting a nice, simple approach.
 
-However, neither can handle the "arbitrary instance" evaluation that OGNL and Bindgen can do for UI elements like tables. Which, for non-iterative binding problems, is just fine. But, when you do start doing iterative binding, I think it would be missed.
+However, neither can handle the "arbitrary instance evaluation" that OGNL and Bindgen can do for UI elements like tables. Which, for non-iterative binding problems, is just fine. But, when you do start doing iterative binding, I think it would be missed.
 
 In the end, it doesn't so much matter what specific data binding approach you use. Nor do you have to use any of them, if you do not have a UI component/domain model gap to fill. But if your UI layer is getting verbose and repetitive, you might evaluate some of these data binding options and see which one can best fit your architecture and help integrate the UI and domain together.
 
