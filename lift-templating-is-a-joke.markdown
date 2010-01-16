@@ -10,8 +10,8 @@ I want to like [Lift](http://liftweb.net). I like [Scala](http://scala-lang.org)
 
 I have several nitpicks with it, the one I'll rant about now is its templating syntax.
 
-Lift's Lofty Goals
-------------------
+Lift's Lofty Goal
+-----------------
 
 First, let's start with the author waxing poetic about his design goals in Lift's [Getting Started](http://liftweb.net/docs/getting_started/mod_master.html).
 
@@ -54,13 +54,15 @@ But then you see the implementation:
     &lt;/html&gt;
 </pre>
 
-And...what? What happened to no separation? Designer friendly? You really think Dreamweaver is going to like that `<tr>` tag coming not after a `<table>` tag but a `<left:Show.myForm>` tag.
+And...what? What happened to no separation? Designer friendly? Is Dreamweaver really going to like that `<tr>` tag coming after a `<left:Show.myForm>` tag instead of a `<table>` tag?
 
-Am I seriously supposed to believe that just because the programming symbols here are tags and not curly braces, the design goal of "no programming logic" was actually achieved?
+I don't see how this achieves the design goal of "no programming logic". I consider the `<lift:xxx>` tags to be programming symbols just as much as curly braces.
+
+Yeah, okay, they are tags, but they are not native HTML tags that any designer/web design tool will have seen before. They are programming symbols.
 
 I wouldn't care about the `<lift:xxx>` syntax that much--other projects take this approach as well, e.g. [GWT](http://code.google.com/webtoolkit/) off the top of my head.
 
-But since Lift goes out of its way to repeatedly, proudly assert how designer friendly it is, when it's not, just annoys me.
+But since Lift goes out of its way to assert, repeatedly, how designer friendly it is, when it's not, just annoys me.
 
 Pure Rocks
 ----------
@@ -100,9 +102,9 @@ Now, admittedly, pure requires a few hoops for the programmer to jump through, e
 
 And this could probably be cleaned up.
 
-Even if the templating was driven entirely off of HTML `id` elements, I think you'd have a usable solution.
+Even if the templating was driven entirely off of HTML `id` attributes, I think you'd have a usable solution.
 
-I admit I haven't fully thought it through, but I think it would work out well.
+I admit I haven't fully thought it through, but I'm optimistic.
 
 Code Generation
 ---------------
