@@ -222,7 +222,7 @@ I'm a little fuzzy on the details as I just came across the language, but the ke
 Implicit Caller-Side
 --------------------
 
-In my look-ma-I'm-a-language-designer opinion, I like Heron, but I think Scala should do one better and make the *implicit* caller-side structural typing. As in you don't need the `as Closeable`, the compiler just notices this should happen and makes it so.
+In my look-ma-I'm-a-language-designer opinion, I like Heron's approach, but I think Scala should do one better and support *implicit* caller-side structural typing. As in you don't need the `as Closeable`, the compiler just notices this should happen and makes it so.
 
 With this approach, you can write library/API code and be blithely unaware of whether your callers are passing in real-conforming or structurally-conforming arguments.
 
