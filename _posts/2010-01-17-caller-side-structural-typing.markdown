@@ -271,6 +271,8 @@ So far, this is all straight, "non-structural" Scala code. But then, when the co
 
    This is a JDK7 feature, but the idea is that there will be a way to, at runtime, dynamically add `Closeable` to the list of interfaces that `SomeClass` implements. This is like reaching into the `SomeClass` class declaration line and saying "oh, yeah, you meant to add `implements Closeable`, let me do that for you".
 
+   I think this is the best option for JVM-based structural typing, it just sucks that it is not available yet.
+
    Points:
 
    * Pro: Object identity is not broken--there is no proxy/adaptor instance hiding the real `SomeClass` instance in the background
