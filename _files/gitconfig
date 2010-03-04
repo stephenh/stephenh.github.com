@@ -1,0 +1,51 @@
+[user]
+	name = Stephen Haberman
+	email = stephen@exigencecorp.com
+[alias]
+	aa = !git ls-files -d | xargs -r git rm && git ls-files -m -o --exclude-standard | xargs -r git add
+	aup = "!sh -c 'git ls-files -m | grep $1 | xargs -r git add' -"
+	ag = "!sh -c 'git ls-files -m -o --exclude-standard | grep $1 | xargs -r git add' -"
+	agp = "!sh -c 'git ls-files -m -o --exclude-standard | grep $1 | xargs -r git add -p' -"
+	cg = "!sh -c 'git ls-files -m | grep $1 | xargs -r git checkout' -"
+	dg = "!sh -c 'git ls-files -m | grep $1 | xargs -r git diff' -"
+	pg = "!sh -c 'git ls-files -m | grep $1 | xargs -r git diff --cached' -"
+	rmg = "!sh -c 'git ls-files -d | grep $1 | xargs -r git rm' -"
+	rsg = "!sh -c 'git ls-files -c | grep $1 | xargs -r git reset' -"
+	lg = log --graph --pretty=oneline --abbrev-commit --decorate
+	si = !git svn show-ignore > .git/info/exclude
+	sh = !git-sh
+[color]
+	diff = auto
+	status = auto
+	branch = auto
+	interactive = auto
+	ui = auto
+[color "branch"]
+	current = green bold
+	local = green
+	remote = red bold
+[color "diff"]
+	meta = yellow bold
+	frag = magenta bold
+	old = red bold
+	new = green bold
+[color "status"]
+	added = green bold
+	changed = yellow bold
+	untracked = red
+[core]
+	excludesfile = /home/stephen/.gitignore
+	pager = less -FXRS -x2
+[merge]
+	tool = gvim -d
+[push]
+	default = current
+[branch]
+	autosetuprebase = always
+[color "sh"]
+	branch = yellow
+[diff]
+	renames = copies
+	mnemonicprefix = true
+[svn]
+	rmdir = true
