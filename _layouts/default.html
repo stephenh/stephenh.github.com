@@ -11,10 +11,10 @@
    <link rel="stylesheet" href="/css/screen.css" type="text/css" media="screen, projection" />
    <!-- syntax highlighting CSS -->
    <link rel="stylesheet" href="/css/shCore.css" type="text/css" />
-   <link type="text/css" rel="stylesheet" href="/css/shThemeDefault.css"></link>
+   <link type="text/css" rel="stylesheet" href="/css/shThemeDefault.css" />
    <script type="text/javascript" src="/js/shCore.js"></script>
-   <script type="text/javascript" src="/js/shLegacy.js"></script>
    <script type="text/javascript" src="/js/shBrushBash.js"></script>
+   <script type="text/javascript" src="/js/shBrushPlain.js"></script>
    <script type="text/javascript" src="/js/shBrushScala.js"></script>
    <script type="text/javascript" src="/js/shBrushJava.js"></script>
    <script type="text/javascript" src="/js/shBrushXml.js"></script>
@@ -44,8 +44,10 @@
 </div>
 
 <script type="text/javascript">
-dp.SyntaxHighlighter.ClipboardSwf = '/js/clipboard.swf';
-dp.SyntaxHighlighter.HighlightAll('code');
+SyntaxHighlighter.defaults['toolbar'] = false
+SyntaxHighlighter.defaults['wrap-lines'] = false
+SyntaxHighlighter.config.clipboardSwf = '/js/clipboard.swf';
+SyntaxHighlighter.all();
 </script>
 
 <script type="text/javascript">

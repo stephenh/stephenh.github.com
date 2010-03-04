@@ -13,14 +13,13 @@ Annotations are really popular these days for marking up validation rules.
 
 I'm forcing myself to go through a Seam tutorial, and their example is fairly representative:
 
-<pre name="code" class="java">
     public class FooDomainObject {
         @NotNull @Length(max=100)
         public String getTitle() {
             return title;
         }
     }
-</pre>
+{. class=brush:java}
 
 I cringe every time I see this--annotations are not inherently bad, but I see the annotation-hammer as having replaced the XML-hammer is the Java world. Specifying validation rules as annotations has its strength, but also its weaknesses, which I think are not always evaluated.
 
@@ -59,8 +58,7 @@ For type-safety, this approach leverages [bindgen](http://joist.ws/bindgen.html)
 
 So, an example of a domain object would be:
 
-<pre name="code" class="java">
-  public class FooDomainObject extends BaseClassWithAddRulesEtc {
+    public class FooDomainObject extends BaseClassWithAddRulesEtc {
       public FooDomainObject() {
           this.addExtraRules();
       }
@@ -81,8 +79,8 @@ So, an example of a domain object would be:
           }
           return errors;
       }
-  }
-</pre>
+    }
+{. class=brush:java}
 
 This first alternative has a few trade-offs:
 
@@ -94,36 +92,34 @@ This first alternative has a few trade-offs:
 
 * Turning off rules requires promoting rules to a static field, as in this 2nd example:
 
-<pre name="code" class="java">
-    public class FooDomainObject {
+      public class FooDomainObject {
 
-        private static FooDomainObjectBinding b = new FooDomainObjectBinding();
-        private static Rule titleNotNull = new NotNullRule(b.title());
-        private static Rule saneDateRule = new SaneDateRule(b.start(), b.end());
+          private static FooDomainObjectBinding b = new FooDomainObjectBinding();
+          private static Rule titleNotNull = new NotNullRule(b.title());
+          private static Rule saneDateRule = new SaneDateRule(b.start(), b.end());
 
-        public FooDomainObject() {
-            this.addExtraRules();
-        }
+          public FooDomainObject() {
+              this.addExtraRules();
+          }
 
-        private void addExtraRules() {
-            this.addRule(FooDomainObject.titleNotNull);
-            this.addRule(FooDomainObject.saneDateRule);
-        }
+          private void addExtraRules() {
+              this.addRule(FooDomainObject.titleNotNull);
+              this.addRule(FooDomainObject.saneDateRule);
+          }
 
-        public void disableTitleRule() {
-            this.removeRule(FooDomainObject.titleNotNull);
-        }
+          public void disableTitleRule() {
+              this.removeRule(FooDomainObject.titleNotNull);
+          }
 
-        // ... title, start, stop getters &amp; setters ...
-    }
+          // ... title, start, stop getters &amp; setters ...
+      }
 
-    // ... sometime later ...
-    fooDomainObject.disableTitleRule();
-</pre>
+      // ... sometime later ...
+      fooDomainObject.disableTitleRule();
+  {. class=brush:java}
 
 A variation of this theme would be to kill the `addExtraRules` and use a list utility in the declarations:
 
-<pre name="code" class="java">
     public class FooDomainObject {
 
         private static FooDomainObjectBinding b = new FooDomainObjectBinding();
@@ -144,7 +140,7 @@ A variation of this theme would be to kill the `addExtraRules` and use a list ut
 
     // ... sometime later ...
     fooDomainObject.disableTitleRule();
-</pre>
+{. class=brush:java}
 
 This:
 
@@ -161,21 +157,20 @@ A Scala Alternative
 
 And, actually, since two-way binding is not required, Scala's call-by-name functionality would work here:
 
-<pre name="code" class="scala">
-  class FooDomainObject {
-    addRule(new NotNullRule(title))
-
-    // ... title ...
-  }
-
-  class NotNullRule[T](value: => AnyRef) implements Rule[T] {
-    def validate(T instance) = {
-      if (value == null) {
-        // ... add error ...
+    class FooDomainObject {
+      addRule(new NotNullRule(title))
+   
+      // ... title ...
+    }
+   
+    class NotNullRule[T](value: => AnyRef) implements Rule[T] {
+      def validate(T instance) = {
+        if (value == null) {
+          // ... add error ...
+        }
       }
     }
-  }
-</pre>
+{. class=brush:scala}
 
 However, this has one major trade-off:
 
@@ -183,11 +178,10 @@ However, this has one major trade-off:
 
   I think having the attribute name is required, so we'd have to pass another string parameter:
 
-<pre name="code" class="scala">
-  class FooDomainObject extends BaseClassWithAddRulesEtc {
-    addRule(new NotNullRule("title", title))
-  }
-</pre>
+      class FooDomainObject extends BaseClassWithAddRulesEtc {
+        addRule(new NotNullRule("title", title))
+      }
+  {. class=brush:scala}
 
 But, even then, that's pretty slick and lightweight. If scala's call-by-name had something like "set-by-name" to make it two-way, and perhaps throw in a `getName()` for good measure, it would easily trump the need for [bindgen](http://joist.ws/bindgen.html)-like hacks.
 

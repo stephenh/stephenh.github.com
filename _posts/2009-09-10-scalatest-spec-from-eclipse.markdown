@@ -17,7 +17,6 @@ A Sample Test
 
 So, here's a sample spec-based test that we'd like to run with Eclipse:
 
-<pre name="code" class="scala">
     import org.junit.runner.RunWith
     import org.scalatest.Spec
     import org.scalatest.matchers.MustMatchers
@@ -37,7 +36,7 @@ So, here's a sample spec-based test that we'd like to run with Eclipse:
         }
       }
     }
-</pre>
+{. class=brush:scala}
 
 Note the `"should do something fancy"` test names that JUnit really isn't going to understand (because they are not methods, they're anonymous inner classes ScalaTest keeps track of in an internal data structure).
 
@@ -50,7 +49,6 @@ The `JUnit4Runner` then just has to translate a JUnit run into something the Spe
 
 This turned out to be not that bad:
 
-<pre name="code" class="scala">
     import org.junit.runner.{Description => JuDescription}
     import org.junit.runner.{Runner => JuRunner}
     import org.junit.runner.notification.{Failure => JuFailure}
@@ -94,7 +92,7 @@ This turned out to be not that bad:
     class StopperAdapter extends StStopper {
       override def apply = false
     }
-</pre>
+{. class=brush:scala}
 
 It basically just translates ScalaTest `Events` into JUnit `RunNotifier` events.
 

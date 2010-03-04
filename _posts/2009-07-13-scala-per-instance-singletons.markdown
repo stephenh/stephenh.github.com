@@ -8,13 +8,12 @@ Scala Per-Instance Singletons
 
 I was reading about [Lift](http://liftweb.com) and came across a funky scala syntax:
 
-<pre name="code" class="scala">
     class Foo {
       object bar {
         val name = "bob"
       }
     }
-</pre>
+{: class=brush:scala}
 
 This:
 
@@ -24,7 +23,6 @@ This:
 
 Looking at the decompiled code, it makes more sense:
 
-<pre name="code" class="java">
     import java.rmi.RemoteException;
     import scala.ScalaObject;
 
@@ -56,23 +54,21 @@ Looking at the decompiled code, it makes more sense:
             return scala.ScalaObject.class.$tag(this);
         }
     }
-</pre>
+{: class=brush:java}
 
 My one curiosity is the lack of synchronization in the lazy initialization. I don't know about the official Scala docs, but Lift insinuated an "inner object" declaration was a singleton, not a singleton-unless-you-have-lots-of-threads.
 
 If you use top-level `object` declarations, it seems to make more sense:
 
-<pre name="code" class="scala">
     object Bar {
       def zaz() = {
         println("hi")
       }
     }
-</pre>
+{: class=brush:scala}
 
 As this is decompiled to:
 
-<pre name="code" class="java">
     public final class Bar {
       public static final void zaz() {
         Bar..MODULE$.zaz();
@@ -102,7 +98,7 @@ As this is decompiled to:
         return ScalaObject.class.$tag(this);
       }
     }
-</pre>
+{: class=brush:java}
 
 This uses the `Bar$` static initializer to ensure there is just one instance of `Bar$`. Which works great.
 

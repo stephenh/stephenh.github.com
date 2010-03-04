@@ -17,26 +17,24 @@ The biggest change is that bindings can now be stateless.
 
 Previously, a binding could only be bound to 1 instance at a time, making them not safe for use across multiple threads. You could reuse them within a thread, with a `set(instance)`-based idiom like:
 
-<pre name="code" class="java">
     FooBinding fb = new FooBinding();
     StringBinding nb = fb.name(); // could be more complex, e.g. fb.bar().name()
     
     Foo foo = new Foo("foo");
     fb.set(foo); // binds fb to the foo instance
     nb.get(); // returns "foo"
-</pre>
+{. class=brush:java}
 
 But the gap between `fb.set` and `nb.get()` meant another thread could step in and interleave a `set` behind your back.
 
 Now there are `getWithRoot` and `setWithRoot` methods that are stateless and so thread-safe:
 
-<pre name="code" class="java">
     FooBinding fb = new FooBinding();
     StringBinding nb = fb.name();
     
     Foo foo = new Foo("foo");
     nb.getWithRoot(foo); // returns "foo"
-</pre>
+{. class=brush:java}
 
 This means you can instantiate a binding just once and reuse it across many instances/threads.
 

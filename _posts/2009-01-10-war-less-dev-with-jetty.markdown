@@ -20,12 +20,12 @@ This assumes you have a war-like directory structure of:
         - ...content...
         - WEB-INF
           - web.xml
+{. class=brush:plain}
 
 If for whatever reason your project's source tree doesn't match this, or needs several build steps to generate/massage a web.xml file, then YMMV.
 
 Instead of a standard jetty script, I typically create a `Jetty` wrapper class directly in the project (either `src/main` or `src/bootstrap`) that resembles:
 
-<pre name="code" class="java">
     public class Jetty {
         private static final Server SERVER = new Server();
 
@@ -59,7 +59,7 @@ Instead of a standard jetty script, I typically create a `Jetty` wrapper class d
             }
         }
     }
-</pre>
+{: class=brush:java}
 
 And run this Java class from Eclipse with a `Jetty.launch` target. You'll need `jetty-6.X.jar` and `jetty-util-6.X.jar` on your classpath--either in `lib/main` or a `lib/bootstrap` as you won't need the Jetty jars ending up in your production war.
 
@@ -77,10 +77,9 @@ Now if only Sun would fix hot code replacement to not blow up when you change cl
 
 Also, if you need JNDI resources, you have a few alternatives. One app I worked on did not rely on the container for anything (it used its own c3p0 pool), so this was no problem. Another app did want the DataSource in JNDI, so we wrote a `FakeJndiFactory` that returned a `FakeContext`--it's kind of stupid, `FakeContext` has a 10-15 methods in it, but only `lookup` ever seems to be called, so we left most of `FakeContext`'s methods as no-op and had `lookup` use a static `HashMap`. Then the project-specific Jetty class just did:
 
-<pre name="code" class="java">
 		System.setProperty("java.naming.factory.initial", FakeJndiFactory.class.getName());
 		FakeJndiFactory.properties.put("java:comp/env/jdbc/yourapp", FakeDataSource.getDataSource());
-</pre>
+{: class=brush:java}
 
 Where `FakeDataSource` was a c3p0-backed data source. If you need more container resources than a DataSource, you'll have to invent your own ways to mount them in Jetty or else just stay in the container.
 

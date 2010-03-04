@@ -32,11 +32,13 @@ After a few tests, I ended up with `foo.fx`:
     function f(arg:Integer) {
         return arg + 1;
     }
+{. class=brush:plain}
 
 Running `javafxc foo.fx` to compile it and then `javafx foo` to run it produces this output:
 
     num=1, x=2
     num=3, x=4
+{. class=brush:plain}
 
 Okay, cool, the `f(num)` function is being lazily bound to `x`, such that `x` changes with `num`.
 
@@ -44,7 +46,6 @@ How'd they do that?
 
 Run `jad foo.class` and we get:
 
-<pre name="code" class="java">
     import com.sun.javafx.runtime.*;
     import com.sun.javafx.runtime.location.*;
     import com.sun.javafx.runtime.sequence.Sequence;
@@ -108,7 +109,7 @@ Run `jad foo.class` and we get:
             Entry.start(foo, args);
         }
     }
-</pre>
+{. class=brush:java}
 
 A *lot* of syntactic sugar is going on here.
 

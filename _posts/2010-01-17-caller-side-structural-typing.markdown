@@ -19,32 +19,29 @@ In Java
 
 I think structural types are best explained with an example. Let's start with Java. Say you define an interface `Closeable`:
 
-<pre name="code" class="java">
     public interface Closeable {
       public void close();
     }
-</pre>
+{. class=brush:java}
 
 And then you write some nifty library routines for working with `Closeable`s:
 
-<pre name="code" class="java">
     public class YourLibrary {
       public static void doClose(Closeable closeable) {
         // other nifty stuff
         closeable.close();
       }
     }
-</pre>
+{. class=brush:java}
 
 Now, let's say somebody else wants to use your `doClose` method, e.g. they have a class:
 
-<pre name="code" class="java">
     public class SomeClass {
       public void close() {
         // want this to be called by doClose
       }
     }
-</pre>
+{. class=brush:java}
 
 With traditional static typing, they cannot pass instances of `SomeClass` to your `doClose` useless `SomeClass` explicitly has an `implements Closeable` declaration.
 
@@ -54,11 +51,10 @@ But, sometimes, it gets annoying--and this is where structural typing steps in.
 
 Let's say you try to call:
 
-<pre name="code" class="java">
     SomeClass s = new SomeClass();
     // stuff
     YourLibrary.doClose(s); // usually a compile error
-</pre>
+{. class=brush:java}
 
 Structural typing notices that `doClose` wants a `Closeable`, and while `SomeClass` does not directly implement `Closeable`, it does have all of the methods required (specifically `void close()`) to meet the *structural* requirements of implementing `Closeable`.
 
@@ -71,20 +67,18 @@ In Scala
 
 Scala's approach to structural typing doesn't quite work like my above description. It requires you do declare up-front what types are structural. E.g. if you define a method:
 
-<pre name="code" class="scala">
     object YourLibrary {
       def doClose(closeable: { def close(): Unit }) = {
         // other nifty stuff
         closeable.close()
       }
     }
-</pre>
+{. class=brush:scala}
 
 The type of the argument `closeable` does not an have an explicitly named type. The `{ def close(): Unit }` is Scala's syntax for inline structural types. It means "any type that has a `close` method on it".
 
 Also note that if you don't like the inline syntax, or need to reuse the `closeable` structural type a lot, you can define a type alias like so:
 
-<pre name="code" class="scala">
     object YourLibrary {
       // this is a type alias for the structural type
       type Closeable = {
@@ -97,16 +91,15 @@ Also note that if you don't like the inline syntax, or need to reuse the `closea
         closeable.close()
       }
     }
-</pre>
+{. class=brush:scala}
 
 Since the Scala compiler understands structural types, per our Java example above, you can now do:
 
-<pre name="code" class="scala">
     val s = new SomeClass()
     // stuff
     // compiles because SomeClose.close matches structurally
     YourLibrary.doClose(s)
-</pre>
+{. class=brush:scala}
 
 Without explicitly declaring `SomeClass extends Closeable`. So, this is it, we've got structural typing.
 
@@ -118,7 +111,6 @@ So, in the class file, the `YourLibrary.doClose`'s `closeable` argument is actua
 
 So your code at runtime basically becomes:
 
-<pre name="code" class="scala">
     // Runtime view
     object YourLibrary {
       def doClose(closeable: Object) = {
@@ -126,7 +118,7 @@ So your code at runtime basically becomes:
         m.invoke();
       }
     }
-</pre>
+{. class=brush:scala}
 
 Note that while the reflection side of things looks a lot like Ruby/Groovy-style dynamic language duck typing, the compiler (assuming you stay within Scala) still statically enforces that any types you pass to `doClose` do actually have the `close()` method.
 
@@ -141,7 +133,6 @@ In Whiteoak
 
 The syntax looks something like:
 
-<pre name="code" class="java">
     public class YourLibrary {
       // they introduce a 'struct' keyword for 'structural'
       struct Closeable {
@@ -152,7 +143,7 @@ The syntax looks something like:
         closeable.close()
       }
     }
-</pre>
+{. class=brush:java}
 
 So, at compile-time, it looks very much like using interfaces.
 
@@ -162,7 +153,6 @@ To do this, Whiteoak uses the same approach as Scala--structurally typed argumen
 
 So your code at runtime basically becomes:
 
-<pre name="code" class="java">
     // Runtime version
     public class YourLibrary {
       // Closeable gets an interface
@@ -188,7 +178,7 @@ So your code at runtime basically becomes:
         contents.close();
       }
     }
-</pre>
+{. class=brush:java}
 
 You'll end up with a separate `GeneratedXxx` adaptor class for each type you pass in to `doClose`. However, like Scala caching for reflection, Whiteoak uses caching to avoid re-generating the class on each `make` call.
 
@@ -205,13 +195,12 @@ The author of Heron also wrote a very good article, [Explicit Structural Typing]
 
 So, Heron implements *explicit* *caller-side* structural typing. You can see the explicit syntax in its [unit test](http://code.google.com/p/heron-language/source/browse/trunk/HeronEngine/tests/TestDuckTyping.heron), or, in our example, it looks like:
 
-<pre name="code" class="scala">
      // define Closeable as a regular interface
      // define YourLibrary.doClose as a regular method taking Closeable
      var s = new SomeClass()
      // compiles because `as Closeable` suffix
      YourLibrary.doClose(s as Closeable)
-</pre>
+{. class=brush:scala}
 
 The `as Closeable` directive ensures `s` structurally complies with `Closeable` and then lets the call happen.
 
@@ -228,7 +217,6 @@ With this approach, you can write library/API code and be blithely unaware of wh
 
 So, it'd look like:
 
-<pre name="code" class="scala">
     object YourLibrary {
       // regular trait/interface
       trait Closeable {
@@ -239,24 +227,22 @@ So, it'd look like:
         closeable.close()
       }
     }
-</pre>
+{. class=brush:scala}
 
 So far, this is all straight, "non-structural" Scala code. But then, when the compiler notices the caller passing in a `SomeClass` argument that is not actually a `Closeable`, do one of two things:
 
 1. Generate, at compile-time, a adaptor class that implements `Closeable`. E.g. something like:
 
-   <pre name="code" class="scala">
        class SomeClassAsCloseable(val c: Closeable) extends Closeable {
          def close() = c.close()
        }
-   </pre>
+   {. class=brush:scala}
     
    And automatically transform the caller's call into:
 
-   <pre name="code" class="scala">
        val s = new SomeClass()
        YourLibrary.doClose(new SomeClassAsCloseable(s))
-   </pre>
+   {. class=brush:scala}
 
    Points:
 

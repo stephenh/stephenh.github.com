@@ -50,7 +50,6 @@ Joist Example
 
 Anyway, when building [Joist](http://joist.ws), I wasn't as anti-static as I am becoming, so I'd have code that looks like:
 
-<pre name="code" class="java">
     public class SomeBusinessLogic {
       public void doSomeBusinessLogic(final Integer fooId) {
         // UoW is a static that reaches out and starts a transaction
@@ -63,11 +62,10 @@ Anyway, when building [Joist](http://joist.ws), I wasn't as anti-static as I am 
         });
       }
     }
-</pre>
+{. class=brush:java}
 
 I think I would write this now as:
 
-<pre name="code" class="java">
     public class SomeBusinessLogic {
       private final Repository repo;
 
@@ -84,7 +82,7 @@ I think I would write this now as:
         });
       }
     }
-</pre>
+{. class=brush:java}
 
 The odd thing is that I don't know how useful this would actually be.
 
@@ -109,7 +107,6 @@ I still like Fowler's pattern of the Registry being the one singleton in the app
 
 So, even though my previous Registries were the only singleton, I still exposed their resources via static getter methods, e.g.:
 
-<pre name="code" class="java">
     public class Registry {
       public static ResourceA getResourceA() { ... }
       public static ResourceB getResourceB() { ... }
@@ -120,11 +117,10 @@ So, even though my previous Registries were the only singleton, I still exposed 
         Registry.getResourceB().doStuff();
       }
     }
-</pre>
+{. class=brush:java}
 
 But now, yeah, the static `Registry.getResourceB()` call hurts and I'm changing to something like:
 
-<pre name="code" class="java">
     public interface Registry {
       ResourceA getResourceA();
       ResourceB getResourceB();
@@ -153,7 +149,7 @@ But now, yeah, the static `Registry.getResourceB()` call hurts and I'm changing 
         registry.getResourceA().doStuff();
       }
     }
-</pre>
+{. class=brush:java}
 
 Such that now `Registry` can be mocked/stubbed out.
 
@@ -170,7 +166,6 @@ Inner-Class Dependency Interfaces
 
 One approach I want to play more with is using a GWT MVP-style dependency declaration. E.g. instead of service components being in an application-wide `Registry` interface, or a huge list of constructor arguments, I think an inner-interface would be interesting:
 
-<pre name="code" class="java">
     public class SomeBusinessLogic {
       public interface Deps {
         Repository getRepository()
@@ -186,16 +181,15 @@ One approach I want to play more with is using a GWT MVP-style dependency declar
     // off in your Registry
     public interface Registry extends SomeBusinessLogic, ... {
     }
-</pre>
+{. class=brush:java}
 
 What I like about this is that each class gets its own declaration of the dependencies it requires. For very common dependencies, you could use inheritance, e.g.:
 
-<pre name="code" class="java">
     public class SomeBusinessLogic {
       public interface Deps extends CommonAppDeps {
       }
     }
-</pre>
+{. class=brush:java}
 
 But, without some structural typing tricks, your `Registry` interface is going to have an explosion of `extends XxxLogic, YyyLogic, etc`.
 

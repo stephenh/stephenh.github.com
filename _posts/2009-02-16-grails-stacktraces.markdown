@@ -15,9 +15,8 @@ Clean and restart.
 
 In that regard, Grails exceptions are nicer than Spring exceptions--Spring exceptions don't go away after a clean/restart.
 
-<pre name="code">
-[253826] mortbay.log Nested in org.springframework.beans.factory.access.BootstrapException: Error executing bootstraps; nested exception is org.codehaus.groovy.runtime.InvokerInvocationException: java.lang.NullPointerException: Cannot invoke method count() on null object:
-java.lang.NullPointerException: Cannot invoke method count() on null object
+    [253826] mortbay.log Nested in org.springframework.beans.factory.access.BootstrapException: Error executing bootstraps; nested exception is org.codehaus.groovy.runtime.InvokerInvocationException: java.lang.NullPointerException: Cannot invoke method count() on null object:
+    java.lang.NullPointerException: Cannot invoke method count() on null object
         at org.codehaus.groovy.runtime.NullObject.invokeMethod(NullObject.java:77)
         at org.codehaus.groovy.runtime.InvokerHelper.invokePogoMethod(InvokerHelper.java:743)
         at org.codehaus.groovy.runtime.InvokerHelper.invokeMethod(InvokerHelper.java:720)
@@ -606,11 +605,10 @@ java.lang.NullPointerException: Cannot invoke method count() on null object
         at java.lang.reflect.Method.invoke(Method.java:597)
         at org.codehaus.groovy.grails.cli.support.GrailsStarter.rootLoader(GrailsStarter.java:157)
         at org.codehaus.groovy.grails.cli.support.GrailsStarter.main(GrailsStarter.java:182)
-</pre>
+{. class=brush:plain}
 
-<pre name="code">
-[17] mortbay.log Failed startup of context org.mortbay.jetty.webapp.WebAppContext@38859d{/proxibid,C:\svn\proxibid\juggernaut/web-app}
-org.springframework.beans.factory.access.BootstrapException: Error executing bootstraps; nested exception is org.codehaus.groovy.runtime.InvokerInvocationException: java.lang.NullPointerException
+    [17] mortbay.log Failed startup of context org.mortbay.jetty.webapp.WebAppContext@38859d{/proxibid,C:\svn\proxibid\juggernaut/web-app}
+    org.springframework.beans.factory.access.BootstrapException: Error executing bootstraps; nested exception is org.codehaus.groovy.runtime.InvokerInvocationException: java.lang.NullPointerException
         at org.codehaus.groovy.grails.web.context.GrailsContextLoader.createWebApplicationContext(GrailsContextLoader.java:74)
         at org.springframework.web.context.ContextLoader.initWebApplicationContext(ContextLoader.java:199)
         at org.springframework.web.context.ContextLoaderListener.contextInitialized(ContextLoaderListener.java:45)
@@ -1147,7 +1145,7 @@ org.springframework.beans.factory.access.BootstrapException: Error executing boo
         at java.lang.reflect.Method.invoke(Method.java:597)
         at org.codehaus.groovy.grails.cli.support.GrailsStarter.rootLoader(GrailsStarter.java:157)
         at org.codehaus.groovy.grails.cli.support.GrailsStarter.main(GrailsStarter.java:182)
-Caused by: org.codehaus.groovy.runtime.InvokerInvocationException: java.lang.NullPointerException
+    Caused by: org.codehaus.groovy.runtime.InvokerInvocationException: java.lang.NullPointerException
         at grails.web.container.EmbeddableServer$start.call(Unknown Source)
         at RunApp$_run_closure6_closure12.doCall(RunApp:145)
         at RunApp$_run_closure6_closure12.doCall(RunApp)
@@ -1172,13 +1170,13 @@ Caused by: org.codehaus.groovy.runtime.InvokerInvocationException: java.lang.Nul
         at gant.Gant.invokeMethod(Gant.groovy)
         at gant.Gant.processTargets(Gant.groovy:495)
         at gant.Gant.processTargets(Gant.groovy:480)
-Caused by: java.lang.NullPointerException
+    Caused by: java.lang.NullPointerException
         at BootStrap$_populateBootstrapData_closure508.doCall(BootStrap.groovy:26)
         at BootStrap.populateBootstrapData(BootStrap.groovy:21)
         at BootStrap$_closure1.doCall(BootStrap.groovy:11)
         ... 24 more
-[21] mortbay.log Nested in org.springframework.beans.factory.access.BootstrapException: Error executing bootstraps; nested exception is org.codehaus.groovy.runtime.InvokerInvocationException: java.lang.NullPointerException:
-java.lang.NullPointerException
+    [21] mortbay.log Nested in org.springframework.beans.factory.access.BootstrapException: Error executing bootstraps; nested exception is org.codehaus.groovy.runtime.InvokerInvocationException: java.lang.NullPointerException:
+    java.lang.NullPointerException
         at BootStrap$_populateBootstrapData_closure508.doCall(BootStrap.groovy:26)
         at BootStrap.populateBootstrapData(BootStrap.groovy:21)
         at BootStrap$_closure1.doCall(BootStrap.groovy:11)
@@ -1206,5 +1204,5 @@ java.lang.NullPointerException
         at gant.Gant.invokeMethod(Gant.groovy)
         at gant.Gant.processTargets(Gant.groovy:495)
         at gant.Gant.processTargets(Gant.groovy:480)
-</pre>
+{. class=brush:plain}
 
