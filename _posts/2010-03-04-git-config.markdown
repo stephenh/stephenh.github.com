@@ -9,7 +9,7 @@ I've got an enjoyable git environment set up, with various `.gitconfig`/etc. hac
 
 First, you should start with [git-sh](http://github.com/rtomayko/git-sh). It adds some bash shell customizations like a nice `PS1` prompt, tab completion, and incredibly short git-specific aliases. I'll cover some of the aliases later, but this is the thing that started me down the "how cool can I get my git environment" path.
 
-I've included commented versions of my `.gitconfig` and `.gitshrc`, but you can get the raw versions [here](/_files/gitconfig) and [here](/_files/gitshrc).
+I've included commented versions of my `.gitconfig` and `.gitshrc`, but you can get the raw versions [here](/files/gitconfig) and [here](/files/gitshrc).
 
 Example Shell Session
 ---------------------
