@@ -1115,6 +1115,30 @@ var sh = {
 			}
 			
 			return changed ? copy : original;
+		},
+
+		stripCode: function(original)
+		{
+			var left = '<code>',
+				right = '</code>',
+				// for some reason IE inserts some leading blanks here
+				copy = sh.utils.trim(original),
+				changed = false
+				;
+			
+			if (copy.indexOf(left) == 0)
+			{
+				copy = copy.substring(left.length);
+				changed = true;
+			}
+			
+			if (copy.indexOf(right) == copy.length - right.length)
+			{
+				copy = copy.substring(0, copy.length - right.length);
+				changed = true;
+			}
+			
+			return changed ? copy : original;
 		}
 	}, // end of utils
 	
@@ -1196,6 +1220,7 @@ var sh = {
 			// remove CDATA from <SCRIPT/> tags if it's present
 			if (conf.useScriptTags)
 				code = sh.utils.stripCData(code);
+			code = sh.utils.stripCode(code);
 			
 			params['brush-name'] = brushName;
 			highlighter.highlight(code, params);
