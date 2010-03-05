@@ -62,7 +62,7 @@ Anyway, when building [Joist](http://joist.ws), I wasn't as anti-static as I am 
         });
       }
     }
-{. class=brush:java}
+{: class=brush:java}
 
 I think I would write this now as:
 
@@ -82,7 +82,7 @@ I think I would write this now as:
         });
       }
     }
-{. class=brush:java}
+{: class=brush:java}
 
 The odd thing is that I don't know how useful this would actually be.
 
@@ -117,7 +117,7 @@ So, even though my previous Registries were the only singleton, I still exposed 
         Registry.getResourceB().doStuff();
       }
     }
-{. class=brush:java}
+{: class=brush:java}
 
 But now, yeah, the static `Registry.getResourceB()` call hurts and I'm changing to something like:
 
@@ -149,7 +149,7 @@ But now, yeah, the static `Registry.getResourceB()` call hurts and I'm changing 
         registry.getResourceA().doStuff();
       }
     }
-{. class=brush:java}
+{: class=brush:java}
 
 Such that now `Registry` can be mocked/stubbed out.
 
@@ -181,7 +181,7 @@ One approach I want to play more with is using a GWT MVP-style dependency declar
     // off in your Registry
     public interface Registry extends SomeBusinessLogic, ... {
     }
-{. class=brush:java}
+{: class=brush:java}
 
 What I like about this is that each class gets its own declaration of the dependencies it requires. For very common dependencies, you could use inheritance, e.g.:
 
@@ -189,7 +189,7 @@ What I like about this is that each class gets its own declaration of the depend
       public interface Deps extends CommonAppDeps {
       }
     }
-{. class=brush:java}
+{: class=brush:java}
 
 But, without some structural typing tricks, your `Registry` interface is going to have an explosion of `extends XxxLogic, YyyLogic, etc`.
 

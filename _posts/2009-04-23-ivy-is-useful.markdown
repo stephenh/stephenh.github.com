@@ -55,7 +55,7 @@ Here's a few things I've learned:
           <property name="ivy.bootstrapped" value="true"/> <!-- Avoid re-bootstrapping because it causes classloader issues. -->
         </target>
       </project>
-  {. class=brush:xml}
+  {: class=brush:xml}
 
 * The default settings gave me a fit trying to get SNAPSHOTs to work--ivy is pretty insistent about caching as much as it possibly can.
 
@@ -81,7 +81,7 @@ Here's a few things I've learned:
           </chain>
         </resolvers>
       </ivysettings>
-  {. class=brush:xml}
+  {: class=brush:xml}
 
   I would be hesitant to use the `checkmodified` flag on any resolver that was not local, so would not publish SNAPSHOTs to a publicly-accessible repository.
 

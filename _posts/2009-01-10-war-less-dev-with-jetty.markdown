@@ -20,7 +20,7 @@ This assumes you have a war-like directory structure of:
         - ...content...
         - WEB-INF
           - web.xml
-{. class=brush:plain}
+{: class=brush:plain}
 
 If for whatever reason your project's source tree doesn't match this, or needs several build steps to generate/massage a web.xml file, then YMMV.
 

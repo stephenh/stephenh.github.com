@@ -132,13 +132,13 @@ So, the `CursorProcessor` had several of these `TestBreakers` declared as consta
     public static final TestBreaker BREAK_INSIDE_LINE_RETRY = new TestBreaker();
     public static final TestBreaker BREAK_AFTER_LINE_ATTEMPT = new TestBreaker();
     public static final TestBreaker BREAK_INSIDE_LINE_ATTEMPT = new TestBreaker();
-{. class=brush:java}
+{: class=brush:java}
 
 Then at vulnerable points in the code path, we'd put an explicit call:
 
     // some important code that could break
     CursorProcessor.BREAK_AFTER_CURSOR.ifSetFor(cursorId);
-{. class=brush:java}
+{: class=brush:java}
 
 In production, this is a no-op. But in test, it will throw an exception if we're on a certain cursor. This allows us to test the scenario of one cursor completely blowing up, but verifying that the process continues on to the next cursor.
 
@@ -150,7 +150,7 @@ A JUnit test can then explicitly trigger the breakage:
         // run process
         // assertions
     }
-{. class=brush:java}
+{: class=brush:java}
 
 Showing my bias, I also love that `BREAK_AFTER_CURSOR` is a static constant, because just I did a `Ctrl-Shift-G` on the constant in Eclipse and immediately saw which one test out of thousands was referencing it to trigger than failure condition. I'm not an IoC expert, but I anticipate you would lose this capability with dependency injection.
 

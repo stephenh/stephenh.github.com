@@ -36,7 +36,7 @@ So, here's a sample spec-based test that we'd like to run with Eclipse:
         }
       }
     }
-{. class=brush:scala}
+{: class=brush:scala}
 
 Note the `"should do something fancy"` test names that JUnit really isn't going to understand (because they are not methods, they're anonymous inner classes ScalaTest keeps track of in an internal data structure).
 
@@ -92,7 +92,7 @@ This turned out to be not that bad:
     class StopperAdapter extends StStopper {
       override def apply = false
     }
-{. class=brush:scala}
+{: class=brush:scala}
 
 It basically just translates ScalaTest `Events` into JUnit `RunNotifier` events.
 

@@ -55,7 +55,7 @@ Here is a made up example bash session with some of the commands:
     # commit it
     $ commit -m "Changed stuff in package1"
     # runs: git commit -m "..."
-{. class=brush:bash}
+{: class=brush:bash}
 
 That is the basic idea.
 
@@ -142,7 +142,7 @@ Here is my current `.gitconfig` with comments:
     [svn]
       # push empty directory removals back to svn at directory deletes
       rmdir = true
-{. class=brush:plain}
+{: class=brush:plain}
 
 `.gitshrc`
 ----------
@@ -225,7 +225,7 @@ Ryan's original comments are prefixed with `#`, I'll prefix my additions with `#
 
     ### Added call to git-wtf tool
     gitalias wtf='git-wtf'
-{. class=brush:bash}
+{: class=brush:bash}
 
 Since I defined most of the interesting aliases in the `.gitconfig` `[alias]` section, it means they're all usable via `git xxx`, e.g. `git ag foo`, but listing `alias ag='git ag'` in `.gitshrc` means you can also just use `ag foo`, assuming you've started the `git-sh` environment.
 
