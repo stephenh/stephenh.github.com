@@ -10,7 +10,7 @@ Data binding is interesting topic to me, mostly because of the large effect it c
 
 A good data binding approach means your view layer is not wasting boilerplate LOC getting and setting data between your UI components and your domain model.
 
-Instead, you succinctly bind `domain model <-> UI component` and, in 90% of the cases, be done with it.
+Instead, you succinctly bind domain model to UI component and, in 90% of the cases, be done with it.
 
 I've used and built several data binding options and was recently reconsidering property objects dressed up in some of Scala's magic as a potentially elegant approach.
 
@@ -31,13 +31,12 @@ The Basic Idea: Why Data Binding?
 
 Most data binding approaches I've worked with boil down to an interface that looks like:
 
-<pre name="code" class="java">
-    public interface Binding&lt;T&gt; {
+    public interface Binding<T> {
         T get();
         void set(T value);
-        Class&lt;T&gt; getType();
+        Class<T> getType();
     }
-</pre>
+{: class=brush:java}
 
 The name is not necessarily "Binding", and it may/may not have a generic `T`, but that's the basic idea.
 
@@ -68,7 +67,6 @@ Their usage is all basically calling `Library.set(childObject, "parent.name", va
 
 I had the most success with this approach by using OGNL and integrating it with a [Click](http://click.sf.net)-based view layer. The basic idiom is:
 
-<pre name="code" class="java">
     public class EmployeePage {
       public Employee employee = null; // assigned for us
       public Form form = new Form();
@@ -78,7 +76,7 @@ I had the most success with this approach by using OGNL and integrating it with 
         this.form.add(new Textbox("employee.lastName"));
       }
     }
-</pre>
+{: class=brush:java}
 
 When the form renders itself, the text boxes use OGNL to evaluate the `employee.firstName` String against the page object, e.g. `page.employee.getFirstName()`. This value is included in the rendered HTML.
 
@@ -88,7 +86,6 @@ OGNL also lets you introspect the property types (e.g. equivalent to the `Bindin
 
 OGNL can also handle tables well. In the above `EmployeePage`, each OGNL string was evaluated against the current page object. But OGNL strings can also be evaluated against each object in a collection, e.g.:
 
-<pre name="code" class="java">
     public class EmployeesPage {
       public Employer employer = null; // assigned for us
       public Table table = new Table();
@@ -99,7 +96,7 @@ OGNL can also handle tables well. In the above `EmployeePage`, each OGNL string 
         table.setRows(employer.getEmployees());
       }
     }
-</pre>
+{: class=brush:java}
 
 Here the table class gets the first `Employee` as `currentObject`, renders the columns, with each column calling `Ognl.get(currentObject, "firstName")` and `Ognl.get(currentObject, "lastName")`, respectively, and then the table moves on to the next `Employee` object and repeats.
 
@@ -137,7 +134,6 @@ Given that each `XxxBinding` instance has `get` and `set` methods on it, you can
 
 Using it looks something like:
 
-<pre name="code" class="java">
     @Bindable
     public class EmployeePage {
       public Employee employee = null; // assigned for us
@@ -149,7 +145,7 @@ Using it looks something like:
         this.form.add(new Textbox(b.employee().lastName()));
       }
     }
-</pre>
+{: class=brush:java}
 
 The only classes you create are `EmployeePage` and `Employee`, with the usual `getFirstName`, `setFirstName`, `getLastName`, and `setLastName` methods. Bindgen then generates the `EmployeePageBinding` class, an `employee()` method on it that returns an `EmployeeBinding`, and `firstName()` and `lastName()` methods on the `EmployeeBinding` that return `Binding<String>` instances for first name and last name, respectively.
 
@@ -157,11 +153,10 @@ The big win here is that strings have gone away. If your `Employee` class change
 
 Similarly, Bindgen can handle arbitrary instance evaluation with `Binding.getWithRoot` and `Binding.setWithRoot` methods. E.g.:
 
-<pre name="code" class="java">
     @Bindable
     public class EmployeesPage {
       public Employer employer = null; // assigned for us
-      public Table&lt;Employee&gt; table = new Table&lt;Employee&gt;();
+      public Table<Employee> table = new Table<Employee>();
 
       public void onInit() {
         // b is not connected to any specific Employee instance
@@ -171,7 +166,7 @@ Similarly, Bindgen can handle arbitrary instance evaluation with `Binding.getWit
         table.setRows(employer.getEmployees());
       }
     }
-</pre>
+{: class=brush:java}
 
 The `EmployeeBinding` is still used to setup the table's columns, the difference is that `b.firstName()` is not tied to any particular `Employee`'s first name value.
 
@@ -205,11 +200,10 @@ This makes a lot of sense, because now there is a single object representing and
 
 But it does kind of suck when you have to do:
 
-<pre name="code" class="java">
     String name = employee.name().get();
 
     employee.name().set("new name");
-</pre>
+{: class=brush:java}
 
 Instead of just the usual `getName()` and `setName()` that is etched in our brains.
 
@@ -222,23 +216,20 @@ So, what if we could add some Scala magic? Here's an experiment:
 
 Normal Property Objects:
 
-<pre name="code" class="scala">
       val p = new Parent
       val s: String = p.name.get
       p.name.set("Bob")
-</pre>
+{: class=brush:scala}
 
 Fair enough. But, now with Scala implicit conversion and operator overloading, we can remove both the `.get` on line 2 and the `.set` on line 3:
 
-<pre name="code" class="scala">
       val p = new Parent
       val s: String = p.name
       p.name := "Bob"
-</pre>
+{: class=brush:scala}
 
 See this [gist](http://gist.github.com/245296) for the full code, but most of the magic is:
 
-<pre name="code" class="scala">
     /** PropertyObject interface for getting/setting values. */
     trait Property[T] {
       /** @return the current value */
@@ -256,7 +247,7 @@ See this [gist](http://gist.github.com/245296) for the full code, but most of th
       /** Implicitly called to convert Property[T] -> T */
       implicit def p2value[T](p: Property[T]): T = p.get
     }
-</pre>
+{: class=brush:scala}
 
 Between the `:=` operator and the `p2value` implicit, we've basically made the Property Objects annoying extra `get()`/`set()` method calls go hide behind compiler syntax sugar.
 
@@ -282,7 +273,6 @@ One last Scala trick is taken from [Lift](http://liftweb.net/)'s form library. I
 
 A basic example from [The Lift Book](http://groups.google.com/group/the-lift-book?pli=1):
 
-<pre name="code" class="scala">
     def login(xhtml : NodeSeq) : NodeSeq = {
       var user = ""; var pass = "";
       def auth () = { ... }
@@ -291,7 +281,7 @@ A basic example from [The Lift Book](http://groups.google.com/group/the-lift-boo
           "pass" -> SHtml.password(pass, pass = _)
           "submit" -> SHtml.submit("Login", auth))
     }
-</pre>
+{: class=brush:scala}
 
 
 I'm not a Lift expert, but if you note the `SHtml.text` function, instead of taking 1 binding parameter (e.g. an OGNL string, a `Binding` instance, or a Property Object), Lift passes two parameters. The first is just the String value `user`. The second is a `Function1[String, Unit]` that, when executed, will assign the value passed to it back to the `user` local variable. It's basically an 8-character anonymous inner class.
