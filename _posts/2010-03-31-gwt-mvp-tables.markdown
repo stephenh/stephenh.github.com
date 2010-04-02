@@ -8,6 +8,7 @@ title: GWT MVP Tables
 ---
 
 I'm building a GWT application and, per the latest [best practices](http://code.google.com/events/io/2009/sessions/GoogleWebToolkitBestPractices.html), using a MVP (model view presenter) approach.  
+
 For awhile I was confused about how to build non-trivial views. For example, a dashboard-type table where each row is not just strings of text but an interactive unit.
 
 Last week I finally found an approach that I like: per-row presenters. The trick with complex views seems to be searching for a sweet spot in the decomposition of your presenter/view pairs that is:
