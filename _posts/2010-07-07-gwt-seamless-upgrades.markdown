@@ -52,6 +52,8 @@ GWT's deserialization execution flow for an old request is something like:
 
 For this reason, it's important to still use the old `IsSerializable` marker interface even though GWT will now support Java's `Serializable`.
 
+Also, type name elision cannot be used because it also relies on the serialization policy file.
+
 Then, assuming the RCP contract is the same, everything should still work.
 
 If the RPC contract does change, i.e. the old client tries to use changed/removed functionality, they will get an [IncompatibleRemoteServiceException](http://google-web-toolkit.googlecode.com/svn/javadoc/2.0/com/google/gwt/user/client/rpc/IncompatibleRemoteServiceException.html) which the GWT client-side code should handle and prompt the user to reload the application.
@@ -80,7 +82,7 @@ Summarizing
 
 Based on my current understanding, to service both old and new clients during a GWT upgrade as elegantly as possible, you should:
 
-* Use `IsSerializable` in the RPC DTOs
+* Use `IsSerializable` and no type name elision in the RPC DTOs
 * Handle `IncompatibleRemoteServiceException` in the RPC `AsyncCallback`s
 * Handle 404's in the `runAsync` `onFailures`
 * Minimize/eliminate the window when both old and new servers are available
