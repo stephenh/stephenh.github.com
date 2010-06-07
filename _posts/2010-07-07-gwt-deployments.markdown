@@ -78,8 +78,12 @@ For this reason, it's very important to have a clean switch from old to new vers
 Summarizing
 -----------
 
-* Use `IsSerializable` in your DTOs
-* Handle `IncompatibleRemoteServiceException` in your RPC `AsyncCallback`s
-* Handle 404's in your `runAsync` `onFailures`
+Based on my current understanding, to service both old and new clients during a GWT upgrade as elegantly as possible, you should:
+
+* Use `IsSerializable` in the RPC DTOs
+* Handle `IncompatibleRemoteServiceException` in the RPC `AsyncCallback`s
+* Handle 404's in the `runAsync` `onFailures`
 * Minimize/eliminate the window when both old and new servers are available
+
+Any corrections, feedback, etc., is appreciated.
 
