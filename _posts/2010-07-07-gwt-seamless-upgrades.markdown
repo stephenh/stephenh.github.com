@@ -1,6 +1,6 @@
 ---
 layout: post
-title: GWT Deployments
+title: GWT Seamless Deployments
 ---
 
 <h2>{{ page.title }}</h2>
