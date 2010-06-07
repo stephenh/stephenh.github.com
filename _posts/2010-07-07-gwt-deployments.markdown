@@ -71,7 +71,7 @@ A client might:
 2. Request `/gwtapp/new-permuation-name.nocache.js`, *however*, this request gets served by an old server that only has the old application files
 3. Client gets a `404` and the application stops loading
 
-I currently know of no way to recover from this scenario.
+I currently know of no way to recover from this scenario. Because the error happens in between the GWT bootstrapping code and your application code, there is not a way for your application code to detect what has happened and recover.
 
 For this reason, it's very important to have a clean switch from old to new versions--no old servers should be serving requests when new servers have come online.
 
