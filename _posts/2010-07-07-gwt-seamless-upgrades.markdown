@@ -7,9 +7,9 @@ title: GWT Seamless Deployments
 
 ---
 
-I'm deploying a GWT app on Amazon's EC2 architecture behind an ELB and wanted to ensure the best experience for user's while pushing out new code updates.
+I'm deploying a GWT app on Amazon's EC2 architecture behind an ELB and wanted to ensure the best experience for users while pushing out new code updates.
 
-This is a short review of my most-likely-accurate findings. It is horribly organized and basically a public mind dump vs. a private mind dump to my fellow team members.
+This is a short review of my most-likely-accurate findings. It is not well organized and basically a public mind dump vs. a private mind dump to my other team members.
 
 RPC Key Points
 --------------
@@ -50,7 +50,7 @@ GWT's deserialization execution flow for an old request is something like:
 2. Try to load the serialization policy file based on the permutation header--*however,* this will fail because this is a new server that does not have the old serialization policy file
 3. Fall back on `LegacySerializationPolicy` where only `IsSerializable` can be deserialized
 
-For this reason, it's important to still use the old `IsSerializable` marker interface even though GWT will now support Java's `Serializable`.
+For this reason, it's important to still use the old `IsSerializable` marker interface even though GWT now supports Java's `Serializable`.
 
 Also, type name elision cannot be used because it also relies on the serialization policy file.
 
@@ -63,19 +63,20 @@ One additional wrinkle is code split points. If an old client tries to load part
 Case 2: New Client, Old Server
 ------------------------------
 
-The same scenario above can happen here, when the client has a newer serialization policy strong name than the old server.
+The same scenario above can happen here, when the client has a newer serialization policy strong name than the old server, so the old server falls back to the `LegacySerializationPolicy`.
 
-However, an added wrinkle is the application code itself.
+However, an added wrinkle is the application bootstrapping process.
 
 A client might:
 
-1. Request `/app.html` and get served from a new server--the GWT bootstrapping code will tell the user's browser/locale/etc. combination to load `new-permutation-name.nocache.js`
-2. Request `/gwtapp/new-permuation-name.nocache.js`, *however*, this request gets served by an old server that only has the old application files
-3. Client gets a `404` and the application stops loading
+1. Request `/app.html` and get served by either a new or old server (fine so far)
+2. Request `/app/module.nocache.js` and get served by a new server--this is the GWT bootstrapping code and, based on the user's browser/locale/etc. combination, it tells the browser to load `new-permutation-name.cache.html`
+3. Request `/app/new-permuation-name.cache.html`, *however*, this request gets served by an old server that only has the old application files
+4. Client gets a `404` and the application bootstrapping stops
 
 I currently know of no way to recover from this scenario. Because the error happens in between the GWT bootstrapping code and your application code, there is not a way for your application code to detect what has happened and recover.
 
-For this reason, it's very important to have a clean switch from old to new versions--no old servers should be serving requests when new servers have come online.
+For this reason, it's very important to have a clean switch from old to new versions--no old servers should be serving requests once new servers have come online.
 
 Summarizing
 -----------
