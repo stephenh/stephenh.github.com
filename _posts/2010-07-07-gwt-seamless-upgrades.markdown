@@ -54,7 +54,7 @@ For this reason, it's important to still use the old `IsSerializable` marker int
 
 Also, type name elision cannot be used because it also relies on the serialization policy file.
 
-Then, assuming the RCP contract is the same, everything should still work.
+Then, assuming the RPC contract is the same, everything should still work.
 
 If the RPC contract does change, i.e. the old client tries to use changed/removed functionality, they will get an [IncompatibleRemoteServiceException](http://google-web-toolkit.googlecode.com/svn/javadoc/2.0/com/google/gwt/user/client/rpc/IncompatibleRemoteServiceException.html) which the GWT client-side code should handle and prompt the user to reload the application.
 
