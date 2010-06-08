@@ -76,6 +76,8 @@ A client might:
 
 I currently know of no way to recover from this scenario. Because the error happens in between the GWT bootstrapping code and your application code, there is not a way for your application code to detect what has happened and recover.
 
+**Update:** Thanks for Sripathi Krishnan for pointing out the [`gwt:onLoadErrorFn`](http://groups.google.com/group/google-web-toolkit/browse_thread/thread/2dafc6fd50e622a4) function where you can prompt the user to reload their browser to recover from this scenario.
+
 For this reason, it's very important to have a clean switch from old to new versions--no old servers should be serving requests once new servers have come online.
 
 Summarizing
