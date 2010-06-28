@@ -16,18 +16,20 @@ The [github page](http://github.com/stephenh/gwt-mpv-apt) is pretty self-explana
 Manually Creating Action/Result DTOs
 ------------------------------------
 
+Let's start out without `gwt-mpv-apt` and see how things typically work.
+
 For example, if you were writing a `gwt-dispatch` Action/Result by hand for creating a new `User`, you'd have to:
 
 1. Make a `NewUserAction` class
 1. Have it implement the `Action<NewUserResult>` interface
 1. Add a field/getter/setter for `String username`
-1. Add a package-private `NewUserAction` constructor for serialization
+1. Add a protected `NewUserAction` constructor for serialization
 1. Add a public constructor for `NewUserAction(String username)` for real usage
 1. Add a default `serialVersionUID` to avoid the Eclipse warning (assuming the warning is enabled)
 1. Make a `NewUserResult` class
 1. Have it implement the `Result` interface
 1. Add a field/getter/setter for `boolean success`, and `Integer newUserId`
-1. Add a package-private `NewUserResult` constructor for serialization
+1. Add a protected `NewUserResult` constructor for serialization
 1. Add a public constructor for `NewUserResult(boolean success, Integer newUserId)` for real usage
 1. Add a default `serialVersionUID` to avoid the Eclipse warning (assuming the warning is enabled)
 1. If you want caching add `hashCode/equals` to `NewUserAction`
@@ -106,7 +108,7 @@ In the end, you'll end up with something like:
 
 So, roughly 15 steps leading to 60 LOC.
 
-Now repeat for every Action/Result pair in your project.
+Which isn't necessarily a big deal, until you have to repeat it for every Action/Result pair in your project.
 
 Generating Action/Result DTOs
 -----------------------------
@@ -142,11 +144,11 @@ That's an **order of magnitude** decrease in LOC (60 -> 6) and a **3x decrease i
 Adding Up The Savings
 ---------------------
 
-Saving ~50 LOC for one example is not necessarily a big deal. But this savings will be applied to every command `Action/Result` in your project.
+Saving ~50 LOC for one example is good. But, even better, this savings is applied to every command `Action/Result` in your project.
 
 I'm currently writing what I consider a small project, and it has 20 command patterns. So, 50 LOC `x` 20 commands = 1,000 LOC I didn't have to write.
 
-So, pretty quickly, we're talking about lots of LOC that `gwt-mpv-apt` should save you.
+So, pretty quickly, we're talking about real LOC that `gwt-mpv-apt` should save you.
 
 Events Too
 ----------
