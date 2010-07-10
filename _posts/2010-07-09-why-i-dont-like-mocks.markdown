@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Classicist TDD
+title: Why I Don't Like Mocks
 ---
 
 <h2>{{ page.title }}</h2>
