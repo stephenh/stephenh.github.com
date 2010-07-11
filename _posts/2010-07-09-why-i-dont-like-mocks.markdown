@@ -35,7 +35,6 @@ In Fowler's words:
 
 * *"In essence classic xunit tests are not just unit tests, but also mini-integration tests. As a result many people like the fact that client tests may catch errors that the main tests for an object may have missed, particularly probing areas where classes interact. Mockist tests lose that quality. In addition you also run the risk that expectations on mockist tests can be incorrect, resulting in unit tests that run green but mask inherent errors."*
 
-
 The primary reason stubs facilitate higher-level testing is that mocks, in my opinion, become too complex, verbose, and repetitive to setup and verify scenarios that are not trivial, 1-level of calls.
 
 For example, say you have a `IClient`, and need to get an `IEmployee` from that and then a `IAccount` from that.
@@ -66,6 +65,41 @@ In contrast, the `mock`/`when`/etc. methods typically are not abstracted out and
 This is just my opinion, of course--Fowler's article points out I'm like showing my classicist bias:
 
 * *"As a result I've heard both styles accuse the other of being too much work. Mockists say that creating the fixtures is a lot of effort, but classicists say that this is reused but you have to create mocks with every test."*
+
+Dummy Behavior Scales
+---------------------
+
+Stubs also scale better than mocks because they can contain dummy/default behavior that mocks otherwise to have to repeat in each test.
+
+For example, take an `HttpServletRequest` and wanting to mock out the `getAttribute`/`setAttribute` methods.
+
+With a mock, each time any business logic wants to use attributes, your test is going to have to contain setup code for each attribute involved in the test:
+
+    HttpServletRequest req = mock(HttpServletRequest.class);
+    when(req.getAttribute("foo")).thenReturn("bar");
+    doBusinessLogic(req);
+{: class=brush:java}
+
+And, if you have verify an attribute is being set via `setAttribute`, something like:
+
+    ArgumentCapture<String> key = ArgumentCapture.forClass(String.class);
+    ArgumentCapture<Object> value = ArgumentCapture.forClass(Object.class);
+    verify(req).setAttribute(key.capture(), value.capture());
+    assertThat(key.getValue(), is("foo"));
+    assertThat(value.getValue(), is("bar2"));
+{: class=brush:java}
+
+With a stub, you can have one class `StubRequest` which uses a map to implement simple `getAttribute`/`setAttribute` methods. Now all of your tests can use it:
+
+    StubRequest req = new StubRequest();
+    req.put("foo", "bar");
+    doBusinessLogic(req);
+    assertThat(req.get("foo"), is("bar2"));
+{: class=brush:java}
+
+Besides just the `"foo"` attribute, if the business logic under test was setting its own attributes that it later wanted to retrieve, the stub's dummy map implementation scales even better as our test is encapsulated from those implementation details.
+
+Spring even realized this, as they intelligently include for testing a [MockHttpServletRequest](http://static.springsource.org/spring/docs/2.0.x/api/org/springframework/mock/web/MockHttpServletRequest.html) that is actually a stub, though I can understand if they named it before the terminology of mocks/stubs/doubles had been settled.
 
 Too Many Interfaces
 -------------------
