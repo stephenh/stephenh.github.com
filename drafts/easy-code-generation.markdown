@@ -6,7 +6,7 @@ title: Easy Code Generation
 Easy Code Generation
 ====================
 
-I'm a big fan of code generation (see [joist](http://joist.ws), [gwt-mpv-apt](http://gwtmpv.org/apt.html), [gwt-mpv](http://gwtmpv.org/viewgeneration.html), [interfacegen](http://github.com/stephenh/interfacegen). I think active code generation can go a long way towards reducing boilerplate in a project.
+I'm a big fan of code generation (see [joist](http://joist.ws), [bindgen](http://bindgen.org), [gwt-mpv-apt](http://gwtmpv.org/apt.html), [gwt-mpv](http://gwtmpv.org/viewgeneration.html), [interfacegen](http://github.com/stephenh/interfacegen). I think active code generation can go a long way towards reducing boilerplate in a project.
 
 Code Generation's Bad Reputation
 --------------------------------
@@ -15,11 +15,74 @@ Code generation often gets a bad wrap, especially in the Java community, where m
 
 I will readily admit that most of code generation's reputation is well-deserved, as done incorrectly it can be ugly and painful.
 
-For example, this snippet from the Torque ORM's templates:
+For example, this snippet from the [Torque's](http://db.apache.org/torque) ORM [templates](http://svn.apache.org/viewvc/db/torque/templates/trunk/src/templates/om/bean/Bean.vm?revision=524492&view=markup):
 
-Or this example whatever:
+    #if ($objectIsCaching)
+      #foreach ($fk in $table.Referrers)
+        #set ( $tblFK = $fk.Table )
+        #if ( !($tblFK.Name.equals($table.Name)) )
+          #set ( $className = $tblFK.JavaName )
+          #set ( $relatedByCol = "" )
+          #foreach ($columnName in $fk.LocalColumns)
+            #set ( $column = $tblFK.getColumn($columnName) )
+            #if ($column.isMultipleFK())
+              #set ($relatedByCol= "$relatedByCol$column.JavaName")
+            #end
+          #end
 
-However, a few misapplications does not mean the entire approach is flawed. Code generation can be done well.
+          #if ($relatedByCol == "")
+            #set ( $relCol = "${className}${beanSuffix}s" )
+          #else
+            #set ( $relCol= "${className}${beanSuffix}sRelatedBy$relatedByCol" )
+          #end
+          #set ( $collName = "coll$relCol" )
+
+      protected List#if($enableJava5Features)<${className}${beanSuffix}>#end $collName;
+
+      public List#if($enableJava5Features)<${className}${beanSuffix}>#end get${relCol}()
+      {
+          return $collName;
+      }
+
+      public void set${relCol}(List#if($enableJava5Features)<${className}${beanSuffix}>#end list)
+      {
+          if (list == null)
+          {
+              $collName = null;
+          }
+          else
+          {
+              $collName = new ArrayList#if($enableJava5Features)<${className}${beanSuffix}>#end(list);
+          }
+      }
+
+      #end
+    #end
+{: class=brush:java}
+
+Or this example generated output from [GXP](http://code.google.com/p/gxp/):
+
+    package com.bizo.selfservice.services.email.templates;
+
+    import com.google.gxp.base.*; // causes unused warning
+    import com.google.gxp.css.*; // causes unused warning
+    import com.google.gxp.html.*; // causes unused warning
+    import com.google.gxp.js.*; // causes unused warning
+    import com.google.gxp.text.*; // causes unused warning
+
+    public class FooEmail extends com.google.gxp.base.GxpTemplate {
+
+      private static final String GXP$MESSAGE_SOURCE = "com.foo.templates"; // causes unused warning
+
+      public static void write(final java.lang.Appendable gxp$out, final com.google.gxp.base.GxpContext gxp_context) throws java.io.IOException {
+        final java.util.Locale gxp_locale = gxp_context.getLocale(); // caused unused warning
+        // ...more generated output...
+      }
+{: class=brush:java}
+
+I don't mean to pick on either project--Torque was awesome for it's time, and GXP has an awesome approach. But neither necessarily endears users to code generation.
+
+However, that does not mean the entire approach is flawed. With some effort and good techniques, code generation can be done well.
 
 Good Code Generation
 --------------------
@@ -30,7 +93,7 @@ Good code generation should strive for:
 
    Even though it is generated, developers will inevitably look at the artifacts that code generation produces during the course of programming/debugging/etc. Opening up generated files should not cause their eyes to burn.
    
-   Generated output should have good formating, no warnings, and be generally as hand-written as possible. This will gradually reduce the "oh god no generated code" feeling that most developers understandably have picked up.
+   Generated output should have good formating, no warnings, and be generally as hand-written as possible. This will gradually reduce the "oh god no generated code" feeling that most developers have picked up.
 
 2. Easy to read templates
 
