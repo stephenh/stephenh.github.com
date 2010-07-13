@@ -80,7 +80,7 @@ Or this example generated output from [GXP](http://code.google.com/p/gxp/):
       }
 {: class=brush:java}
 
-I don't mean to pick on either project--Torque was awesome for it's time, and GXP has an awesome approach. But neither necessarily endears users to code generation.
+I don't mean to pick on either project--Torque was awesome for its time, and I really like the idea of GXP. But neither necessarily endears users to code generation.
 
 However, that does not mean the entire approach is flawed. With some effort and good techniques, code generation can be done well.
 
