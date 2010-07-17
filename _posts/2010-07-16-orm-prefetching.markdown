@@ -62,7 +62,9 @@ This usage means:
 * 1 query of `SELECT b.*, p.* FROM blog b, LEFT OUTER JOIN posts p ON b.id = p.blog_id WHERE b.id = 1`--loads 1 blog plus `n` posts
 * `n` queries of `SELECT * FROM comment WHERE post_id = x`--loads 1 comment, repeatedly for each post
 
-So we removed 1 extra query, going from 22 calls to 21 calls, but we really we haven't avoided the `n+1` problem--I'm still poking around Hibernate docs to see if you can bring back sub-sub-collections via prefetching. (I don't have an active Hibernate setup right now--I'll come back and update this if I ever get it figured out.)
+So we removed 1 extra query, going from 22 calls to 21 calls, but we really we haven't avoided the `n+1` problem--I'm still poking around Hibernate docs to see if you can bring back sub-sub-collections via prefetching.
+
+(**Disclaimer**: I don't have an active Hibernate setup right now--I'll come back and update this if I ever get it figured out, but until then, please correct any of the technical points I have wrong.)
 
 Even so, there are several problems with explicit prefetching:
 
