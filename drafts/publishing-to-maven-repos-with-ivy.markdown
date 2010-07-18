@@ -13,7 +13,7 @@ While I am not a fan of Maven itself, I readily admit that the standard shared r
 Using Ivy
 ---------
 
-That being said, I prefer to leverage Maven repositories from a safe, arms length distance via the excellent [Ivy](http://ant.apache.org/ivy) tool which, besides other features, can understand the Maven repository format both as a source for dependencies and destination for publishing projects.
+That being said, I prefer to leverage Maven repositories from a safe, arms length distance via the excellent [Ivy](http://ant.apache.org/ivy) (and [IvyDE](http://ant.apache.org/ivy/ivyde/)) tool which, besides other features, can understand the Maven repository format both as a source for dependencies and destination for publishing projects.
 
 While Ivy-to-Maven works well, it did take me a few tries to get it right, so here are the various settings/files that so far are doing the job.
 
@@ -24,16 +24,17 @@ This is the [gwt-mpv-dev `ivysettings.xml`](http://github.com/stephenh/gwt-mpv/t
 
     <ivysettings>
       <!--
-        This property is used later in the ivy.xml file, but by
-        default for local testing builds, I went ahead and used
-        the Maven SNAPSHOT convention.
+        This property is used later in the ivy.xml file to set
+        the project's revision. Unless overridden, it defaults
+        to the Maven SNAPSHOT convention, as that it works well
+        for publishing local test builds to ~/.m2/repository.
       -->
       <property name="revision" value="SNAPSHOT" override="false"/>
 
       <!-- "default" is defined later in the file. -->
       <settings defaultResolver="default"/>
 
-      <!-- Defines the "public" resolver for ibiblio-hosted jars. -->
+      <!-- Pulls in the "public" resolver for ibiblio-hosted jars. -->
       <include url="${ivy.default.settings.dir}/ivysettings-public.xml"/>
 
       <resolvers>
@@ -75,10 +76,13 @@ This is the [gwt-mpv-dev `ivysettings.xml`](http://github.com/stephenh/gwt-mpv/t
 
 The primary gotcha in this `ivysettings.xml` was having to use two separate resolvers for the same `~/.m2/repository`. This is because:
 
-* Only the `ibiblio` resolver will parser poms and follow transitive dependencies--which is important for retrieving
-* Only the `filesystem` resolver supports publishing--which is naturally important for publishing
+* Only the `ibiblio` resolver will parse poms and follow the pom's transitive dependencies.
 
-So, with the current Ivy capabilities anyway, it takes two resolvers for a single Maven repo if you also want to publish to it.
+  (Technically the `filesystem` or `url` resolvers could retrieve jars with a Maven-ish artifact pattern, but the pom dependencies would be skipped.)
+
+* The `ibiblio` resolver does not support publishing, so we have to fall back to the `filesystem` resolver with a Maven-ish artifact pattern to publish.
+
+So, with the current Ivy 2.1.0 capabilities, it takes two resolvers for a single Maven repo if you want to both retrieve from and publish to it.
 
 `ivy.xml`
 ---------
@@ -89,7 +93,7 @@ This is the [gwt-mpv-dev `ivy.xml`](http://github.com/stephenh/gwt-mpv/tree/mast
       <!--
         We set the revision to the revision property from
         ivysettings.xml, which defaults to SNAPSHOT. This
-        can be overriden when publishing.
+        is overriden when publishing.
       -->
       <info organisation="org.gwtmpv" module="gwt-mpv-dev" revision="${revision}"/>
 
@@ -105,8 +109,10 @@ This is the [gwt-mpv-dev `ivy.xml`](http://github.com/stephenh/gwt-mpv/tree/mast
 
       <publications>
         <!--
-          We explicitly list the pom as an artifact. This
-          way it will get published into the maven repos.
+          We explicitly list a pom as an artifact of our
+          project. This way the Ivy publish task will
+          upload the pom to the maven repo, along with
+          the jars and sources.
         -->
         <artifact type="pom" ext="pom" conf="default"/>
 
@@ -130,7 +136,7 @@ This is the [gwt-mpv-dev `ivy.xml`](http://github.com/stephenh/gwt-mpv/tree/mast
       <dependencies defaultconfmapping="sources->sources(),%->default" defaultconf="default,sources">
         <!--
           gwt-mpv-user is published simultaneously with
-          gwt-mpv-dev, so depend on ${revision}
+          gwt-mpv-dev, so depend on the same exact revision.
         -->
         <dependency org="org.gwtmpv" name="gwt-mpv-user" rev="${revision}" conf="default"/>
 
@@ -143,7 +149,7 @@ This is the [gwt-mpv-dev `ivy.xml`](http://github.com/stephenh/gwt-mpv/tree/mast
 `build.xml`
 -----------
 
-Finally, here is the [gwt-mpv-dev `build.xml`](http://github.com/stephenh/gwt-mpv/tree/master/dev/build.xml):
+Finally, here is the Ivy-related part of the [gwt-mpv-dev `build.xml`](http://github.com/stephenh/gwt-mpv/tree/master/dev/build.xml):
 
     <property name="ivy.jar.version" value="2.1.0"/>
     <property name="ivy.jar.name" value="ivy-${ivy.jar.version}.jar"/>
@@ -191,7 +197,9 @@ Finally, here is the [gwt-mpv-dev `build.xml`](http://github.com/stephenh/gwt-mp
     </target>
 
     <!--
-      publishes to .m2
+      publishes to ~/.m2/repository so that other testing
+      builds on our local machine can see it
+    -->
     <target name="ivy-publish-local" depends="jar,ivy-init,gen-pom" description="publish jar/source to maven repo mounted at ~/.m2/repository">
       <ivy:publish resolver="maven-local-publish" forcedeliver="true" overwrite="true" publishivy="false">
         <artifacts pattern="bin/[type]s/[artifact].[ext]"/>
@@ -202,6 +210,11 @@ Finally, here is the [gwt-mpv-dev `build.xml`](http://github.com/stephenh/gwt-mp
       </delete>
     </target>
 
+    <!--
+      pubishes to the ~/repo directory, which should be something
+      like an sshfs-mount of the public maven repository you are
+      publishing to
+    -->
     <target name="ivy-publish-share" depends="jar,ivy-init,gen-pom" description="publish jar/source to maven repo mounted at ~/repo">
       <ivy:publish resolver="maven-share" forcedeliver="true" overwrite="true" publishivy="false">
         <artifacts pattern="bin/[type]s/[artifact].[ext]" />
@@ -232,6 +245,8 @@ Will publish a jar to `~/.m2` for other local projects to pull in your latest/un
 
 Since we're going through the `maven-local` `<ibiblio/>` resolver, Ivy automatically handles latest-`SNAPSHOT` checking and we don't have to bother with any `~/.ivy2/cache`-busting tricks like I talked about in [Ivy Is Useful](/2009/04/23/ivy-is-useful.html).
 
+Though if you're using [IvyDE](http://ant.apache.org/ivy/ivyde/) and workspace resolution of dependencies, Eclipse should setup all of the cross-project references correctly and you won't have to constantly publish `SNAPSHOT` jars just for local consumption each time you make a change.
+
 Doing Releases
 --------------
 
@@ -240,5 +255,15 @@ With the above setup, I can now publish `gwt-mpv` to the [joist repo](http://rep
     ant -Drevision=x.y ivy-publish-share
 {: class=brush:plain}
 
+It Works
+--------
+
+While this looks like a lot of code, my inline comments added a lot--it is generally ~50 lines of `ivysettings.xml` and `ivy.xml` per-project and then ~50 lines of straight-forward `build.xml` Ant code.
+
+While this is more than, say, 10 LOC, it hasn't been burdensome enough for me to investigate anything else, e.g. [Buildr](http://buildr.apache.org), or even near burdensome enough to consider using Maven itself.
+
+I should probably throw the common files into a shared git repository and then git submodule them around instead of being reduced to copy/paste. But I haven't gotten around to it yet, and it seems like each project always has some tweak here or there that would be annoying to generalize.
+
+Nonetheless, this has been working well for me. If I made any errors or omissions, please let me know.
 
 
