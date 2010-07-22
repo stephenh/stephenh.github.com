@@ -1,10 +1,10 @@
 ---
 layout: post
-title: MySQL
+title: Dammit, MySQL
 ---
 
-MySQL
-=====
+Dammit, MySQL
+=============
 
 After being a happy PostgreSQL user for years, I've finally had to use MySQL for the last 6+ months.
 
@@ -68,7 +68,7 @@ Both statements depend on the other--there is no way to execute these two statem
 
 You are reduced to making one of them `nullable`, e.g. `parent.current_child_id`, and then creating a partially-valid `Parent` and fully-valid `Child`, forcing your ORM to flush to SQL, then going back and updating `Parent` to point to the new `Child`, and doing a final flush+commit.
 
-[MySQL](http://www.mysql.com) still doesn't have deferred foreign key constraints, [PostgreSQL](http://www.postgresql.org) has had them for as long as I've used it.
+[MySQL](http://www.mysql.com) still doesn't have deferred foreign key constraints, [PostgreSQL](http://www.postgresql.org) has had them for as long as I've used it. Even SQLite [has](http://www.sqlite.org/foreignkeys.html#fk_deferred) deferred foreign keys constraints.
 
 No Deferred Unique Key Constraints
 ----------------------------------
@@ -146,7 +146,7 @@ For example, adding the `TRADITIONAL` SQL mode restores the sanity:
 
 So, does your MySQL database have some `NOT NULL` columns? Are you really sure they don't have `null` values in them? Have you checked your SQL mode?
 
-[PostgreSQL](http://www.postgresql.org) doesn't screw around like this, `NOT NULL` always means `NOT NULL`.
+If you use [PostgreSQL](http://www.postgresql.org), you can be sure that your `NOT NULL` columns do not have `null` values in them.
 
 Auto-Changing Timestamps
 ------------------------
@@ -170,7 +170,7 @@ Quick, what's `created`? Yesterday, right? Ah ha! No. It's [today](http://dev.my
 
 *"With neither DEFAULT nor ON UPDATE clauses, it is the same as DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP."*
 
-See that `ON UPDATE CURRENT_TIMESTAMP`? That means MySQL **changes the column value each time you touch the row**.
+See that `ON UPDATE CURRENT_TIMESTAMP`? That means MySQL **changes the column value each time you update the row**.
 
 What MySQL developer ever thought that this was a good default behavior?  I'm trying to think if this is the worst offender of "least surprise" or the if `NOT REALLY NOT NULL` is worse. It's close.
 
@@ -184,14 +184,16 @@ To top it all off, MySQL error messages are a joke. This beauty:
 
 Simply means "you tried to reference a non-existent table".
 
-For as long as MySQL has been around, and how many countless devs have run into this issue, you'd think they'd consider displaying a better error message.
+For as long as MySQL has been around, and how many countless users have run into this issue, you'd think they'd consider displaying a better error message.
 
 Even [git](http://www.git-scm.org) is better at fixing its ease-of-use issues than MySQL.
 
-Much more often than not, [PostgreSQL](http://www.postgresql.org) errors say plainly what really went wrong.
+More often than not, [PostgreSQL](http://www.postgresql.org) errors say plainly what really went wrong.
 
-PostgreSQL Rocks
-----------------
+Dammit, AWS
+-----------
 
-PostgreSQL 9.0 is almost out. Use it instead.
+Unfortunately, [RDS](http://aws.amazon.com/rds/) is awesome, and RDS uses MySQL.
+
+I, and [many others](http://developer.amazonwebservices.com/connect/thread.jspa?threadID=37834), are pulling for Amazon to add PostgreSQL support. Maybe with the first-class replication in the 9.0 release, it will happen sooner rather than later.
 
