@@ -195,5 +195,5 @@ Dammit, AWS
 
 Unfortunately, [RDS](http://aws.amazon.com/rds/) is awesome, and RDS uses MySQL.
 
-I, and [many others](http://developer.amazonwebservices.com/connect/thread.jspa?threadID=37834), are pulling for Amazon to add PostgreSQL support. Maybe with the first-class replication in the 9.0 release, it will happen sooner rather than later.
+I, and [many others](http://developer.amazonwebservices.com/connect/thread.jspa?threadID=37834), are pulling for Amazon to add PostgreSQL support. Maybe with the first-class replication in the 9.0 release, it will happen sooner rather than later. I can hope.
 
