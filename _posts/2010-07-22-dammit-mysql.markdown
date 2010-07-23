@@ -148,6 +148,8 @@ So, does your MySQL database have some `NOT NULL` columns? Are you really sure t
 
 If you use [PostgreSQL](http://www.postgresql.org), you can be sure that your `NOT NULL` columns do not have `null` values in them.
 
+(**Update:** I was wrong--MySQL will not insert `null`, but instead insert a default value, e.g. 0 for int or empty-string for strings. Personally, since I did not include a `DEFAULT` clause in my DDL, I did not expect the database to add a `DEFAULT` value for me.)
+
 Auto-Changing Timestamps
 ------------------------
 
