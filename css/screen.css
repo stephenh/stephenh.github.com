@@ -21,11 +21,13 @@ h1#blog-title {
 h1#blog-title a {
     display: block;
     text-decoration: none;
-    color: white;
+    color: #EEE;
+    text-shadow: 1px 1px 0 #66A;
 }
 
 #blog-description {
     color: #999999;
+    text-shadow: 1px 1px 0 #444;
 }
 
 #site-inner {
@@ -48,6 +50,7 @@ body {
 h1, h2, h3 {
     font-family: Helvetica, Arial, sans-serif;
     margin-bottom: 0.5em;
+    text-shadow: 1px 1px 0 #99C;
 }
 
 #site-inner p {
