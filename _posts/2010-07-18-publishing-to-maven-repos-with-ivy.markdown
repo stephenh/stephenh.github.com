@@ -45,28 +45,27 @@ This is the [gwt-mpv-dev `ivysettings.xml`](http://github.com/stephenh/gwt-mpv/t
           for *retrieving* artifacts for local testing builds,
           we'll use maven's own .m2/repository.
         -->
-        <ibiblio name="maven-local" m2compatible="true" root="file://${user.home}/.m2/repository"/>
+        <ibiblio name="local-m2" m2compatible="true" root="file://${user.home}/.m2/repository"/>
 
         <!--
           for *publishing* artifacts for local testing builds,
           as the previous ibiblio resolver does not support
           publishing
         -->
-        <filesystem name="maven-local-publish" m2compatible="true">
+        <filesystem name="local-m2-publish" m2compatible="true">
           <artifact pattern="${user.home}/.m2/repository/[organisation]/[module]/[revision]/[artifact]-[revision](-[classifier]).[ext]"/>
         </filesystem>
 
         <!--
-          for publishing release artifacts via an sshfs-mounted
-          share
+          for publishing release artifacts via an sshfs-mounted share
         -->
-        <filesystem name="maven-share" m2compatible="true">
+        <filesystem name="share-m2" m2compatible="true">
           <artifact pattern="${user.home}/repo/[organisation]/[module]/[revision]/[artifact]-[revision](-[classifier]).[ext]"/>
         </filesystem>
 
         <!-- strings the separate resolvers all together -->
         <chain name="default">
-          <resolver ref="maven-local"/>
+          <resolver ref="local-m2"/>
           <resolver ref="joist"/>
           <resolver ref="public"/>
         </chain>
@@ -201,7 +200,7 @@ Finally, here is the Ivy-related part of the [gwt-mpv-dev `build.xml`](http://gi
       builds on our local machine can see it
     -->
     <target name="ivy-publish-local" depends="jar,ivy-init,gen-pom" description="publish jar/source to maven repo mounted at ~/.m2/repository">
-      <ivy:publish resolver="maven-local-publish" forcedeliver="true" overwrite="true" publishivy="false">
+      <ivy:publish resolver="local-m2-publish" forcedeliver="true" overwrite="true" publishivy="false">
         <artifacts pattern="bin/[type]s/[artifact].[ext]"/>
       </ivy:publish>
       <!-- snapshots only exist locally, so kick the cache. -->
@@ -216,7 +215,7 @@ Finally, here is the Ivy-related part of the [gwt-mpv-dev `build.xml`](http://gi
       publishing to
     -->
     <target name="ivy-publish-share" depends="jar,ivy-init,gen-pom" description="publish jar/source to maven repo mounted at ~/repo">
-      <ivy:publish resolver="maven-share" forcedeliver="true" overwrite="true" publishivy="false">
+      <ivy:publish resolver="share-m2" forcedeliver="true" overwrite="true" publishivy="false">
         <artifacts pattern="bin/[type]s/[artifact].[ext]" />
       </ivy:publish>
     </target>
@@ -243,7 +242,7 @@ So far I have not published `SNAPSHOT` versions publicly, but they are very hand
 
 Will publish a jar to `~/.m2` for other local projects to pull in your latest/uncommitted changes.
 
-Since we're going through the `maven-local` `<ibiblio/>` resolver, Ivy automatically handles latest-`SNAPSHOT` checking and we don't have to bother with any `~/.ivy2/cache`-busting tricks like I talked about in [Ivy Is Useful](/2009/04/23/ivy-is-useful.html).
+Since we're going through the `local-m2` `<ibiblio/>` resolver, Ivy automatically handles latest-`SNAPSHOT` checking and we don't have to bother with any `~/.ivy2/cache`-busting tricks like I talked about in [Ivy Is Useful](/2009/04/23/ivy-is-useful.html).
 
 Though if you're using [IvyDE](http://ant.apache.org/ivy/ivyde/) and workspace resolution of dependencies, Eclipse should setup all of the cross-project references correctly and you won't have to constantly publish `SNAPSHOT` jars just for local consumption each time you make a change.
 
