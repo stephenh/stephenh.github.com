@@ -65,9 +65,18 @@ This is the [gwt-mpv-dev `ivysettings.xml`](http://github.com/stephenh/gwt-mpv/t
 
         <!-- strings the separate resolvers all together -->
         <chain name="default">
-          <resolver ref="local-m2"/>
-          <resolver ref="joist"/>
           <resolver ref="public"/>
+          <resolver ref="joist"/>
+          <!--
+            Potential gotcha: you want your local-m2 to be last, or at least
+            after the public repo. Otherwise maven proper might partially
+            download a project into ~/.m2, but not include sources, and if
+            local-m2 is first, ivy will pull the artifacts out of ~/.m2 and
+            cache the partially-downloaded view of the repo (i.e. no sources).
+            If public is first, ivy will always try to get artifacts from their
+            canonical source.
+          -->
+          <resolver ref="local-m2"/>
         </chain>
       </resolvers>
     </ivysettings>
@@ -265,4 +274,5 @@ I should probably throw the common files into a shared git repository and then g
 
 Nonetheless, this has been working well for me. If I made any errors or omissions, please let me know.
 
+**Update 08/03/2010**: Add gotcha about the `local-m2` resolver being chained after `public` resolvers.
 
