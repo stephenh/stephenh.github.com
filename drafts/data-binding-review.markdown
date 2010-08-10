@@ -3,14 +3,12 @@ layout: post
 title: Data Binding Review
 ---
 
-Data Binding Tools & Approaches
-===============================
+Data Binding Review
+===================
 
 Data binding is interesting topic to me, mostly because of the large effect it can have on an application's view layer.
 
-A good data binding approach means your view layer is not wasting boilerplate LOC getting and setting data between your UI components and your domain model.
-
-Instead, you succinctly bind domain model to UI component and, in 90% of the cases, be done with it.
+A good data binding approach means your view layer is not wasting boilerplate LOC getting and setting data between your UI components and your domain model. Instead, you succinctly bind domain model to UI component and, in 90% of the cases, be done with it.
 
 I've used and built several data binding options and was recently reconsidering property objects dressed up in some of Scala's magic as a potentially elegant approach.
 
