@@ -91,7 +91,7 @@ Here is my current `.gitconfig` with comments:
       rmg = "!sh -c 'git ls-files -d | grep $1 | xargs -r git rm' -"
 
       # 'reset grep' reset any files that match $1
-      rsg = "!sh -c 'git ls-files -c | grep $1 | xargs -r git reset' -"
+      rsg = "!sh -c 'git ls-files -c --with-tree=HEAD | grep $1 | xargs -r git reset HEAD -- ' -"
 
       # nice log output
       lg = log --graph --pretty=oneline --abbrev-commit --decorate
