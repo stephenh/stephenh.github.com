@@ -322,8 +322,8 @@ Second person, go to `github.com/<user1>/git-workshop`, fork their repository, a
 First person, pull in user2's change into your local repo:
 
     # Pull down user2's work
-    $ git remote add user2 git://github.com/user2/git-workshop
-    $ git remote fetch user2
+    $ git remote add user2 http://github.com/user2/git-workshop.git
+    $ git fetch user2
 
     # Diff your master to user2's master
     $ git diff master..user2/master
