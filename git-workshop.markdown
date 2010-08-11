@@ -13,10 +13,10 @@ Part 1 - Simple Commit
     $ git clone http://github.com/stephenh/git-workshop.git
     $ cd git-workshop
 
-    # 1. Tell git who you are (usually done once per machine)
-    $ git config user.name "Your Name"
-    $ git config user.email your.email@example.com
-    $ git config color.ui auto
+    # 1. Tell git who you are (once per machine)
+    $ git config --global user.name "Your Name"
+    $ git config --global user.email your.email@example.com
+    $ git config --global color.ui auto
 
     # 2. Make a new file
     $ echo "line1" > new.txt
