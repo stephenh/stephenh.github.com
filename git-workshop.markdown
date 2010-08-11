@@ -11,6 +11,7 @@ Part 1 - Simple Commit
 
     # 0. Clone from github
     $ git clone http://github.com/stephenh/git-workshop.git
+    $ cd git-workshop
 
     # 1. Tell git who you are (usually done once per machine)
     $ git config user.name "Your Name"
