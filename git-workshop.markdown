@@ -292,7 +292,7 @@ Both people:
 * Setup your SSH key ([Windows](http://help.github.com/msysgit-key-setup/), [Linux](http://help.github.com/linux-key-setup/)), also note the [Windows git setup](http://help.github.com/win-git-installation/)
 * Should be able to SSH to github: `ssh git@github.com`
 
-First person, make a new repository from [github.com](http://github.com), push a file to it:
+First person, click the New Repository button on the [github.com homepage](http://github.com), push a file to it:
 
     $ mkdir git-workshop
     $ cd git-workshop
