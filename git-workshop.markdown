@@ -10,7 +10,7 @@ Part 1 - Simple Commit
 ----------------------
 
     # 0. Clone from github
-    $ git clone git://github.com/stephenh/git-workshop
+    $ git clone http://github.com/stephenh/git-workshop.git
 
     # 1. Tell git who you are (usually done once per machine)
     $ git config user.name "Your Name"
@@ -284,23 +284,80 @@ Part 8 - Local Branches with Rebasing
 Part 9 - Remote Branches with GitHub
 ------------------------------------
 
-    # 1. Go register for github
-    # http://github.com
+Find someone to work with.
 
-    # 2. Setup your SSH key
-    # http://help.github.com/linux-key-setup/
+Both people:
 
-    # 3. Should be able to ssh to github
-    $ ssh git@github.com
+* Go register for [github](http://github.com)
+* Setup your SSH key ([Windows](http://help.github.com/msysgit-key-setup/), [Linux](http://help.github.com/linux-key-setup/)), also note the [Windows git setup](http://help.github.com/win-git-installation/)
+* Should be able to SSH to github: `ssh git@github.com`
 
-    # 4. Make a new repository
-    # http://github.com, click New Repository
+First person, make a new repository from [github.com](http://github.com), push a file to it:
 
-    # 5. 
+    $ mkdir git-workshop
+    $ cd git-workshop
+    $ git init
+    $ touch README
+    $ git add README
+    $ git commit -m 'first commit'
+    $ git remote add origin git@github.com:<user1>/git-workshop.git
+    $ git push origin master
+{: class=brush:bash}
+
+Second person, go to `github.com/<user1>/git-workshop`, fork their repository, and then checkout your copy of it:
+
+    $ git clone git@github.com:<user2>/git-workshop.git
+    $ cd git-workshop
+    $ cat README
+
+    # Change README
+    $ echo "from user2" >> README
+    $ git commit -a -m "Updated the readme."
+
+    # Push user2's change back to user2's clone
+    $ git push
+{: class=brush:bash}
+
+First person, pull in user2's change into your local repo:
+
+    # Pull down user2's work
+    $ git remote add user2 git://github.com/user2/git-workshop
+    $ git remote fetch user2
+
+    # Diff your master to user2's master
+    $ git diff master..user2/master
+
+    # Merge user2's changes
+    $ git merge user2/master
+
+    # Add your own change to README
+    $ echo "from user1" >> README
+    $ git commit -a -m "Updated the readme."
+
+    # Push the changes to your user1 repo
+    $ git push
+{: class=brush:bash}
+
+Second person, pull in user1's changes, and update your repo:
+
+    # Pull down user1's work
+    $ git remote add user1 git://github.com/user2/git-workshop
+    $ git remote fetch user1
+
+    # Diff against what they added
+    $ git diff master..user1/master
+
+    # Merge user1's changes
+    $ git merge user1/master
+    $ cat README
+
+    # Push their changes out to your user2 repo
+    $ git push
 {: class=brush:bash}
 
 Things To Add
 -------------
 
-* stash
+* cherry-pick
+* revert
 
