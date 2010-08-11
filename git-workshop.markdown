@@ -342,8 +342,8 @@ First person, pull in user2's change into your local repo:
 Second person, pull in user1's changes, and update your repo:
 
     # Pull down user1's work
-    $ git remote add user1 git://github.com/user2/git-workshop
-    $ git remote fetch user1
+    $ git remote add user1 http://github.com/user2/git-workshop.git
+    $ git fetch user1
 
     # Diff against what they added
     $ git diff master..user1/master
