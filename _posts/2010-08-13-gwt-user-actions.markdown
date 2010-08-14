@@ -6,6 +6,8 @@ title: Collecting User Actions with GWT
 Collecting User Actions with GWT
 ================================
 
+(Cross-posted from the Bizo [dev blog](http://dev.bizo.com/2010/08/collecting-user-actions-with-gwt.html).)
+
 While I was at one of the [Google I/O](http://code.google.com/events/io/2010/) GWT sessions (courtesy of [Bizo][1]), a Google presenter mentioned how one of their internal GWT applications tracks user actions.
 
 The idea is really just a souped-up, AJAX version of server-side access logs: capturing, buffering, and sending fine-grained user actions up to the server for later analysis.
