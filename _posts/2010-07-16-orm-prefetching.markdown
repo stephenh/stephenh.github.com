@@ -76,7 +76,7 @@ Implicit Pre-Fetching
 
 What seems more novel to me is eschewing custom queries and the ORM just being more intelligent about its usage.
 
-One trick that Hibernate actually already implements is [subselect fetching](http://docs.jboss.org/hibernate/stable/core/reference/en/html_single/#performance-fetching-subselect).  The idea is that when you're mapping your `Post` class, you set `fetch=subselect` on the `comments` element:
+One trick that Hibernate actually already implements is [subselect fetching](http://docs.jboss.org/hibernate/stable/core/reference/en/html_single/#performance-fetching-subselect). The idea is that when you're mapping your `Post` class, you set `fetch=subselect` on the `comments` element:
 
     <class name="Post">
         <!-- ... other mappings ... -->
@@ -103,6 +103,38 @@ Will result in these queries:
 * 1 query on `blog.getPosts()` of `SELECT * FROM post WHERE blog_id = 1`--loads `n` posts
 * 1 query on the 1st `post.getComments()` of `SELECT * FROM comment WHERE post_id IN (N post ids)`--loads `m` comments
 
+**Update**: I reproduced this behavior in a project with `Parent`/`Child`/`GrandChild`, here is SQL Hibernate generated:
+
+    select
+      parent0_.id as id0_0_,
+      parent0_.version as version0_0_,
+      parent0_."name" as name3_0_0_
+      from "parent" parent0_
+      where parent0_.id=?
+    select
+      childs0_.parent_id as parent3_1_,
+      childs0_.id as id1_,
+      childs0_.id as id1_0_,
+      childs0_.version as version1_0_,
+      childs0_."parent_id" as parent3_1_0_,
+      childs0_."name" as name4_1_0_
+      from "child" childs0_
+      where childs0_.parent_id=?
+    select
+      grandchild0_.child_id as child3_1_,
+      grandchild0_.id as id1_,
+      grandchild0_.id as id2_0_,
+      grandchild0_.version as version2_0_,
+      grandchild0_."child_id" as child3_2_0_,
+      grandchild0_."name" as name4_2_0_
+      from "grand_child" grandchild0_
+      where grandchild0_.child_id in (
+        select childs0_.id
+        from "child" childs0_
+        where childs0_.parent_id=?
+      )
+{: class=brush:sql}
+
 What happened is that Hibernate applied a heuristic of saying: "okay, you have `Post A`, and you want its `Comments`...but you also have `Post B`, `Post C`, etc., in your session, I'm going to go ahead and get the `Comments` for all of those `Posts` at the same time."
 
 From my perspective, this seems like a pretty sweet optimization. 
@@ -123,11 +155,20 @@ I came across the paper [Automatic Prefetching by Traversal Profiling in Object 
 
 So, initially you'll get the worst case `n+1` selects, but after a few iterations, their AutoFetch algorithm recognizes that, given the line number/stack trace of the `loadBlog(1)` line, it will soon need all of the posts and comments, so issues a single:
 
-* 1 query of `SELECT b.*, p.*, c.* FROM blog b LEFT OUTER JOIN posts p ON b.id = p.blog_id LEFT OUTER JOIN comments c ON p.id = c.post_id WHERE b.id = 1`--loads the entire blog/posts/comments object graph
+* 1 query of:
+
+      SELECT b.*, p.*, c.*
+      FROM blog b
+      LEFT OUTER JOIN posts p ON b.id = p.blog_id
+      LEFT OUTER JOIN comments c ON p.id = c.post_id
+      WHERE b.id = 1
+  {: class=brush:sql}
+
+  That loads the entire blog/posts/comments object graph
 
 This is pretty magically awesome.
 
-I think the only downside is that technically that many outer joins in 1 query will lead to pretty large data duplication due to it being a cross product. I do not know how much of an issue this would be in real-world usage.
+I think the only downside is that technically that many outer joins in 1 query will lead to potentially large data duplication due to it being a cross product. I do not know how much of an issue this would be in real-world usage.
 
 They might be better off sending a trio 3 simple statements:
 
