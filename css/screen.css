@@ -2,16 +2,18 @@
 body {
   margin: 0;
   padding: 0;
+  background-color: #F5F5F5;
 }
 
 #title-outer {
-    background-color: #1E1E1E;
+    background-color: #2F2F2E;
 }
 
 #title-inner {
     width: 40em;
     margin: 0 auto;
     padding: 0.5em;
+    padding-bottom: 1em;
 }
 
 h1#blog-title {
@@ -21,13 +23,16 @@ h1#blog-title {
 h1#blog-title a {
     display: block;
     text-decoration: none;
-    color: #EEE;
+    font-family: serif;
+    color: #FFFFFE;
     text-shadow: 1px 1px 0 #66A;
 }
 
 #blog-description {
-    color: #999999;
+    color: #BDBDBC;
     text-shadow: 1px 1px 0 #444;
+    font-size: 1.1em;
+    margin-left: 5px;
 }
 
 #site-inner {
@@ -44,7 +49,7 @@ h1#blog-title a {
 }
 
 body {
-    font-size: 0.8em;
+    font-size: 0.9em;
 }
 
 h1, h2, h3 {
