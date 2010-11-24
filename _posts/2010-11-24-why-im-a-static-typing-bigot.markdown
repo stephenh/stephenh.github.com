@@ -70,7 +70,7 @@ However, even in my bigotry, I will definitely concede static languages have the
 
 4. Compile-time meta programming is still a fringe technique.
 
-   Much to my chagrin, compile-time meta programming is not going to be in a mainstream language anytime soon. Despite promising alternatives ([boo][boo], [nemerle][nemerle], [lombok][lombok], [groovy++][groovypp]), it's lacking from more leading "Java next" contenders like [Scala][scala].
+   Much to my chagrin, compile-time meta programming is not going to be in a mainstream static language anytime soon. Despite promising alternatives ([boo][boo], [nemerle][nemerle], [lombok][lombok], [groovy++][groovypp]), it's lacking from more leading "Java next" contenders like [Scala][scala].
 
 [boo]: http://boo.codehaus.org
 [nemerle]: http://nemerle.org
