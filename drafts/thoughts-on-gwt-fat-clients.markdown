@@ -77,7 +77,7 @@ Ideal GWT DTO
   * what if operation only wants to save 3 fields, and client/model already has object with all 10 fields? get a subset DTO out of a model?
   * what if read operation wants to see 5 fields, but write operation only wants to change 1 field? can dto->entity be different than entity<-dto.
   * code splitting? keep DTOs from all going at once?
-  * EmployeeSummary[123] implements EntityDto (employee#123)
+  * `EmployeeSummary[123]` implements EntityDto (employee#123)
     * `name`, `password` -- auto-mapped
     * Address -> EntityDto (address#234) -- auto-mapped
     * Or `address1` (flattened from Address)
