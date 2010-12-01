@@ -7,6 +7,8 @@ title: GWT MVP Tables
 
 ---
 
+**Update 2010/11/30**: I've added updated docs for both [row tables](http://www.gwtmpv.org/rowtable.html) and [cell tables](http://www.gwtmpv.org/celltable.html) on the gwt-mpv website.)
+
 I'm building a GWT application and, per the latest [best practices](http://code.google.com/events/io/2009/sessions/GoogleWebToolkitBestPractices.html), using a MVP (model view presenter) approach.  
 
 For awhile I was confused about how to build non-trivial views. For example, a dashboard-type table where each row is not just strings of text but an interactive unit.
