@@ -13,13 +13,27 @@ Briefly, here's why.
 What I Like About Static Typing
 -------------------------------
 
-1. A type system is basically free tests.
+1. Types act as documentation.
 
-   Of course you still need real tests, but it's all about quick feedback. No matter how fast my unit tests are, a compiler can follow me along and check for trivial errors. In a mature IDE, this happens as you type, which is pretty darn quick.
+   When I read dynamically typed code, I feel completely lost looking at untyped variables and untyped method calls. What methods can I call on this variable? What does this method require of it's parameters? What exactly is this parameter going to be? A map? An object? An int?
+
+   Granted, you can sometimes infer what it is based on the method calls made against it. For example, only the `Employee` class has a `isFired` method. However, this works well only in small, simple methods that are unfortunately rare in a lot of code.
+
+   This programmer-time type inference also requires mental overhead. Glancing up to a type declaration (or hovering for inferred types) tells you right away.
+
+   I do not buy the assertion that I should not care what the types of variables are--that, like Smalltalk, objects will react to whatever messages I send them and I shouldn't care beyond that. While `method_missing` is occasionally very handy, in the majority of cases, simple method resolution semantics are going to be happen (`foo.bar()` calls the `Foo.bar` method), so the language might as well clue me when when this extremely common/simple case applies.
+
+   (Admittedly, I do pine for the static equivalent of `method_missing`--some sort of AST transformation or compile-time `method_missing` hook.)
+
+2. A type system provides free, blazing-fast, pre-unit tests.
+
+   Of course you still need real unit tests. Just like having unit tests doesn't not absolve you from having acceptance tests, having type check tests does not absolve you from having unit tests.
+
+   That being said, it's all about quick feedback. No matter how fast my unit tests are, a compiler can follow me along and more quickly check for trivial errors. In a mature IDE like Eclipse's JDT, this happens as you type, which is pretty darn quick.
 
    Assuming the type tests check, then you proceed to unit tests. Just like after unit tests check, you proceed to integration tests. Gradually progressing to slower, but more encompassing levels of tests.
 
-2. Deep down all programmers want the features of a type-aware IDE.
+3. Deep down all programmers want the features of a type-aware IDE.
 
    Look at IntelliJ's [RubyMine](http://www.jetbrains.com/ruby/) and Spring's [STS](http://www.springsource.com/developer/grails) for Groovy. They make programmers who've been using dynamic languages drool with their (inferred) type-aware hints, navigation, and refactoring.
 
@@ -27,7 +41,7 @@ What I Like About Static Typing
 
    Furthermore, if type inference (and meta-programming, per my next point) was part of the language, then the type-aware IDE could check your entire program, not just the parts that were normal/bland enough (no `instance_eval`) for the IDE-based type inferencer to figure out.
 
-3. Most dynamic meta programming is done relatively immediately at program startup time, and then things settle down and start to look more static in nature--hence most of it could just as well be done at compile-time.
+4. Most dynamic meta programming is done relatively immediately at program startup time, and then things settle down and start to look more static in nature--hence most of it could just as well be done at compile-time.
 
    I think a generic timeline for meta-programming is:
 
@@ -35,11 +49,11 @@ What I Like About Static Typing
    2. Meta-programming magic transforms input-program to result-program
    3. The result-program runs
 
-   In dynamic languages, 2 is done at runtime, and is very coupled with 3. I naively think that 2 could run just as well at compile-time, after the programmer types, via compile-time meta-programming (AST transformations).
+   In dynamic languages, 2 is done at runtime, so is very coupled with 3, to where people consider them the same thing. However, I naively think that 2 could run just as well at compile-time, after the programmer types, via compile-time meta-programming (AST transformations).
 
    For example, I think it is unlikely that, after ActiveRecord adds database columns to a model class, and ActiveSupport opens up String to add helper methods, after two weeks of uptime, there will suddenly be new methods popping up in `Employee`, `String`, or other classes.
 
-   Furthermore, if meta-programming is done at compile-time, then the results would be available to the type-aware IDE and it could now type check your entire program, not just the parts that don't use runtime `method_missing`, `instance_eval` magic.
+   Furthermore, if meta-programming is done at compile-time, then the results would be available to the type-aware IDE and the compiler could now type check your entire program, not just the parts that don't use runtime `method_missing`, `instance_eval` magic.
 
    Unfortunately, compile-time meta-programming is not available in a mainstream language yet.
 
@@ -81,13 +95,15 @@ However, even in my bigotry, I will definitely concede static languages have the
 Other Notes
 -----------
 
-1. Dynamic languages are known to "reload on the fly".
+1. Dynamic languages are will-known for their "reload on the fly" productivity.
 
-   Static languages (on the JVM anyway) really should be able to do this as well. Unfortunately, until this [OpenJDK patch][hotswap] lands, you need [JRebel][jrebel] or framework-level classloader gymnastics. Yeah, this is unfortunate, but a temporary limitation.
+   Static languages (on the JVM anyway) really should be able to do this as well. Unfortunately, until this [OpenJDK patch][hotswap] lands, you need [JRebel][jrebel] or framework-level classloader gymnastics. Yeah, this is unfortunate, but a *cough* temporary *cough* limitation.
 
 2. Dynamic languages often have better designed libraries.
 
    Java in particular is known for it's ugly APIs. However, very often, the problem is just that an API lacks higher levels of abstraction, and is not related an inherent language flaw.
+
+   For example, Rickard has a [great alternative](http://www.jroller.com/rickard/entry/a_generic_input_output_api) to the frequently-cited "I can't succinctly read a file from Java" problem.
 
    Perhaps there is a larger reason why dynamic languages have nice APIs, though my cop out assertion is just that their language designers are better at API design.
 
@@ -105,7 +121,7 @@ Over Emphasis
 
 I don't think I have added anything interesting to the dynamic vs. static debate, though that wasn't my intent--I just wanted to codify my opinion.
 
-I do have a gnawing suspicion that most users of dynamic languages would, without realizing it now, prefer a static language, if there existed a sufficiently robust static language with a syntax/type system/runtime that would allow them to keep their current style of development.
+I do have a gnawing suspicion that most users of dynamic languages would, without realizing it now, prefer a static language, if there existed a sufficiently robust static language with a syntax, type system, and runtime that would allow them to keep their current style of development.
 
 That being said, there are several developers I respect who are more self-aware than this, and still love dynamic languages.
 
