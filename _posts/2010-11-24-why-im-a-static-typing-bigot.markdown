@@ -43,30 +43,34 @@ What I Like About Static Typing
 
 4. Most dynamic meta programming is done relatively immediately at program startup time, and then things settle down and start to look more static in nature--hence most of it could just as well be done at compile-time.
 
-   I think a generic timeline for meta-programming is:
+   To explain, I think a generic timeline for meta-programming is:
 
    1. The programmer types input-program
    2. Meta-programming magic transforms input-program to result-program
    3. The result-program runs
 
-   In dynamic languages, 2 is done at runtime, so is very coupled with 3, to where people consider them the same thing. However, I naively think that 2 could run just as well at compile-time, after the programmer types, via compile-time meta-programming (AST transformations).
+   In dynamic languages, 2 is done at runtime, so is very coupled with 3, to where people consider them the same thing--because they are. However, I naively think that 2 could run just as well at compile-time, after the programmer types, via compile-time meta-programming (AST transformations).
 
    For example, I think it is unlikely that, after ActiveRecord adds database columns to a model class, and ActiveSupport opens up String to add helper methods, after two weeks of uptime, there will suddenly be new methods popping up in `Employee`, `String`, or other classes.
 
-   Furthermore, if meta-programming is done at compile-time, then the results would be available to the type-aware IDE and the compiler could now type check your entire program, not just the parts that don't use runtime `method_missing`, `instance_eval` magic.
+   Furthermore, if meta-programming is done at compile-time, then the result-program is also available at compile-time. So now the compiler/type-aware IDE can type check your entire program, not just the parts that don't use runtime `method_missing`, `instance_eval` magic.
 
-   Unfortunately, compile-time meta-programming is not available in a mainstream language yet.
+   (Note: I still think on-the-fly changing of code, e.g. via a console/debugger, etc., is a good thing, see the "Other Notes" section below.)
 
 What I Don't Like About Static Typing
 -------------------------------------
 
 However, even in my bigotry, I will definitely concede static languages have their downsides:
 
-1. Type-aware IDEs are hard.
+1. Type-aware IDEs (Eclipse plugins, IntelliJ, etc.) are hard and become barriers to entry.
 
-   As nice as they are, type-aware IDEs also stifle innovation as they become a barrier to entry for new languages.
-   
-   Designers of new languages can't just have a great language, with a great library, with a great community--they also need to invest a very non-trivial amount of time into an Eclipse plugin.
+   Compilers themselves, for either static or dynamic languages. are a very well-known, basically solved problem--lots of books, parser libraries, etc. The compilation environment is a very static: take input text X and transform it into output code Y.
+
+   IDEs, however, are really hard. The compilation environment is no longer static--the IDE still transforms X to Y, but while transforming X to Y, it also has to put errors on the right line, squiggles under the right words, pop ups at the right place, cache the entire program's type data to provide instant navigation, and all while the user is flying around the source file changing things and trying to make the IDE developer's life a nightmare.
+
+   Supposedly JVM-based languages can leverage Eclipse's existing IDE infrastructure. But from looking at the Groovy and Scala IDE plugin histories, it still takes a really long time to get solid, quick integration with the Eclipse JDT.
+
+   Type-aware IDEs also stifle innovation as they become a barrier to entry for new languages.  Designers of new languages can't just have a great language, with a great library, with a great community--they also need to invest a very non-trivial amount of time into an Eclipse plugin.
 
 2. Type systems are hard.
 
@@ -95,15 +99,17 @@ However, even in my bigotry, I will definitely concede static languages have the
 Other Notes
 -----------
 
-1. Dynamic languages are will-known for their "reload on the fly" productivity.
+1. Dynamic languages are well-known for their "reload on the fly" productivity. Code can be changed without restarting a process, leading to a faster feedback loop for developers.
 
-   Static languages (on the JVM anyway) really should be able to do this as well. Unfortunately, until this [OpenJDK patch][hotswap] lands, you need [JRebel][jrebel] or framework-level classloader gymnastics. Yeah, this is unfortunate, but a *cough* temporary *cough* limitation.
+   I think this is a great thing--and that static languages really should be able to do this as well. Unfortunately, for the JVM anyway, until this [OpenJDK patch][hotswap] lands, you need [JRebel][jrebel] or framework-level classloader gymnastics to get more than the JVM's default "only method contents can be updated" behavior. Yeah, this is unfortunate, but a *cough* temporary *cough* limitation.
+
+   For static languages, applying the type changes, especially if any compile-time meta-programming is involved, likely means using an IDE debugger to change running types, instead of the "just retype the function in a console" approach some dynamic languages can use. But I think the effect is the same.
 
 2. Dynamic languages often have better designed libraries.
 
    Java in particular is known for it's ugly APIs. However, very often, the problem is just that an API lacks higher levels of abstraction, and is not related an inherent language flaw.
 
-   For example, Rickard has a [great alternative](http://www.jroller.com/rickard/entry/a_generic_input_output_api) to the frequently-cited "I can't succinctly read a file from Java" problem.
+   For example, besides the typical Apache [commons-io](http://commons.apache.org/io/api-1.4/org/apache/commons/io/FileUtils.html) library, Rickard has an elegant alternative [I/O API](http://www.jroller.com/rickard/entry/a_generic_input_output_api) to the frequently-cited "I can't succinctly read a file from Java" problem.
 
    Perhaps there is a larger reason why dynamic languages have nice APIs, though my cop out assertion is just that their language designers are better at API design.
 
