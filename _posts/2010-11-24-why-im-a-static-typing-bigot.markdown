@@ -57,6 +57,8 @@ What I Like About Static Typing
 
    (Note: I still think on-the-fly changing of code, e.g. via a console/debugger, etc., is a good thing, see the "Other Notes" section below.)
 
+   **Update:** This [blog post](http://gnuu.org/2010/12/13/too-lazy-to-type/) by Loren Segal states this point much better than I do and includes links to papers/profiling results that back up the assertion.
+
 What I Don't Like About Static Typing
 -------------------------------------
 
