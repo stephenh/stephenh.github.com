@@ -16,7 +16,7 @@ Here's a few things I've learned:
 
 * [IvyDE](http://ant.apache.org/ivy/ivyde/) rocks, especially being able to recognize other open Eclipse projects and put them on the classpath instead of the cached SNAPSHOT jars, so now you can just hit save and not have to worry about updating jars.
 
-  You have to enable this in Java Build Path, Libraries, ivy.xml, Advanced, check Resolve dependencies in workspace.
+  You have to enable this in Java Build Path, Libraries, `ivy.xml`, Advanced, check Resolve dependencies in workspace.
 
 * [IvyDE](http://ant.apache.org/ivy/ivyde/) is still immature--the `ivy.xml` has to resolve of its dependencies perfectly or else you are kind of screwed. It's best to get you `ivy.xml`, `ivysettings.xml` working with Ant first, then try Eclipse and IvyDE.
 
@@ -57,33 +57,33 @@ Here's a few things I've learned:
       </project>
   {: class=brush:xml}
 
-* The default settings gave me a fit trying to get SNAPSHOTs to work--ivy is pretty insistent about caching as much as it possibly can.
+* The default settings gave me a fit trying to get SNAPSHOTs to work--Ivy is pretty insistent about caching as much as it possibly can.
 
   Which is cool, but it grew annoying when it would not check the *local* repo, `~/.ivy2/local`, for a newly-published SNAPSHOT just because a SNAPSHOT already existed in the cache, `~/.ivy2/cache`.
 
-  I ended up using a `local-checkmodified` resolver to bust through: 
+  I ended up using a `local-snapshot` resolver to bust through: 
 
       <ivysettings>
         <settings defaultResolver="default"/>
         <include url="${ivy.default.settings.dir}/ivysettings-public.xml"/>
         <include url="${ivy.default.settings.dir}/ivysettings-local.xml"/>
         <resolvers>
-          <!-- Copy/paste from ivysettings-local.xml bith with checkmodified/changingPattern to bust the cache for snapshots. -->
-          <filesystem name="local-checkmodified" checkmodified="true" changingPattern=".*SNAPSHOT">
+          <!-- Copy/paste from ivysettings-local.xml with with changingPattern to bust the cache for snapshots. -->
+          <filesystem name="local-snapshot" changingPattern=".*SNAPSHOT">
             <ivy pattern="${ivy.local.default.root}/${ivy.local.default.ivy.pattern}" />
             <artifact pattern="${ivy.local.default.root}/${ivy.local.default.artifact.pattern}" />
           </filesystem>
 
-          <!-- Repeating the checkmodified/changingPattern incantation here is very important. -->
-          <chain name="default" checkmodified="true" changingPattern=".*SNAPSHOT">
-            <resolver ref="local-checkmodified"/>
+          <!-- Repeating the changingPattern incantation here is very important. -->
+          <chain name="default" changingPattern=".*SNAPSHOT">
+            <resolver ref="local-snapshot"/>
             <resolver ref="public"/>
           </chain>
         </resolvers>
       </ivysettings>
   {: class=brush:xml}
 
-  I would be hesitant to use the `checkmodified` flag on any resolver that was not local, so would not publish SNAPSHOTs to a publicly-accessible repository.
+  **Update:** I previously had `checkmodified=true` set on both `localhost-snapshot` and `chain` resolvers, however, I don't believe this is required.
 
 Overall I've found Ivy pleasant and look forward to future releases, especially of IvyDE.
 

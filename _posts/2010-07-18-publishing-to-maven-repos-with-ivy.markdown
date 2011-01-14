@@ -8,7 +8,7 @@ Publishing to Maven Repos with Ivy
 
 Publishing to Maven repositories is a fact of life for projects in the Java community.
 
-While I am not a fan of Maven itself, I readily admit that the standard shared repository/transitive-metadata approach they have driven has been a great thing for the community. While I was initially skeptical, downloading dependencies and getting them out of source code repos is a good thing. 
+While I am not a fan of Maven itself, I readily admit that the standard shared repository/transitive-metadata approach they have driven has been a great thing for the community. While I was initially skeptical, downloading dependencies and keeping them out of source code repos is a good thing. 
 
 Using Ivy
 ---------
@@ -45,7 +45,11 @@ This is the [gwt-mpv-dev `ivysettings.xml`](http://github.com/stephenh/gwt-mpv/t
           for *retrieving* artifacts for local testing builds,
           we'll use maven's own .m2/repository.
         -->
-        <ibiblio name="local-m2" m2compatible="true" root="file://${user.home}/.m2/repository"/>
+        <ibiblio
+          name="local-m2"
+          m2compatible="true"
+          root="file://${user.home}/.m2/repository"/
+          changingPattern=".*SNAPSHOT">
 
         <!--
           for *publishing* artifacts for local testing builds,
@@ -61,10 +65,10 @@ This is the [gwt-mpv-dev `ivysettings.xml`](http://github.com/stephenh/gwt-mpv/t
         -->
         <filesystem name="share-m2" m2compatible="true">
           <artifact pattern="${user.home}/repo/[organisation]/[module]/[revision]/[artifact]-[revision](-[classifier]).[ext]"/>
-        </filesystem>
+        <filesystem>
 
         <!-- strings the separate resolvers all together -->
-        <chain name="default">
+        <chain name="default" changingPattern=".*SNAPSHOT">
           <resolver ref="public"/>
           <resolver ref="joist"/>
           <!--
@@ -212,10 +216,6 @@ Finally, here is the Ivy-related part of the [gwt-mpv-dev `build.xml`](http://gi
       <ivy:publish resolver="local-m2-publish" forcedeliver="true" overwrite="true" publishivy="false">
         <artifacts pattern="bin/[type]s/[artifact].[ext]"/>
       </ivy:publish>
-      <!-- snapshots only exist locally, so kick the cache. -->
-      <delete>
-        <fileset dir="${ivy.cache.dir}/${ivy.organisation}/${ivy.module}" includes="**/*SNAPSHOT*"/>
-      </delete>
     </target>
 
     <!--
@@ -275,4 +275,6 @@ I should probably throw the common files into a shared git repository and then g
 Nonetheless, this has been working well for me. If I made any errors or omissions, please let me know.
 
 **Update 08/03/2010**: Add gotcha about the `local-m2` resolver being chained after `public` resolvers.
+
+**Update 01/13/2011**: Add `changingPattern="true"` to `local-m2` and `default` resolvers so that snapshots work without having Ant manually flushing the cache.
 
