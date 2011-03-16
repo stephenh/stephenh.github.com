@@ -1,14 +1,16 @@
 ---
 layout: post
-title: Lift Templating Is A Joke
+title: Lift Templating is a Joke
 ---
 
-Lift Templating Is A Joke
+Lift Templating is a Joke
 =========================
 
 I want to like [Lift](http://liftweb.net). I like [Scala](http://scala-lang.org) and Lift seems like the goto Scala web framework for now.
 
 I have several nitpicks with it, the one I'll rant about now is its templating syntax.
+
+**Disclaimer:** I know "joke" is a harsh word--but given the combination of the author's superior attitude towards other frameworks plus his own solution missing the very goals he sets forth, I felt compelled to respond in kind.
 
 Lift's Lofty Goal
 -----------------
@@ -32,27 +34,26 @@ Falling Short
 
 But then you see the implementation:
 
-<pre name="code" class="html">
-    &lt;html&gt; 
+    <html> 
     ... 
-    &lt;lift:Show.myForm form="POST"&gt; 
-    &lt;tr&gt; 
-      &lt;td&gt;Name&lt;/td&gt; 
-      &lt;td&gt;&lt;f:name&gt;&lt;input type="text"/&gt;&lt;/f:name&gt;&lt;/td&gt; 
-    &lt;/tr&gt; 
-    &lt;tr&gt; 
-      &lt;td&gt;Birthyear&lt;/td&gt; 
-      &lt;td&gt;&lt;f:year&gt; 
-          &lt;select&gt;&lt;option&gt;2007&lt;/option&gt;&lt;/select&gt; 
-      &lt;/f:year&gt;&lt;/td&gt; 
-    &lt;/tr&gt; 
-    &lt;tr&gt; 
-      &lt;td&gt;&nbsp;&lt;/td&gt; 
-      &lt;td&gt;&lt;input type="submit" value="Add"/&gt;&lt;/td&gt; 
-    &lt;/tr&gt; 
-    &lt;/lift:Show.myForm&gt; 
-    &lt;/html&gt;
-</pre>
+    <lift:Show.myForm form="POST"> 
+    <tr> 
+      <td>Name</td> 
+      <td><f:name><input type="text"/></f:name></td> 
+    </tr> 
+    <tr> 
+      <td>Birthyear</td> 
+      <td><f:year> 
+          <select><option>2007</option></select> 
+      </f:year></td> 
+    </tr> 
+    <tr> 
+      <td>&nbsp;</td> 
+      <td><input type="submit" value="Add"/></td> 
+    </tr> 
+    </lift:Show.myForm> 
+    </html>
+{: class=brush:html}
 
 And...what? What happened to no separation? Designer friendly? Is Dreamweaver really going to like that `<tr>` tag coming after a `<left:Show.myForm>` tag instead of a `<table>` tag?
 
@@ -71,34 +72,32 @@ The Lift crowd needs to look at [pure](http://beebole.com/pure/) instead.
 
 If you look at the [demos](http://beebole.com/pure/demos/), one of pure's table examples is:
 
-<pre name="code" class="html">
-    &lt;table class="playerList"&gt;
-      &lt;thead&gt;
-        &lt;tr&gt;&lt;th&gt;Player&lt;/th&gt;&lt;/tr&gt;
-      &lt;/thead&gt;
-      &lt;tbody&gt;
-        &lt;tr class="player"&gt;
-         &lt;td&gt;Chloe&lt;/td&gt;
-       &lt;/tr&gt;
-      &lt;/tbody&gt;
-    &lt;/table&gt;
-</pre>
+    <table class="playerList">
+      <thead>
+        <tr><th>Player</th></tr>
+      </thead>
+      <tbody>
+        <tr class="player">
+         <td>Chloe</td>
+       </tr>
+      </tbody>
+    </table>
+{: class=brush:html}
 
 Now **this** is designer friendly. There really are no programming symbols in this.
 
 Now, admittedly, pure requires a few hoops for the programmer to jump through, e.g. this directive:
 
-<pre name="code" class="jscript">
     {
       "tbody tr": {
-        "player&lt;-players": {
+        "player<-players": {
           "td": "player",
           "td@style": "\"cursor:pointer\"",
           "td@onclick": "\"clickLine(this);\""
         }
       }
     }
-</pre>
+{: class=brush:jscript}
 
 And this could probably be cleaned up.
 
@@ -111,26 +110,24 @@ Code Generation
 
 While I'm on the topic of templating, I like how GWT parses its templates at compile-time and ensures they type-safely match your usage of the templates.
 
-What I don't get is why this has to happen during the already time consuming GWT startup phase.
+What I don't get is why this has to happen during the already-time-consuming GWT startup phase.
 
 Even a project like Lift could build a code generator that, after parsing your templates at **build-time**, creates an `XxxTemplate.scala` class with type-safe elements for you to program against.
 
 For example, take something like `foo.html`:
 
-<pre name="code" class="html">
-    &lt;table id="playerList"&gt;
+    <table id="playerList">
       ...
-    &lt;/table&gt;
-</pre>
+    </table>
+{: class=brush:html}
 
-And after running `lift generate-templates` on the command line, Lift would spit out a class:
+And after running `lift generate-templates` on the command line (ideally ran automatically each time your HTML files change), Lift would spit out a class:
 
-<pre name="code" class="scala">
     object FooHtml {
       val playerList = new TableElement("playerList")
       // other elements/etc.
     }
-</pre>
+{: class=brush:scala}
 
 This output may get somewhat ugly, but its basically going to be the same code Lift is interpreting at runtime (or, in the case of joys like [Tapestry](http://tapestry.apache.org/), are bytecode compiling at runtime).
 
@@ -143,33 +140,34 @@ Which again is ironic given how Lift just ragged on `HttpSession`, again from th
 
 ---
 
-*Lift has a type-safe mechanism for storing variables during the scope of a given session. In Java, you would do something like casting a value retrieved from the `HttpSession`. For example: `String myString = (String) httpSession.getAttribute(“Something”)`; The problem with this code is that a developer may not remember that Something is support to be a `String` and put a `String[]` in it. Additionally, there’s no well defined logic for creating a default value for the attribute.*
+*Lift has a type-safe mechanism for storing variables during the scope of a given session.*
+
+*In Java, you would do something like casting a value retrieved from the `HttpSession`. For example: `String myString = (String) httpSession.getAttribute(“Something”)`; The problem with this code is that a developer may not remember that Something is support to be a `String` and put a `String[]` in it. Additionally, there's no well defined logic for creating a default value for the attribute.*
 
 ---
 
 Well, good for you, Lift, you avoid magic Strings in session usage--but then go right back to magic Strings all over your templating layer.
 
-<pre name="code" class="scala">
-    private def doList(reDraw: () =&gt; JsCmd)(html: NodeSeq): NodeSeq = 
-    toShow. 
-    flatMap(td =&gt; 
-      bind("todo", html, 
-          "check" -&gt; ajaxCheckbox(td.done, 
-                  v =&gt; {td.done(v).save; reDraw()}), 
-          "priority" -&gt; 
-          ajaxSelect(ToDo.priorityList, Full(td.priority.toString), 
-                  v =&gt; {td.priority(v.toInt).save; reDraw()}), 
-          "desc" -&gt; desc(td, reDraw) 
+    private def doList(reDraw: () => JsCmd)(html: NodeSeq): NodeSeq = 
+      toShow.flatMap(td => 
+        bind("todo", html, 
+          "check" -> ajaxCheckbox(
+                  td.done, 
+                  v => {td.done(v).save; reDraw()}), 
+          "priority" -> ajaxSelect(
+                  ToDo.priorityList, Full(td.priority.toString), 
+                  v => {td.priority(v.toInt).save; reDraw()}), 
+          "desc" -> desc(td, reDraw) 
       ))
-</pre>
+{: class=brush:scala}
 
-See `"todo"`, `"check"`, `"priority"`, etc., all magic strings.
+See `"todo"`, `"check"`, `"priority"`, etc.--all untyped, magic strings.
 
 And, again, I wouldn't care so much had they just not touted their `SessionVar`, and, also making the wording such that "oh, you'd do this crappy approach *in Java*", when, no, Java can have a `SessionVar` abstraction just as well as Scala/Lift can.
 
 I don't mention this because I have a chip on my shoulder about Scala. I actually really like Scala. But I do have a chip on my shoulder about the last 10 years of people bitching about how crappy Java is when really the problem with Java is not some inherent flaw but instead the self-inflicted complexity J2EE devs love foisting on their projects.
 
-Anyway, build-time code generation really isn't that bad. It just needs to be easy to run, fast, and not produce crap code.
+Anyway, build-time code generation really isn't that bad. It just needs to be easy to run (automatic if possible), fast, and not produce crap code.
 
 I'd love to see Lift, or some other Java/Scala project, pick up this approach and run with it.
 

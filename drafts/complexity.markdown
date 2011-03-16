@@ -1,3 +1,7 @@
+---
+layout: post
+title: Complexity
+---
 
 Conclusion: Why Do We Subject Ourselves to This
 -----------------------------------------------
