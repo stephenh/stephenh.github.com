@@ -1,3 +1,7 @@
+---
+layout: post
+title: ORM
+---
 
 * Implicit save--as soon as an instance is touched
 * Implicit percolation
