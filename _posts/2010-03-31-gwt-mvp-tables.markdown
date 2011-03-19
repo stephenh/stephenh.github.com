@@ -7,7 +7,7 @@ title: GWT MVP Tables
 
 ---
 
-**Update 2010/11/30**: I've added updated docs for both [row tables](http://www.gwtmpv.org/rowtable.html) and [cell tables](http://www.gwtmpv.org/celltable.html) on the gwt-mpv website.)
+**Update 2010/11/30**: I've added docs for two approaches to GWT MVP tables: [row tables](http://www.gwtmpv.org/rowtable.html) and [cell tables](http://www.gwtmpv.org/celltable.html) in gwt-mpv. ([gwt-mpv](http://www.gwtmpv.org) is a framework to reduce the MVP boilerplate I complained about in this post.)
 
 I'm building a GWT application and, per the latest [best practices](http://code.google.com/events/io/2009/sessions/GoogleWebToolkitBestPractices.html), using a MVP (model view presenter) approach.  
 
