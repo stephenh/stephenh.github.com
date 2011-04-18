@@ -240,7 +240,8 @@ For more reading on CQS/CQRS, I suggest:
 
 * Both the [Wikipedia](http://en.wikipedia.org/wiki/Command-query_separation) article and Martin Fowler's [CommandQuerySeparation](http://www.martinfowler.com/bliki/CommandQuerySeparation.html), however they focus on CQS as applied to OO, e.g. side-effect free vs. mutating method calls.
 
-* For CQS applied to services, e.g. CQRS, [Udi Dahan](http://www.udidahan.com/2009/12/09/clarified-cqrs/) seems to be one of the first advocates of the term. Since then, CQRS even seems to have it's own [site](http://cqrsinfo.com/) and [google group](http://groups.google.com/group/dddcqrs).
+* For CQS applied to services, e.g. CQRS, [Udi Dahan](http://www.udidahan.com/2009/12/09/clarified-cqrs/) seems to be one of the first advocates of the term. Since then, CQRS even seems to have its own [site](http://cqrsinfo.com/) and [google group](http://groups.google.com/group/dddcqrs).
 
+(Note: this post was also cross-posted on the Bizo [dev blog](http://dev.bizo.com). If you're interested in more posts on AWS/Java/Scala problems, you should check it out.)
 
 
