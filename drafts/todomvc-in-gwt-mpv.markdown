@@ -33,7 +33,7 @@ And if you want to follow along in the source while reading this post, the sourc
 Models
 ------
 
-To start with, both the JS implementation and the gwt-mpv implementation rely heavily on event-driven models of both simple properties (booleans, strings, etc.) and lists (adds, removes, changes).
+To start with, both the JS implementations and the gwt-mpv implementation rely heavily on event-driven models of both simple properties (booleans, strings, etc.) and lists (adds, removes, changes).
 
 Each JS framework does this slightly differently, but knockout has a clear usage:
 
@@ -60,16 +60,41 @@ So, `viewModel.todos` changes when something is added/removed, then `viewModel.r
 
 I think this style of declaratively settings up view/model bindings is the key to doing non-trivial AJAX applications without loosing your functionality (or sanity, whichever is less important) to growing balls of spaghetti code. Changing the model should lead to the view updates just working.
 
-In the gwt-mpv port, this is achieved slightly differently, although the affect is the same:
+In the gwt-mpv port, this is achieved slightly differently, although the affect is the same.
 
-In the [StatsTodoPresenter](https://github.com/stephenh/todomvc-gwtmpv/blob/master/src/main/java/org/gwtmpv/todomvc/client/app/StatsTodoPresenter.java#L36), this shows/hides the stats automatically on model changes:
+Instead of traditional Java primitive fields + getters/setters, gwt-mpv models have property objects, e.g. in the [Todo](https://github.com/stephenh/todomvc-gwtmpv/blob/master/src/main/java/org/gwtmpv/todomvc/client/model/Todo.java) object:
+
+    public class Todo {
+      public final BooleanProperty done = booleanProperty("done", false);
+      public final StringProperty name = stringProperty("name");
+
+      public Todo(String name) {
+        this.name.set(name);
+      }
+    }
+{: class=brush:java}
+
+And model objects can be put into lists, e.g. in [AppState](https://github.com/stephenh/todomvc-gwtmpv/blob/master/src/main/java/org/gwtmpv/todomvc/client/model/AppState.java):
+
+    public class AppState {
+      public final ListProperty<Todo> allTodos = listProperty("allTodos");
+{: class=brush:java}
+
+So that then the view can be bound to these models, e.g. in [StatsTodoPresenter](https://github.com/stephenh/todomvc-gwtmpv/blob/master/src/main/java/org/gwtmpv/todomvc/client/app/StatsTodoPresenter.java), this shows/hides the stats automatically when the list model changes:
 
     binder.when(state.allTodos.size()).is(0).hide(view.stats());
 {: class=brush:java}
 
-Where `allTodos` is a `ListProperty` model object and the `binder.when` call is a DSL to setup common "when this, do that" bindings.
+And views can be added/removed to a `ul` when a list model changes, e.g. in [ListTodoPresenter](https://github.com/stephenh/todomvc-gwtmpv/blob/master/src/main/java/org/gwtmpv/todomvc/client/app/ListTodoPresenter.java):
 
-Derived properties are done the same way as knockout:
+    binder.bind(state.allTodos).to(this, view.ul(), new ListPresenterFactory<Todo>() {
+      public Presenter create(Todo todo) {
+        return new ListTodoItemPresenter(state, todo);
+      }
+    });
+{: class=brush:java}
+
+Derived properties are done the same way as knockout, e.g. in [AppState](https://github.com/stephenh/todomvc-gwtmpv/blob/master/src/main/java/org/gwtmpv/todomvc/client/model/AppState.java#L18):
 
     numberLeft = integerProperty(new DerivedValue<Integer>() {
       public Integer get() {
@@ -79,8 +104,6 @@ Derived properties are done the same way as knockout:
 {: class=brush:java}
 
 gwt-mpv doesn't implement knockout's crazy (cool) auto-detection of dependent properties, hence having to call `depends(allTodos, doneTodos)` to explicitly set them. I'm on the fence about whether the magic to do this is worth implementing, but it's definitely pretty cool.
-
-Also, gwt-mpv doesn't yet have a way to declaratively sync a `ListProperty` to view objects. Many of the JS frameworks do: you add a new object to the list, and the bound view auto-adds a new todo line. This requires a [small amount of boilerplate](https://github.com/stephenh/todomvc-gwtmpv/blob/master/src/main/java/org/gwtmpv/todomvc/client/app/ListTodoPresenter.java#L34) right now that would be nice to clean up.
 
 So, that's similarities; basically, yay for the model.
 
@@ -140,7 +163,7 @@ Which means that it's the responsibility of the presenter logic to later toggle 
 
 This has two affects:
 
-1. The conditional logic is not within the view, but in the presenter, which can be unit tested (discussed later)
+1. The conditional logic is not within the template, but in the presenter, which can be unit tested without rendering (discussed later)
 
 2. In GWT, you rarely re-render parts of the page to affect change, instead you just mutate the existing DOM (...unless using GWT's Cell widgets, which are for bulk display for tables/lists, but are exceptions).
 
@@ -200,7 +223,7 @@ In GWT, we use regular, old-school anonymous event listeners:
     });
 {: class=brush:java}
 
-Although this can sometimes be cleaned up by using the binder DSL:
+Although if you're just updating a model, this can be cleaned up by using the binder DSL:
 
     binder.bind(done).to(view.checkBox());
 {: class=brush:java}
@@ -260,7 +283,7 @@ And then goes right into testing features:
 
 The `type` method (naively) emulates a user typing into the "new todo" text box. `keyDown` is the enter key being pressed. And then we can assert our model was changed, and the new model object created with the right name.
 
-There are 29 other tests like this I wrote awhile porting todomvc. They run in 1/10th of a second, no selenium, no browser, etc.
+There are 30 other tests like this I wrote awhile porting todomvc. They run in 1/10th of a second, no selenium, no browser, etc.
 
 Which, to me, actually makes it feasible to develop your UI logic in a TDD fashion.
 
