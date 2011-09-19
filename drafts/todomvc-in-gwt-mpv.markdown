@@ -110,7 +110,7 @@ So, that's similarities; basically, yay for the model.
 Components
 ----------
 
-While most of the JS implementations have a single HTML file, a single CSS file, and a single application JS file, GWT is very component-oriented, which leads to a more spread-out project structure. The files for the todomvc port are:
+While most of the JS implementations have a single HTML file, a single CSS file, and a single application JS file, GWT is very component-oriented, which leads to a more spread-out project structure. The primary files for the todomvc port are (in the [app](https://github.com/stephenh/todomvc-gwtmpv/tree/master/src/main/java/org/gwtmpv/todomvc/client/app) and [views](https://github.com/stephenh/todomvc-gwtmpv/tree/master/src/main/java/org/gwtmpv/todomvc/client/views) packages):
 
 * `App.ui.xml` + `AppPresenter` for just the high-level layout
 * `CreateTodo.ui.xml` + `CreateTodoPresenter` for the top "new todo" portion
