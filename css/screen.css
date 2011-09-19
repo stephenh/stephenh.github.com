@@ -16,6 +16,10 @@ body {
     padding-bottom: 1em;
 }
 
+h1 {
+    font-size: 1.75em;
+}
+
 h1#blog-title {
     margin: 0.1em;
 }
