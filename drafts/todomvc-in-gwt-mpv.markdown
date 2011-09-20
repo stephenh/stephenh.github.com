@@ -1,5 +1,5 @@
 ---
-layout: post
+layout: draft
 title: todomvc in gwt-mpv
 ---
 
