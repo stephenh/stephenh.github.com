@@ -35,25 +35,18 @@ And if you want to follow along in the source while reading this post, the sourc
 Project Layout
 --------------
 
+The gwt-mpv todo implementation uses an idiomatic Java/GWT layout. The primary packages are:
 
+* [org.gwtmpv.todomvc.client.app](https://github.com/stephenh/todomvc-gwtmpv/tree/master/src/main/java/org/gwtmpv/todomvc/client/app) for presenters,
+* [org.gwtmpv.todovmc.client.model](https://github.com/stephenh/todomvc-gwtmpv/tree/master/src/main/java/org/gwtmpv/todomvc/client/model) for models, and
+* [org.gwtmov.todomvc.client.views](https://github.com/stephenh/todomvc-gwtmpv/tree/master/src/main/java/org/gwtmpv/todomvc/client/views) for view templates.
 
-
-While most of the JS implementations have a single HTML file, a single CSS file, and a single application JS file, GWT is very component-oriented, which leads to a more spread-out project structure. The primary files for the todomvc port are (in the [app](https://github.com/stephenh/todomvc-gwtmpv/tree/master/src/main/java/org/gwtmpv/todomvc/client/app) and [views](https://github.com/stephenh/todomvc-gwtmpv/tree/master/src/main/java/org/gwtmpv/todomvc/client/views) packages):
-
-* `App.ui.xml` + `AppPresenter` for just the high-level layout
-* `CreateTodo.ui.xml` + `CreateTodoPresenter` for the top "new todo" portion
-* `ListTodo.ui.xml` + `ListTodoPresenter` for the list of todos
-* `ListTodoItem.ui.xml` + `ListTodoItemPresenter` for each item in the list of todos
-* `TodoStats.ui.xml` + `StatsTodoPresenter` for the "left" count and "clear" link
-
-Each part of functionality has its own template view file, its own presenter, its own unit test, and can be comprehended on its own without, for the most part, knowing how the rest of the application works.
-
-While initially all these separate files might seem excessive for a small application, it means there is an inherent structure that will scale well as your application grows.
+For a small application like the todo app, having multiple files is likely harder to follow than the JS implementations, which typically have just one JS file + CSS file. However, this approach works best for GWT and means you already have a good setup if your project grows larger.
 
 Models
 ------
 
-To start with, all the UI frameworks define models for the domain objects involved. In gwt-mpv, this is done simply with a [Todo](https://github.com/stephenh/todomvc-gwtmpv/blob/master/src/main/java/org/gwtmpv/todomvc/client/model/Todo.java) class:
+To start with, all rich UI frameworks typically define models for the domain objects involved. In gwt-mpv, this is done simply with a [Todo](https://github.com/stephenh/todomvc-gwtmpv/blob/master/src/main/java/org/gwtmpv/todomvc/client/model/Todo.java) class:
 
     public class Todo {
       public final BooleanProperty done = booleanProperty("done", false);
@@ -69,8 +62,10 @@ Instead of traditional Java fields + getters/setters, gwt-mpv models have proper
 
 You can also have lists of model objects, which fire events when items are added/removed to the list, e.g. in [AppState](https://github.com/stephenh/todomvc-gwtmpv/blob/master/src/main/java/org/gwtmpv/todomvc/client/model/AppState.java):
 
-    public final ListProperty<Todo> allTodos = listProperty("allTodos");
-    public final ListProperty<Todo> doneTodos = listProperty("doneTodos");
+    public class AppState {
+      public final ListProperty<Todo> allTodos = listProperty("allTodos");
+      public final ListProperty<Todo> doneTodos = listProperty("doneTodos");
+    }
 {: class=brush:java}
 
 As with the JS frameworks, gwt-mpv also supports derived properties, e.g. in [AppState](https://github.com/stephenh/todomvc-gwtmpv/blob/master/src/main/java/org/gwtmpv/todomvc/client/model/AppState.java#L18):
@@ -82,10 +77,12 @@ As with the JS frameworks, gwt-mpv also supports derived properties, e.g. in [Ap
     }).depends(allTodos, doneTodos);
 {: class=brush:java}
 
+gwt-mpv models can also do validation of properties (required, length checks, etc.), but that wasn't needed for the todo application.
+
 Views
 -----
 
-gwt-mpv's views build on GWT's [UiBinder](http://code.google.com/webtoolkit/doc/latest/DevGuideUiBinder.html), which uses HTML-like XML to layout your application. The main distinguishing feature of UiBinder is that it lacks any logic (either behavior or data binding) in the view--there are no `<% if (...) %>` tags or `ng:data-bind="..."` attributes.
+gwt-mpv's views build on GWT's [UiBinder](http://code.google.com/webtoolkit/doc/latest/DevGuideUiBinder.html), which uses HTML-like XML to layout your application. The main distinguishing feature of UiBinder is that it lacks any logic (either behavior or data binding) in the view--there are no `<% if (...) %>` tags or `data-bind="..."` attributes.
 
 For example, [ListTodoItem.ui.xml](https://github.com/stephenh/todomvc-gwtmpv/blob/master/src/main/java/org/gwtmpv/todomvc/client/views/ListTodoItem.ui.xml#L76):
 
@@ -121,7 +118,7 @@ Some GWT specifics aside (widgets, etc.), this is basically HTML. A few things t
 
 The main feature that gwt-mpv provides for views is generating derivative artifacts from the `ui.xml` files. In the MVP pattern, presenters code against an abstract `IsXxxView` interface, and then UiBinder needs a `XxxViewImpl` Java class, but gwt-mpv can derive both of these from the `ui.xml` file.
 
-For an example, `IsListTodoItemView` looks like:
+For an example, the generated `IsListTodoItemView` looks like:
 
     interface IsListTodoItemView extends IsWidget {
       IsHTMLPanel li();
@@ -135,7 +132,7 @@ For an example, `IsListTodoItemView` looks like:
     }
 {: class=brush:java}
 
-We'll cover this more later when talking about testing.
+Where each `ui:field`-annotated element/widget in the `ui.xml` file is exposed, but only as an abstract `IsXxx` interface which themselves can be substituted for fake DOM-less versions at test time. We'll cover this more later when talking about testing.
 
 Presenters
 ----------
@@ -191,16 +188,16 @@ Finally, looking at [ListTodoPresenter](https://github.com/stephenh/todomvc-gwtm
     });
 {: class=brush:java}
 
-Hopefully you can see that, besides view boilerplate generation, rich models and a fluent binding DSL are the other main strengths gwt-mpv brings to the table to succinctly, declaratively wire together your application's behavior.
+Hopefully you can see that, besides view boilerplate reduction, rich models and a fluent binding DSL are the other main strengths gwt-mpv brings to the table to succinctly, declaratively wire together your application's behavior.
 
 Testing
 -------
 
 Finally, the reason for the extra abstraction of the Model View Presenter architecture, it is now ridiculously easy to test your model and presenter logic without the DOM.
 
-For the todomvc port, this means we can test the "new todo" functionality by:
+For the todomvc port, this means we can test the "add a new todo" functionality by:
 
-1. Setting up a test model
+1. Setting up a test list model
 2. Instantiating the presenter to test
 3. Retrieving the stub (no DOM) view implementation (which is generated by gwt-mpv from the `ui.xml` template file) that has fake versions of each of our components
 
@@ -248,9 +245,20 @@ So, it's not perfect. But if you had to choose:
 
 I think it's a fair assertion you're much better off with the former.
 
+Comparison with JS Frameworks
+-----------------------------
 
+Reading through the various JS implementations of the todo app, and gwt-mpv's implementation, it's encouraging to see that they are all trying to do basically the same thing: use event-driven models and views to wire together a rich client.
 
-So, the backbone implementation includes templates like this:
+I think this approach of declaratively setting up view/model bindings is the key to doing non-trivial AJAX applications without loosing your functionality (or sanity, whichever is less important) to growing balls of spaghetti code. Changing the model should lead to the view updates just working.
+
+That being said, each framework does things slightly differently. Here I'll briefly cover how GWT/gwt-mpv is different.
+
+### Templates
+
+GWT's `ui.xml` files seem like the most static/most dumb view templates. Whether this is good or bad is personal preference, although I like it because I think it forces as much view logic as possible into the presenter.
+
+Some JS frameworks, like backbone, use more server-side-style templates:
 
     <script type="text/template" id="item-template">
       <div class="todo <%= done ? 'done' : '' %>">
@@ -266,62 +274,51 @@ So, the backbone implementation includes templates like this:
     </script>
 {: class=brush:html}
 
-Note the conditional `done` class and `checked` attributes.
+Where others use data-binding attributes, like knockout:
 
+    <script id="todoitemtemplate" type="text/html">
+      <li data-bind="css: {editing: editing}">
+        <div data-bind="attr: { class : done() ? 'todo done' : 'todo'}">
+          <div class="display">
+            <input class="check" type="checkbox" data-bind="checked: done" />
+            <div class="todo-content" data-bind="text: content, click: edit" style="cursor: pointer;"></div>
+            <span class="todo-destroy" data-bind="click: viewModel.remove"></span>
+          </div>
+          <div class="edit">
+            <input class="todo-input" type="text" data-bind="value: content, event: { keyup: editkeyup, blur: stopEditing }"/>
+          </div>
+        </div>
+      </li>
+    </script>
+{: class=brush:html}
 
+These approaches typically require rendering the DOM elements to test the view logic. I generally think this is a bad thing, although I was surprised to learn that, if you avoid the traditional Selenium/etc., approaches, in-browser DOM testing can be [quite fast](http://tinnedfruit.com/2011/04/26/testing-backbone-apps-with-jasmine-sinon-3.html) these days.
 
+Also with templates, in GWT you rarely re-render parts of the page to show changes, instead you just mutate the existing DOM (...unless using GWT's Cell widgets, which are for bulk display for tables/lists, but are exceptions). Some JS frameworks re-render, some don't, but in general I'm a fan of not re-rendering.
 
-
-I think this style of declaratively settings up view/model bindings is the key to doing non-trivial AJAX applications without loosing your functionality (or sanity, whichever is less important) to growing balls of spaghetti code. Changing the model should lead to the view updates just working.
-
-In gwt-mpv, this is achieved slightly differently, although the effect is the same.
-
-
-
-
-So, that's similarities; basically, yay for the model.
-
-
-Templates
----------
-
-Which means that it's the responsibility of the presenter logic to later toggle the CSS classes, etc. when needed.
-
-This has two affects:
-
-1. The conditional logic is not within the template, but in the presenter, which can be unit tested without rendering (discussed later)
-
-2. In GWT, you rarely re-render parts of the page to affect change, instead you just mutate the existing DOM (...unless using GWT's Cell widgets, which are for bulk display for tables/lists, but are exceptions).
-
-   Avoiding re-rending is, in my opinion, more amenable to a rich, component-based UI because then your components (which have state) aren't having their underlying DOM elements constantly swept out from under them.
+Avoiding re-rending is, in my opinion, more amenable to a rich, component-based UI because then your components (which have state) aren't having their underlying DOM elements constantly swept out from under them.
    
-   This may not be an issue when re-rendering tiny, leaf parts of the DOM, but as you work your way up in the DOM of your complex app, I think it would become harder to remember all the state needed to faithfully re-render things from scratch (like the checked state in the above backbone example).
+This may not be an issue when re-rendering tiny, leaf parts of the DOM, but as you work your way up in the DOM of a complex app, I think it would become harder to remember all the state needed to faithfully re-render things from scratch (like the checked state in the above backbone example).
 
-   I can see where the sentiment of "eh, just re-render" comes from. Having been a server-side web developer, I certainly miss the simplicity of the "each response is a clean slate" model. And re-rendering entire parts of the page certainly worked well for Rails, albeit it was still doing rendering on the server-side. However, I don't think it is as good of a conceptual fit on a stateful client.
+I can see where the sentiment of "eh, just re-render" comes from. Having been a server-side web developer, I certainly miss the simplicity of the "each response is a clean slate" model. And re-rendering entire parts of the page certainly worked well for Rails, albeit it was still doing rendering on the server-side. However, I don't think it is as good of a conceptual fit on a stateful client.
 
-A few other notes about GWT's templates:
+### No Selectors
 
+In GWT, you typically already have references to the DOM objects you want to mutate (albeit usually encapsulated by widgets), so you rarely, if ever, need selectors.
 
-No Selectors
-------------
-
-This is probably a bigger difference than the templates, but somewhat derives from it.
-
-In GWT, because it is component based, you nearly always already have references to the DOM objects you want to mutate, albeit usually encapsulated by GWT's widgets.
-
-Let's see what I mean. In the backbone implementation, to update a list item's text when it changes, the code uses a selector to reach out and grab the text box:
+The is different than most of the JS frameworks. For example, in the backbone implementation, to update a list item's text when it changes, the code uses a selector to reach out and grab the text box:
 
     this.$('.todo-content').text(content);
 {: class=brush:jscript}
 
-Where as in the [ListTodoItemPresenter](https://github.com/stephenh/todomvc-gwtmpv/blob/master/src/main/java/org/gwtmpv/todomvc/client/app/ListTodoItemPresenter.java#L66), the view kept a reference to the text box while building itself (done by UiBinder), so now we can just call it:
+Where as in the [ListTodoItemPresenter](https://github.com/stephenh/todomvc-gwtmpv/blob/master/src/main/java/org/gwtmpv/todomvc/client/app/ListTodoItemPresenter.java#L66), the view kept a reference to the DOM element while building itself (done by UiBinder), so now we can just call it directly:
 
     view.content().setText(view.editBox().getText());
 {: class=brush:java}
 
 (The `content()` method is just a getter than returns the view's `content` field, which is a GWT Label component, which just wraps a DOM `div` tag.)
 
-The same thing for event handling--while backbone uses selectors for event listening:
+Several of the JS frameworks also like to use selectors for event handling, again backbone:
 
     events: {
       "click .check"              : "toggleDone",
@@ -331,7 +328,7 @@ The same thing for event handling--while backbone uses selectors for event liste
     },
 {: class=brush:jscript}
 
-In GWT, we use regular, old-school anonymous event listeners:
+Where as GWT typically uses old-school anonymous inner classes:
 
     view.newTodo().addKeyDownHandler(new KeyDownHandler() {
       public void onKeyDown(KeyDownEvent event) {
@@ -345,7 +342,7 @@ Although if you're just updating a model, this can be cleaned up by using the bi
     binder.bind(done).to(view.checkBox());
 {: class=brush:java}
 
-Avoiding selectors has a few up-shots:
+Even though anonymous inner classes are not the most awesome thing ever, avoiding selectors has a few up-shots:
 
 1. Your code more exactly denotes the elements it will change.
 
@@ -355,7 +352,7 @@ Avoiding selectors has a few up-shots:
 
 2. Your application doesn't have to worry about selectors from various components overlapping each other.
 
-   DOM selectors inherently execute against the entire, global DOM. In a large, structured application, this is less-than-ideal, both for performance and separation of concerns.
+   Naive DOM selectors will select against the global DOM, which in a large, complex application is less-than-ideal. Better selectors will start with the component's subtree of the DOM, and even better selectors will not continue searching within the component's nested children components.
 
 3. Testing is easier because you don't need a fake DOM to run the selectors against. More on testing below, but if your code mutates explicit references, it's easier for tests to fake these references out at test time.
 
@@ -366,15 +363,14 @@ However, for full-page AJAX applications, when 95%+ of the page is rendered clie
 Disclaimers
 -----------
 
-* Per my earlier link to Ray Ryan's 2009 I/O talk, I can't take credit for the DOM-less testing approach. gwt-mpv, and several other frameworks within the GWT sphere, are just running with a great idea.
+* Per my earlier link to Ray Ryan's 2009 Google I/O talk, I can't take credit for the DOM-less testing approach. gwt-mpv, and several other frameworks within the GWT sphere, are just running with a great idea.
 
-* I used a global [AppState](https://github.com/stephenh/todomvc-gwtmpv/blob/master/src/main/java/org/gwtmpv/todomvc/client/model/AppState.java) class to share the `ListProperty`s across presenters. Some GWT developers would probably lobby for even more decoupling by passing messages on an `EventBus`, but that seemed like overkill for this app.
+* In the todo application, I used a global [AppState](https://github.com/stephenh/todomvc-gwtmpv/blob/master/src/main/java/org/gwtmpv/todomvc/client/model/AppState.java) class to share the `ListProperty`s across presenters. Some GWT developers would probably lobby for even more decoupling by passing messages on an `EventBus`, but that seemed like overkill for this app.
 
 * The original CSS was in one massive file, and I may have butchered it when moving it into each component. It looks fine in Chrome, but YMMV.
 
 * Yes, Java isn't cool anymore, but [scala-gwt](http://scalagwt.github.com/) is another project I contribute to which would make everything more terse when it ships, although it looks like we'll have to start on scala-dart here pretty soon.
 
-As far as I can tell, this isn't possible yet with the JS frameworks. They may decouple the model, but view logic is still strongly coupled to the DOM. (Not because it's impossible, but because none of the frameworks have built the necessary abstractions yet.)
 
 
 
