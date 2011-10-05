@@ -191,7 +191,7 @@ In Heron
 
 [Heron](http://code.google.com/p/heron-language/) is an interesting language that takes a caller-side approach to structural typing. It is not actually a JVM language, but his caller-side approach is something I like, so I thought I'd include it.
 
-The author of Heron also wrote a very good article, [Explicit Structural Typing](http://dobbscodetalk.com/index.php?option=com_myblog&show=Explicit-Structural-Typing-Duck-Typing-.html&Itemid=29), that covers these same structural typing ideas and terminology better than I do.
+The author of Heron also wrote a very good article, [Explicit Structural Typing](http://drdobbs.com/blogs/architecture-and-design/228701413), that covers these same structural typing ideas and terminology better than I do.
 
 So, Heron implements *explicit* *caller-side* structural typing. You can see the explicit syntax in its [unit test](http://code.google.com/p/heron-language/source/browse/trunk/HeronEngine/tests/TestDuckTyping.heron), or, in our example, it looks like:
 
