@@ -21,7 +21,7 @@ In my experience, pre-assertion waiting in tests is not ideal. They're verbose, 
 
 Instead, I think a good goal for functional UI tests is to **never have explicit wait lines** in your test methods. If you can pull this off, I think the resulting tests will be more readable, more reliable, and more resilient to change.
 
-To accomplish this goal, on my last few projects, I've been using two tricks that, in tandem, work really well:
+To accomplish this, I've been using two tricks that, in tandem, work really well:
 
 1. Reintroduce the concept of "page loading"
 2. Use post-action waiting instead of pre-assertion waiting
@@ -30,21 +30,36 @@ And also a heavy dose of [Page Objects](http://code.google.com/p/selenium/wiki/P
 
 So, let's see what this looks like.
 
+Reintroduce "page loading"
+--------------------------
+
 First: reintroduce page loading. Not real page loading, obviously. But what was Web 1.0 page loading useful for? Knowing when the browser is waiting on the server. AJAX calls are the same thing--talking to the server. We just need to make it explicit and visible to Selenium.
 
-There are a variety of ways of doing this, but you basically need a choke point in your application where all AJAX requests go through. Before any AJAX request goes out, increment a variable, put its value into a hidden `div` tag, and then when the AJAX response comes back, decrement the variable, and again update the `outstanding` div.
+There are a variety of ways of doing this, but you basically need a choke point in your application where all AJAX requests go through. Then:
+
+1. Before any AJAX request goes out, increment an `outstanding` variable
+2. Put the value of `outstanding` into a hidden `div` tag
+3. When the AJAX response comes back, decrement `outstanding` variable
+4. Again put the value of `outstanding` into the hidden `div`
+
+Now Selenium has the ability to see the application's "loading" state:
+
+* If `outstanding.innerText == "0"`, all things are good, continue the test
+* If `outstanding.innerText != "0"`, the application is waiting, block the test
 
 I don't have any JavaScript code to show how this works, as I do all my client-side programming in GWT, so use a [gwt-dispatch](http://code.google.com/p/gwt-dispatch/)-style approach that broadcasts AJAX events on an `EventBus`, which then [OutstandingWatcher](https://github.com/stephenh/gwt-mpv/blob/master/user/src/main/java/org/gwtmpv/util/OutstandingWatcher.java) listens for and maintains the `outstanding` div appropriately.
 
 For JQuery/etc., something in [Extending AJAX](http://api.jquery.com/extending-ajax/) would probably work. It's probably 10-20 lines of code.
 
-Anyway, once you have this in place, you've basically got page loads back--any time an AJAX request is in-flight, Selenium can know about it by watching if `outstanding != 0`. E.g. with their new `ExpectedConditions`, it might look like:
+Anyway, once you have this in place, you've basically got page loads back--any time an AJAX request is in-flight, Selenium can know about it by watching if `outstanding != 0`. E.g. with Selenium's new `ExpectedConditions` API, it might look like:
 
     /** Waits until all async calls are complete. */
     public static ExpectedCondition<Boolean> outstanding() {
       return new ExpectedCondition<Boolean>() {
         public Boolean apply(final WebDriver from) {
-          final String outstanding = from.findElement(By.id("outstanding")).getText();
+          final String outstanding = from
+            .findElement(By.id("outstanding"))
+            .getText();
           return "0".equals(outstanding);
         }
       };
@@ -58,42 +73,57 @@ So, then you could use this in a test like:
     assertErrorIs(...);
 {: class=brush:java}
 
-Which brings us right to the second trick: the test is now doing **post-action** waiting. And not only is it post-action, but it's **generic**. This has several nice benefits:
+Post-Action Waiting
+-------------------
 
-* It doesn't matter whatever the action was doing while the request was in-flight--spinning a wheel for the user, or even doing nothing at all, but our waiting code can still see `outstanding != 0` and always just works.
+Which brings us right to the second trick: the test is now doing **post-action** waiting. And not only is it post-action, but it's **generic waiting**. This has several nice benefits:
 
-* It doesn't matter what we're going to assert after this, so we don't need to worry about the `outstanding()` wait breaking if we change the applications behavior (e.g. in contrast, a naive pre-assertion wait might be `waitForPresent('theErrorDiv')`, but that will be different depending on what we need to assert.
+* It doesn't matter whatever the application was doing while the request was in-flight--spinning a wheel for the user, doing nothing at all, whatever--Selenium can always look for `outstanding != 0` and just work.
+
+* It doesn't matter what the test is going to assert after this, so we don't need to worry about all of our tests' wait logic breaking if we change the application's behavior.
+
+Basically, we're back to the convenience of Web 1.0 applications--we have an automatic, reliable way of keeping the browser and test in sync with each other.
+
+Page Objects
+------------
 
 So, that's the core of the approach. I think this just by itself will work quite well and, in my opinion, better than pre-assertion/per-assertion waiting approaches.
 
-However, I've also been going one step further and, with my own [pageobjects](https://github.com/stephenh/pageobjects) implementation, centralizing the waiting declarations within the page objects themselves. So, I might have:
+However, I've also been going one step further and, with my [pageobjects](https://github.com/stephenh/pageobjects) implementation, centralizing the waiting declarations within the page objects themselves. So, I might have:
 
     // each page/fragment in the app has an XxxPage class
-    class AjaxPage extends AbstractPageObject {
+    class EmployeePage extends AbstractPageObject {
       // each element on the page has a field of XxxObject
-      public ButtonObject submit = new ButtonObject("submitId")
+      public TextBoxObect name = new TextBoxObect("employeeName");
+
+      // fluently add `outstanding` to submit
+      public ButtonObject submit = new ButtonObject("submit")
         .afterClickWaitFor(outstanding());
+
       // cstr, other fields...
     }
 {: class=brush:java}
 
-The `afterClickWaitFor` means there is just *one place* in all of the functional tests that says "after this button is clicked, we probably have to wait for the server". Very [DRY](http://c2.com/cgi/wiki?DontRepeatYourself).
+The `afterClickWaitFor` means there is just *one place* in all of the functional tests that says "after this button is clicked, we will probably have to wait for the server".
 
-The tests themselves can now look like:
+So the test can now look even simpler, with no mention of waiting:
 
-    ajaxPage.submit.click();
+    employeePage.submit.click();
     assertErrorIs(...);
 {: class=brush:java}
 
-And if you're extra spiffy, you might even encapsulate the error gathering logic into the `AjaxPage` as well, so then you're test is:
+And if you're extra spiffy, you might even encapsulate the error gathering logic into the `EmployeePage` as well, so then you're test is:
 
-    ajaxPage.submit.click();
-    assertThat(ajaxPage.getErrors(), contains("..."));
+    employeePage.submit.click();
+    assertThat(employeePage.getErrors(), contains("..."));
 {: class=brush:java}
 
-To me, this is a pretty nice test to read. No explicit waiting, pretty high level (the ids/lookup logic is in the `PageObject`/`ButtonObject`). It's probably not as flowing as a [GooS](http://www.growing-object-oriented-software.com/)-style functional test, which are awesome, but personally I find this level of abstraction to be a sweet spot in the trade off between effort and benefit.
+To me, this is a pretty nice test to read. No explicit waiting, pretty high level (the ids/lookup logic are encapsulated in the page objects). It's probably not as flowing as a [GooS](http://www.growing-object-oriented-software.com/)-style functional tests, which are awesome, but personally I find this level of abstraction to be a sweet spot in the trade off between effort and benefit.
 
-The one large disclaimer to this approach is that I haven't had to deal with a lot of animation--all of my waiting really is on the server, and then things in the UI are generally displayed right away (within the same event loop that services that AJAX response).
+Disclaimer
+----------
+
+The one large disclaimer to this approach is that I haven't had to deal with a lot of animation--all of my waiting really is on the server, and then things in the UI are generally displayed right away (within the same event loop that services the AJAX response).
 
 If you're doing anything with `setTimeout`, e.g. animation or progressive calculations, then you'll probably have to fall back to pre-assertion waiting. Although hopefully you could find a wait to encapsulate it into a page object, perhaps some sort of `beforeAssertionWaitFor` method (which doesn't exist yet).
 
