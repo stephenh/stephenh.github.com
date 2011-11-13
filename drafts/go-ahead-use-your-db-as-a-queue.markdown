@@ -63,7 +63,7 @@ When I want to enqueue work, I want the strongest guarantee that the queue will 
 
 So, I want enqueues to just work, which means the queue should *always* be available. If it's not, I'm back at square one, somehow having to ensure enqueues aren't dropped when the queue is unavailable. This means somehow persistently writing to local disk, having enqueues recovered on machine failure, etc., and a lot of extra work.
 
-(Admittedly, an alternative if your external queue is unavailable is to fail the entire request, especially any database commits. Then you don't need to worry about dropped enqueues because it will be the user's/caller's responsibility to recognize the entire request failed and try again later. If you can make and enforce this choice, then a separate queue would be okay.)
+(Admittedly, an alternative if your external queue is unavailable is to fail the entire request, especially before any database commits. Then you don't need to worry about dropped enqueues because it will be the user's/caller's responsibility to recognize the entire request failed and try again later. If you can make and enforce this choice, then a separate queue would be okay.)
 
 Instead, I find the simplest, strongest guarantee of availability is to just use your primary application database--it should always be there.
 
@@ -108,12 +108,14 @@ Another thing to consider is implementing your own DaaQ logic/polling, or using 
 
 My general opinion is that if you need potentially lots of workers, using an existing solution is likely a good bet. However, for lighter workloads, there can be an advantage to rolling your own, as you can adapt it to your needs.
 
-For example, one queue I implemented had the feature that if a user had multiple enqueued items, and one failed, the all of the user's work would be put on hold (because items later in the queue depended on the user's items earlier in the queue completing successfully). But items for other users would keep being processed.
+For example, one queue I implemented had the feature that if a user had multiple enqueued items, and one failed, then all of the user's work would be put on hold (because items later in the queue depended on the user's items earlier in the queue completing successfully). But items for other users would keep being processed.
 
 Conclusion
 ----------
 
-So, yeah, tl;dr, use common sense, if database-as-a-queue isn't going to work for your system, then don't use it. But if your situation allows it, I think it's an easy win for a simpler, more robust system.
+So, yeah, tl;dr, use common sense, if database-as-a-queue isn't going to work for your system, then don't use it. I'm sure there are many scenarios where it really is not a good fit.
+
+But if your situation does allow it, then I think it's an easy win for a simpler, more robust system.
 
 [1]: http://it.toolbox.com/blogs/programming-life/a-look-at-using-your-database-as-a-queue-49143
 
