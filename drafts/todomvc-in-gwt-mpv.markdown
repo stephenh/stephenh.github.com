@@ -12,9 +12,14 @@ It is a great way to compare JS frameworks, as [Jérôme Gravel-Niquet](http://j
 
 As a [GWT](http://code.google.com/webtoolkit/) user, I have a slightly different viewpoint on JavaScript application development (eh, it's just assembly...er, [C](http://blog.izs.me/post/10213512387/javascript-is-not-web-assembly)), but I nonetheless agree with these JS frameworks that intelligently structuring AJAX applications is important.
 
-In the GWT world, Model View Presenter has been the hot way to do this [since 2009](http://www.google.com/events/io/2009/sessions/GoogleWebToolkitBestPractices.html), and I've obliged by hacking on [gwt-mpv](http://www.gwtmpv.org) for various apps we're writing at [Bizo](http://www.bizo.com).
+In the GWT world, Model View Presenter has been the hot way to do this [since 2009](http://www.google.com/events/io/2009/sessions/GoogleWebToolkitBestPractices.html), and I've obliged by hacking on [gwt-mpv](http://www.gwtmpv.org), an MVP framework, for various apps we're writing at [Bizo](http://www.bizo.com).
 
-Since gwt-mpv shares a lot of the same ideas and goals as the todomvc JS frameworks, I thought it'd be fun to port todomvc to gwt-mpv as yet another implementation to compare and contrast with the others.
+gwt-mpv shares a lot of the same ideas and goals as the todomvc JS frameworks, namely:
+
+* rich, event-driven models
+* data-binding models to views declaratively
+
+So I thought it'd be fun to port todomvc to gwt-mpv as yet another implementation to compare and contrast with the others.
 
 In doing so, and doing this writeup, I have two goals:
 
@@ -369,7 +374,7 @@ Disclaimers
 
 * The original CSS was in one massive file, and I may have butchered it when moving it into each component. It looks fine in Chrome, but YMMV.
 
-* Yes, Java isn't cool anymore, but [scala-gwt](http://scalagwt.github.com/) is another project I contribute to which would make everything more terse when it ships, although it looks like we'll have to start on scala-dart here pretty soon.
+* Yes, Java isn't cool anymore, but [scala-gwt](http://scalagwt.github.com/) is another project I contribute to which would make everything more terse when it ships.
 
 
 
