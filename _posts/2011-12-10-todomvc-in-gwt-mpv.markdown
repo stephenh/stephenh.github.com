@@ -79,7 +79,7 @@ As with the JS frameworks, gwt-mpv also supports derived properties, e.g. in [Ap
       public Integer get() {
         return allTodos.get().size() - doneTodos.get().size();
       }
-    }).depends(allTodos, doneTodos);
+    });
 {: class=brush:java}
 
 gwt-mpv models can also do validation of properties (required, length checks, etc.), but that wasn't needed for the todo application.
