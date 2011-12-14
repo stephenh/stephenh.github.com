@@ -3,6 +3,7 @@ body {
   margin: 0;
   padding: 0;
   background-color: #F5F5F5;
+  overflow-y: scroll;
 }
 
 #title-outer {
