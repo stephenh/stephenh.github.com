@@ -1,10 +1,12 @@
 ---
 layout: draft
-title: todomvc in gwt-mpv
+title: todomvc in Tessell
 ---
 
 {{page.title}}
 ==============
+
+**Update 2011/12/29:** This post was originally about the gwt-mpv framework, which has since been rechristened Tessell, see [tessell.org](http://www.tessell.org).
 
 Recently I came across [todomvc](https://github.com/addyosmani/todomvc) on HN, a nifty sample application that shows the same "todo app" functionality implemented in a number of different JavaScript UI frameworks.
 
@@ -12,46 +14,46 @@ It is a great way to compare JS frameworks, as [Jérôme Gravel-Niquet](http://j
 
 As a [GWT](http://code.google.com/webtoolkit/) user, I have a slightly different viewpoint on JavaScript application development (eh, it's just assembly...er, [C](http://blog.izs.me/post/10213512387/javascript-is-not-web-assembly)), but I nonetheless agree with these JS frameworks that intelligently structuring AJAX applications is important.
 
-In the GWT world, Model View Presenter has been the hot way to do this [since 2009](http://www.google.com/events/io/2009/sessions/GoogleWebToolkitBestPractices.html), and I've obliged by hacking on [gwt-mpv](http://www.gwtmpv.org), an MVP framework, for various apps we're writing at [Bizo](http://www.bizo.com).
+In the GWT world, Model View Presenter has been the hot way to do this [since 2009](http://www.google.com/events/io/2009/sessions/GoogleWebToolkitBestPractices.html), and I've obliged by hacking on [Tessell](http://www.tessell.org), an MVP framework, for various apps we're writing at [Bizo](http://www.bizo.com).
 
-gwt-mpv shares a lot of the same ideas and goals as the todomvc JS frameworks, namely:
+Tessell shares a lot of the same ideas and goals as the todomvc JS frameworks, namely:
 
 * rich, event-driven models
 * data-binding models to views declaratively
 
-So I thought it'd be fun to port todomvc to gwt-mpv as yet another implementation to compare and contrast with the others.
+So I thought it'd be fun to port todomvc to Tessell as yet another implementation to compare and contrast with the others.
 
 In doing so, and doing this writeup, I have two goals:
 
-* Show GWT developers that gwt-mpv's code generation-driven MVP leads to minimal boilerplate
+* Show GWT developers that Tessell's code generation-driven MVP leads to minimal boilerplate
 * Show JavaScript developers that GWT can be a competent choice for rich-client development
 
 Demo and Code
 -------------
 
-Although it looks just like the other implementations, the gwt-mpv port's code is currently hosted here:
+Although it looks just like the other implementations, the Tessell port's code is currently hosted here:
 
-* [http://todomvc.gwtmpv.org/TodoMvc.html](http://todomvc.gwtmpv.org/TodoMvc.html)
+* [http://todomvc.tessell.org/TodoMvc.html](http://todomvc.tessell.org/TodoMvc.html)
 
 And if you want to follow along in the source while reading this post, the source is on github:
 
-* [https://github.com/stephenh/todomvc-gwtmpv](https://github.com/stephenh/todomvc-gwtmpv)
+* [https://github.com/stephenh/todomvc-tessell](https://github.com/stephenh/todomvc-tessell)
 
 Project Layout
 --------------
 
-The gwt-mpv todo implementation uses an idiomatic Java/GWT layout. The primary packages are:
+The Tessell todo implementation uses an idiomatic Java/GWT layout. The primary packages are:
 
-* [org.gwtmpv.todomvc.client.app](https://github.com/stephenh/todomvc-gwtmpv/tree/master/src/main/java/org/gwtmpv/todomvc/client/app) for presenters,
-* [org.gwtmpv.todovmc.client.model](https://github.com/stephenh/todomvc-gwtmpv/tree/master/src/main/java/org/gwtmpv/todomvc/client/model) for models, and
-* [org.gwtmov.todomvc.client.views](https://github.com/stephenh/todomvc-gwtmpv/tree/master/src/main/java/org/gwtmpv/todomvc/client/views) for view templates.
+* [org.tessell.todomvc.client.app](https://github.com/stephenh/todomvc-tessell/tree/master/src/main/java/org/tessell/todomvc/client/app) for presenters,
+* [org.tessell.todovmc.client.model](https://github.com/stephenh/todomvc-tessell/tree/master/src/main/java/org/tessell/todomvc/client/model) for models, and
+* [org.tessell.todomvc.client.views](https://github.com/stephenh/todomvc-tessell/tree/master/src/main/java/org/tessell/todomvc/client/views) for view templates.
 
 For a small application like the todo app, having multiple files is likely harder to follow than the JS implementations, which typically have just one JS file + CSS file. However, this approach works best for GWT and means you already have a good setup if your project grows larger.
 
 Models
 ------
 
-To start with, all rich UI frameworks typically define models for the domain objects involved. In gwt-mpv, this is done simply with a [Todo](https://github.com/stephenh/todomvc-gwtmpv/blob/master/src/main/java/org/gwtmpv/todomvc/client/model/Todo.java) class:
+To start with, all rich UI frameworks typically define models for the domain objects involved. In Tessell, this is done simply with a [Todo](https://github.com/stephenh/todomvc-tessell/blob/master/src/main/java/org/tessell/todomvc/client/model/Todo.java) class:
 
     public class Todo {
       public final BooleanProperty done = booleanProperty("done", false);
@@ -63,9 +65,9 @@ To start with, all rich UI frameworks typically define models for the domain obj
     }
 {: class=brush:java}
 
-Instead of traditional Java fields + getters/setters, gwt-mpv models have property objects. Property objects fire events when they change, which allows the rest of the application to react accordingly.
+Instead of traditional Java fields + getters/setters, Tessell models have property objects. Property objects fire events when they change, which allows the rest of the application to react accordingly.
 
-You can also have lists of model objects, which fire events when items are added/removed to the list, e.g. in [AppState](https://github.com/stephenh/todomvc-gwtmpv/blob/master/src/main/java/org/gwtmpv/todomvc/client/model/AppState.java):
+You can also have lists of model objects, which fire events when items are added/removed to the list, e.g. in [AppState](https://github.com/stephenh/todomvc-tessell/blob/master/src/main/java/org/tessell/todomvc/client/model/AppState.java):
 
     public class AppState {
       public final ListProperty<Todo> allTodos = listProperty("allTodos");
@@ -73,7 +75,7 @@ You can also have lists of model objects, which fire events when items are added
     }
 {: class=brush:java}
 
-As with the JS frameworks, gwt-mpv also supports derived properties, e.g. in [AppState](https://github.com/stephenh/todomvc-gwtmpv/blob/master/src/main/java/org/gwtmpv/todomvc/client/model/AppState.java#L18):
+As with the JS frameworks, Tessell also supports derived properties, e.g. in [AppState](https://github.com/stephenh/todomvc-tessell/blob/master/src/main/java/org/tessell/todomvc/client/model/AppState.java#L18):
 
     numberLeft = integerProperty(new DerivedValue<Integer>() {
       public Integer get() {
@@ -82,14 +84,14 @@ As with the JS frameworks, gwt-mpv also supports derived properties, e.g. in [Ap
     });
 {: class=brush:java}
 
-gwt-mpv models can also do validation of properties (required, length checks, etc.), but that wasn't needed for the todo application.
+Tessell models can also do validation of properties (required, length checks, etc.), but that wasn't needed for the todo application.
 
 Views
 -----
 
-gwt-mpv's views build on GWT's [UiBinder](http://code.google.com/webtoolkit/doc/latest/DevGuideUiBinder.html), which uses HTML-like XML to layout your application. The main distinguishing feature of UiBinder is that it lacks any logic (either behavior or data binding) in the view--there are no `<% if (...) %>` tags or `data-bind="..."` attributes.
+Tessell's views build on GWT's [UiBinder](http://code.google.com/webtoolkit/doc/latest/DevGuideUiBinder.html), which uses HTML-like XML to layout your application. The main distinguishing feature of UiBinder is that it lacks any logic (either behavior or data binding) in the view--there are no `<% if (...) %>` tags or `data-bind="..."` attributes.
 
-For example, [ListTodoItem.ui.xml](https://github.com/stephenh/todomvc-gwtmpv/blob/master/src/main/java/org/gwtmpv/todomvc/client/views/ListTodoItem.ui.xml#L76):
+For example, [ListTodoItem.ui.xml](https://github.com/stephenh/todomvc-tessell/blob/master/src/main/java/org/tessell/todomvc/client/views/ListTodoItem.ui.xml#L76):
 
     <gwt:HTMLPanel ui:field="li" tag="li" styleName="{style.todo}">
       <div ui:field="displayPanel">
@@ -121,7 +123,7 @@ Some GWT specifics aside (widgets, etc.), this is basically HTML. A few things t
 
    3. The compiler ensures all CSS identifiers are globally unique--if you use `.name` in one `ui.xml` or `css` file, you don't have to worry about it colliding with another `.name` in another `ui.xml` or `css` file.
 
-The main feature that gwt-mpv provides for views is generating derivative artifacts from the `ui.xml` files. In the MVP pattern, presenters code against an abstract `IsXxxView` interface, and then UiBinder needs a `XxxViewImpl` Java class, but gwt-mpv can derive both of these from the `ui.xml` file.
+The main feature that Tessell provides for views is generating derivative artifacts from the `ui.xml` files. In the MVP pattern, presenters code against an abstract `IsXxxView` interface, and then UiBinder needs a `XxxViewImpl` Java class, but Tessell can derive both of these from the `ui.xml` file.
 
 For an example, the generated `IsListTodoItemView` looks like:
 
@@ -144,7 +146,7 @@ Presenters
 
 Presenters are the glue between your model and view. Ideally presenters simply bind the model and view together; but, if needed, they can also implement more complex logic.
 
-An extremely simple presenter is [AppPresenter](https://github.com/stephenh/todomvc-gwtmpv/blob/master/src/main/java/org/gwtmpv/todomvc/client/app/AppPresenter.java), which just assembles the three separate panels of the application:
+An extremely simple presenter is [AppPresenter](https://github.com/stephenh/todomvc-tessell/blob/master/src/main/java/org/tessell/todomvc/client/app/AppPresenter.java), which just assembles the three separate panels of the application:
 
     public class AppPresenter extends BasicPresenter<IsAppView> {
 
@@ -168,7 +170,7 @@ An extremely simple presenter is [AppPresenter](https://github.com/stephenh/todo
     }
 {: class=brush:java}
 
-Obviously usually presenters do a bit more; in the todo app, the most busy presenter is the [ListTodoItemPresenter](https://github.com/stephenh/todomvc-gwtmpv/blob/master/src/main/java/org/gwtmpv/todomvc/client/app/ListTodoItemPresenter.java), which, amongst other things, binds the `todo.name` property to the view:
+Obviously usually presenters do a bit more; in the todo app, the most busy presenter is the [ListTodoItemPresenter](https://github.com/stephenh/todomvc-tessell/blob/master/src/main/java/org/tessell/todomvc/client/app/ListTodoItemPresenter.java), which, amongst other things, binds the `todo.name` property to the view:
 
     binder.bind(todo.name).to(view.editBox());
     binder.bind(todo.name).toTextOf(view.content());
@@ -184,7 +186,7 @@ Besides just binding fields, the binder DSL can also be used for performing othe
     binder.when(editing).is(true).set(s.editing()).on(view.li());
 {: class=brush:java}
 
-Finally, looking at [ListTodoPresenter](https://github.com/stephenh/todomvc-gwtmpv/blob/master/src/main/java/org/gwtmpv/todomvc/client/app/ListTodoPresenter.java), keeping the view's `ul` list of one-`li`-per-todo in sync with the `allTodos` list model can also be done with binding:
+Finally, looking at [ListTodoPresenter](https://github.com/stephenh/todomvc-tessell/blob/master/src/main/java/org/tessell/todomvc/client/app/ListTodoPresenter.java), keeping the view's `ul` list of one-`li`-per-todo in sync with the `allTodos` list model can also be done with binding:
 
     binder.bind(state.allTodos).to(this, view.ul(), new ListPresenterFactory<Todo>() {
       public Presenter create(Todo todo) {
@@ -193,7 +195,7 @@ Finally, looking at [ListTodoPresenter](https://github.com/stephenh/todomvc-gwtm
     });
 {: class=brush:java}
 
-Hopefully you can see that, besides view boilerplate reduction, rich models and a fluent binding DSL are the other main strengths gwt-mpv brings to the table to succinctly, declaratively wire together your application's behavior.
+Hopefully you can see that, besides view boilerplate reduction, rich models and a fluent binding DSL are the other main strengths Tessell brings to the table to succinctly, declaratively wire together your application's behavior.
 
 Testing
 -------
@@ -204,9 +206,9 @@ For the todomvc port, this means we can test the "add a new todo" functionality 
 
 1. Setting up a test list model
 2. Instantiating the presenter to test
-3. Retrieving the stub (no DOM) view implementation (which is generated by gwt-mpv from the `ui.xml` template file) that has fake versions of each of our components
+3. Retrieving the stub (no DOM) view implementation (which is generated by Tessell from the `ui.xml` template file) that has fake versions of each of our components
 
-So a test starts out looking like [CreateTodoPresenterTest](https://github.com/stephenh/todomvc-gwtmpv/blob/master/src/test/java/org/gwtmpv/todomvc/client/app/CreateTodoPresenterTest.java):
+So a test starts out looking like [CreateTodoPresenterTest](https://github.com/stephenh/todomvc-tessell/blob/master/src/test/java/org/tessell/todomvc/client/app/CreateTodoPresenterTest.java):
 
     public class CreateTodoPresenterTest extends AbstractPresenterTest {
       final ListProperty<Todo> todos = listProperty("todos");
@@ -231,7 +233,7 @@ And then goes right into testing features:
 
 The `newTodo().type(...)` method emulates a user typing into the "new todo" text box. `newTodo().keyDown(...)` is the enter key being pressed. And then we can assert our model was changed, and the new model object created with the right name.
 
-The gwt-mpv port has ~30 presenter tests like this one. They all run in 1/10th of a second, no selenium, no browser, etc.
+The Tessell port has ~30 presenter tests like this one. They all run in 1/10th of a second, no selenium, no browser, etc.
 
 To me, this means its now actually feasible to develop your UI logic in a TDD fashion. Which is a huge win.
 
@@ -253,11 +255,11 @@ I think it's a fair assertion you're much better off with the former.
 Comparison with JS Frameworks
 -----------------------------
 
-Reading through the various JS implementations of the todo app, and gwt-mpv's implementation, it's encouraging to see that they are all trying to do basically the same thing: use event-driven models and views to wire together a rich client.
+Reading through the various JS implementations of the todo app, and Tessell's implementation, it's encouraging to see that they are all trying to do basically the same thing: use event-driven models and views to wire together a rich client.
 
 I think this approach of declaratively setting up view/model bindings is the key to doing non-trivial AJAX applications without loosing your functionality (or sanity, whichever is less important) to growing balls of spaghetti code. Changing the model should lead to the view updates just working.
 
-That being said, each framework does things slightly differently. Here I'll briefly cover how GWT/gwt-mpv is different.
+That being said, each framework does things slightly differently. Here I'll briefly cover how GWT/Tessell is different.
 
 ### Templates
 
@@ -316,7 +318,7 @@ The is different than most of the JS frameworks. For example, in the backbone im
     this.$('.todo-content').text(content);
 {: class=brush:jscript}
 
-Where as in the [ListTodoItemPresenter](https://github.com/stephenh/todomvc-gwtmpv/blob/master/src/main/java/org/gwtmpv/todomvc/client/app/ListTodoItemPresenter.java#L66), the view kept a reference to the DOM element while building itself (done by UiBinder), so now we can just call it directly:
+Where as in the [ListTodoItemPresenter](https://github.com/stephenh/todomvc-tessell/blob/master/src/main/java/org/tessell/todomvc/client/app/ListTodoItemPresenter.java#L66), the view kept a reference to the DOM element while building itself (done by UiBinder), so now we can just call it directly:
 
     view.content().setText(view.editBox().getText());
 {: class=brush:java}
@@ -368,16 +370,14 @@ However, for full-page AJAX applications, when 95%+ of the page is rendered clie
 Disclaimers
 -----------
 
-* Per my earlier link to Ray Ryan's 2009 Google I/O talk, I can't take credit for the DOM-less testing approach. gwt-mpv, and several other frameworks within the GWT sphere, are just running with a great idea.
+* Per my earlier link to Ray Ryan's 2009 Google I/O talk, I can't take credit for the DOM-less testing approach. Tessell, and several other frameworks within the GWT sphere, are just running with a great idea.
 
-* In the todo application, I used a global [AppState](https://github.com/stephenh/todomvc-gwtmpv/blob/master/src/main/java/org/gwtmpv/todomvc/client/model/AppState.java) class to share the `ListProperty`s across presenters. Some GWT developers would probably lobby for even more decoupling by passing messages on an `EventBus`, but that seemed like overkill for this app.
+* In the todo application, I used a global [AppState](https://github.com/stephenh/todomvc-tessell/blob/master/src/main/java/org/tessell/todomvc/client/model/AppState.java) class to share the `ListProperty`s across presenters. Some GWT developers would probably lobby for even more decoupling by passing messages on an `EventBus`, but that seemed like overkill for this app.
 
 * The original CSS was in one massive file, and I may have butchered it when moving it into each component. It looks fine in Chrome, but YMMV.
 
-* Yes, Java isn't cool anymore, but [scala-gwt](http://scalagwt.github.com/) is another project I contribute to which would make everything more terse when it ships.
+* Yes, Java isn't cool anymore, but [scala-gwt](http://scalagwt.github.com/) will make everything more awesome and terse when it ships.
 
 
-
-
-[2]: https://github.com/stephenh/todomvc-gwtmpv/blob/master/src/main/java/org/gwtmpv/todomvc/client/app/ListTodoItemPresenter.java#L50
+[2]: https://github.com/stephenh/todomvc-tessell/blob/master/src/main/java/org/tessell/todomvc/client/app/ListTodoItemPresenter.java#L50
 

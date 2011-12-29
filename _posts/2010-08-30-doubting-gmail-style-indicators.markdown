@@ -26,7 +26,7 @@ However, I think in reality what attracted me most to the pattern was really the
 
 With the global indicator, I no longer had to code boilerplate loading/spinning indicator logic for every button in the app. Which, given I was brand new to AJAX development, I'd been doing in kind of an ad hoc way.
 
-Better yet, using [gwt-dispatch][gwtdispatch]-style RPC commands, and [gwt-mpv][gwtmpv]'s [DispatchXxx][dispatch] events, I had one centralized class that, by listening to the event bus, could automatically handle "command went out, show indicator" and then "response came back, hide indicator". One place, done.
+Better yet, using [gwt-dispatch][gwtdispatch]-style RPC commands, and [Tessell][tessell]'s [DispatchXxx][dispatch] events, I had one centralized class that, by listening to the event bus, could automatically handle "command went out, show indicator" and then "response came back, hide indicator". One place, done.
 
 It was really nice as it let me be lazy and stop thinking about indicators all the time.
 
@@ -52,7 +52,7 @@ I have not flushed these abstractions out yet, so I can't be sure how elegant th
 
 [bizo]: http://www.bizo.com
 [bizads]: http://bizads.bizo.com
-[gwtmpv]: http://www.gwtmpv.org
-[dispatch]: http://github.com/stephenh/gwt-mpv/tree/master/user/src/main/java/org/gwtmpv/dispatch/client/events/
+[tessell]: http://www.tessell.org
+[dispatch]: http://github.com/stephenh/tessell/tree/master/user/src/main/java/org/tessell/dispatch/client/events/
 [gwtdispatch]: http://code.google.com/p/gwt-dispatch/
 

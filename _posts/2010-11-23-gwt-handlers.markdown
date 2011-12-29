@@ -47,7 +47,7 @@ There are two relative points about calling `removeHandler()` on a `HandlerRegis
 
    If you have a "global" event source, like an always-visible navigation bar widget or an application-wide `EventBus`, and you have a transient event listener, like a presenter listening for events, the presenter's event handler will keep it from being garbage collected until the `EventBus` is also garbage collected.
 
-For example, if you have a `FooPlacePresenter` in a framework like [gwt-mpv](http://www.gwtmpv.org):
+For example, if you have a `FooPlacePresenter` in a framework like [Tessell](http://www.tessell.org):
 
     public class FooPlacePresenter {
       public void onBind() {

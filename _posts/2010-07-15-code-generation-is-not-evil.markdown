@@ -6,7 +6,7 @@ title: Code Generation Is Not Evil
 Code Generation Is Not Evil
 ===========================
 
-I'm a big fan of code generation (see [joist](http://joist.ws/orm.html), [bindgen](http://bindgen.org), [gwt-mpv-apt](http://gwtmpv.org/apt.html), [gwt-mpv](http://gwtmpv.org/viewgeneration.html), and [interfacegen](http://github.com/stephenh/interfacegen). I think active code generation can go a long way towards reducing boilerplate in a project.
+I'm a big fan of code generation (see [joist](http://joist.ws/orm.html), [bindgen](http://bindgen.org), [Tessell](http://www.tessell.org/viewgeneration.html), and [interfacegen](http://github.com/stephenh/interfacegen). I think active code generation can go a long way towards reducing boilerplate in a project.
 
 Bad Reputation
 --------------
@@ -110,7 +110,7 @@ Good examples of this are [joist](http://joist.ws/orm.html) making types that th
     }  
 {: class=brush:java}
 
-Or [gwt-mpv](http://www.gwtmpv.org/viewgeneration.html) making boilerplate Java classes based on HTML-like XML UI templates:
+Or [Tessell](http://www.tessell.org/viewgeneration.html) making boilerplate Java classes based on HTML-like XML UI templates:
 
     <ui:UiBinder ...>
       <gwt:HTMLPanel>

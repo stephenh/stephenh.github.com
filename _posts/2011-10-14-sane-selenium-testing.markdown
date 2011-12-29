@@ -47,7 +47,7 @@ Now Selenium has the ability to see the application's "loading" state:
 * If `outstanding.innerText == "0"`, all things are good, continue the test
 * If `outstanding.innerText != "0"`, the application is waiting, block the test
 
-I don't have any JavaScript code to show how this works, as I do all my client-side programming in GWT, so use a [gwt-dispatch](http://code.google.com/p/gwt-dispatch/)-style approach that broadcasts AJAX events on an `EventBus`, which then [OutstandingWatcher](https://github.com/stephenh/gwt-mpv/blob/master/user/src/main/java/org/gwtmpv/util/OutstandingWatcher.java) listens for and maintains the `outstanding` div appropriately.
+I don't have any JavaScript code to show how this works, as I do all my client-side programming in GWT, so use a [gwt-dispatch](http://code.google.com/p/gwt-dispatch/)-style approach that broadcasts AJAX events on an `EventBus`, which then [OutstandingWatcher](https://github.com/stephenh/tessell/blob/master/user/src/main/java/org/tessell/util/OutstandingWatcher.java) listens for and maintains the `outstanding` div appropriately.
 
 For JQuery/etc., something in [Extending AJAX](http://api.jquery.com/extending-ajax/) would probably work. It's probably 10-20 lines of code.
 

@@ -7,6 +7,8 @@ title: gwt-mpv-apt 1.1
 
 ---
 
+**Update 2011/12/29:** This post was originally about the `gwt-mpv-apt` project, which has since been merged into/rechristened Tessell, see [tessell.org](http://www.tessell.org).
+
 `gwt-mpv-apt` is a annotation processor (natively supported by Eclipse and `javac`) that generates `gwt-dispatch` and `GwtEvents` for GWT projects.
 
 The benefit is **a 10x decrease in boilerplate code**, which is something every GWT project needs.
