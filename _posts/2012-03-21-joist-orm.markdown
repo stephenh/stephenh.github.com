@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Joist, the ORM for Me
+title: Joist, the Java ORM for Me
 ---
 
 {{page.title}}
@@ -225,4 +225,14 @@ Often times ORMs will abuse transactions to make their tests fast--specifically,
 Of course, I do strongly believe that each test should have it's own "fresh" view the database, so that tests are not dependent on the order in which they are ran. However, I think this is best achieved by having a screaming fast way to reset the database between each test.
 
 For Joist, it leverages the code generation cycle to also generate a stored procedure (only in development) called `flush_test_database`, that will delete the data from all non-stable tables (stable are tables like enums/codes). This means `setUp` can make 1 wire call to the database and have everything reset.
+
+Try It!
+-------
+
+So, Joist is my attempt to achieve all of these goals in an ORM built cleanly, from scratch to satisfy them and not a myriad of other use cases.
+
+I've been using Joist successfully for day job and hobby projects for 2 years now, am on version 1.2.16, and feel pretty confident in its abilities.
+
+Please check out the [Joist](http://joist.ws) website, the [code](http://github.com/stephenh/joist), or the [Joist dicussion list](https://groups.google.com/forum/?fromgroups#!forum/joist).
+
 
