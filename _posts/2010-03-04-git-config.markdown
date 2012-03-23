@@ -142,6 +142,8 @@ Here is my current `.gitconfig` with comments:
     [svn]
       # push empty directory removals back to svn at directory deletes
       rmdir = true
+      # set svn:mergeinfo when pushing merge commits
+      pushmergeinfo = true
 {: class=brush:plain}
 
 `.gitshrc`
