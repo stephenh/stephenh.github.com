@@ -73,25 +73,25 @@ Here is my current `.gitconfig` with comments:
       email = stephen@exigencecorp.com
     [alias]
       # 'add all' stages all new+changed+deleted files
-      aa = !git ls-files -d | xargs -r git rm && git ls-files -m -o --exclude-standard | xargs -r git add
+      aa = !git ls-files -z -d | xargs -0 -r git rm && git ls-files -z -m -o --exclude-standard | xargs -0 -r git add
 
       # 'add grep' stages all new+changed that match $1
-      ag = "!sh -c 'git ls-files -m -o --exclude-standard | grep $1 | xargs -r git add' -"
+      ag = "!sh -c 'git ls-files -z -m -o --exclude-standard | grep -z $1 | xargs -0 -r git add' -"
 
       # 'checkout grep' checkouts any files that match $1
-      cg = "!sh -c 'git ls-files -m | grep $1 | xargs -r git checkout' -"
+      cg = "!sh -c 'git ls-files -z -m | grep -z $1 | xargs -0 -r git checkout' -"
 
       # 'diff grep' diffs any files that match $1
-      dg = "!sh -c 'git ls-files -m | grep $1 | xargs -r git diff' -"
+      dg = "!sh -c 'git ls-files -z -m | grep -z $1 | xargs -0 -r git diff' -"
 
       # 'patch grep' diff --cached any files that match $1
-      pg = "!sh -c 'git ls-files -m | grep $1 | xargs -r git diff --cached' -"
+      pg = "!sh -c 'git ls-files -z -m | grep -z $1 | xargs -0 -r git diff --cached' -"
 
       # 'remove grep' remove any files that match $1
-      rmg = "!sh -c 'git ls-files -d | grep $1 | xargs -r git rm' -"
+      rmg = "!sh -c 'git ls-files -z -d | grep -z $1 | xargs -0 -r git rm' -"
 
       # 'reset grep' reset any files that match $1
-      rsg = "!sh -c 'git ls-files -c --with-tree=HEAD | grep $1 | xargs -r git reset HEAD -- ' -"
+      rsg = "!sh -c 'git diff --cached --name-only | grep $1 | xargs -r git reset HEAD -- ' -"
 
       # nice log output
       lg = log --graph --pretty=oneline --abbrev-commit --decorate
