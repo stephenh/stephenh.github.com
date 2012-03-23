@@ -79,3 +79,6 @@ This now gives us a few options. For `someRandomLogic`, we can:
 
 I need a better example.
 
+---
+
+Extract static method + inline local variables.
