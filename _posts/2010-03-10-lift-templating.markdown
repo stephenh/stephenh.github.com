@@ -1,10 +1,14 @@
 ---
 layout: post
-title: Lift Templating is a Joke
+title: Lift Templating s/is/was a Joke
 ---
 
-Lift Templating is a Joke
-=========================
+Lift Templating s/is/was a Joke
+===============================
+
+**Update May 3, 2012:** Thomas Walther pointed me to Lift's new [class attribute-based](http://seventhings.liftweb.net/templates) approach to templating. This new approach looks much better and much more inline with the designer-friendly goals that Lift has had since day one but that, originally, I felt it was falling short on. Which is great, I could see myself really liking their new approach.
+
+(Now the original post...)
 
 I want to like [Lift](http://liftweb.net). I like [Scala](http://scala-lang.org) and Lift seems like the goto Scala web framework for now.
 
