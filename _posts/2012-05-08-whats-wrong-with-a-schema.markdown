@@ -44,7 +44,9 @@ So, while migrations introduce a deployment complexity, I think the trade-off (t
 
 Particularly in a long-lived application, where the maintenance phase is longer than the initial development phase (as it should be in all successful projects, I think), it seems like constantly having to think with "what might the data from last month, six months, 12 months ago look like?" would get tiresome.
 
-Musing further, and thinking specifically of MongoDB's assertion of "schema-less == simplicity". I'm sure this applies during the initial development phase--when there is no production data around, and you as a developer want to put 10 rows of whatever test data you want in your local data store, sure, it's simple to not have a schema. But my naive impression is that this initial simplicity will not bear itself out throughout the life cycle of an application, and in the long-term actually become a burden.
+Musing further, and thinking specifically of MongoDB's assertion of "schema-less == simplicity". I'm sure this applies during the initial development phase--when there is no production data around, and you as a developer want to put 10 rows of whatever test data you want in your local data store, sure, it's simple to not have a schema.
+
+My assertion is that this initial simplicity will not bear itself out throughout the life cycle of an application, and in the long-term will actually become a burden.
 
 Sometimes Schema-less is Warranted
 ----------------------------------
@@ -59,8 +61,8 @@ However, that doesn't mean that for every system "AP" is now the best fit--"C" h
 
 Same thing with schemas--if you really can't use one, I understand; I just question that stance being a default position.
 
-Not Necessarily Relational
---------------------------
+Schemas Don't Have to be Relational
+-----------------------------------
 
 I think people, myself included, usually associate data store schemas with relational databases. Which is an understandable association given the long, successful history of relational databases and how they all intrinsically have the notion of a schema.
 
@@ -73,7 +75,7 @@ That being said, I'm having a hard time thinking of examples of non-relational d
 Metadata is Powerful
 --------------------
 
-Although slightly tangential, having a schema that can be parsed by other tools is a great way for providing metadata about your system for use in code generation. See projects like [Joist](http://www.joist.ws) that derive the domain layer from the relational schema.
+Although slightly tangential, having a schema that can be parsed by other tools is a great way for providing metadata about your system for use in code generation. See projects like [Joist](http://www.joist.ws) that derive the entire domain layer (sans custom business logic) from the relational schema.
 
 Granted, a project's "schema of record" doesn't necessarily have to be relational, or the same schema as your data store. E.g. I could see using a custom JSON schema to define your entities/relationships, and then going from there to a relational schema or some domain objects.
 
@@ -95,6 +97,6 @@ Disclaimer
 
 And, just as I must qualify my static typing position, I must qualify my pro-schema position that obviously many successful systems are being built with schema-less data stores. And a lot of good things have been said about them. So it's of course impossible for me to pontificate that all schema-less systems are doomed to fail.
 
-But I nonetheless have a personal preference (obviously) that I assert is at least partly/mostly supported by the trade-offs I've tried to outline here. If your system can accept the trade-offs, I think schemas are generally worth their trouble in the long run.
+But I nonetheless have a personal preference (obviously) that I assert is supported by the trade-offs I've tried to outline here. If your system can accept the trade-offs, I think schemas are generally worth their trouble in the long run.
 
 
