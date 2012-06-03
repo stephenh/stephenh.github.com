@@ -85,7 +85,7 @@ Here is my current `.gitconfig` with comments:
       dg = "!sh -c 'git ls-files -z -m | grep -z $1 | xargs -0 -r git diff' -"
 
       # 'patch grep' diff --cached any files that match $1
-      pg = "!sh -c 'git ls-files -z -m | grep -z $1 | xargs -0 -r git diff --cached' -"
+      pg = "!sh -c 'git ls-files -z -c | grep -z $1 | xargs -0 -r git diff --cached' -"
 
       # 'remove grep' remove any files that match $1
       rmg = "!sh -c 'git ls-files -z -d | grep -z $1 | xargs -0 -r git rm' -"
