@@ -20,7 +20,7 @@ While Ivy-to-Maven works well, it did take me a few tries to get it right, so he
 `ivysettings.xml`
 -----------------
 
-This is the [gwt-mpv-dev `ivysettings.xml`](http://github.com/stephenh/gwt-mpv/tree/master/dev/ivysettings.xml), with comments added.
+This is the [ivysettings.xml](https://github.com/stephenh/joist/blob/master/ivysettings.xml) to Joist, with comments added.
 
     <ivysettings>
       <!--
