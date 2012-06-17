@@ -147,5 +147,5 @@ Admittedly, I like [Tessell](http://www.tessell.org)'s approach, to both the vie
 
 Although it would be interesting to look into replacing UiBinder within Tessell's stack with ErraiUI. Especially for having multiple components driven from one template file. If Tessell's code generation saw an ErraIUI `.html` file, it could MVP-ize it by creating an interface-plus-implementation based on the HTML tags with `data-field` attributes. Not entirely sure how it would recognize sub-components given they also use `data-field`. But seems like it could work.
 
-Just the development of ErraiUI itself is also interesting--it shows that RedHat/JBoss are quite willing to step away from stock GWT libraries like UiBinder and innovate their own solutions. Which is great. It's awesome to see them putting this much investment in the GWT ecosystem, even if I personally don't plan on using the projects anytime soon.
+Just the development of ErraiUI itself is also interesting--it shows that RedHat/JBoss are quite willing to step away from stock GWT libraries like UiBinder and innovate their own solutions. Which is great. It's awesome to see them putting this much investment in the GWT ecosystem.
 
