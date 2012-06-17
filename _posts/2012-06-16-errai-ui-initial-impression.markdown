@@ -20,9 +20,9 @@ Since I'm watching the [demo video](http://vimeo.com/44141164) now, I thought I'
 
    The de facto GWT template library, UiBinder, is HTML-*ish*, but really XML (not even XHTML), so you can't just open it up in a browser. Besides being XML, it has various GWT markup (`gwt:TextBox`, `ui:field`) thrown in that won't mean anything until rendered.
 
-   Having worked a lot with UiBinder, I've gotten used to UiBinder's almost-HTML templates and no longer thing it's a big deal. But I can why see sticking with pure HTML templates would be a good idea.
+   Having worked a lot with UiBinder, I've gotten used to UiBinder's almost-HTML templates and no longer think it's a big deal. But I can why see sticking with pure HTML templates would be a good idea.
 
-   One cool feature is that'll strip headers/footers from your `.html` file, so if you have a mockup from your designer that looks like:
+   One cool feature of ErraiUI is that'll strip headers/footers from your `.html` template file, so if you have a mockup from your designer that looks like:
 
        <html>
          <head><!--various js/style stuff--></head>
@@ -37,15 +37,15 @@ Since I'm watching the [demo video](http://vimeo.com/44141164) now, I thought I'
 
    By using the `@Templated("#template")` annotation, ErraiUI will find the `data-field=template` element, use it as the root of your component's template, and drop all of the HTML before/after it.
 
-   This makes a lot of sense, because you usually don't want this in your component itself (the styles/window dressing/etc. have already been drawn when your app loaded), but it's very handy to leave it there for designers/developers to just pop open in a browser and see what the HTML renders like, sans GWT.
+   This makes a lot of sense, because you usually don't want this header/footer cruft in your component itself (the styles/window dressing/etc. have already been drawn when your app loaded), but it's very handy to leave it there for designers/developers to just pop open in a browser and see what the HTML renders like, sans GWT.
 
-   So, yeah, that's pretty cool.
+   This seems to be their biggest feature and, kudos, it's pretty cool.
 
 2. Another awesome feature is that they can split a single `.html` file up across multiple components.
 
-   In UiBinder, if you have a parent component with various child components, each child needs it's own new `ui.xml` file, as there is no way to get separate/multiple `UiBinder` instances from a single `ui.xml` file.
+   In UiBinder, if you have a parent component with various child components, each child needs it's own new `ui.xml` file, as there is no way to get separate/multiple `UiBinder` instances from a single `ui.xml` file. So you end up with `Parent.ui.xml` and a separate `ParentChild.ui.xml` containing just the (typically few) lines of child markup.
 
-   ErraiUI templates, on the other hand, allows you have to take a giant static template like:
+   ErraiUI templates, on the other hand, allows you have to take a single static template like:
 
        <div data-field="parentTemplate">
          <!-- some stuff -->
@@ -67,7 +67,7 @@ Since I'm watching the [demo video](http://vimeo.com/44141164) now, I thought I'
 
    And then you can have two separate component classes, `Parent` annotated with `@Templated("#parentTemplate")` and `Child` annotated with `@Templated("Parent.html#childTemplate")` getting their respective markup from the same file.
 
-   This is great--I've personally wanted to do this with UiBinder for awhile. As usual with UiBinder, you get used to  not being able to do it. But it is a pain to make a new `ui.xml` file every time you need to separate out a child's markup from its parent's markup.
+   This is great--I've personally wanted to do this with UiBinder for awhile. As usual with UiBinder, you get used to  not being able to do it. But it is annoying to make a new `ui.xml` file every time you need to separate out a child's markup from its parent's markup.
 
 3. Despite ErraiUI's otherwise awesome focus on pure/static HTML templates, sometimes abstracting boilerplate markup is handy, and I'm curious how/if they'll handle it.
 
@@ -97,7 +97,7 @@ Since I'm watching the [demo video](http://vimeo.com/44141164) now, I thought I'
 
    But once in the application, I think it's another form of boilerplate if you have more than a handful of form fields. Markup like this, that is very commonly used but also non-trivial, should be abstracted into a component so it can be defined once and maintained in a single place.
 
-   With UiBinder, you can make an application-specific `TextBox` or `TextLine` class and then in your forms do something like:
+   With UiBinder, you can make an application-specific `TextBox` or `TextLine` component and then in your forms do something like:
 
        <form>
          <app:TextLine ui:field="name"/>
@@ -108,7 +108,7 @@ Since I'm watching the [demo video](http://vimeo.com/44141164) now, I thought I'
 
    Which, personally, I think is a real boon for reducing boilerplate and increasing developer productivity.
 
-   Unfortunately, it doesn't mesh at all with ErraiUI's approach of templates being as-static as possible to facilitate WYSIWYG.
+   Unfortunately, it doesn't mesh at all with ErraiUI's approach of templates being completely static to facilitate WYSIWYG.
 
    Part of ErraiUI's philosophy, AFAICT, is that you no longer need to hack up your designer's mockups to use their HTML templates for your application. Which, on one hand is great; I've done that hacking before, and it's tedious. But, on the other hand, I think there are benefits, namely being able to bring abstractions like components to bare to reduce duplication.
 
