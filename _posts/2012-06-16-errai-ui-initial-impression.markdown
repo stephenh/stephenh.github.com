@@ -16,6 +16,14 @@ The latest feature to be [announced](https://twitter.com/JBossMike/status/214066
 
 Since I'm watching the [demo video](http://vimeo.com/44141164) now, I thought I'd write up a few thoughts.
 
+If you want to jump right into their example code that's shown in the video, here are links to their GitHub [demo project](https://github.com/lincolnthree/errai-ui-demo) for:
+
+* The [App.html](https://github.com/lincolnthree/errai-ui-demo/blob/master/src/main/java/org/jboss/errai/ui/demo/client/local/App.html) template
+* The [App.java](https://github.com/lincolnthree/errai-ui-demo/blob/master/src/main/java/org/jboss/errai/ui/demo/client/local/App.java) component
+* The [Spotlight.java](https://github.com/lincolnthree/errai-ui-demo/blob/master/src/main/java/org/jboss/errai/ui/demo/client/local/Spotlight.java) sub-component
+
+So, my thoughts:
+
 1. Their pure HTML templates are pretty spiffy.
 
    The de facto GWT template library, UiBinder, is HTML-*ish*, but really XML (not even XHTML), so you can't just open it up in a browser. Besides being XML, it has various GWT markup (`gwt:TextBox`, `ui:field`) thrown in that won't mean anything until rendered.
