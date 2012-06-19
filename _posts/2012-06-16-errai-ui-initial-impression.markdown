@@ -6,7 +6,7 @@ title: ErraiUI Initial Impression
 {{page.title}}
 ==============
 
-JBoss's [Errai](http://www.jboss.org/errai) project has always been on my list of GWT technologies to play it.
+JBoss's [Errai](http://www.jboss.org/errai) project has always been on my list of GWT technologies to play with.
 
 AFAICT it's original/core purpose was sending events not just between the client and server, but between clients as well (via the server, I assume). This seems pretty useful, but I just hadn't had a need for it yet.
 
