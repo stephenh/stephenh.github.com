@@ -6,19 +6,19 @@ title: How to Sanely Use Ivy's Artifact Tags
 {{page.title}}
 ==============
 
-[Ivy](http://ant.apache.org/ivy/), everyone's favorite "it's not Maven" dependency manager, has a unique, idiosyncratic feature I was fighting with today.
+[Ivy](http://ant.apache.org/ivy/), everyone's favorite "it's not Maven" dependency manager, has a unique, idiosyncratic feature I was fighting with today: artifact tags to override which jars/artifacts you use from upstream projects.
 
-While Maven has only project-to-project dependencies (i.e. you get all the jars in each downstream project whether you want them or not), Ivy adds the concept of configurations to select subsets of artifacts within your dependencies. E.g., in an `ivy.xml` file:
+While Maven has only project-to-project dependencies (i.e. you get all the jars in each upstream project whether you want them or not), Ivy adds the concept of configurations to select subsets of artifacts within your dependencies. E.g., in an `ivy.xml` file:
 
-    <dependency org="downstream" name="project" rev="1.0"
+    <dependency org="upstream" name="project" rev="1.0"
         conf="default->someSubsetConf" />
 {: class=brush:xml}
 
-By using `someSubsetConf`, you can select a specific set of artifacts (only those that its own `ivy.xml` file declares as part of it's `someSubsetConf`) from the downstream project.
+By using `someSubsetConf`, you can select a specific set of artifacts (only those that its own `ivy.xml` file declares as part of it's `someSubsetConf`) from the upstream project.
 
-Ivy goes further, and that if the downstream project doesn't have a configuration in its `ivy.xml` file that suits your needs, you can request specific artifacts directly, e.g.:
+Ivy goes further, and that if the upstream project doesn't have a configuration in its `ivy.xml` file that suits your needs, you can request specific artifacts directly, e.g.:
 
-    <dependency org="downstream" name="project" rev="1.0">
+    <dependency org="upstream" name="project" rev="1.0">
       <artifact name="onlyTheOneYouWant"/>
     </dependency>
 {: class=brush:xml}
@@ -30,7 +30,7 @@ Nonetheless, I use Ivy, and have used `artifact` tags on several occasions, but 
 The Short Version
 -----------------
 
-1. Prefer to not use `artifact` tags--if possible, change the downstream project's configurations to match your needs and just rely on configuration-to-configuration mapping. It's more intuitive, less boilerplate.
+1. Prefer to not use `artifact` tags--if possible, change the upstream project's configurations to match your needs and just rely on configuration-to-configuration mapping. It's more intuitive, less boilerplate.
 
    If you must use `artifact` tags, then:
 
@@ -40,7 +40,7 @@ The Short Version
 
 For example:
 
-    <dependency org="downstream" name="project"
+    <dependency org="upstream" name="project"
         rev="1.0" conf="conf1,conf2">
       <artifact name="artifact1" conf="conf1"/>
       <artifact name="artifact2" conf="conf2"/>
@@ -224,7 +224,7 @@ And now, each of the variations:
 Note on Transitive Dependencies
 -------------------------------
 
-Just a quick note, but while `artifact` let's you pick apart a downstream project's artifacts for only those you want, this doesn't have any affect on the transitive dependencies you inherit from the project--those are still based strictly on configurations.
+Just a quick note, but while `artifact` let's you pick apart an upstream project's artifacts for only those you want, this doesn't have any affect on the transitive dependencies you inherit from the project--those are still based strictly on configurations.
 
 Usually this just means you'll end up pulling in more transitive dependencies than you need, but I think it re-enforces the notion the `artfact` override is a hack and that finding a way to do configuration-to-configuration mappings is a better way to do things with Ivy.
 
