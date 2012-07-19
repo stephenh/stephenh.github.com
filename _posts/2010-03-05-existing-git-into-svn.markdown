@@ -19,19 +19,25 @@ git svn init
 Here is what I do, from the existing local git repo:
 
     # Create the project directory in subversion
-    $ /usr/bin/svn mkdir https://foo.com/svn/parent/trunk/project -m "Make project directory."
+    $ /usr/bin/svn mkdir
+      https://foo.com/svn/parent/trunk/project
+      -m "Make project directory."
     Committed revision 200.
 
     # Initialize git-svn, doesn't fetch anything yet
-    $ git svn init https://foo.com/svn/ -T parent/trunk/project -t parent/tags/project -b parent/branches/project --prefix=svn/
+    $ git svn init https://foo.com/svn/
+      -T parent/trunk/project
+      -t parent/tags/project
+      -b parent/branches/project
+      --prefix=svn/
 
     # Set authors so we get prettier authors
     $ git config svn.authorsfile ../authors
 
     # Now pull down the svn commits
     $ git svn fetch
-    W: Ignoring error from SVN, path probably does not exist: Filesystem has no item: File not found: revision 100, path '/parent'
-    W: Do not be alarmed at the above message git-svn is just searching aggressively for old history.
+    W: Ignoring error from SVN, ...
+    W: Do not be alarmed at the above message git-svn ...
     This may take a while on large repositories
     r200 = (guid) (refs/remotes/svn/trunk)
 
@@ -40,13 +46,15 @@ Here is what I do, from the existing local git repo:
     * master            c3a7161 The latest git commit.
       remotes/svn/trunk 3b7fed6 Make project directory.
 
-    # Now we want to take all of our local commits and rebase them on top of the new svn/trunk
+    # Now we want to take all of our local commits and 
+    # rebase them on top of the new svn/trunk
     $ git rebase svn/trunk
     First, rewinding head to replay your work on top of it...
     Applying: First git commit
     Applying: The latest git commit
 
-    # Now we should see our local commits applied on top of svn/trunk
+    # Now we should see our local commits applied
+    # on top of svn/trunk
     $ git lg
     * 52b7977 (HEAD, master) The latest git commit
     * a34e162 First git commit
