@@ -1,6 +1,6 @@
 ---
-layout: draft
-title: Sane Rich User Interfaces
+layout: post
+title: Building Sane Rich User Interfaces
 ---
 
 {{page.title}}
@@ -8,7 +8,7 @@ title: Sane Rich User Interfaces
 
 I've been meaning to write a "lessons learned" or "best practice" sort of post on how I think rich UI applications can be made simpler and less buggy by changing your mindset from an imperative one to a declarative one.
 
-But, until I do that, I thought it might be better to start with a concrete example. Sometimes its easier to wrap your head around something small and concrete before abstracting the into the theoretical.
+But, until I do that, I thought it might be better to start with a concrete example. Sometimes its easier to think about something small and concrete before abstracting into the theoretical.
 
 So, do that, I thought I'd show an example refactoring of changing some UI code from an imperative approach to a declarative approach.
 
