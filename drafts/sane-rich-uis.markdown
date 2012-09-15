@@ -19,24 +19,24 @@ We'll use a relatively small problem that I think is still a good illustration: 
 
 E.g. the tabs might be "Tab A", "Tab B", and "Tab C", and clicking on each tab hides the previous tab's content and shows the new tab's content.
 
-Instead of just building this functionality into a larger page, we'll break it out into a separate component, `VerticalTabs`.
+Instead of just building this functionality into a larger page, we'll break it out into a separate component, `Tabs`.
 
 The Imperative Approach
 =======================
 
 Jumping straight to the code, this is a slightly simplified version of an imperative approach to building the tabs:
 
-    public class VerticalTabs extends CompositeIsWidget {
+    public class Tabs extends CompositeIsWidget {
 
-      private IsVerticalTabsView view = newVerticalTabsView();
+      private IsTabsView view = newTabsView();
       private ArrayList<IsWidget> panels = new ArrayList<IsWidget>();
 
-      public VerticalTabs() {
+      public Tabs() {
         setWidget(view);
       }
 
       public void addTab(String tabName, IsWidget panel) {
-        IsVerticalTabView itemView = newVerticalTabView();
+        IsTabView itemView = newTabView();
         panels.add(panel);
         if (panels.size() == 1) {
           itemView.listItem().addStyleName("active");
@@ -64,7 +64,7 @@ Jumping straight to the code, this is a slightly simplified version of an impera
 
 This code might be a little foreign if you're not used to GWT/Tessell development, but I think in general it's pretty easy to follow.
 
-The `newVerticalXxxView` calls are instantiating templates from GWT's `ui.xml` UiBinder files, so `newVerticalTabsView()` returns a styled `ul` tag, and `newVerticalTabView()` returns a styled `li` tag for each tab.
+The `newXxxView` calls are instantiating templates from GWT's `ui.xml` UiBinder files, so `newTabsView()` returns a styled `ul` tag, and `newTabView()` returns a styled `li` tag for each tab.
 
 In general, I don't think there is anything terribly wrong with this code; the variable names are good, the methods aren't egregiously long, and it's bug free.
 
@@ -95,8 +95,9 @@ Looking at these behaviors, the notion of a "current tab" is pretty apparent. Re
 
 So, let's pull out that notion into an abstraction; let's make a `Tab` and a `currentTab`:
 
-    public class VerticalTabs extends CompositeIsWidget {
+    public class Tabs extends CompositeIsWidget {
 
+      private IsTabsView view = newTabsView();
       private Tab currentTab;
 
       public void addTab(String tabName, IsWidget panel) {
@@ -116,7 +117,7 @@ So, let's pull out that notion into an abstraction; let's make a `Tab` and a `cu
       }
 
       private class Tab {
-        private IsVerticalTabView view = newVerticalTabView();
+        private IsTabView view = newTabView();
         private Tab(String tabName, IsWidget panel) {
           view.addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent e) {
@@ -133,7 +134,7 @@ However, we're still stuck in the reactive model; we're having to remember to ca
 
 The stumbling block is that `currentTab` is just a field--we can't react to its changes unless we manually add code before/after our own setting of the field.
 
-Rich UI frameworks, Tessell included, solve this by promoting simple fields into "properties", which can watch their current value, and call observers when it is changed. The property is essentially the model in traditional MVC.
+Rich UI frameworks, Tessell included, solve this by promoting simple fields into stateful properties, which can watch their current value, and call observers when it is changed. The property is the foundation for models in traditional MVC.
 
 So, let's change `currentTab` to a property:
 
@@ -141,9 +142,9 @@ So, let's change `currentTab` to a property:
       basicProperty("currentTab");
 {: class=brush:java}
 
-Since we have an abstraction around the value instead of just the value, we can now setup declarations around this abstraction, this property, and not just the value itself.
+Since we have an abstraction around the value instead of just the value, we can now setup declarations around the abstraction, the property, and not just the value itself.
 
-To see how well this works out, let's reexamine our 3 behaviors, and how they can be translated into declarations:
+To see how well this works out, we can re-examine our 3 behaviors, and see how they can be translated into declarations. (We'll use Tessell's DSL, but the same abstractions could be done in any MVC framework.)
 
 * "When I am the current tab, show my panel" can look like:
 
@@ -162,20 +163,22 @@ To see how well this works out, let's reexamine our 3 behaviors, and how they ca
 
 And that's it.
 
-With Tessell's DSL, we have a 1-to-1 mapping between a behavior and 1 line of code. This behavior should then just happen as the program runs. Whether in response to user input, or other code changing the model, we don't care; our behavior should implicitly stay correctly applied.
+With a property-based DSL, like in Tessell, we have a 1-to-1 mapping between a behavior and 1 line of code.
+
+This behavior should then "just work" as the program runs. Whether in response to user input, or other business logic code changing the model, we don't care; our behavior should implicitly stay correctly applied.
 
 The Final Code
 ==============
 
 So, here's the full refactored code example:
 
-    public class VerticalTabs extends CompositeIsWidget {
+    public class Tabs extends CompositeIsWidget {
 
-      private IsVerticalTabsView view = newVerticalTabsView();
+      private IsTabsView view = newTabsView();
       private Binder binder = new Binder();
       private BasicProperty<Tab> currentTab = basicProperty("currentTab");
 
-      public VerticalTabs() {
+      public Tabs() {
         setWidget(view);
       }
 
@@ -186,7 +189,7 @@ So, here's the full refactored code example:
       }
 
       private class Tab {
-        private IsVerticalTabView view = newVerticalTabView();
+        private IsTabView view = newTabView();
 
         private Tab(String tabName, IsWidget panel) {
           view.anchor().setText(tabName);
@@ -203,9 +206,11 @@ When This Works
 
 Obviously the success of this approach depends on the robustness of the binding DSL, as the DSL has to support the various behaviors you want to perform in a generic way.
 
-Specifically for Tessell, I won't assert that Tessell's DSL is as refined as something like Hamcrest, which I think is the prototypical DSL in the Java world. But it supports a pretty wide array of behaviors, and is getting more as I add them as needed.
+Specifically for Tessell, I won't assert that Tessell's DSL is as refined as something like Hamcrest, which I think is the prototypical DSL in the Java world. But it supports a pretty wide array of behaviors, and is getting more when they are added as needed.
 
-Besides the DSL, you also have to be able to represent your program's state as these stateful properties, basically models, to allow them to be passed declaratively into the DSL and for the DSL to be able to register observers and react to them.
+Besides the DSL, you also have to represent your problem domain as these stateful properties, basically models, to allow them to be passed declaratively into the DSL and for the DSL to be able to register observers and react to them.
+
+I don't think either of these are large stumbling blocks, but they do require massaging your codebase to fit the MVC/property/DSL approach, instead of just using raw DTOs.
 
 Rules of Thumb
 ==============
@@ -232,7 +237,4 @@ So, those are my thoughts on building a rich UI in a sane way.
 I don't think this is terribly novel, as MVC is old-hat 1980s/90s stuff, albeit reinvented in Web 2.0 apps, and I think everyone generally acknowledges that declarative programming can be, for the right problems, much more succinct than imperative programming.
 
 But I think, even if its not novel, its easy for developers to stay in an imperative mindset if you're not consciously thinking of looking for abstractions and pulling out declarations as they become apparent.
-
-
-
 
