@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Brief DI Skeptic
+title: Brief Dependency Injection Skeptic
 ---
 
 {{page.title}}
