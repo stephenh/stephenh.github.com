@@ -10,7 +10,7 @@ I saw this go by on Twitter the other day:
 
 "Someone needs to know how my collaborators get wired up, but it doesn't need to be me. Now you're ready for Dependency Injection." ([link](https://twitter.com/dws/status/25391735782993510://twitter.com/dws/status/253917357829935105))
 
-This is a very succinct description of why I'm a DI-skeptic: I actually do care about how my collaborators get wired up.
+This leads to a very succinct description of why I'm a DI-skeptic: I actually do care about how my collaborators get wired up.
 
 Perhaps I'm naive, or haven't worked in a system large enough, or complicated enough, or whatever, but so far my opinion and experience has been any that overhead or tedium that comes from manual wiring (which is little if [done well](http://www.draconianoverlord.com/2011/03/17/frameworkless-di.html), IMO) is a wash compared to fighting a framework to get it to do the same thing for you.
 
