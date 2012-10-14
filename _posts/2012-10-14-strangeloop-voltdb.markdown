@@ -109,7 +109,7 @@ But what about read isolation? I think optimistic locking would work for this, e
       WHERE id = 2 AND version = 2;
 {: class=brush:sql}
 
-So, now if anyone else has touch either `bank_account` in between my read and my write, the `version = 2` clause will fail, and I'd know the data is stale.
+So, now if anyone else has touched either `bank_account` in between my read and my write, the `version = 2` clause will fail, and I'd know the data is stale.
 
 The trick would be that I'd need VoltDB to fail the whole transaction if the `UPDATE` modified count for any of the statements was zero.
 
