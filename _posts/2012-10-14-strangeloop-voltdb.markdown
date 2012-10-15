@@ -113,7 +113,9 @@ So, now if anyone else has touched either `bank_account` in between my read and 
 
 The trick would be that I'd need VoltDB to fail the whole transaction if the `UPDATE` modified count for any of the statements was zero.
 
-This is basically moving isolation enforcement to the client, meaning it would have to fail or retry if the optimistic lock failed. I would be fine with that though, as optimistic locking is really easy to build into an ORM.
+This is basically moving isolation enforcement to the client, meaning it would have to fail or retry if the optimistic lock failed. I would be fine with that though, as optimistic locking is easy to build into an ORM.
+
+With a bit of work, I could see an ORM like [Joist](http://joist.ws) supporting VoltDB as a backend just like the traditional MySQL/Postgres backends.
 
 Unfortunately, I don't think VoltDB can do this today--the client API can only invoke stored procedures, so it would require a sort of meta-stored procedure that took a list of tables/values to update and iteratively `eval`'d them.
 
