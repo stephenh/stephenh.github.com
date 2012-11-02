@@ -1,5 +1,5 @@
 ---
-layout: draft
+layout: post
 title: Faking at the Right Level
 ---
 

@@ -1,5 +1,5 @@
 ---
-layout: draft
+layout: post
 title: How to Sanely Use Ivy's Artifact Tags
 ---
 

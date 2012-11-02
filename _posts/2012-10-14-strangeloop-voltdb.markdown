@@ -1,5 +1,5 @@
 ---
-layout: draft
+layout: post
 title: Strangeloop 2012--VoltDB
 ---
 
