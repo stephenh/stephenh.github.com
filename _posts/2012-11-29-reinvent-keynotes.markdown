@@ -1,5 +1,5 @@
 ---
-layout: draft
+layout: post
 title: Reinvent 2012 Keynote Notes
 ---
 
@@ -66,10 +66,10 @@ Commandants for 21st century architectures:
   * Use availability zones.
   * Integrate security from the ground up (firewalls are not enough anymore, we don't use moats), ports are closed by default.
   * Build, test, deploy continuously
-    * (amazon.com deploys every 10 seconds, 30k instances receiving updates).
-    * Amazon.com used to do phased deployments, roll version gradually through availability zones.
-    * Now flips back/forth. Rollback isn't impossible as the old machines are still around.
-  * Don't think in single failures. Don't treat failure as an exception.
+    * amazon.com deploys every 10 seconds, 30k instances receiving updates
+    * amazon.com used to do phased deployments, roll a new version gradually through each availability zone
+    * Now flips back/forth. Rollback is possible as the old machines are still around.
+  * Don't think about single failures. Don't treat failure as an exception.
 * Adaptive
   * "Use occam's razor" and "Assume nothing"--what?
 * Data driven: instrument everything, all the time.
