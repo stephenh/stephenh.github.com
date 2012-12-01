@@ -10,7 +10,7 @@ I did some of the usual family tech support over the Thanksgiving holiday, this 
 
 While the "issue" (too many icons in the IE favorites bar) was taken care of in short order, it seemed inevitable that something else would come up, and I was not looking forward to remote phone support.
 
-Initially, I was quite willing to sign up for Fogcreek's Copilot program, but ran into two issues:
+Initially, I was quite willing to sign up for Fog Creek's Copilot program, but ran into two issues:
 
 1. It seems geared towards on-the-fly support, with the "here, we'll email them a code and they can download it" approach.
 
@@ -20,7 +20,7 @@ Initially, I was quite willing to sign up for Fogcreek's Copilot program, but ra
 
 2. They don't support Linux.
 
-   Um...wtf? All Copilot did was pay some intern to bundle a VNC client/server into Window EXEs, hook up some admittedly vary useful firewall poking scheme via their remote servers, and hey, they have a product.
+   Um...wtf? All Fog Creek did was pay some intern to bundle a VNC client/server into Window EXEs, hook up some admittedly vary useful firewall poking scheme via their remote servers, and hey, they have a product.
 
    Which, fair enough, smart business execution...but Copilot *is* VNC and VNC is from the Linux ecosystem--so, seriously, just let me fire up TightVNC, even if on my end I have to, oh no, type in a crazy host name and port number. Whatever.
 
