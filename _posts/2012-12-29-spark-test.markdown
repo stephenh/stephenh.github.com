@@ -22,29 +22,42 @@ As an example of some Spark code, I thought I'd copy/paste one of my "let's try 
 
       @Test
       def test() {
+        // make collection (table) a, with 3 rows, each
+        // row is a tuple of (key, value), or (Int, String)
         val a = sc.parallelize(List((1, "a"), (1, "b"), (2, "c")))
+
+        // make collection (table) b, also with 3 rows
         val b = sc.parallelize(List((1, 5.00), (1, 6.00), (3, 7.00)))
-        a.cogroup(b).collect().toList should be === Seq(
-          (3, (Seq(), Seq(7.00))),
-          (1, (Seq("a", "b"), Seq(5.00, 6.00))),
-          (2, (Seq("c"), Seq())))
-        a.join(b).collect().toList should be === Seq(
+
+        // typical join, all that match in both a and b
+        a.join(b).collect() should be === Array(
           (1, ("a", 5.00)),
           (1, ("a", 6.00)),
           (1, ("b", 5.00)),
           (1, ("b", 6.00)))
-        a.leftOuterJoin(b).collect().toList should be === Seq(
+
+        // typical left join, include all from a
+        a.leftOuterJoin(b).collect() should be === Array(
           (1, ("a", Some(5.00))),
           (1, ("a", Some(6.00))),
           (1, ("b", Some(5.00))),
           (1, ("b", Some(6.00))),
           (2, ("c", None)))
-        a.rightOuterJoin(b).collect().toList should be === Seq(
+
+        // typical right join, include all from b
+        a.rightOuterJoin(b).collect() should be === Array(
           (3, (None, 7.00)),
           (1, (Some("a"), 5.00)),
           (1, (Some("a"), 6.00)),
           (1, (Some("b"), 5.00)),
           (1, (Some("b"), 6.00)))
+
+        // cogroup, which is the primitive, and returns each
+        // key with the key's elements from both a and b
+        a.cogroup(b).collect() should be === Array(
+          (3, (Seq(), Seq(7.00))),
+          (1, (Seq("a", "b"), Seq(5.00, 6.00))),
+          (2, (Seq("c"), Seq())))
       }
     }
 {: class=brush:scala}
