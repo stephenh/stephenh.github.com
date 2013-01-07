@@ -11,7 +11,7 @@ A few times a year, I try and record a screencast for one of my open source proj
 Using ffmpeg
 ------------
 
-After trying a variety of GUI programs (like `gwt-recordMyDesktop`) with various degrees of success, I've had the best results just running `ffmpeg` from the command line. Which, given this is Linux, I guess shouldn't be too surprising.
+After trying a variety of GUI programs (like `gtk-recordMyDesktop`) with various degrees of success, I've had the best results just running `ffmpeg` from the command line. Which, given this is Linux, I guess shouldn't be too surprising.
 
 For my own future reference, the magic incantation I've been using is:
 
