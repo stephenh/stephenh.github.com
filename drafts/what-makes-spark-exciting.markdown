@@ -13,7 +13,7 @@ Why Replace Hive?
 
 Admittedly, Hive has served us well for quite awhile now.
 
-We have a non-trivial amount of reports that process a non-trivial data on a regular basis. Without Hive, we would have been hard pressed to provide the same functionality in the same time frame.
+Like many startups these days, we have a non-trivial amount of reports that process a non-trivial data on a regular basis. Without Hive, we would have been hard pressed to provide the same functionality in the same time frame.
 
 That said, it has gotten to the point where Hive is more frequently invoked in negative contexts ("damn it, Hive") than positive.
 
@@ -37,18 +37,24 @@ Unfortunately, Hive makes unit testing basically impossible. For several reasons
 
 Despite these limitations, about a year ago we had a developer dedicate some effort to prototyping an approach that would run Hive scripts within our CI workflow. In the end, while his prototype worked, the workflow was wonky enough that we never adopted it for production projects.
 
+The result? Our Hive reports are basically untested. This sucks.
+
 #### 2. Hive is hard to extend
 
 Extending Hive via custom functions (UDFs and UDAFs) is possible, and we do it all the time--but it's a pain in the ass.
 
 Perhaps this is not Hive's fault, and it's some Hadoop internals leaking into Hive, but the various [ObjectInspector](http://hive.apache.org/docs/r0.5.0/api/org/apache/hadoop/hive/serde2/objectinspector/ObjectInspector.html) hoops, to me, always seemed annoying to deal with.
 
-So What Makes Spark Great?
---------------------------
+Given these shortcomings, Bizo has been looking for a Hive-successor for awhile, even going so far as to prototype a [revolute](https://github.com/aboisvert/revolute), a Scala DSL on top of [Cascading](http://www.cascading.org/), but had not yet found something we were really excited about.
 
-[Spark](http://www.spark-project.org) is an alternative to Hadoop/Hive that prides itself on being able to load and keep data in memory, so your queries aren't always I/O bound.
+Enter Spark!
+------------
 
-That is great, but the exciting aspect for us at Bizo is how Spark addresses both of Hive's primary shortcomings and turns them into strengths. Specifically:
+[Spark](http://www.spark-project.org) is an alternative to Hadoop/Hive in that it provides a cluster computing framework to run jobs in. We had heard of it, but were so impressed by the Spark presentation at AWS re:Invent (the talk receieved [the highest rating of all non-keynote sessions](https://amplab.cs.berkeley.edu/news/sparkshark-a-big-hit-at-aws-reinvent/)) that we wanted to learn more.
+
+One of Spark's strengths is that it prides itself on being able to load and keep data in memory, so your queries aren't always I/O bound.
+
+That is great, but the exciting aspect for us at Bizo is how Spark addresses both of Hive's primary shortcomings, and turns them into huge strengths. Specifically:
 
 #### 1. Spark is amazingly easy to test
 
@@ -60,13 +66,13 @@ Writing a test in Spark is as easy as:
         // this is real code...
         val sc = new SparkContext("local", "MyUnitTest')
         // and now some psuedo code...
-        val output = nowRunYourCodeThatUsesSpark(sc)
+        val output = runYourCodeThatUsesSpark(sc)
         assertAgainst(output)
       }
     }
 {: class=brush:scala}
 
-(I will go into more detail about `nowRunYourCodeThatUsesSpark` in a future post.)
+(I will go into more detail about `runYourCodeThatUsesSpark` in a future post.)
 
 This one liner starts up a new [SparkContext](http://spark-project.org/docs/latest/api/core/index.html#spark.SparkContext), which is all your program needs to execute Spark jobs. There is no local installation required (just have the Spark jar on your classpath, e.g. via Maven or Ivy), no local server to start/stop. It just works.
 
@@ -74,7 +80,7 @@ As a technical aside, this "local" mode starts up an in-process Spark instance, 
 
 Granted, this is usually more work than you want to be done in an unit test (which ideally would not hit any file or network I/O), but the redeeming quality is that it's *fast*. Tests run in ~2 seconds.
 
-While this is slow for pure/traditional unit tests, this is such a huge revolution compared to Hive that we'll gladly take it.
+Okay, yes, this is slow compared to pure, traditional unit tests, but is such a huge revolution compared to Hive that we'll gladly take it (2 seconds is infinitely faster than 0).
 
 #### 2. Spark is easy to extend
 
@@ -112,11 +118,11 @@ This seamless hop between the RDD and custom Java/Scala code is very nice, and m
 Is Spark Perfect?
 -----------------
 
-As full disclosure, we're still in the early stages of testing Spark, so we can't yet say whether Spark will be a whole sale replacement for Hive within Bizo. We haven't gotten to any serious performance comparisons or written large, complex reports to see if Spark can take whatever we throw at it.
+As full disclosure, we're still in the early stages of testing Spark, so we can't yet say whether Spark will be a wholesale replacement for Hive within Bizo. We haven't gotten to any serious performance comparisons or written large, complex reports to see if Spark can take whatever we throw at it.
 
 Personally, I am also admittedly somewhat infutuated with Spark at this point, so that could be clouding my judgement about the pros/cons and the tradeoffs with Hive.
 
-One Spark con so far is that Spark is pre-1.0, and it can show. I've seen some stack traces that shouldn't happen, and some usability warts, that hopefully will be cleared up by 1.0. (That said, even as a newbie I find the codebase small and very easy to read, such that I've had several small pull requests accepted already.)
+One Spark con so far is that Spark is pre-1.0, and it can show. I've seen some stack traces that shouldn't happen, and some usability warts, that hopefully will be cleared up by 1.0. (That said, even as a newbie I find the codebase small and very easy to read, such that I've had several small pull requests accepted already--which is some consolation compared to the duanting codebases of Hadoop and Hive.)
 
 We have also seen that, for our first Spark job, moving from "Spark job written" to "Spark job running in production" is taking longer than expected. But given that Spark is a new tool to us, we expect this to be a one-time cost.
 
