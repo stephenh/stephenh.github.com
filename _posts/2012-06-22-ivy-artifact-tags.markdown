@@ -122,7 +122,7 @@ And now, each of the variations:
 
    So, due to `defaultconf="default;sources"`, those are our "master configurations" for this artifact, and the web *jar* artifact is put in both the default and sources confs.
 
-   **Take away:** Leaving off `artifact`'s `conf` attribute puts the artifact is any master configuration, which is probably what you want. Add a `conf`.
+   **Take away:** Leaving off `artifact`'s `conf` attribute puts the artifact in any master configuration, which is probably not what you want. Add a `conf`.
 
 3. Add an `artifact` tag with `conf` attribute:
 
