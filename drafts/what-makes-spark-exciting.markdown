@@ -131,7 +131,7 @@ As full disclosure, we're still in the early stages of testing Spark, so we can'
 
 Personally, I am also admittedly somewhat infutuated with Spark at this point, so that could be clouding my judgement about the pros/cons and the tradeoffs with Hive.
 
-One Spark con so far is that Spark is pre-1.0, and it can show. I've seen some stack traces that shouldn't happen, and some usability warts, that hopefully will be cleared up by 1.0. (That said, even as a newbie I find the codebase small and very easy to read, such that I've had several small pull requests accepted already--which is some consolation compared to the daunting codebases of Hadoop and Hive.)
+One Spark con so far is that Spark is pre-1.0, and it can show. I've seen some stack traces that shouldn't happen, and some usability warts, that hopefully will be cleared up by 1.0. (That said, even as a newbie I find the codebase small and very easy to read, such that I've had [several](https://github.com/mesos/spark/pull/352) [small](https://github.com/mesos/spark/pull/351) [pull requests](https://github.com/mesos/spark/pull/362) accepted already--which is a nice consolation compared to the daunting codebases of Hadoop and Hive.)
 
 We have also seen that, for our first Spark job, moving from "Spark job written" to "Spark job running in production" is taking longer than expected. But given that Spark is a new tool to us, we expect this to be a one-time cost.
 
