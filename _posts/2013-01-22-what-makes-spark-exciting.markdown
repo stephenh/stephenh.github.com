@@ -1,10 +1,12 @@
 ---
-layout: draft
+layout: post
 title: What Makes Spark Exciting
 ---
 
 {{page.title}}
 ==============
+
+([Cross-posted](http://dev.bizo.com/2013/01/what-makes-spark-exciting.html) on the Bizo [dev blog](http://dev.bizo.com/).)
 
 At [Bizo](http://www.bizo.com), we're currently evaluating/prototyping [Spark](http://www.spark-project.org) as a replacement for [Hive](http://hive.apache.org/) for our batch reports.
 
