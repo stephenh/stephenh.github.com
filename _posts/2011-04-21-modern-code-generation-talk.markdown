@@ -1,4 +1,3 @@
-
 ---
 layout: post
 title: Modern Code Generation Talk
