@@ -145,7 +145,7 @@ This is the [gwt-mpv-dev `ivy.xml`](http://github.com/stephenh/gwt-mpv/tree/mast
         defaultconfmapping == unless specified otherwise, our confs map
           to default for our dependencies
       -->
-      <dependencies defaultconfmapping="sources->sources(),%->default" defaultconf="default,sources">
+      <dependencies defaultconfmapping="sources->sources();%->default" defaultconf="default;sources">
         <!--
           gwt-mpv-user is published simultaneously with
           gwt-mpv-dev, so depend on the same exact revision.
