@@ -85,6 +85,7 @@ For our S3 example, the Spark/Hadoop default partitioning for gzipped files is o
     slave2: 
       traffic-2000-01-02.log:
         user1 /foo.html 5:00pm
+        user3 /bar.html 5:05pm
 
     slave3:
       traffic-2000-01-04.log:
@@ -136,60 +137,126 @@ Now that we have the aggregation by user, we can count each user's lines:
 
 Minus some hand waving about the Scala syntax, `RDD.collect` applies our function to each line of the `RDD`, which conveniently is now a user + all of their lines as a `Seq` (a list).
 
-So, Spark has fulfilled it's job of moving the data for each user all together and handing it over to our report 
+So, Spark has fulfilled it's job of moving the data for each user all together and handing it over to our report. We can apply our logic and then dump the result to S3. Easy!
 
+What about Shuffling?
+---------------------
 
+So, after a somewhat longer than expected tangent about the high-level semantics/mental model of Spark, let's try and flush out a mental model for shuffling.
 
+If you'll recall from before, our logs came into the cluster like so (now annotated with partition 1-4, assuming a partition-per-file):
 
+    slave1:
+      traffic-2000-01-01.log: (partition 1)
+        user1 /foo.html 8:00am
+        user2 /bar.html 8:10am
+      traffic-2000-01-03.log: (partition 2)
+        user1 /zaz.html 8:30am
 
+    slave2: 
+      traffic-2000-01-02.log: (partition 3)
+        user1 /foo.html 5:00pm
+        user3 /bar.html 5:05pm
 
+    slave3:
+      traffic-2000-01-04.log: (partition 4)
+        user2 /foo.html 2:00pm
+        user1 /bar.html 2:10pm
+        user2 /foo.html 2:20pm
+{: class=brush:plain}
 
-When Spark first loads our data, we have all of the log data available. In our simple case, 3 fields (user, page, and time). Let's say we only want user and page, so we might do something like:
+And we know Spark gets all of the `user1` lines together, `user2` lines together, etc. But how?
 
-    val nameAndPages = users.map { logLine =>
-      val parts = someHowParseLine(logLine)
-      (parts(0), parts(1))
+Let's think about Spark's units of work: partitions.
+
+Previously, our data was basically randomly loaded into 4 partitions (whatever file it happened to be in).
+
+Instead, we want it reorganized by user, so we want new partitions. The default Spark behavior is to use the same number of partitions for a new `RDD` as the previous `RDD`, so we'll have 4 new partitions, that may look something like this:
+
+     RDD1 (random/from logs)     RDD2 (partitioned by user)
+
+    partition 1                 partition 1
+      user1 /foo.html             user2 /bar.html
+      user2 /bar.html             user2 /foo.html
+    partition 2                   user2 /foo.html
+      user1 /zaz.html             user3 /bar.html
+    partition 3          -->    partition 2
+      user1 /foo.html             user1 /foo.html
+      user3 /bar.html             user1 /foo.html
+    partition 4                   user1 /zaz.html
+      user2 /foo.html             user1 /bar.html
+      user1 /bar.html           partition 3
+      user2 /foo.html           partition 4
+{: class=brush:plain}
+
+A few things to note:
+
+1. Spark, by default, picks which new partition a line goes in by hashing it's key; so, in this instead `user2`'s id hashed to partition 1, `user1`'s key hashed to partition 2, etc.
+1. This results in the data for any given user now being all within a single partition.
+2. Partitions will have data for more than just 1 key, e.g. both `user2` and `user3` hashed to partition 1.
+3. In our trivial example, a few partitions ended up with no data, but this is unlikely in real jobs with large data sets.
+
+I can only draw one ASCII `-->`, but in typical Spark diagrams, there are lots of arrows between each partition, making the name "shuffle" more fitting.
+
+One could imagine pseudo-code for this operation as something like:
+
+    val newPartitions = new Array[List[Line]](4)
+    for (oldPartition <- oldPartitions) {
+      for (line <- oldPartition) {
+        int newPartition = line._1.hashCode % 4
+        newPartitions(newPartition) += line
+      }
     }
 {: class=brush:scala}
 
-Spark is basically letting us apply a function (the closure) to each line, as if we were working against a collection in-memory.
+This pseudo-code of course assumes every fits in memory, while Spark has to take a more nuanced approach.
 
-Conceptually, we can now this of our data as:
-
-    machine1:
-      file1.log:
-        (user1, /foo.html)
-        (user2, /bar.html)
-      file2.log:
-        (user1, /zaz.html)
-
-    machine2: 
-      file4.log:
-        (user1, /foo.html)
-
-    machine3:
-      file3.log:
-        (user2, /foo.html)
-        (user1, /bar.html)
-        (user2, /foo.html)
-{: class=brush:plain}
-
-Note that the data hasn't actually been moved across machines, because the operation doesn't require that, we can just modify it in place.
-
-(Conceptually; Spark won't actually modify the data in place nor run the operation at this point, but we'll get to that.)
-
-Let's do a Shuffle
+Shuffling At Scale
 ------------------
 
-So, we have data in our cluster, and we've done a simple map on it, now let's shuffle.
+In our example, we have 4 partitions in `RDD1` and 4 partitions in `RDD2`.
 
-Right now the lines for each user are spread randomly across the shuffle. Let's say we want to count page views per user, so we want to be able to put all of the pages for one user together.
+In map/reduce parlance, `RDD1` is called the map-side, and `RDD2` is called the reduce-side. This goes back to the original Google/Hadoop map/reduce semantics which Spark is inspired by.
 
-In spark, this might look like:
+So, since `RDD1` has 4 partitions, the shuffle to `RDD2` is said to have 4 mappers. And since `RDD2` has 4 partitions, then there are 4 reducers.
 
-    val byUser =
-      nameAndPages.groupBy { _._1 } // _1 == the user
+In our example, the number of mappers and reducers are the same, but this is not necessarily the case; if you know `RDD2` will have much fewer keys in it (due to a `filter` for example), you could drop the number of reducers to reduce overhead. We'll talk about this more later.
+
+So, conceptually if a shuffle has 4 mappers, and 4 reducers, each mapper (say mapper partition 1) must have a buffer to each reducer (reducer partition 1, reducer partition 2, reducer partition 3, etc.).
+
+This is a basic permutation, so for 4 mappers and 4 reducers, it results in `4 x 4 = 16` buffers that must store the shuffle results, or blocks in Spark.
+
+The logic is pretty straight forward (as pseudo code anyway):
+
+    // map-side, on each slave, store everything into blocks
+    for (oldPartition <- oldPartitionsOnThisSlave) {
+      for (line <- oldPartition) {
+        int newPartitionId = line._1.hashCode % 4
+        val blockId = "shuffle_" + currentShuffleId + 
+          "_from_ " + oldPartition.id +
+          "_to_" + newPartitionId
+        // stores block locally
+        block = getBlock(blockId) += line
+      }
+    }
+
+    // reduce-side, on each slave, read everything into new partitions
+    for (newPartition <- newPartitionsOnThisSlave) {
+      for (oldPartition <- oldPartitions) {
+        val incomingBlock = "shuffle_" + currentShuffleId +
+          "_from_" + oldPartitions.id +
+          "_to_" + newPartition.id
+         // fetches block from oldPartition's node
+        block = getBlock(incomingBlock)
+      }
+    }
 {: class=brush:scala}
+
+
+Credits
+-------
+
+The Spark community, and Patrick Wendell and Aaron Davidson in particular, on the user list where extremely helpful in describing the mechanics of shuffling.
 
 
 
