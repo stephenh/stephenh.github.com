@@ -34,7 +34,7 @@ Shuffles
 
 The process of moving data around, in Spark and most map/reduce frameworks, is called a shuffle.
 
-This is somewhat confusing, as in everyday usage, "shuffle" means random placement (like shuffling a deck of cards). Random placement would obviously be less than ideal, as Spark wouldn't know/control where the data is at.
+This is somewhat confusing, as in everyday usage, "shuffle" means random placement (like shuffling a deck of cards). Random placement would obviously be less than ideal, as Spark wouldn't know/control where the data is at, and User 1's data may end up on many different nodes.
 
 Instead, in Spark for other map/reduce frameworks, shuffling means moving data into a very specific place, typically for doing aggregation operations like joins.
 
@@ -181,20 +181,20 @@ Instead, we want it reorganized by user, so we want new partitions. The default 
     partition 2                   user2 /foo.html
       user1 /zaz.html             user3 /bar.html
     partition 3          -->    partition 2
-      user1 /foo.html             user1 /foo.html
+      user1 /foo.html           partition 3
       user3 /bar.html             user1 /foo.html
-    partition 4                   user1 /zaz.html
-      user2 /foo.html             user1 /bar.html
-      user1 /bar.html           partition 3
+    partition 4                   user1 /foo.html
+      user2 /foo.html             user1 /zaz.html
+      user1 /bar.html             user1 /bar.html
       user2 /foo.html           partition 4
 {: class=brush:plain}
 
 A few things to note:
 
-1. Spark, by default, picks which new partition a line goes in by hashing it's key; so, in this instead `user2`'s id hashed to partition 1, `user1`'s key hashed to partition 2, etc.
-1. This results in the data for any given user now being all within a single partition.
-2. Partitions will have data for more than just 1 key, e.g. both `user2` and `user3` hashed to partition 1.
-3. In our trivial example, a few partitions ended up with no data, but this is unlikely in real jobs with large data sets.
+1. Spark, by default, picks which new partition a line goes in by hashing it's key; so, in this instead `user2`'s id hashed to partition 1, `user1`'s key hashed to partition 3, etc.
+2. This results in the data for any given user now being all within a single partition.
+3. Partitions will have data for more than just 1 key, e.g. both `user2` and `user3` hashed to partition 1.
+4. In our trivial example, a few partitions ended up with no data, but this is unlikely in real jobs with large data sets.
 
 I can only draw one ASCII `-->`, but in typical Spark diagrams, there are lots of arrows between each partition, making the name "shuffle" more fitting.
 
@@ -207,43 +207,68 @@ One could imagine pseudo-code for this operation as something like:
         newPartitions(newPartition) += line
       }
     }
+    // each bucket of the newPartitions array now
+    // has that new partition's log lines
 {: class=brush:scala}
 
 This pseudo-code of course assumes every fits in memory, while Spark has to take a more nuanced approach.
 
-Shuffling At Scale
-------------------
+Shuffling via Blocks
+--------------------
 
-In our example, we have 4 partitions in `RDD1` and 4 partitions in `RDD2`.
+The previous pseudo-code described how Spark could do a shuffle with just arrays and lists in memory. Obviously for real jobs, the entire `RDD` of data could not all be kept in RAM,
 
-In map/reduce parlance, `RDD1` is called the map-side, and `RDD2` is called the reduce-side. This goes back to the original Google/Hadoop map/reduce semantics which Spark is inspired by.
+Instead, Spark's shuffle implementation buffers data to disk, in blocks. During a shuffle, Spark will save data from the old partitions to blocks, and then later transfer/read these blocks into the new partitions.
 
-So, since `RDD1` has 4 partitions, the shuffle to `RDD2` is said to have 4 mappers. And since `RDD2` has 4 partitions, then there are 4 reducers.
+The blocks that would be involved, written by `RDD1` and read by `RDD2`, would look like:
 
-In our example, the number of mappers and reducers are the same, but this is not necessarily the case; if you know `RDD2` will have much fewer keys in it (due to a `filter` for example), you could drop the number of reducers to reduce overhead. We'll talk about this more later.
+     RDD1 (random/from logs)     RDD2 (partitioned by user)
 
-So, conceptually if a shuffle has 4 mappers, and 4 reducers, each mapper (say mapper partition 1) must have a buffer to each reducer (reducer partition 1, reducer partition 2, reducer partition 3, etc.).
+    partition 1 (slave1)        partition 1 (slave3)
+      write block_1_to_1          read block_1_to_1
+      write block_1_to_2          read block_2_to_1
+      write block_1_to_3          read block_3_to_1
+      write block_1_to_4          read block_4_to_1
+    partition 2 (slave1)        partition 2 (slave2)
+      write block_2_to_1          read block_1_to_2
+      write block_2_to_2          read block_2_to_2
+      write block_2_to_3          read block_3_to_2
+      write block_2_to_4          read block_4_to_2
+    partition 3 (slave2)  -->   partition 3 (slave2)
+      write block_3_to_1          read block_1_to_3
+      write block_3_to_2          read block_2_to_3
+      write block_3_to_3          read block_3_to_3
+      write block_3_to_4          read block_4_to_3
+    partition 4 (slave3)        partition 4 (slave1)
+      write block_4_to_1          read block_1_to_4
+      write block_4_to_2          read block_2_to_4
+      write block_4_to_3          read block_3_to_4
+      write block_4_to_4          read block_4_to_4
+{: class=brush:plain}
 
-This is a basic permutation, so for 4 mappers and 4 reducers, it results in `4 x 4 = 16` buffers that must store the shuffle results, or blocks in Spark.
+As you can see, after buffering the data to/from blocks, the net effect will be a shuffle, and the data is now moved to its new partition (based on its key).
 
-The logic is pretty straight forward (as pseudo code anyway):
+Thinking about this from a pseudo code approach, it is also pretty straight forward. Spark will first have the mappers run, which vaguely do:
 
     // map-side, on each slave, store everything into blocks
     for (oldPartition <- oldPartitionsOnThisSlave) {
       for (line <- oldPartition) {
         int newPartitionId = line._1.hashCode % 4
-        val blockId = "shuffle_" + currentShuffleId + 
+        val blockId = "block_" + currentShuffleId + 
           "_from_ " + oldPartition.id +
           "_to_" + newPartitionId
-        // stores block locally
-        block = getBlock(blockId) += line
+        // stores data for this block locally
+        getBlock(blockId) += line
       }
     }
+{: class=brush:scala}
+
+And then once they are complete, Spark will have the reducers run to now pull this data back in:
 
     // reduce-side, on each slave, read everything into new partitions
     for (newPartition <- newPartitionsOnThisSlave) {
       for (oldPartition <- oldPartitions) {
-        val incomingBlock = "shuffle_" + currentShuffleId +
+        val incomingBlock = "block_" + currentShuffleId +
           "_from_" + oldPartitions.id +
           "_to_" + newPartition.id
          // fetches block from oldPartition's node
@@ -252,11 +277,28 @@ The logic is pretty straight forward (as pseudo code anyway):
     }
 {: class=brush:scala}
 
+(If you're curious about Spark's actual implementation of these, the 1st snippet is implemented in `ShuffleMapTask`, and the 2nd snippet is implemented in `ShuffledRDD`.)
+
+### Mapper and Reducer Terminology
+
+In our example, we had two `RDD`s: `lines`, the raw log lines, and `linesByUser`, which are grouped/shuffled by user id.
+
+For a shuffle, Spark uses common map/reduce terminology, and calls the `lines` `RDD` the map-side, and the `linesByUser` `RDD` the reduce-side.
+
+Since `lines` has 4 partitions, the shuffle to `linesByUser` is said to have 4 mappers. And since `linesByUser` has 4 partitions, then there are 4 reducers.
+
+Here the number of mappers and reducers are the same, but this is not necessarily the case; if you know `linesByUser` will have much fewer keys in it (due to a `filter` for example), you could drop the number of reducers to reduce overhead. We'll talk about this more later.
+
+So, conceptually if a shuffle has 4 mappers, and 4 reducers, each mapper (say the mapper for `lines` partition 1) must have a block for each reducer (the reducer for `linesByUser` partition 1, `linesByUser` reducer partition 2, `linesByUser` reducer partition 3, etc.).
+
+This is a basic permutation, so for 4 mappers and 4 reducers, it results in `4 x 4 = 16` blocks to store the shuffle results.
+
+Shuffling at Scale
+------------------
+
+...this is what I actually wanted to post about...
 
 Credits
 -------
 
-The Spark community, and Patrick Wendell and Aaron Davidson in particular, on the user list where extremely helpful in describing the mechanics of shuffling.
-
-
-
+The Spark community, and Patrick Wendell and Aaron Davidson in particular, on the Spark user list where extremely helpful in describing the mechanics of shuffling (see [this thread](http://markmail.org/search/?q=oome+list%3Aorg.apache.spark.user#query:oome%20list%3Aorg.apache.spark.user+page:1+mid:ybauig4d5phdackv+state:results)).
