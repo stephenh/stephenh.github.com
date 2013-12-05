@@ -17,6 +17,8 @@ That being said, I prefer to leverage Maven repositories from a safe, arms lengt
 
 While Ivy-to-Maven works well, it did take me a few tries to get it right, so here are the various settings/files that so far are doing the job.
 
+**Update 12/05/2013:** I don't know why I did this, but the example `ivysettings.xml`, `ivy.xml`, and `build.xml` files below are actually from two separate projects of mine ([Joist](http://www.joist.ws) and [Tessell](http://www.tessell.org)). So, sorry for that being confusing, but they should still work. Note that you can check out either the Joist or Tessell builds for the latest Ivy incantations, in case these have drifted.
+
 `ivysettings.xml`
 -----------------
 
@@ -99,7 +101,7 @@ So, with the current Ivy 2.1.0 capabilities, it takes two resolvers for a single
 `ivy.xml`
 ---------
 
-This is the [gwt-mpv-dev `ivy.xml`](http://github.com/stephenh/gwt-mpv/tree/master/dev/ivy.xml), again with comments. 
+This is the [Tessell `ivy.xml`](http://github.com/stephenh/tessell/tree/master/dev/ivy.xml), again with comments. 
 
     <ivy-module version="2.0" xmlns:m="http://ant.apache.org/ivy/maven">
       <!--
@@ -107,7 +109,7 @@ This is the [gwt-mpv-dev `ivy.xml`](http://github.com/stephenh/gwt-mpv/tree/mast
         ivysettings.xml, which defaults to SNAPSHOT. This
         is overriden when publishing.
       -->
-      <info organisation="org.gwtmpv" module="gwt-mpv-dev" revision="${revision}"/>
+      <info organisation="org.tessell" module="tessell-dev" revision="${revision}"/>
 
       <!--
         I'm not a huge fan of a separate sources conf,
@@ -147,10 +149,10 @@ This is the [gwt-mpv-dev `ivy.xml`](http://github.com/stephenh/gwt-mpv/tree/mast
       -->
       <dependencies defaultconfmapping="sources->sources();%->default" defaultconf="default;sources">
         <!--
-          gwt-mpv-user is published simultaneously with
-          gwt-mpv-dev, so depend on the same exact revision.
+          tessell-user is published simultaneously with
+          tessell-dev, so depend on the same exact revision.
         -->
-        <dependency org="org.gwtmpv" name="gwt-mpv-user" rev="${revision}" conf="default"/>
+        <dependency org="org.tessell" name="tessell-user" rev="${revision}" conf="default"/>
 
         <!-- other dependencies -->
         <dependency org="com.google.gwt" name="gwt-dev" rev="2.1.0.M1" conf="default"/>
@@ -161,7 +163,7 @@ This is the [gwt-mpv-dev `ivy.xml`](http://github.com/stephenh/gwt-mpv/tree/mast
 `build.xml`
 -----------
 
-Finally, here is the Ivy-related part of the [gwt-mpv-dev `build.xml`](http://github.com/stephenh/gwt-mpv/tree/master/dev/build.xml):
+Finally, here is the Ivy-related part of the [Tessell `build.xml`](http://github.com/stephenh/tessell/tree/master/dev/build.xml):
 
     <property name="ivy.jar.version" value="2.1.0"/>
     <property name="ivy.jar.name" value="ivy-${ivy.jar.version}.jar"/>
@@ -239,7 +241,7 @@ This is generally acceptable, insofar as Ivy will get all of the dependencies tr
 
 So if you want to add more elements to the pom, it is probably easiest to just hand-maintain a `project.pom.template` and use a simple Ant filter to update the version on each build before being uploaded.
 
-For example, [gwt-mpv-dev-0.1.pom](http://repo.joist.ws/org/gwtmpv/gwt-mpv-dev/0.1/gwt-mpv-dev-0.1.pom) was built automatically by `makepom`, while [gwt-mpv-apt-1.3.pom](http://repo.joist.ws/org/gwtmpv/gwt-mpv-apt/1.3/gwt-mpv-apt-1.3.pom) was built from a hand-maintained template.
+For example, [tessell-dev-2.13.4.pom](http://repo.joist.ws/org/tessell/tessell-dev/2.13.4/tessell-dev-2.13.4.pom) was built automatically by `makepom`, while [tessell-apt-2.6.3.pom](http://repo.joist.ws/org/tessell/tessell-apt/2.6.3/tessell-apt-2.6.3.pom) was built from a hand-maintained template.
 
 Local Testing Builds
 --------------------
@@ -258,7 +260,7 @@ Though if you're using [IvyDE](http://ant.apache.org/ivy/ivyde/) and workspace r
 Doing Releases
 --------------
 
-With the above setup, I can now publish `gwt-mpv` to the [joist repo](http://repo.joist.ws/org/gwtmpv) via:
+With the above setup, I can now publish Tessell to the [joist repo](http://repo.joist.ws/org/tessell) via:
 
     ant -Drevision=x.y ivy-publish-share
 {: class=brush:plain}
@@ -277,4 +279,6 @@ Nonetheless, this has been working well for me. If I made any errors or omission
 **Update 08/03/2010**: Add gotcha about the `local-m2` resolver being chained after `public` resolvers.
 
 **Update 01/13/2011**: Add `changingPattern="true"` to `local-m2` and `default` resolvers so that snapshots work without having Ant manually flushing the cache.
+
+**Update 12/05/2013**: Fixed old "gwt-mpv" links to Tessell, as the project got renamed.
 
