@@ -31,7 +31,7 @@ What GOOS suggests is a pretty common pattern of allowing each test to commit it
     for (Class domainClass : someListOfDomainClasses) {
       persistenceLayer.deleteAll(domainClass);
     }
-{: class=brush:java}
+{: class="brush:java"}
 
 This can be a little tricky as you don't want to trigger any foreign key constraints if you, say, delete the `FooParent` rows before the `FooChild` rows that have foreign keys to them. The usual hack is something like `set foreign_key_constraints=0` for MySQL or deferred key constraints for PostgreSQL.
 
@@ -49,7 +49,7 @@ While I'm not usually a fan of stored procedures, in this case, it makes sense--
 
     // mysql
     execute("call flush_test_database()");
-{: class=brush:java}
+{: class="brush:java"}
 
 The stored procedure then executes the 500+ `delete` calls directly against the database.
 
@@ -75,7 +75,7 @@ The stored procedure for Postgres looks like:
       LANGUAGE 'plpgsql' VOLATILE
       COST 100;
     ALTER FUNCTION flush_test_database() SECURITY DEFINER;
-{: class=brush:sql}
+{: class="brush:sql"}
 
 Note that the `SECURITY DEFINER` part is important as it will allow callers of the stored procedure (e.g. your application's database user) to alter sequences that it does not own (e.g. because they are owned by the root `postgres` user).
 
@@ -94,7 +94,7 @@ MySQL is even easier as `TRUNCATE TABLE` resets the auto increment column:
     SET FOREIGN_KEY_CHECKS=1;
     SELECT 1;
     END
-{: class=brush:sql}
+{: class="brush:sql"}
 
 Again, you can see [GenerateFlushFunction.java][flush] for the exact code.
 

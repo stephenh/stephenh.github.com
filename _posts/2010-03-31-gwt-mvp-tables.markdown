@@ -81,7 +81,7 @@ To show an example, a regular form that would edit a `Foo` object in GWT MVP is 
         return nameField;
       }
     }
-{: class=brush:java}
+{: class="brush:java"}
 
 The idea is that the `Display` interface is easily mockable, so you can write a `FooPresenterTest` that creates a mock `Display`, with mock `HasValue`/etc., and test all of your `FooPresenter` business logic without actually using any GWT widgets that would require running in a browser environment (like `GWTTestCase`).
 
@@ -138,7 +138,7 @@ One of the GWT examples uses a `List<String[]>` as a very naive `TableModel`, bu
         }
       }
     }
-{: class=brush:java}
+{: class="brush:java"}
 
 The GWT incubator has a much more powerful, elaborate `TableModel` for their [`PagingScrollTable`](http://code.google.com/p/google-web-toolkit-incubator/wiki/PagingScrollTable) that is worth checking out if this approach works for you.
 
@@ -188,7 +188,7 @@ There is an idiom where you can attach a listener to the entire table, and then 
         }
       }
     }
-{: class=brush:java}
+{: class="brush:java"}
 
 However this seems less than ideal to me. The view becomes more complicated, and the presenter no longer has concrete `HasXxx` interfaces that are easy to wire up and stub out. There is also no clear place to store per-cell/per-row state, except perhaps in maps or other fields in the parent presenter.
 
@@ -224,7 +224,7 @@ This approach would look something like:
         fooTable.setWidget(row, column, display.asWidget());
       }
     }
-{: class=brush:java}
+{: class="brush:java"}
 
 Just looking at this example, it doesn't seem that bad. I thought it'd work out nicely.
 
@@ -283,7 +283,7 @@ A per-row presenter, with its parent presenter as well, would look like:
         }
       }
     }
-{: class=brush:java}
+{: class="brush:java"}
 
 As far as how each row's concrete view class is implemented, I did some hacking so that the entire row has its own UiBinder file. E.g. `FooRowView.ui.xml` might look like:
 
@@ -296,7 +296,7 @@ As far as how each row's concrete view class is implemented, I did some hacking 
         </tr>
       </gwt:HTMLPanel>
     </ui:UiBinder>
-{: class=brush:xml}
+{: class="brush:xml"}
 
 This `ui.xml` file initially looks a little odd because each row has its own `<table>` tag--however, this is just a necessary hack because `HTMLPanel` does not like its `tag` attribute to be set to `tr`. I guess when browsers do `innerHTML`, they don't like a `tr` running around without its parent `table`.
 
@@ -322,7 +322,7 @@ So, to get around this, plus `HTMLTable`'s lack of a per-row API, I wrote a `Row
         // Adopt
         adopt(widget);
       }
-{: class=brush:java}
+{: class="brush:java"}
 
 So, we logically attach the entire `HTMLPanel` widget (to get the usual `Widget`/`attach` magic), but for physically attaching we raid the `HTMLPanel`'s table element of all of its `TR` elements (which should be just one given this display is for one row) and append them to our own `bodyElement`.
 

@@ -58,7 +58,7 @@ For example, this snippet from the [Torque's](http://db.apache.org/torque) ORM [
 
       #end
     #end
-{: class=brush:java}
+{: class="brush:java"}
 
 Complex templates like this make both the initial development and long-term maintenance of code generators painful.
 
@@ -80,7 +80,7 @@ Another example is this generated output from [GXP](http://code.google.com/p/gxp
         final java.util.Locale gxp_locale = gxp_context.getLocale(); // caused unused warning
         // ...more generated output...
       }
-{: class=brush:java}
+{: class="brush:java"}
 
 Ugly, warning-filled output makes developers turn up their noses when they invariably glance at the generated output as they use it.
 
@@ -108,7 +108,7 @@ Good examples of this are [joist](http://joist.ws/orm.html) making types that th
       ChildAlias c = new ChildAlias("c");  
       return Select.from(c).where(c.name.equals(name)).unique();  
     }  
-{: class=brush:java}
+{: class="brush:java"}
 
 Or [Tessell](http://www.tessell.org/viewgeneration.html) making boilerplate Java classes based on HTML-like XML UI templates:
 
@@ -120,7 +120,7 @@ Or [Tessell](http://www.tessell.org/viewgeneration.html) making boilerplate Java
         <div><gwt:SubmitButton ui:field="submit" text="Submit"/></div>
       </gwt:HTMLPanel>
     </ui:UiBinder>
-{: class=brush:xml}
+{: class="brush:xml"}
 
 That is turned into, among other things, an interface for the developer to code against:
 
@@ -130,7 +130,7 @@ That is turned into, among other things, an interface for the developer to code 
       IsTextBox description();
       IsSubmitButton submit();
     }
-{: class=brush:java}
+{: class="brush:java"}
 
 Or any of the SOAP/RPC projects like [Axis](http://ws.apache.org/axis/), [Thrift](http://incubator.apache.org/thrift/), or [protobuf](http://code.google.com/p/protobuf/) creating in-language DTOs for cross-process communications.
 
@@ -187,7 +187,7 @@ The idea behind `sourcegen` is to break away from Velocity-style templates and a
 
       outputClass.addField("bar").type(Integer.class);
       outputClass.addMethod("getBar").returnType(Integer.class).body.line("return bar;");
-  {: class=brush:java}
+  {: class="brush:java"}
 
   `sourcegen` will then output the class declaration boilerplate:
 
@@ -205,14 +205,14 @@ The idea behind `sourcegen` is to break away from Velocity-style templates and a
           return bar;
         }
       }
-  {: class=brush:java}
+  {: class="brush:java"}
 
 * Any program generating Java code is going to have to handle imports. Instead of pessimistically including any possible import a template might need at the start of the file (e.g. single pass, and resulting in a slew of detested "Unused import" warnings), a program should be able to say half-way through the file "btw, I need `foo.bar.Zaz` imported".
 
       // we've already added methods/fields/etc. to outputClass
       // but now we hit a conditional and need Zaz as well
       outputClass.addImports(Zaz.class);
-  {: class=brush:java}
+  {: class="brush:java"}
 
   (`sourcegen` actually goes further and implements auto-import--if you add a field of type `foo.bar.Zaz`, `sourcegen` will change the type to just `Zaz` in the output if a) you are already in the `foo.bar` package or b) the `Zaz` class does not clash with an existing import.)
 
@@ -245,7 +245,7 @@ With this internal DSL in place, code generation can now read like regular progr
           this.clearAssociations(domainCodegen, entity);
         }
     }
-  {: class=brush:java}
+  {: class="brush:java"}
 
 Now instead of one huge template, code generation can be broken into discrete chunks, e.g. `this.manyToOneProperties`, and at the end all of the classes/methods/fields can be output at once via a single `toCode()` call.
 

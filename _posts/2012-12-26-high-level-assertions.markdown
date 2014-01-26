@@ -22,7 +22,7 @@ Anyway, the pattern I strive for with most tests is (ha) BDD inspired:
       // then <some business artifact is observable>
       assertSomething();
     }
-{: class=brush:java}
+{: class="brush:java"}
 
 Where ideally the comments of "given, when, then" document the why, the meaning of what's going on, so that 6 months from now, any programmer, yourself included, could glance at the comments and follow what is going on.
 
@@ -44,14 +44,14 @@ E.g. often you'll see code that wants to assert "there are two $50 credit transa
     assertThat(txns.get(0).getType(), is(CREDIT));
     assertThat(txns.get(1).getAmount(), is(Money.dollars(50.00));
     assertThat(txns.get(1).getType(), is(CREDIT));
-{: class=brush:java}
+{: class="brush:java"}
 
 We just ate more than half of our 7 LOC budget.
 
 So, in thinking how we can make this assertion simpler, and more direct, I've wound up occasionally using strings (gasp) to encode a high-/business-level meaning, e.g.:
 
     assertTxns(txns, "1/1 $50 CREDIT", "1/1 $50 CREDIT");
-{: class=brush:java}
+{: class="brush:java"}
 
 Or, if you have attributes about an account (like overpaid or overdue), you might do:
 
@@ -59,7 +59,7 @@ Or, if you have attributes about an account (like overpaid or overdue), you migh
     assertAccount(account1, "#1234 CHECKING (overpaid, overdue)");
     // and the 2nd account is okay
     assertAccount(account2, "#5678 CHECKING");
-{: class=brush:java}
+{: class="brush:java"}
 
 Note how ideally information you normally wouldn't care about, like an account being overpaid (which is hopefully unusual), is not included in the default description, as it would be noise that most test cases don't care about.
 
@@ -111,7 +111,7 @@ I haven't tried it yet, but I could see addressing the cons with an assertion me
         assertThat(account.getOverpaid, is (overpaid))
       }
     }
-{: class=brush:scala}
+{: class="brush:scala"}
 
 This way each test method could opt-in to only asserting the attributes it cares about. ...although this sounds very similar to the imperative approach, and is just kind of hacking it to be one 1 line.
 

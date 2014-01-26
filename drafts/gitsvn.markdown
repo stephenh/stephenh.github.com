@@ -11,7 +11,7 @@ First, make the project trunk, A:
     $ svn mkdir https://bizodev.jira.com/svn/GITSVN/trunk/project1 -m "Creating project1."
 
     $ svn mkdir https://bizodev.jira.com/svn/GITSVN/branches/project1 -m "Creating project1 branches."
-{: class=brush:plain}
+{: class="brush:plain"}
 
 Now make git-svn clones, A and B:
 
@@ -21,7 +21,7 @@ Now make git-svn clones, A and B:
        -b branches/project1
        --authors-file=./authors
        --prefix=svn/ project1
-{: class=brush:plain}
+{: class="brush:plain"}
 
 The authors file maps user names to emails, mine is:
 
@@ -39,14 +39,14 @@ The authors file maps user names to emails, mine is:
     kip = Kip <kip@bizo.com>
     gannon = Patrick <gannon@bizo.com>
     appnexus = AppNexus <appnexus@bizo.com>
-{: class=brush:plain}
+{: class="brush:plain"}
 
 The default local branch name is master, but I think trunk makes more sense, A and B:
 
     $ git checkout -b trunk master
 
     $ git branch -d master
-{: class=brush:plain}
+{: class="brush:plain"}
 
 Note that `master` will keep showing up, as `git-svn` seems to resurrect it occasionally.
 
@@ -56,7 +56,7 @@ Making the First File
 Make a new line, person B:
 
     $ echo "line 1" > file1.txt
-{: class=brush:plain}
+{: class="brush:plain"}
 
 Note that the file is currently "untracked", B:
 
@@ -67,7 +67,7 @@ Note that the file is currently "untracked", B:
     #
     #	file1.txt
     nothing added to commit but untracked files present (use "git add" to track)
-{: class=brush:plain}
+{: class="brush:plain"}
 
 Running `git commit` would not do anything at this point.
 
@@ -81,7 +81,7 @@ So, you want to stage `file1.txt` for addition, B:
     #   (use "git reset HEAD <file>..." to unstage)
     #
     #	new file:   file1.txt
-{: class=brush:plain}
+{: class="brush:plain"}
 
 Now make a local commit for it, B:
 
@@ -105,7 +105,7 @@ Now make a local commit for it, B:
     $ git branch -av
     * trunk             0d9b4da Added file1.txt.
       remotes/svn/trunk ef3ebc9 Creating project1.
-{: class=brush:plain}
+{: class="brush:plain"}
 
 And push it to Subversion, B:
 
@@ -121,7 +121,7 @@ And push it to Subversion, B:
     $ git branch -av
     * trunk             22b69e5 Added file1.txt.
       remotes/svn/trunk 22b69e5 Added file1.txt.
-{: class=brush:plain}
+{: class="brush:plain"}
 
 Also, pull it down, A:
 
@@ -129,7 +129,7 @@ Also, pull it down, A:
 
     $ ls 
     file1.txt
-{: class=brush:plain}
+{: class="brush:plain"}
 
 Dealing with Conflicts
 ----------------------
@@ -148,7 +148,7 @@ Both people make a change to `file1.txt`, person A:
     +line2a
 
     $ git commit -m "Added line2."
-{: class=brush:plain}
+{: class="brush:plain"}
 
 Person B:
 
@@ -164,7 +164,7 @@ Person B:
     +line2b
 
     $ git commit -m "Added line2."
-{: class=brush:plain}
+{: class="brush:plain"}
 
 Person A wins, commits first:
 
@@ -176,7 +176,7 @@ Person A wins, commits first:
     r22026 = 1fb3acea494184455fbae1e7bfba6388c87d2f62 (refs/remotes/svn/trunk)
     No changes between current HEAD and refs/remotes/svn/trunk
     Resetting to the latest refs/remotes/svn/trunk
-{: class=brush:plain}
+{: class="brush:plain"}
 
 Person B gets a conflict:
 
@@ -210,7 +210,7 @@ Person B gets a conflict:
     ++=======
     + line2b
     ++>>>>>>> Added line2.
-{: class=brush:plain}
+{: class="brush:plain"}
 
 Fix the file, then mark it as resolved:
 
@@ -241,7 +241,7 @@ Fix the file, then mark it as resolved:
     +line2
 
     $ git rebase --continue
-{: class=brush:plain}
+{: class="brush:plain"}
 
 Let's change the commit message:
 
@@ -250,7 +250,7 @@ Let's change the commit message:
     $ git branch -av
     * trunk             4bc84a1 Fixed line2.
       remotes/svn/trunk 1fb3ace Added line2.
-{: class=brush:plain}
+{: class="brush:plain"}
 
 And push it to Subversion:
 
@@ -262,7 +262,7 @@ And push it to Subversion:
     r22027 = 1b16b4f4c2e718c09fc4e6fd9fb1d536e6d758f9 (refs/remotes/svn/trunk)
     No changes between current HEAD and refs/remotes/svn/trunk
     Resetting to the latest refs/remotes/svn/trunk
-{: class=brush:plain}
+{: class="brush:plain"}
       
 And Person A pulls down the change,
 
@@ -271,7 +271,7 @@ And Person A pulls down the change,
     r22027 = 1b16b4f4c2e718c09fc4e6fd9fb1d536e6d758f9 (refs/remotes/svn/trunk)
     First, rewinding head to replay your work on top of it...
     Fast-forwarded master to refs/remotes/svn/trunk.
-{: class=brush:plain}
+{: class="brush:plain"}
 
 Branching
 ---------
@@ -280,7 +280,7 @@ Make a new branch, Person A:
 
     $ git svn branch -m "New branch foo." foo
     Copying https://bizodev.jira.com/svn/GITSVN/trunk/project1 at r22027 to https://bizodev.jira.com/svn/GITSVN/branches/project1/foo...
-{: class=brush:plain}
+{: class="brush:plain"}
 
 Create a local branch to make changes on:
 
@@ -302,7 +302,7 @@ Create a local branch to make changes on:
     r22030 = 7f31f71982414d098bf52bf3decb447669e21efb (refs/remotes/svn/foo)
     No changes between current HEAD and refs/remotes/svn/foo
     Resetting to the latest refs/remotes/svn/foo
-{: class=brush:plain}
+{: class="brush:plain"}
 
 Now Person B can work on the branch too:
 
@@ -319,7 +319,7 @@ Now Person B can work on the branch too:
     * trunk             1b16b4f Fixed line2.
       remotes/svn/foo   4d49165 Added line3.
       remotes/svn/trunk 1b16b4f Fixed line2.
-{: class=brush:plain}
+{: class="brush:plain"}
 
 Person B can merge foo into trunk:
 
@@ -350,7 +350,7 @@ Person B can merge foo into trunk:
     r22031 = 8baa1e105c067292165892345dc62081e9c4d09b (refs/remotes/svn/trunk)
     No changes between current HEAD and refs/remotes/svn/trunk
     Resetting to the latest refs/remotes/svn/trunk
-{: class=brush:plain}
+{: class="brush:plain"}
 
 
 

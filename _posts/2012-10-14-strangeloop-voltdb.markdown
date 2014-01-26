@@ -88,7 +88,7 @@ So, if my middleware did something like:
 
     // sends update b1 and b2 as 1 call/transaction
     orm.commitTxn();
-{: class=brush:scala}
+{: class="brush:scala"}
 
 The UPDATEs for `b1` and `b2` would happen atomically.
 
@@ -107,7 +107,7 @@ But what about read isolation? I think optimistic locking would work for this, e
       WHERE id = 1 AND version = 1;
     UPDATE bank_account SET balance = 0, version = 3
       WHERE id = 2 AND version = 2;
-{: class=brush:sql}
+{: class="brush:sql"}
 
 So, now if anyone else has touched either `bank_account` in between my read and my write, the `version = 2` clause will fail, and I'd know the data is stale.
 

@@ -35,7 +35,7 @@ Here's what a typical RPC request might look like:
     X-GWT-Permutation: 361924868514EB67231B0C48DC4B136A
 
     <serialized-objects-here>
-{: class=brush:plain}
+{: class="brush:plain"}
 
 The interesting thing to notice is the `X-GWT-Permutation` header--this is the strong name (hash) of the browser/locale/etc. code base the client is currently running.
 

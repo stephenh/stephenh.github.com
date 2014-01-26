@@ -29,7 +29,7 @@ The usage is very straight forward:
       .arg("/some/path")
       .toSystemOut()
     println(result.exitCode)
-{: class=brush:scala}
+{: class="brush:scala"}
 
 So, if you're doing similar things, you might find it useful. You can check out:
 

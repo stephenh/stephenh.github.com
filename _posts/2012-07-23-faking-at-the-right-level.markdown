@@ -48,7 +48,7 @@ You might start out with something simple:
         // use commons-http
       }
     }
-{: class=brush:scala}
+{: class="brush:scala"}
 
 (Note that this `Http` interface is really simple--it is something you'd start with, and then add more support for other methods, headers, return codes, etc., if/as you need them.)
 
@@ -69,7 +69,7 @@ Also, with the `Http` abstraction, now in your tests for `ApiClientImpl`, you ca
     stubHttp.assertHas(
       "POST /foo",
       "{ foo: { id: 2 } }")
-{: class=brush:scala}
+{: class="brush:scala"}
 
 Which is still pretty standard stuff. I frequently start out with mocks, but eventually end up with stubs, as I think their state/abstraction scales better than pure mocks (see [Why I Like Stubs](/2010/07/09/why-i-dont-like-mocks.html) for a longer tangent on that).
 
@@ -92,7 +92,7 @@ For example, let's say you have a `SyncService` that uses your `ApiClient`. I've
         "POST /foo",
         "{ foo: id: 2 } }")
     }
-{: class=brush:scala}
+{: class="brush:scala"}
 
 Here we're testing `SyncService` not by observing state changes/method calls to it's direct dependencies, but in the dependency of it's dependency.
 
@@ -113,7 +113,7 @@ Instead, as is perhaps obvious, it is a lot cleaner to test `SyncService` by fak
 
       verify(mockClient).sendFoo(...)
     }
-{: class=brush:scala}
+{: class="brush:scala"}
 
 Where this becomes really helpful is when you stub at this project-specific level, as you can start applying state and dummy behavior to cut down on the mock tedious.
 
@@ -136,7 +136,7 @@ For example, a stub `ApiClient` might look like:
         instances += foo
       }
     }
-{: class=brush:scala}
+{: class="brush:scala"}
 
 With this dummy behavior, you can now put parts of `SyncService` under test that need to get/send `Foo`s and have both the `SyncService` implementation and your test method get the behavior for free (no setting up mocks with `when sendFoo` for every little `sendFoo` call).
 

@@ -23,7 +23,7 @@ Specifically, I worked on an enterprise system once that had a fairly common pat
         }
       }
     }
-{: class=brush:java}
+{: class="brush:java"}
 
 Each 3rd-level/grand child entity was processed in its own transaction. But, for an ORM, that generally means a new session, which means re-querying the database for the parent, the child, etc., on each iteration of the loop.
 
@@ -79,7 +79,7 @@ Snapshots then, allow the programmer to do this, e.g.:
         }
       }
     }
-{: class=brush:java}
+{: class="brush:java"}
 
 Thanks to Java's anonymous inner classes, this is a tad verbose, but should show the basic idea.
 

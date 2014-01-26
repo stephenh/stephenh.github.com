@@ -605,7 +605,7 @@ In that regard, Grails exceptions are nicer than Spring exceptions--Spring excep
         at java.lang.reflect.Method.invoke(Method.java:597)
         at org.codehaus.groovy.grails.cli.support.GrailsStarter.rootLoader(GrailsStarter.java:157)
         at org.codehaus.groovy.grails.cli.support.GrailsStarter.main(GrailsStarter.java:182)
-{: class=brush:plain}
+{: class="brush:plain"}
 
     [17] mortbay.log Failed startup of context org.mortbay.jetty.webapp.WebAppContext@38859d{/proxibid,C:\svn\proxibid\juggernaut/web-app}
     org.springframework.beans.factory.access.BootstrapException: Error executing bootstraps; nested exception is org.codehaus.groovy.runtime.InvokerInvocationException: java.lang.NullPointerException
@@ -1204,5 +1204,5 @@ In that regard, Grails exceptions are nicer than Spring exceptions--Spring excep
         at gant.Gant.invokeMethod(Gant.groovy)
         at gant.Gant.processTargets(Gant.groovy:495)
         at gant.Gant.processTargets(Gant.groovy:480)
-{: class=brush:plain}
+{: class="brush:plain"}
 

@@ -16,7 +16,7 @@ Let's start with a servlet that just writes out "Hello World". I'm going to use 
     public void service(Writer w) {
       w.write("Hello World");
     }
-{: class=brush:java}
+{: class="brush:java"}
 
 Simple enough. We can double-out `Writer` and put the `service` method under test. I'll skip the test code--whether you mock or stub, it'll be pretty simple.
 
@@ -25,7 +25,7 @@ So, now let's say our code needs access to the query parameters:
     public void service(Writer w, Map<String, String> params) {
       w.write("Hello World " + params.get("queryParam"));
     }
-{: class=brush:java}
+{: class="brush:java"}
 
 And now the headers:
 
@@ -38,7 +38,7 @@ And now the headers:
         " using " +
         headers.get("User-Agent"));
     }
-{: class=brush:java}
+{: class="brush:java"}
 
 And now the session:
 
@@ -53,7 +53,7 @@ And now the session:
         headers.get("User-Agent") +
         session.get("username"));
     }
-{: class=brush:java}
+{: class="brush:java"}
 
 And now we also want to set the response Content-Type header:
 
@@ -70,7 +70,7 @@ And now we also want to set the response Content-Type header:
         headers.get("User-Agent") +
         session.get("username"));
     }
-{: class=brush:java}
+{: class="brush:java"}
 
 One last thing--so far our `service` method has been stateless. Just for illustration, let's make it stateful:
 
@@ -103,7 +103,7 @@ One last thing--so far our `service` method has been stateless. Just for illustr
           session.get("username"));
       }
     }
-{: class=brush:java}
+{: class="brush:java"}
 
 
 At this point, the parameter list is getting out of hand, so we can apply [Introduce Parameter Object](http://www.refactoring.com/catalog/introduceParameterObject.html) and make `Request` and `Response` interfaces:
@@ -118,7 +118,7 @@ At this point, the parameter list is getting out of hand, so we can apply [Intro
       setHeader(String name, String value);
       Writer getWriter();
     }
-{: class=brush:java}
+{: class="brush:java"}
 
 And now have our `Servlet` class use them:
 
@@ -141,7 +141,7 @@ And now have our `Servlet` class use them:
           request.getSession().get("username"));
       }
     }
-{: class=brush:java}
+{: class="brush:java"}
 
 This looks a lot better. We introduced a `Request` abstraction that groups request-lifecycle attributes, and so instead of passing around lots of related parameters, we can pass around `Request` and `Response` instances.
 
@@ -169,7 +169,7 @@ If you're mocking, you just mock out the parts of `Request` you need:
       servlet = new ServletTwo(request, response);
       // ..rest of test ...
     }
-{: class=brush:java}
+{: class="brush:java"}
 
 Personally, I [prefer stubbing](/2010/07/09/why-i-dont-like-mocks.html) in this scenario, and would use something akin Spring's misnamed [MockHttpServletRequest](http://static.springsource.org/spring/docs/2.0.x/api/org/springframework/mock/web/MockHttpServletRequest.html) (it's really a [stub](http://martinfowler.com/articles/mocksArentStubs.html)):
 
@@ -185,7 +185,7 @@ Personally, I [prefer stubbing](/2010/07/09/why-i-dont-like-mocks.html) in this 
       servlet = new ServletTwo(request, response);
       // ...rest of test ...
     }
-{: class=brush:java}
+{: class="brush:java"}
 
 But, which ever style you prefer, this extra level of mocking/stubbing in tests is pretty standard for `Request` interfaces.
 
@@ -217,7 +217,7 @@ But let's be pedantic and focus on the API change of our constructor (using the 
       this.request = request;
       this.response = response;
     }
-{: class=brush:java}
+{: class="brush:java"}
 
 What are the pros and cons of the change?
 
@@ -250,7 +250,7 @@ Instead of a servlet, let's now write a service, some sort of stateless bean in 
 
       // ...service methods...
     }
-{: class=brush:java}
+{: class="brush:java"}
 
 I've made up `EmailSender`, `FooDao`, and `BlahService` as dependencies of `Service`--what the actual dependencies are isn't important. The main point is that they are all application-scoped dependencies.
 
@@ -269,7 +269,7 @@ But what if we apply the same refactoring that we just applied to `Servlet`? We 
       FooDao getFooDao();
       BlahService getBlahService();
     }
-{: class=brush:java}
+{: class="brush:java"}
 
 And now let's use it:
 
@@ -295,7 +295,7 @@ And now let's use it:
       }
       // service method calls blahService.xxx();
     }
-{: class=brush:java}
+{: class="brush:java"}
 
 Whichever style you prefer, we've drastically simplified our constructor--instead of saying "I need X, Y, Z, ...", it's "I need some application-scoped dependencies".
 
@@ -322,7 +322,7 @@ You can either mock:
       service = new ServiceTwo(appContext);
       // ...rest of test ...
     }
-{: class=brush:java}
+{: class="brush:java"}
 
 Or, stub:
 
@@ -337,7 +337,7 @@ Or, stub:
       service = new ServiceTwo(appContext);
       // ...rest of test ...
     }
-{: class=brush:java}
+{: class="brush:java"}
 
 Service Reflection
 ------------------

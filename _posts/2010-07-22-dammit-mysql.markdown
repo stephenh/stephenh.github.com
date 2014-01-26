@@ -46,7 +46,7 @@ Deferred foreign key constraints mean you can do:
     INSERT INTO child (id, parent_id, name) VALUES (2, 1, 'child');
     INSERT INTO parent (id, name) VALUES (1, 'parent');
     COMMIT;
-{: class=brush:sql}
+{: class="brush:sql"}
 
 Note that technically we've inserted `child.parent_id=1`, but `parent.id=1` is not in the database yet.
 
@@ -62,7 +62,7 @@ It also becomes crucial if you have a two-way relationship between rows, e.g.:
     INSERT INTO child (id, parent_id, name) VALUES (2, 1, 'child');
     INSERT INTO parent (id, name, current_child_id) VALUES (1, 'parent', 1);
     COMMIT;
-{: class=brush:sql}
+{: class="brush:sql"}
 
 Both statements depend on the other--there is no way to execute these two statements if you lack deferred foreign key constraints.
 
@@ -85,7 +85,7 @@ Deferred unique constraints are similar, but mean you can temporarily violate a 
     UPDATE user SET username = 'fred' WHERE id = 1;
     UPDATE user SET username = 'bob' WHERE id = 2;
     COMMIT;
-{: class=brush:sql}
+{: class="brush:sql"}
 
 Without deferred unique constraints, changing `bob -> fred` would blow up immediately. Instead you have to dance around the issue by using a temporary value, e.g.:
 
@@ -94,7 +94,7 @@ Without deferred unique constraints, changing `bob -> fred` would blow up immedi
     UPDATE user SET username = 'bob' WHERE id = 2;
     UPDATE user SET username = 'fred' WHERE id = 1;
     COMMIT;
-{: class=brush:sql}
+{: class="brush:sql"}
 
 Like foreign key constraints, this extra hoop means two explicit unit of work flushes as you change `User1` to a temp value, flush, change `User2` to the right value, flush, and finally change `User1` to the right value, flush and commit.
 
@@ -142,7 +142,7 @@ For example, adding the `TRADITIONAL` SQL mode restores the sanity:
     -- finally, it blows up
     mysql> insert into user () values ();
     ERROR 1364 (HY000): Field 'username' doesn't have a default value
-{: class=brush:sql}
+{: class="brush:sql"}
 
 So, does your MySQL database have some `NOT NULL` columns? Are you really sure they don't have `null` values in them? Have you checked your SQL mode?
 
@@ -161,12 +161,12 @@ What would most developers assume happens if today you run:
       created timestamp
     );
     INSERT INTO employee (id, name, timestamp) (1, 'bob', NOW());
-{: class=brush:sql}
+{: class="brush:sql"}
 
 Then tomorrow you do:
 
     UPDATE employee SET name = 'fred';
-{: class=brush:sql}
+{: class="brush:sql"}
 
 Quick, what's `created`? Yesterday, right? Ah ha! No. It's [today](http://dev.mysql.com/doc/refman/5.0/en/timestamp.html):
 
@@ -182,7 +182,7 @@ Crappy Error Messages
 To top it all off, MySQL error messages are a joke. This beauty:
 
     Can't create table 'foo.#sql-338_90' (errno: 150)
-{: class=brush:plain}
+{: class="brush:plain"}
 
 Simply means "you tried to reference a non-existent table".
 

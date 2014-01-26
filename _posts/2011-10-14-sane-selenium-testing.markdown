@@ -15,7 +15,7 @@ But that goes away in AJAX applications--no page load. There are a variety of wa
     ajaxSubmit.click();
     waitForErrorToShowUp();
     assertErrorIs(...);
-{: class=brush:java}
+{: class="brush:java"}
 
 In my experience, pre-assertion waiting in tests is not ideal. They're verbose, often fickle, and at a higher risk of rotting when the application is refactored ("Is this wait really needed? Better leave it in, just in case.").
 
@@ -64,14 +64,14 @@ Anyway, once you have this in place, you've basically got page loads back--any t
         }
       };
     }
-{: class=brush:java}
+{: class="brush:java"}
 
 So, then you could use this in a test like:
 
     ajaxSubmit.click();
     WebDriverUtil.waitFor(outstanding());
     assertErrorIs(...);
-{: class=brush:java}
+{: class="brush:java"}
 
 Post-Action Waiting
 -------------------
@@ -102,7 +102,7 @@ However, I've also been going one step further and, with my [pageobjects](https:
 
       // cstr, other fields...
     }
-{: class=brush:java}
+{: class="brush:java"}
 
 The `afterClickWaitFor` means there is just *one place* in all of the functional tests that says "after this button is clicked, we will probably have to wait for the server".
 
@@ -110,13 +110,13 @@ So the test can now look even simpler, with no mention of waiting:
 
     employeePage.submit.click();
     assertErrorIs(...);
-{: class=brush:java}
+{: class="brush:java"}
 
 And if you're extra spiffy, you might even encapsulate the error gathering logic into the `EmployeePage` as well, so then you're test is:
 
     employeePage.submit.click();
     assertThat(employeePage.getErrors(), contains("..."));
-{: class=brush:java}
+{: class="brush:java"}
 
 To me, this is a pretty nice test to read. No explicit waiting, pretty high level (the ids/lookup logic are encapsulated in the page objects). It's probably not as flowing as a [GooS](http://www.growing-object-oriented-software.com/)-style functional tests, which are awesome, but personally I find this level of abstraction to be a sweet spot in the trade off between effort and benefit.
 

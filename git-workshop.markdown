@@ -47,7 +47,7 @@ Part 1 - Simple Commit
         --abbrev-commit
         --decorate"
     $ git l
-{: class=brush:bash}
+{: class="brush:bash"}
 
 Part 2 - Diff, Undo Line Changes
 --------------------------------
@@ -83,7 +83,7 @@ Part 2 - Diff, Undo Line Changes
     # 8. Undo the change, line2 is removed, nothing to commit
     $ git checkout new.txt
     $ git status
-{: class=brush:bash}
+{: class="brush:bash"}
 
 Part 3 - Diff, Undo File Changes
 --------------------------------
@@ -113,7 +113,7 @@ Part 3 - Diff, Undo File Changes
     # 6. Restore new.txt in working copy
     $ git checkout new.txt
     $ git status
-{: class=brush:bash}
+{: class="brush:bash"}
 
 Part 4 - Local Branches
 -----------------------
@@ -149,7 +149,7 @@ Part 4 - Local Branches
     # 8. Now we can delete adding-b branch
     $ git branch -d adding-b
     $ git branch -v
-{: class=brush:bash}
+{: class="brush:bash"}
 
 Part 5 - Local Branches with Conflicts
 --------------------------------------
@@ -189,7 +189,7 @@ Part 5 - Local Branches with Conflicts
     $ git commit
     $ git l
     $ git branch -d changing-b
-{: class=brush:bash}
+{: class="brush:bash"}
 
 Part 7 - Changing History
 -------------------------
@@ -244,7 +244,7 @@ Part 7 - Changing History
     $ git reset --hard HEAD@{N}
     $ cat new.txt   # no line5
     $ cat new-b.txt # new line3
-{: class=brush:bash}
+{: class="brush:bash"}
 
 Part 8 - Local Branches with Rebasing
 -------------------------------------
@@ -280,7 +280,7 @@ Part 8 - Local Branches with Rebasing
     $ git l
     
     # No (unneeded) forks
-{: class=brush:bash}
+{: class="brush:bash"}
 
 Part 9 - Remote Branches with GitHub
 ------------------------------------
@@ -303,7 +303,7 @@ First person, click the New Repository button on the [github.com homepage](http:
     $ git commit -m 'first commit'
     $ git remote add origin git@github.com:<user1>/git-workshop.git
     $ git push origin master
-{: class=brush:bash}
+{: class="brush:bash"}
 
 Second person, go to `github.com/<user1>/git-workshop`, fork their repository, and then checkout your copy of it:
 
@@ -317,7 +317,7 @@ Second person, go to `github.com/<user1>/git-workshop`, fork their repository, a
 
     # Push user2's change back to user2's clone
     $ git push
-{: class=brush:bash}
+{: class="brush:bash"}
 
 First person, pull in user2's change into your local repo:
 
@@ -337,7 +337,7 @@ First person, pull in user2's change into your local repo:
 
     # Push the changes to your user1 repo
     $ git push
-{: class=brush:bash}
+{: class="brush:bash"}
 
 Second person, pull in user1's changes, and update your repo:
 
@@ -354,7 +354,7 @@ Second person, pull in user1's changes, and update your repo:
 
     # Push their changes out to your user2 repo
     $ git push
-{: class=brush:bash}
+{: class="brush:bash"}
 
 Things To Add
 -------------

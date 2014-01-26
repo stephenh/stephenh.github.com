@@ -90,7 +90,7 @@ This is where dependencies are declared. The Ivy confs are a lot like Maven's sc
         <dependency org="junit" name="junit" rev="4.8.1" conf="compile;sources" />
       </dependencies>
     </ivy-module>
-{: class=brush:xml}
+{: class="brush:xml"}
 
 Things to note:
 
@@ -116,7 +116,7 @@ Ivy uses a separate file to configure, among other things, the repositories you 
         </chain>
       </resolvers>
     </ivysettings>
-{: class=brush:xml}
+{: class="brush:xml"}
 
 Things to note:
 
@@ -135,7 +135,7 @@ This, of course, is the Eclipse classpath file.
       <classpathentry kind="con" path="org.apache.ivyde.eclipse.cpcontainer.IVYDE_CONTAINER/?ivyXmlPath=ivy.xml&amp;confs=*&amp;ivySettingsPath=%24%7Bworkspace_loc%3Apageobjects%2Fivysettings.xml%7D&amp;loadSettingsOnDemand=false&amp;propertyFiles="/>
       <classpathentry kind="output" path="target/eclipse"/>
     </classpath>
-{: class=brush:xml}
+{: class="brush:xml"}
 
 Things to note:
 
@@ -168,7 +168,7 @@ This is what drives the Buildr build. It's like a `build.xml` file, but written 
         pom.from 'target/pom.xml'
       end
     end
-{: class=brush:ruby}
+{: class="brush:ruby"}
 
 Things to note:
 

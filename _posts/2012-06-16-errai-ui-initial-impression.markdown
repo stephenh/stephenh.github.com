@@ -41,7 +41,7 @@ So, my thoughts:
            <!--common static footer-->
          </body>
        </html>
-   {: class=brush:html}
+   {: class="brush:html"}
 
    By using the `@Templated("#template")` annotation, ErraiUI will find the `data-field=template` element, use it as the root of your component's template, and drop all of the HTML before/after it.
 
@@ -71,7 +71,7 @@ So, my thoughts:
            </div>
          </div>
        </div>
-   {: class=brush:html}
+   {: class="brush:html"}
 
    And then you can have two separate component classes, `Parent` annotated with `@Templated("#parentTemplate")` and `Child` annotated with `@Templated("Parent.html#childTemplate")` getting their respective markup from the same file.
 
@@ -95,7 +95,7 @@ So, my thoughts:
            errors go here
          </div>
        </div>
-   {: class=brush:html}
+   {: class="brush:html"}
 
    Which isn't that bad.
 
@@ -112,7 +112,7 @@ So, my thoughts:
          <app:TextLine ui:field="title"/>
          <app:TextLine ui:field="description"/>
        </form>
-   {: class=brush:html}
+   {: class="brush:html"}
 
    Which, personally, I think is a real boon for reducing boilerplate and increasing developer productivity.
 

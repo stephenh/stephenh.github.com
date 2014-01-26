@@ -27,7 +27,7 @@ This is often used for test data, e.g. if you have:
     e3.setAge(52);
     e3.setDescription("wtf employee");
     doSomethingWith(e1, e2, e3);
-{: class=brush:java}
+{: class="brush:java"}
 
 This sort of code burns my eyes. I can't keep track of the `e1`, `e2`, `e3` variables, and often make copy/paste typos of missing a change from `e1` to `e3`.
 
@@ -49,7 +49,7 @@ Just grouping the assignments is a little better:
     e3.setDescription("wtf employee");
 
     doSomethingWith(e1, e2, e3);
-{: class=brush:java}
+{: class="brush:java"}
 
 As now each variable declaration is very close to it's use site and you can reason about `e1` for awhile, then `e2` for awhile, and finally `e3`.
 
@@ -67,7 +67,7 @@ However, the multiple `setName`, `setAge`, `setDescription` calls are a good can
       e.setDescription(description);
       return e;
     }
-{: class=brush:java}
+{: class="brush:java"}
 
 Nothing ground breaking, and we're basically just adding a custom constructor/factory method for our own use. Obviously if you controlled the `Employee` source and had several clients wanting a `newEmployee` method, you could move it into the `Employee` class.
 
@@ -79,7 +79,7 @@ Anyway, to make this a chord instead of just a normal Extract Method, I've seen 
       newEmployee("e1", 50, "great employee"),
       newEmployee("e2", 51, "awesome employee"),
       newEmployee("e3", 52, "wtf employee"));
-{: class=brush:java}
+{: class="brush:java"}
 
 The combination here (Extract Method + Inline Variable) I think results in much more readable code as we went from 13 LOC to accomplish what we really want (calling `doSomethingWith`) to 4 LOC. ~3x less.
 

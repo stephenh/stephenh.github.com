@@ -60,7 +60,7 @@ As an example of some Spark code, I thought I'd copy/paste one of my "let's try 
           (2, (Seq("c"), Seq())))
       }
     }
-{: class=brush:scala}
+{: class="brush:scala"}
 
 A few things to note:
 

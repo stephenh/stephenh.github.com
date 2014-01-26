@@ -64,7 +64,7 @@ Here is what I do, from the existing local git repo:
     $ git svn dcommit
     Committing to https://foo.com/svn/parent/trunk/project
     ...
-{: class=brush:bash}
+{: class="brush:bash"}
 
 --prefix=svn
 ------------
@@ -85,12 +85,12 @@ With the tracking branches having a prefix, you can also use them as local branc
     $ git branch -av
     * trunk             33c3136 Latest svn commit
     * remotes/svn/trunk 33c3136 Latest svn commit
-{: class=brush:bash}
+{: class="brush:bash"}
 
 Then if you have other branches you want to track:
 
     $ git checkout -b featurea svn/featurea
-{: class=brush:bash}
+{: class="brush:bash"}
 
 Almost Really Sweet
 -------------------

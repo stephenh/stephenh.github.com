@@ -47,7 +47,7 @@ Our Spark code for this example might look like:
 
     val lines: RDD[String] =
       sc.textFile("s3n://bucket/traffic/year=2000/month=01/day=01/")
-{: class=brush:scala}
+{: class="brush:scala"}
 
 Here we are saying "go out to S3 and load the lines of all the log files with this bucket and prefix."
 
@@ -92,7 +92,7 @@ For our S3 example, the Spark/Hadoop default partitioning for gzipped files is o
         user2 /foo.html 2:00pm
         user1 /bar.html 2:10pm
         user2 /foo.html 2:20pm
-{: class=brush:plain}
+{: class="brush:plain"}
 
 So, obviously this is a small/contrived example, but the idea is that each slave has gotten some number of log files, each one as it's own partition, and each partition has some number of lines in it.
 
@@ -118,7 +118,7 @@ This might look like:
       .map { line => parseIntoUserClass(line) }
       .map { line => (line.userId, line)
       .groupByKey()
-{: class=brush:scala}
+{: class="brush:scala"}
 
 Spark uses the Scala `Tuple2` class to denote the key/payload portion of aggregation. A `Tuple2` is basically like the ubiquitous `Pair` class; it just was two values, `_1` and `_2` (being Scala, the names have underscores of course). `Tuple2` is generic, `Tuple2[T1, T2]`, so `_1` and `_2` can be whatever types you want them to be.
 
@@ -133,7 +133,7 @@ Now that we have the aggregation by user, we can count each user's lines:
     linesByUser.collect {
       case (userId, lines) => (userId, lines.count)
     }.saveAsTextFile("s3n://bucket/report-output")
-{: class=brush:scala}
+{: class="brush:scala"}
 
 Minus some hand waving about the Scala syntax, `RDD.collect` applies our function to each line of the `RDD`, which conveniently is now a user + all of their lines as a `Seq` (a list).
 
@@ -163,7 +163,7 @@ If you'll recall from before, our logs came into the cluster like so (now annota
         user2 /foo.html 2:00pm
         user1 /bar.html 2:10pm
         user2 /foo.html 2:20pm
-{: class=brush:plain}
+{: class="brush:plain"}
 
 And we know Spark gets all of the `user1` lines together, `user2` lines together, etc. But how?
 
@@ -187,7 +187,7 @@ Instead, we want it reorganized by user, so we want new partitions. The default 
       user2 /foo.html             user1 /zaz.html
       user1 /bar.html             user1 /bar.html
       user2 /foo.html           partition 4
-{: class=brush:plain}
+{: class="brush:plain"}
 
 A few things to note:
 
@@ -209,7 +209,7 @@ One could imagine pseudo-code for this operation as something like:
     }
     // each bucket of the newPartitions array now
     // has that new partition's log lines
-{: class=brush:scala}
+{: class="brush:scala"}
 
 This pseudo-code of course assumes every fits in memory, while Spark has to take a more nuanced approach.
 
@@ -244,7 +244,7 @@ The blocks that would be involved, written by `RDD1` and read by `RDD2`, would l
       write block_4_to_2          read block_2_to_4
       write block_4_to_3          read block_3_to_4
       write block_4_to_4          read block_4_to_4
-{: class=brush:plain}
+{: class="brush:plain"}
 
 As you can see, after buffering the data to/from blocks, the net effect will be a shuffle, and the data is now moved to its new partition (based on its key).
 
@@ -261,7 +261,7 @@ Thinking about this from a pseudo code approach, it is also pretty straight forw
         getBlock(blockId) += line
       }
     }
-{: class=brush:scala}
+{: class="brush:scala"}
 
 And then once they are complete, Spark will have the reducers run to now pull this data back in:
 
@@ -275,7 +275,7 @@ And then once they are complete, Spark will have the reducers run to now pull th
         block = getBlock(incomingBlock)
       }
     }
-{: class=brush:scala}
+{: class="brush:scala"}
 
 (If you're curious about Spark's actual implementation of these, the 1st snippet is implemented in `ShuffleMapTask`, and the 2nd snippet is implemented in `ShuffledRDD`.)
 

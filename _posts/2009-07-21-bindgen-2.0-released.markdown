@@ -23,7 +23,7 @@ Previously, a binding could only be bound to 1 instance at a time, making them n
     Foo foo = new Foo("foo");
     fb.set(foo); // binds fb to the foo instance
     nb.get(); // returns "foo"
-{: class=brush:java}
+{: class="brush:java"}
 
 But the gap between `fb.set` and `nb.get()` meant another thread could step in and interleave a `set` behind your back.
 
@@ -34,7 +34,7 @@ Now there are `getWithRoot` and `setWithRoot` methods that are stateless and so 
     
     Foo foo = new Foo("foo");
     nb.getWithRoot(foo); // returns "foo"
-{: class=brush:java}
+{: class="brush:java"}
 
 This means you can instantiate a binding just once and reuse it across many instances/threads.
 

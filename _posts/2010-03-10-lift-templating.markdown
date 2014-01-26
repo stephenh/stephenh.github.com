@@ -57,7 +57,7 @@ But then you see the implementation:
     </tr> 
     </lift:Show.myForm> 
     </html>
-{: class=brush:html}
+{: class="brush:html"}
 
 And...what? What happened to no separation? Designer friendly? Is Dreamweaver really going to like that `<tr>` tag coming after a `<left:Show.myForm>` tag instead of a `<table>` tag?
 
@@ -86,7 +86,7 @@ If you look at the [demos](http://beebole.com/pure/demos/), one of pure's table 
        </tr>
       </tbody>
     </table>
-{: class=brush:html}
+{: class="brush:html"}
 
 Now **this** is designer friendly. There really are no programming symbols in this.
 
@@ -101,7 +101,7 @@ Now, admittedly, pure requires a few hoops for the programmer to jump through, e
         }
       }
     }
-{: class=brush:jscript}
+{: class="brush:jscript"}
 
 And this could probably be cleaned up.
 
@@ -123,7 +123,7 @@ For example, take something like `foo.html`:
     <table id="playerList">
       ...
     </table>
-{: class=brush:html}
+{: class="brush:html"}
 
 And after running `lift generate-templates` on the command line (ideally ran automatically each time your HTML files change), Lift would spit out a class:
 
@@ -131,7 +131,7 @@ And after running `lift generate-templates` on the command line (ideally ran aut
       val playerList = new TableElement("playerList")
       // other elements/etc.
     }
-{: class=brush:scala}
+{: class="brush:scala"}
 
 This output may get somewhat ugly, but its basically going to be the same code Lift is interpreting at runtime (or, in the case of joys like [Tapestry](http://tapestry.apache.org/), are bytecode compiling at runtime).
 
@@ -163,7 +163,7 @@ Well, good for you, Lift, you avoid magic Strings in session usage--but then go 
                   v => {td.priority(v.toInt).save; reDraw()}), 
           "desc" -> desc(td, reDraw) 
       ))
-{: class=brush:scala}
+{: class="brush:scala"}
 
 See `"todo"`, `"check"`, `"priority"`, etc.--all untyped, magic strings.
 

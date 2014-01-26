@@ -68,7 +68,7 @@ Illustrated in code, our approach had, very simplified, been:
         return config;
       }
     }
-{: class=brush:java}
+{: class="brush:java"}
 
 ### Potential "Big Data" Approaches
 
@@ -144,7 +144,7 @@ In code, this looks like:
         // and Jackson to deserialize it to a map
       }
     }
-{: class=brush:java}
+{: class="brush:java"}
 
 ### A Few Wrinkles: Real-Time Reads and Writes
 
@@ -181,7 +181,7 @@ As an example for how simple Jackson and Scalatra made writing the JSON API, her
         json
       }
     }
-{: class=brush:scala}
+{: class="brush:scala"}
 
 ### Background Writes
 
@@ -224,7 +224,7 @@ This generally looks like:
         }
       }
     }
-{: class=brush:java}
+{: class="brush:java"}
 
 ### tl;dr We Implemented Command Query Responsibility Segregation
 

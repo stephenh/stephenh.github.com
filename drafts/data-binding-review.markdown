@@ -34,7 +34,7 @@ Most data binding approaches I've worked with boil down to an interface that loo
         void set(T value);
         Class<T> getType();
     }
-{: class=brush:java}
+{: class="brush:java"}
 
 The name is not necessarily "Binding", and it may/may not have a generic `T`, but that's the basic idea.
 
@@ -74,7 +74,7 @@ I had the most success with this approach by using OGNL and integrating it with 
         this.form.add(new Textbox("employee.lastName"));
       }
     }
-{: class=brush:java}
+{: class="brush:java"}
 
 When the form renders itself, the text boxes use OGNL to evaluate the `employee.firstName` String against the page object, e.g. `page.employee.getFirstName()`. This value is included in the rendered HTML.
 
@@ -94,7 +94,7 @@ OGNL can also handle tables well. In the above `EmployeePage`, each OGNL string 
         table.setRows(employer.getEmployees());
       }
     }
-{: class=brush:java}
+{: class="brush:java"}
 
 Here the table class gets the first `Employee` as `currentObject`, renders the columns, with each column calling `Ognl.get(currentObject, "firstName")` and `Ognl.get(currentObject, "lastName")`, respectively, and then the table moves on to the next `Employee` object and repeats.
 
@@ -143,7 +143,7 @@ Using it looks something like:
         this.form.add(new Textbox(b.employee().lastName()));
       }
     }
-{: class=brush:java}
+{: class="brush:java"}
 
 The only classes you create are `EmployeePage` and `Employee`, with the usual `getFirstName`, `setFirstName`, `getLastName`, and `setLastName` methods. Bindgen then generates the `EmployeePageBinding` class, an `employee()` method on it that returns an `EmployeeBinding`, and `firstName()` and `lastName()` methods on the `EmployeeBinding` that return `Binding<String>` instances for first name and last name, respectively.
 
@@ -164,7 +164,7 @@ Similarly, Bindgen can handle arbitrary instance evaluation with `Binding.getWit
         table.setRows(employer.getEmployees());
       }
     }
-{: class=brush:java}
+{: class="brush:java"}
 
 The `EmployeeBinding` is still used to setup the table's columns, the difference is that `b.firstName()` is not tied to any particular `Employee`'s first name value.
 
@@ -201,7 +201,7 @@ But it does kind of suck when you have to do:
     String name = employee.name().get();
 
     employee.name().set("new name");
-{: class=brush:java}
+{: class="brush:java"}
 
 Instead of just the usual `getName()` and `setName()` that is etched in our brains.
 
@@ -217,14 +217,14 @@ Normal Property Objects:
       val p = new Parent
       val s: String = p.name.get
       p.name.set("Bob")
-{: class=brush:scala}
+{: class="brush:scala"}
 
 Fair enough. But, now with Scala implicit conversion and operator overloading, we can remove both the `.get` on line 2 and the `.set` on line 3:
 
       val p = new Parent
       val s: String = p.name
       p.name := "Bob"
-{: class=brush:scala}
+{: class="brush:scala"}
 
 See this [gist](http://gist.github.com/245296) for the full code, but most of the magic is:
 
@@ -245,7 +245,7 @@ See this [gist](http://gist.github.com/245296) for the full code, but most of th
       /** Implicitly called to convert Property[T] -> T */
       implicit def p2value[T](p: Property[T]): T = p.get
     }
-{: class=brush:scala}
+{: class="brush:scala"}
 
 Between the `:=` operator and the `p2value` implicit, we've basically made the Property Objects annoying extra `get()`/`set()` method calls go hide behind compiler syntax sugar.
 
@@ -279,7 +279,7 @@ A basic example from [The Lift Book](http://groups.google.com/group/the-lift-boo
           "pass" -> SHtml.password(pass, pass = _)
           "submit" -> SHtml.submit("Login", auth))
     }
-{: class=brush:scala}
+{: class="brush:scala"}
 
 
 I'm not a Lift expert, but if you note the `SHtml.text` function, instead of taking 1 binding parameter (e.g. an OGNL string, a `Binding` instance, or a Property Object), Lift passes two parameters. The first is just the String value `user`. The second is a `Function1[String, Unit]` that, when executed, will assign the value passed to it back to the `user` local variable. It's basically an 8-character anonymous inner class.

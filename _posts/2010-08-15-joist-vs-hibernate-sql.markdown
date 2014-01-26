@@ -58,7 +58,7 @@ Here's Hibernate (using `hibernate.show_sql=true`):
         from "child" childs0_
         where childs0_.parent_id=?
       )
-{: class=brush:sql}
+{: class="brush:sql"}
 
 And here's joist (using `joist.jdbc=TRACE`):
 
@@ -98,7 +98,7 @@ And here's joist (using `joist.jdbc=TRACE`):
       FROM "grand_child" gc
       WHERE gc.child_id = ?
       ORDER BY gc.id
-{: class=brush:sql}
+{: class="brush:sql"}
 
 So, Hibernate had 17 SQL statements, Joist had 8 SQL statements, ~50% less.
 

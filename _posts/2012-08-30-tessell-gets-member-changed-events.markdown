@@ -11,7 +11,7 @@ Tessell got a feature I'd been meaning to add for awhile: member changed events.
 Tessell has always had property changed events, e.g. `StringProperty` gets a new value, so it fires a change event, which, via data-binding, auto-updates the view:
 
     binder.bind(someStringProperty).to(view.someNameField);
-{: class=brush:java}
+{: class="brush:java"}
 
 Which has handled a surprising number of use cases over Tessell's lifetime.
 
@@ -21,7 +21,7 @@ But the other hip JavaScript MVC frameworks usually have this notion of "member 
       StringProperty name;
       StringProperty city;
     }
-{: class=brush:java}
+{: class="brush:java"}
 
 You can, besides listening to `name`/`city` change events, listen to change events on the model, and get notified when any of the properties of the model changes.
 
@@ -35,7 +35,7 @@ This also typically works recursively up a model tree, e.g. if you add a parent/
     class AddressModel {
       StringProperty city;
     }
-{: class=brush:java}
+{: class="brush:java"}
 
 Then any change of an address's `city` property will not only fire the event on `AddressModel`, but also on the parent `EmployeeModel`.
 
@@ -46,7 +46,7 @@ Well, after thinking Tessell should have that for awhile, I finally got around t
 Coincidentally, I had a chance to use this today, with some data-binding:
 
     binder.onMemberChange(employeeModel).execute(saveCommand);
-{: class=brush:java}
+{: class="brush:java"}
 
 So that any time any property on the `EmployeeModel` changes, we send it to the server (yes, doing this manually is terribly unhip, compared to transparent persistence frameworks like Meteor).
 

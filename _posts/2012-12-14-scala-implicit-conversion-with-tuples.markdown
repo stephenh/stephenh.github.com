@@ -34,7 +34,7 @@ I had not seen this before, but while reading a blog post about this [Magnet Pat
         println(needsAFoo(1, 2))
       }
     }
-{: class=brush:scala}
+{: class="brush:scala"}
 
 This is pretty neat, and something I'll try and remember.
 

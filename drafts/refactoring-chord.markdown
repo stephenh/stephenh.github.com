@@ -21,7 +21,7 @@ For example, let's say you start with a large method:
         // ...
       }
     }
-{: class=brush:java}
+{: class="brush:java"}
 
 The random logic is too big for just `foo`, so first we apply the common Extract Method:
 
@@ -36,7 +36,7 @@ The random logic is too big for just `foo`, so first we apply the common Extract
       // some random logic with thing
       // ...
     }
-{: class=brush:java}
+{: class="brush:java"}
 
 So, smaller methods are good, this is better than it was before.
 
@@ -55,7 +55,7 @@ Specifically, a good question to ask is: does `someRandomLogic` use any instance
       // some random logic with thing
       // ...
     }
-{: class=brush:java}
+{: class="brush:java"}
 
 This seems like a trivial change, but it highlights that `someRandomLogic` doesn't really belong in this class. Since none of the instance's fields are being used, it's fairly obvious `someRandomLogic` is not related to the core purpose of the class.
 

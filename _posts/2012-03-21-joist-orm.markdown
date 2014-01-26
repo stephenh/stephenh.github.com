@@ -46,7 +46,7 @@ I did not fully appreciate the boilerplate involved in most Java domain models u
 
     class Employee < ActiveRecord::Base
     end
-{: class=brush:ruby}
+{: class="brush:ruby"}
 
 Rails then, of course, uses a sort of startup-time code generation to create getters, setters, etc. Unfortunately, while Java can do runtime code generation (CGLib, etc.), it means the generated code is not available to the programmer in their IDE to do code completion/etc. against.
 
@@ -54,7 +54,7 @@ Hence, in my opinion, build-time code generation is the way ORMs should work. Jo
 
     public class Employee extends EmployeeCodegen {
     }
-{: class=brush:java}
+{: class="brush:java"}
 
 Note that it's critical that code generation can be used throughout the life of the project. Tools that reverse engineer a schema and generate a bunch of `.java` files that then developers have to maintain by hand are useless once you start adding business logic to your domain model. You must be able to have the generated code and your changes coexist so that the generator can rerun with the latest schema/settings/etc. and not overwrite your changes.
 
@@ -75,7 +75,7 @@ For example, if you want describe a one-to-many relation in Hibernate/JPA, it mi
         targetEntity = Child.class)
     @OrderBy("id")
     private Set<Child> children;
-{: class=brush:java}
+{: class="brush:java"}
 
 Now, what about the next one-to-many you want to map? Copy/paste another 7 lines. Repeat for each one-to-many (and many-to-many) relation in your project. Even if the mapping is not 7 lines, say it's 2, or even 1, that adds up to a lot of copy/pasting that all developers on the project (who may not all understand the intricacies of what they're pasting) will do.
 
@@ -83,7 +83,7 @@ Or, let's say you decide to map `datetime` columns as `TimePoint`s from the exce
 
     @Type(type="com.yourapp.TimePointCustomType")
     private TimePoint created;
-{: class=brush:java}
+{: class="brush:java"}
 
 And then remember to do this for every single `datetime` column in your application.
 
@@ -93,7 +93,7 @@ I consider this to be a violation of DRY. So, in Joist, this decision of "use Ti
       "datetime",
       "com.domainlanguage.time.TimePoint",
       "joist.domain.orm.queries.columns.TimePointAliasColumn");
-{: class=brush:java}
+{: class="brush:java"}
 
 And now all of the `datetime` columns across the entire application will be mapped correctly.
 
@@ -104,7 +104,7 @@ Note that you can also do pattern matching, e.g. any integer column ending with 
       ".*amount$",
       "com.domainlanguage.money.Money",
       "joist.domain.orm.queries.columns.MoneyAliasColumn");
-{: class=brush:java}
+{: class="brush:java"}
 
 Of course, there are a few caveats here:
 
@@ -128,7 +128,7 @@ A pet peeve is using a domain model/ORM where the domain objects become inconsis
     c.setParent(p);
     // now, does this assertion pass?
     assertTrue(p.getChildren().contains(c));
-{: class=brush:java}
+{: class="brush:java"}
 
 If the assertion fails here, the `Parent` and `Child` objects have become inconsistent with each other and you're just asking for heartburn when business logic that is based on the `Parent` starts looking for `Children` and doesn't have the latest changes.
 
@@ -157,7 +157,7 @@ Implicit transaction management is very popular these days, especially with some
     Employee e1 = employeeService.find(1); // 1 txn here
     e1.setSomething(...);
     employeeService.save(e1); // another txn here
-{: class=brush:java}
+{: class="brush:java"}
 
 This leads to a number of cons:
 
@@ -185,7 +185,7 @@ Instead of service APIs, Joist uses a thread-local transaction (Unit of Work) th
     // back in the filter
     UoW.commit();
     UoW.close();
-{: class=brush:java}
+{: class="brush:java"}
 
 Or, alternatively, you can use an oh-god-Java-is-ugly closure style:
 
@@ -194,7 +194,7 @@ Or, alternatively, you can use an oh-god-Java-is-ugly closure style:
         // in a txn now, it will commit on exit
       }
     });
-{: class=brush:java}
+{: class="brush:java"}
 
 Note that, if I was doing this all over again, I would probably not use static methods on the `UoW` class and instead pass around the `UnitOfWork` context. But I haven't gotten to refactoring that yet.
 
@@ -209,7 +209,7 @@ Joist takes a sort of middle ground, with [type safe queries](http://joist.ws/ty
       ChildAlias c = new ChildAlias("c");  
       return Select.from(c).where(c.name.equals(name)).unique();  
     }  
-{: class=brush:java}
+{: class="brush:java"}
 
 In my experience this has been "good enough", especially for Java. I think doing anything more complex (modeling relational algebra) takes jumping to Scala to do well.
 

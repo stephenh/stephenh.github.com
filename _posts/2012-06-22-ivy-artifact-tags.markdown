@@ -12,7 +12,7 @@ While Maven has only project-to-project dependencies (i.e. you get all the jars 
 
     <dependency org="upstream" name="project" rev="1.0"
         conf="default->someSubsetConf" />
-{: class=brush:xml}
+{: class="brush:xml"}
 
 By using `someSubsetConf`, you can select a specific set of artifacts (only those that its own `ivy.xml` file declares as part of it's `someSubsetConf`) from the upstream project.
 
@@ -21,7 +21,7 @@ Ivy goes further, and that if the upstream project doesn't have a configuration 
     <dependency org="upstream" name="project" rev="1.0">
       <artifact name="onlyTheOneYouWant"/>
     </dependency>
-{: class=brush:xml}
+{: class="brush:xml"}
 
 While this flexibility, which is very characteristic of Ivy, is often times nice, I do sometimes wonder whether Maven's non-flexibility and hence simplicity in not having confs and artifact overrides is the better choice in the long run.
 
@@ -45,7 +45,7 @@ For example:
       <artifact name="artifact1" conf="conf1"/>
       <artifact name="artifact2" conf="conf2"/>
     </dependency>
-{: class=brush:xml}
+{: class="brush:xml"}
 
 Will put `artifact1` in your `conf1` and `artifact2` in your `conf2`, just as you would expect. Simple.
 
@@ -76,7 +76,7 @@ The base `ivy.xml` file I was using looked like:
         defaultconf="default;sources">
       ...
     </dependencies>
-{: class=brush:xml}
+{: class="brush:xml"}
 
 And now, each of the variations:
 
@@ -84,7 +84,7 @@ And now, each of the variations:
 
        <dependency org="springframework" name="spring"
            rev="3.0.6.RELEASE"/>
-   {: class=brush:xml}
+   {: class="brush:xml"}
 
    Pulls in:
 
@@ -104,7 +104,7 @@ And now, each of the variations:
            rev="3.0.6.RELEASE">
          <artifact name="org.springframework.web" />
        </dependency>
-   {: class=brush:xml}
+   {: class="brush:xml"}
 
    Pulls in:
 
@@ -130,7 +130,7 @@ And now, each of the variations:
            rev="3.0.6.RELEASE">
          <artifact name="org.springframework.web" conf="default"/>
        </dependency>
-   {: class=brush:xml}
+   {: class="brush:xml"}
 
    Pulls in:
 
@@ -152,7 +152,7 @@ And now, each of the variations:
            rev="3.0.6.RELEASE" conf="default">
          <artifact name="org.springframework.web" conf="default"/>
        </dependency>
-   {: class=brush:xml}
+   {: class="brush:xml"}
 
    Pulls in:
 
@@ -169,7 +169,7 @@ And now, each of the variations:
          <artifact name="org.springframework.web" conf="default"/>
          <artifact name="org.springframework.web-sources" type="sources" ext="jar" conf="sources"/>
        </dependency>
-   {: class=brush:xml}
+   {: class="brush:xml"}
 
    Pulls in:
 
@@ -186,7 +186,7 @@ And now, each of the variations:
          <artifact name="org.springframework.web" conf="default"/>
          <artifact name="org.springframework.test" conf="test"/>
        </dependency>
-   {: class=brush:xml}
+   {: class="brush:xml"}
 
    Pulls in:
 
@@ -210,7 +210,7 @@ And now, each of the variations:
          <artifact name="org.springframework.web" conf="default"/>
          <artifact name="org.springframework.test" conf="test"/>
        </dependency>
-   {: class=brush:xml}
+   {: class="brush:xml"}
 
    Pulls in:
 

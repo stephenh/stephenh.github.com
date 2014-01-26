@@ -81,7 +81,7 @@ Writing a test in Spark is as easy as:
         assertAgainst(output)
       }
     }
-{: class=brush:scala}
+{: class="brush:scala"}
 
 (I will go into more detail about `runYourCodeThatUsesSpark` in a future post.)
 
@@ -105,7 +105,7 @@ Some really short, made up example code is:
     val suffixed = in.map { line => line + "some suffix" }
     // now save the new lines back out
     suffixed.saveAsTextFile("s3://bucket/path2")
-{: class=brush:scala}
+{: class="brush:scala"}
 
 Spark's job is to package up your `map` closure, and run it against that extra large text file across your cluster. And it does so by, after shuffling the code and data around, *actually calling your closure* (i.e. there is no [LINQ](http://msdn.microsoft.com/en-us/library/vstudio/bb397926.aspx)-like introspection of the closure's AST).
 
@@ -118,7 +118,7 @@ This may seem minor, but it's huge, because it means there is no framework code 
       SomeUtilityClass.process(line) 
     }
     processed.saveAsTextFile("s3://bucket/path2")
-{: class=brush:scala}
+{: class="brush:scala"}
 
 Notice how `SomeUtilityClass` doesn't have to know it's running within a Spark RDD in the cluster. It just takes a String. Done.
 

@@ -20,7 +20,7 @@ However, I would propose a different implementation: instead of the "name" part 
         q.setParameter(...);
         return q.getResultList();
     }
-{: class=brush:java}
+{: class="brush:java"}
 
 This would alleviate my concerns about type-safety and SQL encapsulation, but still allow the `EntityManager` to find all of the annotated queries on startup for validation.
 

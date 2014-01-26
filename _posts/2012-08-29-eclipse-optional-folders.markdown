@@ -20,5 +20,5 @@ So, for posterity and my own sanity, the syntax is:
         <attribute name="optional" value="true"/>
       </attributes>
     </classpathentry>
-{: class=brush:xml}
+{: class="brush:xml"}
 

@@ -31,7 +31,7 @@ This means that, when declaring a method, you decide then whether or not *all* c
         foo.doFoo()
       }
     }
-{: class=brush:scala}
+{: class="brush:scala"}
 
 Okay, so what?
 
@@ -68,7 +68,7 @@ I'm not sure. Previously, I mulled about how some languages do [Caller-Side Stru
     // as generates a delegate that
     // implements Foo for LikeFoo
     takesFoo(new LikeFoo() as Foo);
-{: class=brush:java}
+{: class="brush:java"}
 
 However, these approaches (on a pre-[interface-injection](http://openjdk.java.net/projects/mlvm/subprojects.html#InterfaceInjection) JVM anyway), usually just end up as the compiler/JVM auto-writing the adaptor for you (and can only be used for interfaces). Which is cool, but may/may not be structural typing anymore.
 

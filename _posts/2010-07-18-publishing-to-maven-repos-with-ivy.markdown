@@ -86,7 +86,7 @@ This is the [ivysettings.xml](https://github.com/stephenh/joist/blob/master/ivys
         </chain>
       </resolvers>
     </ivysettings>
-{: class=brush:xml}
+{: class="brush:xml"}
 
 The primary gotcha in this `ivysettings.xml` was having to use two separate resolvers for the same `~/.m2/repository`. This is because:
 
@@ -158,7 +158,7 @@ This is the [Tessell `ivy.xml`](http://github.com/stephenh/tessell/tree/master/d
         <dependency org="com.google.gwt" name="gwt-dev" rev="2.1.0.M1" conf="default"/>
       </dependencies>
     </ivy-module>
-{: class=brush:xml}
+{: class="brush:xml"}
 
 `build.xml`
 -----------
@@ -230,7 +230,7 @@ Finally, here is the Ivy-related part of the [Tessell `build.xml`](http://github
         <artifacts pattern="bin/[type]s/[artifact].[ext]" />
       </ivy:publish>
     </target>
-{: class=brush:xml}
+{: class="brush:xml"}
 
 Making Poms
 -----------
@@ -249,7 +249,7 @@ Local Testing Builds
 So far I have not published `SNAPSHOT` versions publicly, but they are very handy for sharing in-development changes between projects on your local machine. Just doing:
 
     ant ivy-publish-local
-{: class=brush:plain}
+{: class="brush:plain"}
 
 Will publish a jar to `~/.m2` for other local projects to pull in your latest/uncommitted changes.
 
@@ -263,7 +263,7 @@ Doing Releases
 With the above setup, I can now publish Tessell to the [joist repo](http://repo.joist.ws/org/tessell) via:
 
     ant -Drevision=x.y ivy-publish-share
-{: class=brush:plain}
+{: class="brush:plain"}
 
 It Works
 --------

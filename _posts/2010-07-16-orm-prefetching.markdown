@@ -19,7 +19,7 @@ The problem prefetching solves is known as `n+1` selects. It is best seen by a c
             render(comment);
         }
     }
-{: class=brush:java}
+{: class="brush:java"}
 
 This usage almost always means:
 
@@ -45,7 +45,7 @@ For example, with Hibernate you'd do [something like](http://docs.jboss.org/hibe
         .list();
       return blogs.get(0);
     }
-{: class=brush:java}
+{: class="brush:java"}
 
 The code then becomes:
 
@@ -55,7 +55,7 @@ The code then becomes:
             render(comment);
         }
     }
-{: class=brush:java}
+{: class="brush:java"}
 
 This usage means:
 
@@ -85,7 +85,7 @@ One trick that Hibernate actually already implements is [subselect fetching](htt
             <one-to-many class="Comment"/>
         </set>
     </class>
-{: class=brush:xml}
+{: class="brush:xml"}
 
 Now our original code snippet:
 
@@ -95,7 +95,7 @@ Now our original code snippet:
             render(comment);
         }
     }
-{: class=brush:java}
+{: class="brush:java"}
 
 Will result in these queries:
 
@@ -133,7 +133,7 @@ Will result in these queries:
         from "child" childs0_
         where childs0_.parent_id=?
       )
-{: class=brush:sql}
+{: class="brush:sql"}
 
 What happened is that Hibernate applied a heuristic of saying: "okay, you have `Post A`, and you want its `Comments`...but you also have `Post B`, `Post C`, etc., in your session, I'm going to go ahead and get the `Comments` for all of those `Posts` at the same time."
 
@@ -162,7 +162,7 @@ So, initially you'll get the worst case `n+1` selects, but after a few iteration
       LEFT OUTER JOIN posts p ON b.id = p.blog_id
       LEFT OUTER JOIN comments c ON p.id = c.post_id
       WHERE b.id = 1
-  {: class=brush:sql}
+  {: class="brush:sql"}
 
   That loads the entire blog/posts/comments object graph
 

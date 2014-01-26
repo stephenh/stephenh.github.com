@@ -19,7 +19,7 @@ I'm forcing myself to go through a Seam tutorial, and their example is fairly re
             return title;
         }
     }
-{: class=brush:java}
+{: class="brush:java"}
 
 I cringe every time I see this--annotations are not inherently bad, but I see the annotation-hammer as having replaced the XML-hammer is the Java world. Specifying validation rules as annotations has its strength, but also its weaknesses, which I think are not always evaluated.
 
@@ -80,7 +80,7 @@ So, an example of a domain object would be:
           return errors;
       }
     }
-{: class=brush:java}
+{: class="brush:java"}
 
 This first alternative has a few trade-offs:
 
@@ -116,7 +116,7 @@ This first alternative has a few trade-offs:
 
       // ... sometime later ...
       fooDomainObject.disableTitleRule();
-  {: class=brush:java}
+  {: class="brush:java"}
 
 A variation of this theme would be to kill the `addExtraRules` and use a list utility in the declarations:
 
@@ -140,7 +140,7 @@ A variation of this theme would be to kill the `addExtraRules` and use a list ut
 
     // ... sometime later ...
     fooDomainObject.disableTitleRule();
-{: class=brush:java}
+{: class="brush:java"}
 
 This:
 
@@ -170,7 +170,7 @@ And, actually, since two-way binding is not required, Scala's call-by-name funct
         }
       }
     }
-{: class=brush:scala}
+{: class="brush:scala"}
 
 However, this has one major trade-off:
 
@@ -181,7 +181,7 @@ However, this has one major trade-off:
       class FooDomainObject extends BaseClassWithAddRulesEtc {
         addRule(new NotNullRule("title", title))
       }
-  {: class=brush:scala}
+  {: class="brush:scala"}
 
 But, even then, that's pretty slick and lightweight. If scala's call-by-name had something like "set-by-name" to make it two-way, and perhaps throw in a `getName()` for good measure, it would easily trump the need for [bindgen](http://joist.ws/bindgen.html)-like hacks.
 

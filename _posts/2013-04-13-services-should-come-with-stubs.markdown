@@ -16,7 +16,7 @@ For example, let's imagine a very trivial data service that provides an interfac
       def saveData(id: String, data: Array[Byte])
       def getData(id: String): Array[Byte])
     }
-{: class=brush:scala}
+{: class="brush:scala"}
 
 Real services would of course have more interesting contracts, but this is good enough for illustration purposes.
 
@@ -30,7 +30,7 @@ So, the `DataService` codebase is going to ship a jar, say `data-service.jar`, w
         // do JSON serialization
       }
     }
-{: class=brush:scala}
+{: class="brush:scala"}
 
 So, this is all well and good; the downstream client codebase can program against the `DataService` contract, and while testing use a fake, and in production use the real `DataServiceJsonImpl`.
 
@@ -45,7 +45,7 @@ Okay, so let's look at the fake implementation...what should it look like? Per s
         data.get(id).getOrElse { sys.error("Not found") }
       }
     }
-{: class=brush:scala}
+{: class="brush:scala"}
 
 Great! We're done.
 

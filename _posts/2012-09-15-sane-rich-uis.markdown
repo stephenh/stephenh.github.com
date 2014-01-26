@@ -60,7 +60,7 @@ Jumping straight to the code, this is a slightly simplified version of an impera
         view.list().add(itemView);
       }
     }
-{: class=brush:java}
+{: class="brush:java"}
 
 This code might be a little foreign if you're not used to GWT/Tessell development, but I think in general it's pretty easy to follow.
 
@@ -126,7 +126,7 @@ So, let's pull out that notion into an abstraction; let's make a `Tab` and a `cu
           });
         }
       }
-{: class=brush:java}
+{: class="brush:java"}
 
 This is better. We've moved the styling updates into one place, `setCurrentTab`, so things are not as spread out.
 
@@ -140,7 +140,7 @@ So, let's change `currentTab` to a property:
 
     private BasicProperty<Tab> currentTab =
       basicProperty("currentTab");
-{: class=brush:java}
+{: class="brush:java"}
 
 Since we have an abstraction around the value instead of just the value, we can now setup declarations around the abstraction, the property, and not just the value itself.
 
@@ -149,17 +149,17 @@ To see how well this works out, we can re-examine our 3 behaviors, and see how t
 * "When I am the current tab, show my panel" can look like:
 
       binder.when(currentTab).is(this).show(panel);
-  {: class=brush:java}
+  {: class="brush:java"}
 
 * "When I am the current tab, set `active` on my `li` tag" can look like:
 
       binder.when(currentTab).is(this).set(active).on(view.li());
-  {: class=brush:java}
+  {: class="brush:java"}
 
 * "When I am clicked, make myself the current tab" can look like:
 
       binder.onClick(view.anchor()).set(currentTab).to(this);
-  {: class=brush:java}
+  {: class="brush:java"}
 
 And that's it.
 
@@ -199,7 +199,7 @@ So, here's the full refactored code example:
         }
       }
     }
-{: class=brush:java}
+{: class="brush:java"}
 
 When This Works
 ===============

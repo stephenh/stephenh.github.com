@@ -15,7 +15,7 @@ Being a fat-client technology, GWT involves a lot of event listeners. The idiom 
         }
       }
     );
-{: class=brush:java}
+{: class="brush:java"}
 
 One interesting question is what to do with the `HandlerRegistration` return value of the `addValueChangeHandler` method:
 
@@ -28,7 +28,7 @@ One interesting question is what to do with the `HandlerRegistration` return val
     );
     // when do you call this?
     r.removeHandler();
-{: class=brush:java}
+{: class="brush:java"}
 
 Is Calling `removeHandler()` Required?
 --------------------------------------
@@ -57,7 +57,7 @@ For example, if you have a `FooPlacePresenter` in a framework like [Tessell](htt
           new BlahEventHandler() { ... });
       }
     }
-{: class=brush:java}
+{: class="brush:java"}
 
 Each time the user visits the `#foo` place, a new instance of `FooPlacePresenter` will get created and it will start listening for `BlahEvent`s on the application-wide `EventBus`.
 

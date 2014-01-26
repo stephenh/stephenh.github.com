@@ -35,7 +35,7 @@ Gosu has a much better alternative which is simply brilliant--build data binding
       var _employer: Employer as Employer
       var _name: String as Name
     }
-{: class=brush:java}
+{: class="brush:java"}
 
     var er = new Employer() { :Name = "er-a" }
     var ee = new Employee() { :Employer = er, :Name = "ee-1" }
@@ -51,7 +51,7 @@ Gosu has a much better alternative which is simply brilliant--build data binding
     var b3 = ee#Name
     b3.set("ee-1")
     puts(ee.Name)
-{: class=brush:java}
+{: class="brush:java"}
 
 
 

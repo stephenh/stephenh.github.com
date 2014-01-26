@@ -17,7 +17,7 @@ Here's a simple example. Given this HTML:
     <div class="parent">
       <div class="child"></div>
     </div>
-{: class=brush:xml}
+{: class="brush:xml"}
 
 We just have a parent/child. Let's style them as nested boxes with this CSS:
 
@@ -32,7 +32,7 @@ We just have a parent/child. Let's style them as nested boxes with this CSS:
       height: 100px;
       margin: 50px;
     }
-{: class=brush:css}
+{: class="brush:css"}
 
 We expect a 200x200 blue box with a 100x100 red box inside of it, with 50px of blue showing all around the red box.
 
@@ -53,7 +53,7 @@ The unintuitive fix is to add `overflow: auto` to the parent:
       <div class="child">
       </div>
     </div>
-{: class=brush:xml}
+{: class="brush:xml"}
 
 And now it works as expected:
 

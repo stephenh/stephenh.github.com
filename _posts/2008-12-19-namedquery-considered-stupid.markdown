@@ -17,14 +17,14 @@ A few examples from Google show the basic syntax:
         queryString="SELECT OBJECT(e) FROM Employee e WHERE e.firstName = :firstName")
     public class Employee {
     }
-{: class=brush:java}
+{: class="brush:java"}
 
 Then somewhere else, you can do:
 
     Query queryEmployeesByFirstName = em.createNamedQuery("findAllEmployeesByFirstName");
     queryEmployeeByFirstName.setParameter("firstName", "John");
     Collection employees = queryEmployessByFirstName.getResultList();
-{: class=brush:java}
+{: class="brush:java"}
 
 (I'm using the [first google hit](http://download.oracle.com/docs/cd/B32110_01/web.1013/b28221/ent30qry001.htm) for "JPA @NamedQuery" for the examples.)
 
@@ -48,7 +48,7 @@ The only benefit I can guess about this approach is that you'd get to reuse the 
         queryEmployeeByFirstName.setParameter("firstName", "John");
         return queryEmployessByFirstName.getResultList();
     }
-{: class=brush:java}
+{: class="brush:java"}
 
 And there you go, reuse and encapsulation all in one go, and all Plain Old Java.
 

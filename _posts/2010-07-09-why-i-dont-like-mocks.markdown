@@ -46,13 +46,13 @@ This would look something like:
     IAccount a = mock(IAccount.class);
     when(client.getEmployee(1)).thenReturn(ee);
     when(ee.getAccount(2)).thenReturn(a);
-{: class=brush:java}
+{: class="brush:java"}
 
 Contrast this with a stub (+ builder) approach of:
 
     StubRepo repo = new StubRepo();
     repo.addClientWithEmployeeAndAccount(1, 2);
-{: class=brush:java}
+{: class="brush:java"}
 
 Granted, domain objects are not usually a target for mocking ([usually](http://www.qi4j.org/)), but this is first example of an `n`-layer object graph that came to mind. Eh, I should come up with a better example.
 
@@ -78,7 +78,7 @@ With a mock, each time any business logic wants to use attributes, your test is 
     HttpServletRequest req = mock(HttpServletRequest.class);
     when(req.getAttribute("foo")).thenReturn("bar");
     doBusinessLogic(req);
-{: class=brush:java}
+{: class="brush:java"}
 
 And, if you have verify an attribute is being set via `setAttribute`, something like:
 
@@ -87,7 +87,7 @@ And, if you have verify an attribute is being set via `setAttribute`, something 
     verify(req).setAttribute(key.capture(), value.capture());
     assertThat(key.getValue(), is("foo"));
     assertThat(value.getValue(), is("bar2"));
-{: class=brush:java}
+{: class="brush:java"}
 
 With a stub, you can have one class `StubRequest` which uses a map to implement simple `getAttribute`/`setAttribute` methods. Now all of your tests can use it:
 
@@ -95,7 +95,7 @@ With a stub, you can have one class `StubRequest` which uses a map to implement 
     req.put("foo", "bar");
     doBusinessLogic(req);
     assertThat(req.get("foo"), is("bar2"));
-{: class=brush:java}
+{: class="brush:java"}
 
 Besides just the `"foo"` attribute, if the business logic under test was setting its own attributes that it later wanted to retrieve, the stub's dummy map implementation scales even better as our test is encapsulated from those implementation details.
 

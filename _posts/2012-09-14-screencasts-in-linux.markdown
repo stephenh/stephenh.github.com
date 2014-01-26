@@ -49,7 +49,7 @@ So, along with the regular setup instructions of including their JavaScript file
         flowplayer("player", "casts/flowplayer-3.2.7.swf", { clip: { autoPlay: false } });
       --></script>
     </p>
-{: class=brush:html}
+{: class="brush:html"}
 
 The subtle but important thing to note here is the space before the closing `</a>` tag; this keeps jekyll from munging the HTML into something that the FlowPlayer JavaScript doesn't like.
 

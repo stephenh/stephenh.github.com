@@ -33,7 +33,7 @@ Anyway, here's the code:
         + replacement
         + s.substring(j);
     }
-{: class=brush:java}
+{: class="brush:java"}
 
 Bad Test
 --------
@@ -52,7 +52,7 @@ So, this is the test I started out with:
         replaceBetween("starttoken ... tend", "starttoken", "t", " !!! "),
         is("starttoken !!! tend"));
     }
-{: class=brush:java}
+{: class="brush:java"}
 
 This test covers 3 boundary cases that I cared about, but while setting up the review, I found several things confusing about it:
 
@@ -87,7 +87,7 @@ This is what I ended up refactoring the test to:
         replaceBetween("startendstart middle end", "startendstart", "end", "!"),
         is("startendstart!end"));
     }
-{: class=brush:java}
+{: class="brush:java"}
 
 I think this version is demonstrably better:
 

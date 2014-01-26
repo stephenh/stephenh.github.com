@@ -20,7 +20,7 @@ As an example, this is normal/stateful/return-oriented programming:
     // print a customer
     println(customer.name)
     println(customer.description))
-{: class=brush:scala}
+{: class="brush:scala"}
 
 Where as this is stateless/east-oriented programming:
 
@@ -50,7 +50,7 @@ Where as this is stateless/east-oriented programming:
     });
     // could have a suite of CustomerWriter implementations,
     // e.g. System.out/JSON/etc., decorators, etc.
-{: class=brush:scala}
+{: class="brush:scala"}
 
 The topic of east-oriented programming came up because east-oriented programming is the one style where I think you could use a mocking library extensively and not have crappy tests.
 

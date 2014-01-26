@@ -13,7 +13,7 @@ I was reading about [Lift](http://liftweb.com) and came across a funky scala syn
         val name = "bob"
       }
     }
-{: class=brush:scala}
+{: class="brush:scala"}
 
 This:
 
@@ -54,7 +54,7 @@ Looking at the decompiled code, it makes more sense:
             return scala.ScalaObject.class.$tag(this);
         }
     }
-{: class=brush:java}
+{: class="brush:java"}
 
 My one curiosity is the lack of synchronization in the lazy initialization. I don't know about the official Scala docs, but Lift insinuated an "inner object" declaration was a singleton, not a singleton-unless-you-have-lots-of-threads.
 
@@ -65,7 +65,7 @@ If you use top-level `object` declarations, it seems to make more sense:
         println("hi")
       }
     }
-{: class=brush:scala}
+{: class="brush:scala"}
 
 As this is decompiled to:
 
@@ -98,7 +98,7 @@ As this is decompiled to:
         return ScalaObject.class.$tag(this);
       }
     }
-{: class=brush:java}
+{: class="brush:java"}
 
 This uses the `Bar$` static initializer to ensure there is just one instance of `Bar$`. Which works great.
 

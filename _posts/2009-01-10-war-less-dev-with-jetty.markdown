@@ -22,7 +22,7 @@ This assumes you have a war-like directory structure of:
         - ...content...
         - WEB-INF
           - web.xml
-{: class=brush:plain}
+{: class="brush:plain"}
 
 If for whatever reason your project's source tree doesn't match this, or needs several build steps to generate/massage a web.xml file, then YMMV.
 
@@ -61,7 +61,7 @@ Instead of a standard jetty script, I typically create a `Jetty` wrapper class d
             }
         }
     }
-{: class=brush:java}
+{: class="brush:java"}
 
 And run this Java class from Eclipse with a `Jetty.launch` target. You'll need `jetty-6.X.jar` and `jetty-util-6.X.jar` on your classpath--either in `lib/main` or a `lib/bootstrap` as you won't need the Jetty jars ending up in your production war.
 
@@ -81,7 +81,7 @@ Also, if you need JNDI resources, you have a few alternatives. One app I worked 
 
 		System.setProperty("java.naming.factory.initial", FakeJndiFactory.class.getName());
 		FakeJndiFactory.properties.put("java:comp/env/jdbc/yourapp", FakeDataSource.getDataSource());
-{: class=brush:java}
+{: class="brush:java"}
 
 Where `FakeDataSource` was a c3p0-backed data source. If you need more container resources than a DataSource, you'll have to invent your own ways to mount them in Jetty or else just stay in the container.
 

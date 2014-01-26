@@ -58,7 +58,7 @@ To frame the example, let's setup three class that respond to a user request. So
         emailRepo.sendAnEmail();
       }
     }
-{: class=brush:java}
+{: class="brush:java"}
 
 This is completely made-up, but the idea is that we have several objects involved in servicing the request. Some of them are stateless (`Servlet` and `Handlers`) but some are stateful (`BarHandler`).
 
@@ -87,7 +87,7 @@ The approach I've settled on lately is based around an `AppRegistry` interface. 
 
       EmailRepo getEmailRepo();
     }
-{: class=brush:java}
+{: class="brush:java"}
 
 I use the term `Registry` in deference to Fowler's pattern, but you could just as well call it `AppContext`, which is more Spring-like. Which, speaking of Spring, you can basically think of `AppRegistry` as making a plain, strongly-typed interface with a `getXxx` method for each bean in your Spring config file.
 
@@ -136,7 +136,7 @@ And now we just create a new instance of it and pass it around:
         emailRepo.sendAnEmail();
       }
     }
-{: class=brush:java}
+{: class="brush:java"}
 
 And that's it. Pros/cons are discussed next, but the short of it is that we can still test the `BarHandler` class--a fake (stub or mock, but, no, really, [use a stub](/2010/07/09/why-i-dont-like-mocks.html)) `AppRegistry` can be passed into `BarHandler` with whatever fake versions of the dependencies you want to use for the test.
 
@@ -159,7 +159,7 @@ Briefly, the `AppRegistryInstance` class just instantiates the dependencies and 
         return emailRepo;
       }
     }
-{: class=brush:java}
+{: class="brush:java"}
 
 And you could just as well create a `StubAppRegistryInstance` for all of your tests to reuse:
 
@@ -175,7 +175,7 @@ And you could just as well create a `StubAppRegistryInstance` for all of your te
         return emailRepo;
       }
     }
-{: class=brush:java}
+{: class="brush:java"}
 
 So that now instead of copy/paste setting up a lot of mock expectations/results, your test can pass a `StubAppRegistryInstance` to the `BarHandler` under test and then assert against the side affects that `BarHandler` makes to `DummyDatabaseRepo` and `DummyEmailRepo`.
 
