@@ -2,8 +2,11 @@
 body {
   margin: 0;
   padding: 0;
-  background-color: #F5F5F5;
+  background-color: #ddd;
   overflow-y: scroll;
+  font-family: lato, 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-weight: 300;
+  font-size: 21px;
 }
 
 #title-outer {
@@ -11,14 +14,9 @@ body {
 }
 
 #title-inner {
-    width: 40em;
+    width: 43em;
     margin: 0 auto;
-    padding: 0.5em;
-    padding-bottom: 1em;
-}
-
-h1 {
-    font-size: 1.75em;
+    padding: 0.5em 1.5em 1em 1.5em;
 }
 
 h1#blog-title {
@@ -28,7 +26,6 @@ h1#blog-title {
 h1#blog-title a {
     display: block;
     text-decoration: none;
-    font-family: serif;
     color: #FFFFFE;
     text-shadow: 1px 1px 0 #66A;
 }
@@ -40,25 +37,30 @@ h1#blog-title a {
     margin-left: 5px;
 }
 
+#site-outer {
+    background-color: #ddd;
+    overflow: auto; /* prevent margin collapse */
+}
+
 #site-inner {
-    width: 40em;
+    width: 43em;
     margin: 2em auto 2em auto;
+    padding: 1em 1.5em 1em 1.5em;
     text-align: justify;
+    background-color: white;
+    border-radius: 10px;
+}
+
+#footer-outer {
 }
 
 #footer-inner {
-    width: 40em;
+    width: 43em;
     margin: 2em auto 2em auto;
-    padding-top: 2em;
-    border-top: 1px solid white;
-}
-
-body {
-    font-size: 0.9em;
+    padding: 0em 1.5em 1em 1.5em;
 }
 
 h1, h2, h3 {
-    font-family: Helvetica, Arial, sans-serif;
     margin-bottom: 0.5em;
     text-shadow: 1px 1px 0 #99C;
 }
