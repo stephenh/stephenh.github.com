@@ -5,7 +5,7 @@ body {
   background-color: #ddd;
   overflow-y: scroll;
   font-family: lato, 'Helvetica Neue', Helvetica, Arial, sans-serif;
-  font-weight: 300;
+  color: #333333;
   font-size: 21px;
 }
 
@@ -72,10 +72,6 @@ h1, h2, h3 {
 
 #site-inner li {
     margin-bottom: 1em;
-}
-
-code  {
-    font-family: consolas, monospace;
 }
 
 pre {
