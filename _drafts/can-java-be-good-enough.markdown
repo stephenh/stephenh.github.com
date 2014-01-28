@@ -1,5 +1,5 @@
 ---
-title: Making Java Good Enough
+title: Can Java Be Good Enough?
 layout: draft
 ---
 
@@ -91,7 +91,7 @@ I'm not going to try and do a good of explanation of this, but Scala's feature w
 I'll try a small example. Here's some code in Java:
 
     public void processFruit(List<? extends Fruit> fruits) {
-      // do something with fruits
+      // do something with fruits...
     }
 
     List<Apple> apples = new ArrayList<Apple>();
@@ -99,6 +99,8 @@ I'll try a small example. Here's some code in Java:
 {: class="brush:java"}
 
 Note the really ugly `<? extends Fruit>`. In Java, you just get used to typing these all the time when you want to pass lists around with polymorphism.
+
+(Pedantically, the `?` keeps `processFruit` type-safe; because `processFruit` has no idea what the `?` type actually is, it can never call `fruits.add`. This is actually good, because calling `fruits.add(banana)` would be bad when the caller had passed in an `List<Apple>`.)
 
 Scala has a much better solution:
 
@@ -119,7 +121,9 @@ This is because the `Seq` type was declared like:
 
 Note that `+` before `T`. That basically tells the type system that "you can always assume the user really meant `Seq[? extends T]`" whenever they actually typed `Seq[T]`.
 
-This is really spoiling, as it's just even less typing that you have to do.
+(Pedantically, again, the reason this works is that `Seq` *has no add method*. Because it has no mutating methods, it basically doesn't matter if `processFruit` treats `Seq[Apple]` as if it was a `Seq[Fruit]`. It can never accidentally add a `Banana`, so it is still, like the Java version, type-safe.)
+
+The rub is that, in in Scala, the *type* declared it's variance type-safety *just once*, and now every single method parameter or local variable that wants to generically accept the type does not have to repeat the `? extends Fruit` incantation. This is really nice.
 
 I am not at all a type system expert, but I'd like to think that since the Java type system already has the notion of use-site variance, that declaration-site variance could be grafted on in a basically pleasant manner.
 
@@ -165,6 +169,8 @@ That said, there are some Scala features that, all things considered, I don't of
 
 * Typeclasses--*maybe* if Scala eventually uses these for type-safe equality, I'd be a fan, but otherwise I don't often (ever?) find myself thinking "damn, I wish I could do type classes here".
 
+* Pattern matching--I use pattern matching all the time in Scala (especially with `Option`), but I rarely feel the twinge "man I wish I had that" when in Java. I think pattern matching is very nicely integrated into the Scala language, but I don't think that means that Java (or other languages) must automatically copy it.
+
 These all fit nicely into the Scala language, but I don't think any of them would have to be shoved into Java to consider Java a "good enough" language.
 
 Java Strengths That I Personally Still Enjoy
@@ -187,9 +193,9 @@ When Would I use Scala vs. Java?
 
 At this point, Scala is my default language. It's just that nice. That said, I'm not a zealot, and could see myself opting for Java:
 
-* If Scala is not supported/well-supported in a given environment (embedded?, Android, GWT is important to me, etc.).
+* If Scala is not supported/well-supported in a given environment (embedded?, Android?, GWT is important to me, etc.).
 
-* If I knew that the codebase would eventually be 100k+ LOC. I can't imagine the Scala compiler being very pleasant on codebases over 20-30k LOC.
+* If I knew that the codebase would eventually be 50k+ LOC. I can't imagine the Scala compiler being very pleasant on codebases over 20-30k LOC.
 
 * If I knew that the codebase would live 5+ years. Java will definitely be around and healthy (knock on wood) in 5 years.
 
@@ -219,19 +225,19 @@ If Oracle did happen to get serious about making the modern Java (basically catc
 
 Perhaps this is an obvious assertion, but I think it's much more realistic now than it has been in the past.
 
-Disclaimer
-----------
+So, Can Java Be Good Enough?
+----------------------------
 
 I know several of my coworkers will heavily object to the idea that "Java + a few fixes" would ever be as sexy as Scala.
 
 And they're right. Scala is always going to be the sexier language when compared to Java.
 
-I highly doubt that at Bizo I'll ever lobby to start a new server-side project in Java. Even if it was super-high performance/whatever. For us, Scala has won.
+And, to their credit, I highly doubt that, while at Bizo, I'll ever lobby to start a new server-side project in Java. Even if it was super-high performance/whatever. For us, Scala has won.
 
-But an industry standard language doesn't necessarily have to be (and almost always isn't) the sexiest. It just needs to GSD.
+But an industry standard language doesn't necessarily have to be (and almost always isn't) the sexiest language on the block. It just needs to GSD.
 
-So, I guess I'm saying to Oracle, Java will never be Scala, but, realistically, that's fine, you could win me back. Java 8 isn't enough. But it's much closer. Please don't fuck it up. :-)
+So, I guess I'm saying to Oracle, Java will never be Scala--but that's fine, you could still win me back.
 
-
+Java can be good enough. Java 8 isn't enough yet, but it's much closer.
 
 
