@@ -2,21 +2,20 @@
 body {
   margin: 0;
   padding: 0;
-  background-color: #ddd;
   overflow-y: scroll;
   font-family: lato, 'Helvetica Neue', Helvetica, Arial, sans-serif;
-  color: #333333;
+  color: #333;
   font-size: 21px;
+  background-color: #333;
 }
 
 #title-outer {
-    background-color: #2F2F2E;
 }
 
 #title-inner {
     width: 43em;
     margin: 0 auto;
-    padding: 0.5em 1.5em 1em 1.5em;
+    padding: 1em 2em 0em 2em;
 }
 
 h1#blog-title {
@@ -27,28 +26,27 @@ h1#blog-title a {
     display: block;
     text-decoration: none;
     color: #FFFFFE;
-    text-shadow: 1px 1px 0 #66A;
+    text-shadow: 1px 1px 0 #333;
 }
 
 #blog-description {
     color: #BDBDBC;
-    text-shadow: 1px 1px 0 #444;
+    text-shadow: 1px 1px 0 #333;
     font-size: 1.1em;
     margin-left: 5px;
 }
 
 #site-outer {
-    background-color: #ddd;
     overflow: auto; /* prevent margin collapse */
 }
 
 #site-inner {
     width: 43em;
-    margin: 2em auto 2em auto;
-    padding: 1em 1.5em 1em 1.5em;
+    margin: 1.5em auto 1.5em auto;
+    padding: 0.5em 2em 0.5em 2em;
     text-align: justify;
-    background-color: white;
     border-radius: 10px;
+    background-color: white;
 }
 
 #footer-outer {
@@ -56,8 +54,14 @@ h1#blog-title a {
 
 #footer-inner {
     width: 43em;
-    margin: 2em auto 2em auto;
-    padding: 0em 1.5em 1em 1.5em;
+    margin: 0em auto 0em auto;
+    padding: 0em 2em 0.5em 2em;
+}
+
+#footer-inner a {
+    color: #BDBDBC;
+    text-decoration: none;
+    margin-right: 0.5em;
 }
 
 h1, h2, h3 {
