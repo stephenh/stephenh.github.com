@@ -1,6 +1,6 @@
 ---
 title: Can Java Be Good Enough?
-layout: draft
+layout: post
 ---
 
 {{page.title}}
