@@ -6,18 +6,17 @@ layout: draft
 {{page.title}}
 ==============
 
-At [Bizo](http://www.bizo.com), we pretty much use exclusively Scala on the server-side. We're big fans.
+At [Bizo](http://www.bizo.com), we use basically exclusively Scala on the server-side. We're big fans.
 
 That said, we have a few Java codebases left, either legacy server-side codebases that haven't been converted/rewritten yet, or GWT client-side webapps.
 
 Now that Java 8 is coming out in March 2014 (don't jinx it!), I've been mulling what would make Java "good enough", e.g. for it not to be completely painful to write Java code after having been spoiled by Scala.
 
-Obviously this would be different for everyone. But after thinking about it, I think, for me, I can distill it down to 2 syntax features, and 2 type system features, half of which are already on the way:
+Obviously this would be different for everyone. But after thinking about it, I think, for me, I can distill it down to 2 syntax features, and 1 type system feature, half of which are already on the way:
 
 * Lambdas with powerful collections (Java 8)
 * The `val` keyword
 * Declaration-site type variance
-* Traits (Java 8)
 
 Lambdas with powerful collections
 ---------------------------------
@@ -81,7 +80,7 @@ Which, yeah, I understand why boring and explicit is, a lot of times, good for t
 
 But I'd still appreciate some leeway, especially within method bodies, by having `val` available.
 
-And, hey, C# has it (well, `var`, but close enough).
+And, hey, C# has it (`var`).
 
 Declaration-site Type Variance
 ------------------------------
@@ -130,7 +129,7 @@ I am not at all a type system expert, but I'd like to think that since the Java 
 Traits
 ------
 
-I was almost not going to include traits, because I only occasionally find myself missing them, vs. the previous things that I find myself cursing on a regular basis.
+I almost did include traits, and it's not on my official list, because I only occasionally find myself missing them, vs. the previous things that I find myself cursing on a regular basis.
 
 But, hey, Java 8 is getting [default methods](http://zeroturnaround.com/rebellabs/java-8-explained-default-methods/).
 
@@ -150,7 +149,7 @@ Which is the same as:
     }
 {: class="brush:scala"}
 
-So we might as well put traits on the list.
+So we might as well mention it.
 
 Scala Features That Didn't Make the Cut
 ---------------------------------------
@@ -197,7 +196,9 @@ At this point, Scala is my default language. It's just that nice. That said, I'm
 
 * If I knew that the codebase would eventually be 50k+ LOC. I can't imagine the Scala compiler being very pleasant on codebases over 20-30k LOC.
 
-* If I knew that the codebase would live 5+ years. Java will definitely be around and healthy (knock on wood) in 5 years.
+* If I knew that the codebase would live 5+ years. Java will definitely be around and healthy in 5 years. What about Scala? The VCs will have wanted TypeSafe flipped by then, so perhaps it ends up at VMWare, or, well, VMWare, and they're continuing to invest it. Which, who knows, an even larger break from academia might be good for Scala in the long run.
+
+To these last two points, perhaps the answer is to just avoid 50k+ LOC/5+ year systems in the first place. Which I know to many is just naive, but I've been surprised at how well Bizo has managed to evolve as "100s of small codebases" rather than "1-2 huge codebases".
 
 Peak Scala?
 -----------
@@ -208,20 +209,24 @@ I cannot take credit for this, but one of my astute coworkers made this observat
 
 2. With Java 8, Java is getting demonstrably more "good enough" (especially to those who have held out using it for this long), that it's actually becoming less likely that Java users will convert to Scala.
 
-So, based on these observations, is it likely that Scala has hit peak adoption?
+So, based on these observations, is it likely that Scala has hit peak adoption? Who's left to switch?
 
 I was originally very skeptical of his claim, as it smacks of FUD.
 
+And, personally, I know I constantly underestimate "how many people are out there", be it as customers of online retail, brick and mortar retail, or even just users of programming languages. My weakness is always assuming that the current state is a steady state, and not still a transition.
+
+So, yes, there are probably many, many programmers out there who will still switch to Scala. I hope they do. It's a great language.
+
 But, since my static typing bias keeps me in GWT, and so Java, on a daily basis, with Java 8 coming soon and promising to usher in an era of "modern Java"...I dunno. It's interesting.
 
-Will Oracle Build Some Momentum?
---------------------------------
+Can Oracle Pull Off a Modern Java?
+----------------------------------
 
 It is tempting to be seduced into thinking Oracle might build some momentum here, and continue on a road to a modern Java that is not embarrassing for programmers to admit is their primary/preferred language.
 
 That said, I have not been super-impressed with the post-Java 8 road maps. The Jigsaw/OSGI thing in particular seems like a large distraction, IMO. Dunno, I could very well end being wrong on Jigsaw, but personally I'd prefer more Java-the-language focus.
 
-If Oracle did happen to get serious about making the modern Java (basically catching up/passing C#), I think it would be a huge dent in the adoption of the various "Java Next" contenders (Scala, Ceylon, Fantom, etc.).
+If Oracle did happen to get serious about making modern Java (basically catching up/passing C#), I think it would be a huge dent in the adoption of the various "Java Next" contenders (Scala, Ceylon, Fantom, etc.).
 
 Perhaps this is an obvious assertion, but I think it's much more realistic now than it has been in the past.
 
@@ -238,6 +243,6 @@ But an industry standard language doesn't necessarily have to be (and almost alw
 
 So, I guess I'm saying to Oracle, Java will never be Scala--but that's fine, you could still win me back.
 
-Java can be good enough. Java 8 isn't enough yet, but it's much closer.
+Java can be good enough. And Java 8 is much closer. Keep it up!
 
 
