@@ -314,18 +314,15 @@ Fuck It, Build a Web 1.0 App
 
 A Web 1.0 architecture is interesting. The main differences are:
 
-1. The wire calls are basically "HTML out", "maps of forms parameters in".
-   * Pro: This is incredibly generic, such that the "schema" of the web application is so implicit that people basically never even think of it.
-   * Pro: the need for client-side/server-side DTOs go away, as the server-side goes directly from HTML to domain objects, and the client-side goes from HTML to screen.
-   * Con: Automation is hard, as it involves screenscaping, for which there is no explicit schema.
-   * Con: Abstraction of the UI into smaller/reusable component on the server-side (which is stateless) is hard and often a leaky abstract (e.g. [Tapestry](http://tapestry.apache.org) did this with components, templating languages use macros/includes).
+1. The wire calls are basically "HTML out", "maps of forms parameters in"
+   * Pro: This is incredibly generic, such that the "schema" of what operations the web application supports is entirely implicit
+   * Con: Automation is hard, as it involves screenscaping, for which there is no explicit schema
 2. The application is split into "server-side client logic" and "client-side client logic" 
-   * E.g. templates are rendered on the server, but then JavaScript must munge things on the client
-     * Tangentially, this is why jQuery was successful; Web 1.5 apps were "get a shit load of HTML from the server, then tease it apart with selectors". For Web 2.0 apps (or 2.5 apps, e.g. apps built with rich UI frameworks), they often have pointers directly to HTML elements, so need less selectors. Or at least selectors applied at much smaller scopes.
+   * E.g. templates are rendered on the server, but then JavaScript must munged things on the client
+     * Tangentially, this is why jQuery was successful; Web 1.5 apps were "get a shit load of HTML from the server, then tease it apart with selects". For Web 2.0 apps (or 2.5 apps, e.g. apps built with rich UI frameworks), they often have pointers directly to HTML elements, so need less selectors. Or at least selectors applied at much smaller scopes.
    * Con: If any client-side interactivity is expected, updating the UI either involves duplicating the rendering logic on the client, or re-fetching that section from the server (e.g. RJS, which was actually pretty cute).
-   * Con: The client-side has basically no data structures (other than DOM nodes picked from the bag of HTML) to program against, so quickly becomes coupled to the DOM and so untestable.
+   * Con: The client-side has basically no data structures (other than DOM nodes picked from the bag of HTML) to program against, so quickly becomes coupled to the DOM and so untestable
 
-Basically, it's fine until you write more than 100 lines of JavaScript per page.
 
 
 
