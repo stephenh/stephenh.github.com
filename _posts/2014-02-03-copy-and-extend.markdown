@@ -1,5 +1,5 @@
 ---
-layout: draft
+layout: post
 title: Copy & Extend, A Great Way To Learn
 ---
 
