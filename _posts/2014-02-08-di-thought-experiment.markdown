@@ -1,10 +1,10 @@
 ---
-layout: post
-title: DI Thought Experiment
+layout: draft
+title: Dependency Injection Thought Experiment
 ---
 
-DI Thought Experiment
-=====================
+{{page.title}}
+==============
 
 Recently, I thought of a simple thought experiment.
 
@@ -18,7 +18,9 @@ Let's start with a servlet that just writes out "Hello World". I'm going to use 
     }
 {: class="brush:java"}
 
-Simple enough. We can double-out `Writer` and put the `service` method under test. I'll skip the test code--whether you mock or stub, it'll be pretty simple.
+Simple enough. We can fake-out `Writer` (use a mock `Writer` or a `StubWriter`) and put the `service` method under test.
+
+I'll skip the test code as, regardless of whether you mock or stub, it'll be pretty simple.
 
 So, now let's say our code needs access to the query parameters:
 
@@ -27,7 +29,9 @@ So, now let's say our code needs access to the query parameters:
     }
 {: class="brush:java"}
 
-And now the headers:
+We now have 2 method parameters. Fair enough.
+
+But now let's say we also want the HTTP headers:
 
     public void service(
         Writer w,
@@ -40,7 +44,9 @@ And now the headers:
     }
 {: class="brush:java"}
 
-And now the session:
+We have 3 method parameters. Still fine.
+
+But then next we need the session:
 
     public void service(
         Writer w,
@@ -55,7 +61,7 @@ And now the session:
     }
 {: class="brush:java"}
 
-And now we also want to set the response Content-Type header:
+Oh, and now we also want to set the response Content-Type header:
 
     public void service(
         Writer w,
@@ -72,7 +78,11 @@ And now we also want to set the response Content-Type header:
     }
 {: class="brush:java"}
 
-One last thing--so far our `service` method has been stateless. Just for illustration, let's make it stateful:
+Eesh. Now we're at 5 method parameters.
+
+How about one last thing--so far our `service` method has been stateless, which is fine, that's how servlets work.
+
+But, illustration purposes, let's pretend our "servlet" component it actually stateful (e.g. one is created per-request):
 
     public class Servlet {
       private final Writer w;
@@ -105,8 +115,9 @@ One last thing--so far our `service` method has been stateless. Just for illustr
     }
 {: class="brush:java"}
 
+At this point, passing around the parameter list is getting out of hand.
 
-At this point, the parameter list is getting out of hand, so we can apply [Introduce Parameter Object](http://www.refactoring.com/catalog/introduceParameterObject.html) and make `Request` and `Response` interfaces:
+Which is fine, we can apply a well known refactoring, [Introduce Parameter Object](http://www.refactoring.com/catalog/introduceParameterObject.html), and make `Request` and `Response` interfaces:
 
     public interface Request {
       Map<String, String> getParams();
@@ -143,12 +154,18 @@ And now have our `Servlet` class use them:
     }
 {: class="brush:java"}
 
-This looks a lot better. We introduced a `Request` abstraction that groups request-lifecycle attributes, and so instead of passing around lots of related parameters, we can pass around `Request` and `Response` instances.
+This looks a lot better.
+
+We introduced a `Request` abstraction that groups request-lifecycle attributes, and so instead of passing around lots of related parameters, we can pass around `Request` and `Response` instances.
+
+So far, none of this should be new or different, because HTTP libraries in basically any OO language look this way.
 
 Servlet Testing
 ---------------
 
-After introducing the `Request` interface, testing the `Servlet` class involves a level of indirection. Previously we could pass doubled `Writer`, `Map`, etc. instances directly as parameters to our `service` method--now we have to wrap a `Request` around the test `Writer`, `Map`, etc. and pass the `Request` instead.
+After introducing the `Request` interface, testing the `Servlet` class involves a level of indirection.
+
+Previously we could pass fake `Writer`, `Map`, etc. instances directly as parameters to our `service` method--now we have to wrap a `Request` around the test `Writer`, `Map`, etc. and pass the `Request` instead.
 
 If you're mocking, you just mock out the parts of `Request` you need:
 
@@ -189,8 +206,8 @@ Personally, I [prefer stubbing](/2010/07/09/why-i-dont-like-mocks.html) in this 
 
 But, which ever style you prefer, this extra level of mocking/stubbing in tests is pretty standard for `Request` interfaces.
 
-Servlet Reflection
-------------------
+Thoughts on Servlet Refactoring
+-------------------------------
 
 So far, whether you prefer a stateful or stateless `Servlet` class aside, I think this has been a pretty standard "best practice" refactoring.
 
@@ -232,7 +249,7 @@ You might take a moment to note to yourself whether you do/do not agree with thi
 Now with Services
 -----------------
 
-Instead of a servlet, let's now write a service, some sort of stateless bean in your application that needs application-scoped dependencies:
+Instead of a servlet, let's now write a service, some sort of stateless "bean" (it's 2014, I really should stop using that word) in your application that needs application-scoped dependencies:
 
     public class Service {
       private final EmailSender emailSender;
@@ -254,11 +271,11 @@ Instead of a servlet, let's now write a service, some sort of stateless bean in 
 
 I've made up `EmailSender`, `FooDao`, and `BlahService` as dependencies of `Service`--what the actual dependencies are isn't important. The main point is that they are all application-scoped dependencies.
 
-Did you notice how similar this `Service` code looks to the pre-`Request` `Servlet` code?
+Do you notice how similar this `Service` code looks to the pre-`Request` `Servlet` code?
 
 Most people look at the `Service` constructor and think there's no way they want to instantiate by hand all 10-50-whatever services they have in their project when the constructor is going to vary so widely from service to service.
 
-So, in steps auto-wiring dependency injection--Spring, Guice, whatever. They give up strongly-typed `new Service` calls and say "here, let me use reflection to call all these nasty constructors for you".
+So, in steps auto-wiring dependency injection (Spring, Guice, whatever) as the hero to solve this problem. They give up strongly-typed `new Service` calls and say "here, let me use reflection to call all these nasty constructors for you".
 
 Which makes sense if you're forcing yourself to stick with the `Service(EmailSender, FooDao, BlahService)` constructor.
 
@@ -297,7 +314,7 @@ And now let's use it:
     }
 {: class="brush:java"}
 
-Whichever style you prefer, we've drastically simplified our constructor--instead of saying "I need X, Y, Z, ...", it's "I need some application-scoped dependencies".
+Whichever style you prefer, we've drastically simplified our constructor--instead of saying "I need X, Y, Z, ...", it's "I need some of my application's app-scoped dependencies".
 
 Service Testing
 ---------------
@@ -339,10 +356,12 @@ Or, stub:
     }
 {: class="brush:java"}
 
-Service Reflection
-------------------
+Thoughts on Service Refactoring
+-------------------------------
 
-Okay, so what are the pros/cons of the `AppContext` approach for `Service`? To me, they are the same as the pros/cons of the `Servlet` refactoring:
+Okay, so what are the pros/cons of the `AppContext` approach for `Service`?
+
+To me, they are the same as the pros/cons of the `Servlet` refactoring:
 
 * Pro: less parameters to pass around
 * Pro: more decoupled--whoever instantiates our `Service` does not have to know exactly which parts of the application context we need
@@ -360,29 +379,35 @@ We still have Dependency Injection:
 
 And, most importantly, it's simple. Anyone who understands interfaces can understand `AppContext`. And not just how to *use* it, but how it *actually works*. There is no magic.
 
-I think this is a stark contrast to auto-wiring DI, where only a handful of experts on a project truly understand what is happening behind the scenes. The rest of the team, or even entire teams if they lack a true expert, cargo cult their way through auto-wiring DI because its best practice.
+I think this is a stark contrast to auto-wiring DI, where only a handful of experts on a project truly understand what is happening behind the scenes. The rest of the team, or even entire teams if they lack a true expert, cargo cult their way through auto-wiring DI because it's best practice.
 
-Are Request and AppContext that Different?
-------------------------------------------
+Are `Request` and `AppContext` that Different?
+----------------------------------------------
 
-So, `Request` groups request-
+So, the `Request` object groups request-related/request-scoped parameters.
 
-I've been using this `AppContext` style for awhile now, since I wrote [Changing my style](/2010/01/15/changing-my-style.html) (where I referred to it as a registry), and so far it has worked well.
+The `AppContext` object groups application-related/application-scoped services.
 
-What is puzzling to me is that other programmers I've shown the pattern to haven't been as enthusiastic. In particular, the con of a service's dependencies being less explicit is a big sticking point.
+My assertion is that they are based on the same underlying principles.
 
-Which, true, it's a con--it is a con for both the `Servlet`/`Request` refactoring (which is accepted best practice) and the `Service`/`AppContext` refactoring (which is contrary to best practice).
+Which is why, when debating pros/cons of an `AppContext` approach vs. an auto-wiring approach, I find it frustrating when the admitted cons of `AppContext` come up (like less explicit which services are actually being used).
 
+I will not disagree that they are not cons, but I feel they are generally outweighed by the pros (simple, type-safe, no need to rely on a framework), that, in other "Introduce Parameter Object" instances (like Request, etc.), are taken as perfectly fine and a worthy trade-off.
 
+But something about these parameters being "dependencies" (usually application-scoped, but also custom-scoped, given frameworks support that), means developers end up treating/thinking of them differently. I'm not sure why.
 
-What makes the `AppContext` refactoring 
+Personally, I've been using this `AppContext` style for quite awhile in various codebases, since I wrote [Changing my style](/2010/01/15/changing-my-style.html) (where I referred to it as a registry), and it is still working well. (Note that I make no claim for originality.)
 
-But the upshot is get to throw out a whole framework and all the needless complexity it entails.
+Perhaps there are cases where an `AppContext` approach becomes very degenerate, say with hundreds of services. Hundreds of services would be awkward, but I would be tempted at that point to apply the [GooS](http://www.growing-object-oriented-software.com/) philosophy that the awkwardness is pointing out a real smell (a huge codebase with many unstructured dependencies), and not just sweep it under the rug by throwing a framework at it.
 
-Unlike the `Request` example, I've 
+But, even if it does become degenerate in some scenarios (extremely large system/something/something), I can somewhat selfishly assert that, that's fine, those are not my scenarios.
 
+(And vice versa, if other developers assert that an `AppContext` approach would be degenerate for their demonstrably different scenarios, and auto-wiring DI is awesome, I'm willing to trust them on on that.)
 
-application-lifecycle. request-lifecycle.
+That said, I suppose I will go a bit further and assert that most systems that are using auto-wiring DI because it's "best practice", would likely be just fine, and in fact easier/simpler to understand, with a "standard OO" solution to the problem.
 
+As a final note, this was sitting in my "drafts" directory for ages, so I'm somewhat past the whole DI/AppContext debate; I'm not sure why, perhaps because I've been away from any DI-using systems for awhile now. Definitely at [Bizo](http://www.bizo.com), but also in the wider Scala community, it seems that Scala systems have eschewed adopting auto-wiring DI as idiomatic.
+
+But I thought I'd still go ahead and publish it, if anything so that I can have a link to point people to in the future.
 
 
