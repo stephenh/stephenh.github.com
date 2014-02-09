@@ -1,5 +1,5 @@
 ---
-layout: draft
+layout: post
 title: Dependency Injection Thought Experiment
 ---
 
