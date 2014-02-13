@@ -1,5 +1,5 @@
 ---
-layout: draft
+layout: post
 title: Spark Report Patterns
 ---
 
@@ -286,7 +286,7 @@ My only (minor) complaint here is that Scala's type aliases are just symbolic, i
 Liberal use of `collect`
 ------------------------
 
-One of my few criticisms of Spark is that it heavily relies on Scala's tuples whenever you change the "shape" of your data.
+One of my few criticisms of Spark is that it (understandably) heavily relies on Scala's tuples whenever you change the "shape" of your data.
 
 This is what we were doing in the previous example, by only keeping user id and timestamp:
 
@@ -315,11 +315,16 @@ What we usually try and do, and I think is a common Scala idiom, is use pattern 
 
 This uses Scala's pattern matching to "match" against the `Tuple2` (it again uses the parens as syntax sugar), and introduces `userId` as a variable that is equivalent to `_1`. And since we aren't using `_2`, we just use `_` to mean "we don't care about this one".
 
-This has actually served as pretty well, and we continue to use it.
+This has actually served as pretty well, and we continue to use it. We also use it a lot for joins:
 
-Pedantically, it's not perfect--the `case (userId, _)` could say `case (foo, _)` and Scala would not care. Accessing `userId` (or `foo`) would still be type-safe (the type would be `UserId`), but the `userId` in the pattern match is just a variable name. If we were to rename type type to `Username` or something, nothing would force us to go back and change `userId` to `username` in our case statement.
+    logFooByUserId.cogroup(logBarByUserId).collect { 
+      case (userId, (foos, bars)) => ...
+    }
+{: class="brush:scala"}
 
-In contrast, C# can actually handle this scenario by using [Anonymous Types](http://geekswithblogs.net/BlackRabbitCoder/archive/2012/06/21/c.net-little-wonders-the-joy-of-anonymous-types.aspx). It allows LINQ to do very similar things as `map`, but to introduce mini-classes along the way (from previous link):
+Technically, this "use `collect`" idiom is not perfect--it is more verbose as we have to re-introduce `userId`, etc. as more variables.
+
+C# actually handles this scenario better than Scala by using [Anonymous Types](http://geekswithblogs.net/BlackRabbitCoder/archive/2012/06/21/c.net-little-wonders-the-joy-of-anonymous-types.aspx). It allows LINQ to do very similar things as `map`, but to introduce mini-classes along the way (from previous link):
 
     transactions
       .GroupBy(tx => new { tx.UserId, tx.At.Date })
@@ -327,15 +332,140 @@ In contrast, C# can actually handle this scenario by using [Anonymous Types](htt
       .ThenBy(grp => grp.Key.UserId);
 {: class="brush:java"}
 
-You can use that, after doing the `new { tx.UserId, tx.At.Date }`, LINQ has "kept" the `Date` and `UserId` accessors for use later in the query.
+This means that, after the `new { tx.UserId, tx.At.Date }` line, LINQ has "kept" the `Date` and `UserId` accessors for use later in the query.
 
-Perhaps Scala macros will eventually do this (or perhaps already do?), but for now we have `collect`.
+You could do kind of the same thing in Scala, but you'd have to write a new case class for each intermediate "shape", which is basically what LINQ is doing automatically.
 
+Perhaps Scala macros will eventually do this (or perhaps already do?), but for now we have `collect`. And it's really not too bad.
 
+For Comprehensions for Filtering Logs
+-------------------------------------
 
+Another construct we use quite a bit, although more an idiom than a pattern, is Scala's for compressions for applying multiple filters to log files. For example:
 
+    val lines: RDD[RequestLine] = ...
 
+    val views: RDD[(UserId, ClientId, Domain, Timestamp)] = for {
+      line <- lines
+      clientId <- line.clientId if activeClientIds.contains(clientId)
+      domain <- parseDomain(line.url)
+      userId <- line.userId
+      timestamp <- line.timestamp
+    } yield (userId, clientId, domain, timestamp)
 
+    // this assumes a slightly different RequestLine:
+    case class RequestLine(...)
+      def clientId: Option[ClientId] = ...
+      def userId: Option[UserId] = ...
+      def timestamp: Option[Timestamp] = ...
+      def url: Option[Url] = ...
+    }
 
+    // returns None if can't be parsed
+    def parseDomain(url: Url): Option[Domain] = ...
+{: class="brush:scala"}
+
+The change to `RequestLine` to return `Options` is mainly because that, for some of our logs, some columns are optional. However, hopefully very rarely, a log may be corrupted (perhaps due to application logic) and we just don't have a usable value for a certain column.
+
+Spark will blow up the whole job if one row fails (repeatedly due to report logic, not just a transient I/O error), so having `RequestLine` return `Options` with the for comprehension is our way of having the rest of the Spark job continue on if we have a few lines that happen to be invalid.
+
+And besides handling invalid lines, it also gives a nice way to skip lines for other reasons, e.g. inactive clients/other report business logic conditions.
+
+Just to highlight the nifty Scala feature here, we're using a `for { ... }` and `yield (...)`, but the return value of the for expression is not a built-in Scala type (like `Seq`), but Spark's own `RDD` type.
+
+Which means that this for expression is captured as `map`/`filter` invocations, just like any other `RDD` operation, and will be shipped off around the cluster to evaluate against incoming data.
+
+Up-Front Dynamic Coalescing
+---------------------------
+
+One of our long-standing pain points with Spark (currently/pre-1.0) is that picking the right partition size is critical for job performance.
+
+(Brief background: partitions are where if you have 100gb of data "in" an RDD, Spark will break it up into tiny, say, 50-100mb partitions, and process each partition individually. This allows the work to be distributed and to recover more easily from errors.)
+
+If any partition ends up being too big, your job will throw `OutOfMemoryError`s during shuffles (technically this is/has already changed in Spark master, but we haven't tried it out). But if your partitions are too small, the per-partition/per-task overhead can make your job take dramatically longer.
+
+As a side note, I think we are more sensitive to this than most Spark users, as our data *always* comes from S3, which has no real notion of partitions--it's just flat files. Most Spark users, who load likely data from HDFS, will get partition sizes that "just work", since HDFS was built specifically for map/reduce and storing large files in small-ish chunks (splits).
+
+So, anyway, since we use S3, we have to provide our own partitioning hints.
+
+The Spark API does have `coalesce` and `repartition` methods, but, unfortunately (currently/pre-1.0), they only take a desired number of partitions.
+
+But what we really want to shoot for is not number of partitions, by size of partitions.
+
+And ideally the repartitioning should "just happen" for the programmer, without them having to worry "am I loading 1 week of data? 1 months? 6 months?". Each of these would have a drastically different number of partitions.
+
+To handle this, we've built dynamic-coalescing into our shared `newRDD` logic.
+
+The basic idea is to:
+
+1. Look at the file metadata in S3 to come up with total incoming size
+2. Divide incoming size by our "goal partition size" (currently 128mb)
+3. Use the result to coalesce the RDD.
+
+The routine looks like:
+
+    /** Partitions `rdd` based on the total size of `paths`. */
+    def partitionRDD[T](
+        rdd: RDD[T],
+        sourceData: Seq[FilePath]): RDD[T] = {
+      val number = sourceData.map { _.size }.sum / goalSize
+      rdd.coalesce(number.toInt)
+    }
+{: class="brush:scala"}
+
+Note that, technically, we're using `coalesce` instead of the new `repartition` method.
+
+This is because, for us, our incoming S3 files are almost always smaller than the goal size (by default the HDFS S3 backend will not group multiple S3 keys into one split), so we want to reduce the number of partitions. `coalesce` can do this without a shuffle, which is nice to avoid if we can.
+
+After fiddling with some settings (our goal size, using the Snappy compression codec, and setting the shuffle buffer to 10k), this auto-coalesce logic has handled basically any logs/date range we've thrown at it for the past few months.
+
+Eventually, it would be nice if Spark just did this for us, both at the start of a job, and even during each shuffle. I'll wand wave on the implementation details, but "something something sampling the current size of the partitions vs. the ideal size something" would be awesome.
+
+Using Spark Plug for Launching EMR Clusters
+-------------------------------------------
+
+At Bizo, none of our Spark clusters are persistent; instead we use Amazon EMR to spin up a new cluster for each report, run the report, save the result to S3, and shut the cluster down.
+
+For us, this has worked out very well. We really enjoy not having the headache of administering a long-running cluster, and dealing with growing/reducing/sharing it among our jobs. That's what EMR is for.
+
+However, this does result in launching a lot of clusters. To help with that, Larry on Bizo's infrastructure team built [spark-plug](https://github.com/ogrodnek/spark-plug), a Scala DSL for launching EMR clusters (ironically, the name "spark-plug" is completely coincidental, as spark-plug was originally built to launch our Hive EMR clusters).
+
+To use spark-plug, you create a "plug" that will launch your EMR cluster, e.g.:
+
+    object SomePlug extends AbstractPlug {
+      // args can be passed in from cron jobs/CLI
+      def today = CalendarDate.from(args(0), "yyyyMMdd")
+
+      // the name of the 'job' class to run on the spark master
+      override def job = "SomeJob"
+      override def jobArgs = Seq(today.toString)
+      override def numberOfMachines = 20
+
+      // these end up being EMR job steps
+      override def steps = {
+        val checkpath = new CheckS3Path(RequestLine.checkPath(today))
+        val jobStep = RunSparkJob("com.bizo." + job, jobArgs)
+        val otherSteps = Seq(...)
+        Seq(checkpath, jobStep) ++ otherSteps
+      }
+    }
+{: class="brush:scala"}
+
+A few notes about this:
+
+* We use a `CheckS3Path` step to ensure the log files we're reading in actually exist
+* By extending our (internal) `AbstractPlug` class, we can some Spark-related bootstrap actions for free (that take care of installing Spark with our `spark-env.sh` settings, downloading our job's JAR onto each node, then starting the master and slaves)
+* The `RunSparkJob` step is what will, on the master, instantiate the `SomeJob` class from before, and kick off the loading/saving of our report RDDs
+
+Technically some of the steps here (`RunSparkJob`, `CheckS3Path`) are in our internal `spark-plug-bizo-ext` repository, but `spark-plug` itself is open source and has been really great to use.
+
+Conclusion
+----------
+
+We have enjoyed settling into Spark and developing some patterns around how we structure our reports.
+
+The very high levels of test coverage we're able to get are especially nice. Honestly, for all of Spark's reputation and marketing about being "lightning fast", "in-memory based", etc., for me, all of that pales in comparison to actually being able to put our non-trivial reporting code under test.
+
+We also have a few more patterns floating around, but they aren't quite nailed down yet, at least in my head, so I'll save those for a future post. 
 
 
