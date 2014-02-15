@@ -283,6 +283,8 @@ And, wow, look at how much more readable that `doSomeMoreWith` signature is. App
 
 My only (minor) complaint here is that Scala's type aliases are just symbolic, in that if both `UserId` and `ClientId` are really strings, you can pass in a `UserId` variable where the type signature is actually `ClientId` and the compiler will not complain. They probably have a good reason for this, but it actually surprised me--I would have assumed it would not be allowed.
 
+**Update 2/15/2014:** Josh Carver, another Bizo dev, pointed at using [this type tag approach](https://gist.github.com/jcarver989/2fbb1ee926f57373aac5) as a more type-safe way of doing aliases. We are probably going to try it out and see how it goes.
+
 Liberal use of `collect`
 ------------------------
 
@@ -420,6 +422,41 @@ This is because, for us, our incoming S3 files are almost always smaller than th
 After fiddling with some settings (our goal size, using the Snappy compression codec, and setting the shuffle buffer to 10k), this auto-coalesce logic has handled basically any logs/date range we've thrown at it for the past few months.
 
 Eventually, it would be nice if Spark just did this for us, both at the start of a job, and even during each shuffle. I'll wand wave on the implementation details, but "something something sampling the current size of the partitions vs. the ideal size something" would be awesome.
+
+Defining `+` in Case Classes For Reducing
+-----------------------------------------
+
+We frequently need to reduce the values of an RDD, either to `reduceByKey` to combine values for the same key, or just `reduce` to get a result across the whole RDD.
+
+If you have an RDD of key and just a tuple of stats, this can get pretty tedious:
+
+    val rdda: RDD[(UserId, (Clicks, Imps, Convs))] = ...
+    val rddb = rdda.reduceByKey { (v1, v2) => 
+      (v1._1 + v2._1, v1._2 + v2._2, v1._3 + v2._3)
+    }
+{: class="brush:scala"}
+
+With all the `v1`, `v2`, `_1`, `_2`, etc., I made about 10 typos just typing that example for this post. Not pretty in a real job.
+
+What we like to do here is wrap the stats into a case class that defines an `+` operation:
+
+    case class Stats(clicks: Long, imps: Long, convs: Long) {
+      def +(other: Stats): Stats = {
+        Stats(
+          clicks + other.clicks,
+          imps + other.imps,
+          convs + other.convs)
+      }
+    }
+
+    // now reduce is easy
+    val rdda: RDD[(UserId, Stats)] = ...
+    val rddb = rdda.reduceByKey { _ + _ }
+{: class="brush:scala"}
+
+This moves the combination logic out into a specific method, and really makes the job read nicer.
+
+Granted, it is still somewhat tedious to define the `+` method by hand. But we usually don't have very many stats, so it hasn't been painful enough to look into alternatives (e.g. having macros/Algebird/etc. define `+` automatically). 
 
 Using Spark Plug for Launching EMR Clusters
 -------------------------------------------
