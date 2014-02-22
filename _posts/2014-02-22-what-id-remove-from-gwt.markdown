@@ -1,5 +1,5 @@
 ---
-layout: draft
+layout: post
 title: What I Would Remove from GWT--Basically Everything
 ---
 
