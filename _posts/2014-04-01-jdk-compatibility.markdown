@@ -1,6 +1,6 @@
 ---
 title: JDK 1.8/1.7 Compatibility Gotcha
-layout: draft
+layout: post
 ---
 
 {{page.title}}
