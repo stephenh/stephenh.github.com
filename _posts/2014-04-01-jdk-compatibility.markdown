@@ -127,7 +127,12 @@ It's very tiny. And no reference to `Executable`.
 What's a Stack Map Table?
 -------------------------
 
-(Explain what the Stack Map is...)
+<del>Explain what the Stack Map is...</del>
+
+Here are some interesting links:
+
+* [The StackMapTable Attribute](http://docs.oracle.com/javase/specs/jvms/se7/html/jvms-4.html#jvms-4.7.4)
+* [Java 7 Bytecode Verifier](http://chrononsystems.com/blog/java-7-design-flaw-leads-to-huge-backward-step-for-the-jvm)
 
 Reproducing It
 --------------
