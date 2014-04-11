@@ -14,12 +14,12 @@ gitalias rv='git remote -v'
 
 # git add
 gitalias  a='git add'
-gitalias au='git add --update'
-gitalias ap='git add --patch'
-alias aug='git aug' # add all updated/new/deleted
-alias aa='git aa' # add all updated/new/deleted
-alias ag='git ag' # add with grep
-alias agp='git agp' # add with grep -p
+gitalias au='git add --update .'
+gitalias ap='git add --patch .'
+alias aa='git aa' # add updated/new/deleted
+alias ag='git ag' # add updated/new with grep
+alias aug='git aug' # add updated with grep
+alias aup='git aup' # add -p update with grep
 alias cg='git cg' # checkout with grep
 alias dg='git dg' # diff with grep
 alias pg='git pg' # patch with grep
@@ -32,8 +32,8 @@ gitalias c='git checkout'
 # git fetch
 gitalias f='git fetch'
 
-# basic interactive rebase of last 10 commits
-gitalias r='git rebase --interactive HEAD~10'
+# interactive rebase unpushed commits
+alias r='git r'
 alias cont='git rebase --continue'
 
 # git diff
@@ -41,25 +41,34 @@ gitalias d='git diff'
 gitalias p='git diff --cached'   # mnemonic: "patch"
 
 # git ls-files
-gitalias o='git ls-files -o --exclude-standard'    # "other"
+gitalias other='git ls-files -o --exclude-standard'
 
 # git status
 alias  s='git status'
 
+# git merge
+gitalias m='git merge'
+
 # git log
 gitalias  L='git log'
 # gitalias l='git log --graph --pretty=oneline --abbrev-commit --decorate'
-gitalias  l="git log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr)%Creset' --abbrev-commit --date=relative"
+gitalias  l="git log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr, %ae)%Creset' --abbrev-commit --date=relative"
 gitalias ll='git log --pretty=oneline --abbrev-commit --max-count=15'
+
+# git grep
+gitalias g="git grep --break --heading --line-number"
 
 # misc
 gitalias pick='git cherry-pick'
+
+# push to gerrit
+alias pushg='git push origin HEAD:refs/for/master'
 
 # experimental
 gitalias mirror='git reset --hard'
 gitalias stage='git add'
 gitalias unstage='git reset HEAD'
-gitalias pop='git reset --soft HEAD^'
+gitalias back='git reset --soft HEAD^'
 gitalias review='git log -p --max-count=1'
 
 # svn
@@ -67,6 +76,10 @@ gitalias si='git si' # svn ignore
 gitalias sr='git svn rebase'
 gitalias sp='git svn dcommit'
 gitalias sf='git svn fetch'
+gitalias srt='git rebase -i svn/trunk'
 
 gitalias wtf='git-wtf'
+
+alias rrm=/bin/rm
+alias mmv=/bin/mv
 
