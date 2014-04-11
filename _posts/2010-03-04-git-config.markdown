@@ -48,18 +48,22 @@ Here is a made up example bash session with some of the commands:
     $ rsg package3
     # runs: git reset src/package3/file3
 
-    # see what we have staged now (only package1)
+    # we wanted *some* of the changes in package3
+    $ agp package3
+    # runs: git add -p src/package3/file3
+
+    # see what we have staged now (only package1+some package3)
     $ p
     # runs: git diff --cached
 
     # commit it
-    $ commit -m "Changed stuff in package1"
+    $ ci -m "Changed stuff in package1"
     # runs: git commit -m "..."
 {: class="brush:bash"}
 
 That is the basic idea.
 
-Most of the magic is from the `[alias]` section of `.gitconfig`, along with my `.gitshrc` allowing the `git ` prefix to be dropped.
+Most of the magic is from the `[alias]` section of `.gitconfig`, along with my `.gitshrc` allowing the `git` prefix to be dropped.
 
 `.gitconfig`
 ------------
@@ -72,26 +76,32 @@ Here is my current `.gitconfig` with comments:
       name = Stephen Haberman
       email = stephen@exigencecorp.com
     [alias]
-      # 'add all' stages all new+changed+deleted files
+      # 'add all' stages new+changed+deleted files
       aa = !git ls-files -z -d | xargs -0 -r git rm && git ls-files -z -m -o --exclude-standard | xargs -0 -r git add
 
-      # 'add grep' stages all new+changed that match $1
-      ag = "!sh -c 'git ls-files -z -m -o --exclude-standard | grep -z $1 | xargs -0 -r git add' -"
+      # 'add grep' stages new+changed that match $1
+      ag = !sh -c 'git ls-files -z -m -o --exclude-standard | grep -z $1 | xargs -0 -r git add' -
+
+      # 'add updated grep' stages changed that match $1
+      aug = !sh -c 'git ls-files -z -m | grep -z $1 | xargs -0 -r git add' -
+
+      # 'add updated patch' stages changed that match $1 with add -p
+      agp = "!sh -c \"git add -p `git ls-files -z -m -o --exclude-standard | grep -z $1 | tr '\\000' ' '`\" -"
 
       # 'checkout grep' checkouts any files that match $1
-      cg = "!sh -c 'git ls-files -z -m | grep -z $1 | xargs -0 -r git checkout' -"
+      cg = !sh -c 'git ls-files -z -m | grep -z $1 | xargs -0 -r git checkout' -
 
       # 'diff grep' diffs any files that match $1
-      dg = "!sh -c 'git ls-files -z -m | grep -z $1 | xargs -0 -r git diff' -"
+      dg = !sh -c 'git ls-files -z -m | grep -z $1 | xargs -0 -r git diff -- ' -
 
-      # 'patch grep' diff --cached any files that match $1
-      pg = "!sh -c 'git ls-files -z -c | grep -z $1 | xargs -0 -r git diff --cached' -"
+      # 'patch grep' diffs any staged files that match $1
+      pg = !sh -c 'git ls-files -z -c | grep -z $1 | xargs -0 -r git diff --cached' -
 
       # 'remove grep' remove any files that match $1
-      rmg = "!sh -c 'git ls-files -z -d | grep -z $1 | xargs -0 -r git rm' -"
+      rmg = !sh -c 'git ls-files -z -d | grep -z $1 | xargs -0 -r git rm' -
 
       # 'reset grep' reset any files that match $1
-      rsg = "!sh -c 'git diff --cached --name-only | grep $1 | xargs -r git reset HEAD -- ' -"
+      rsg = !sh -c 'git diff --cached --name-only | grep $1 | xargs -r git reset HEAD -- ' -
 
       # nice log output
       lg = log --graph --pretty=oneline --abbrev-commit --decorate
@@ -101,6 +111,9 @@ Here is my current `.gitconfig` with comments:
 
       # start git-sh
       sh = !git-sh
+
+      # rebase unpushed commits
+      r= !git rebase --preserve-merges --interactive @{u}
     [color]
       # turn on color
       diff = auto
@@ -144,6 +157,9 @@ Here is my current `.gitconfig` with comments:
       rmdir = true
       # set svn:mergeinfo when pushing merge commits
       pushmergeinfo = true
+    [pull]
+      # preserve merge commits when rebasing
+      rebase = preserve
 {: class="brush:plain"}
 
 `.gitshrc`
