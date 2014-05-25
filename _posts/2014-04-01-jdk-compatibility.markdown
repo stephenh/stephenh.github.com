@@ -11,6 +11,8 @@ To help future weary souls out, here are the Google-friendly queries for what we
 * java.lang.NoClassDefFoundError: java/lang/reflect/Executable
 * java.lang.ClassNotFoundException: java.lang.reflect.Executable
 
+tldr: if you want to use `-source 1.6`/`-target 1.6` (or 1.7), then compile with the JDK 1.6 or JDK 1.7, otherwise you risk newer/Java 1.8-only classes sneaking into the bytecode.
+
 Overview
 --------
 
