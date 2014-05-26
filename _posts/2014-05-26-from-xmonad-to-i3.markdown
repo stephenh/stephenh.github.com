@@ -44,9 +44,9 @@ I really enjoyed xmonad, and want to still highly recommend it, but I consistent
 
    Yes, I must admit that I am not, nor really want to be, 1337 enough to manage my wireless connection solely from the CLI.
 
-   But, that was fine, as previous to this, I'd always been able to, eventually, get xmonad running within whatever Gnome environment was within Ubuntu (e.g. [Using xmonad in Gnome](http://www.haskell.org/haskellwiki/Xmonad/Using_xmonad_in_Gnome), and was quite happy.
+   But, that was fine, as previous to this, I'd always been able to, eventually, get xmonad running within whatever Gnome environment was within Ubuntu (e.g. [Using xmonad in Gnome](http://www.haskell.org/haskellwiki/Xmonad/Using_xmonad_in_Gnome)), and was quite happy.
 
-   It Saucy, the xmonad install was actually really slick--just `sudo apt-get install xmonad`, and then the LightDM login screen would give you a "Login with XMonad Gnome" (or something like that) option that, IIRC, just worked.
+   In Saucy, the xmonad install was actually really slick--just `sudo apt-get install xmonad`, and then the LightDM login screen would give you a "Login with XMonad Gnome" (or something like that) option that, IIRC, just worked.
 
    But now for 14.04, it's back to just not working. I could probably figure it out, but Saucy spoiled me, and I now expect it to just work.
 
@@ -93,7 +93,7 @@ After trying a few gyrations, I ended up installing [i3](http://www.i3wm.org/) a
 
    (Notice how both of these are exactly the opposite of what I disliked about xmonad.)
 
-3. As a bonus, i3 runs (GNOME) panel-less but is still newbie-friendly because it includes a basic status bar out-of-the-box.
+3. As a bonus, i3 runs panel-less but is still newbie-friendly because it includes a basic status bar out-of-the-box.
 
    Per before, I was never brave enough to run xmonad without a "basically Gnome" panel, and so always went to the pain of having the Gnome/LXDE panels available for the various applets/etc. This was always the most annoying part of getting xmonad setup.
 
@@ -101,7 +101,7 @@ After trying a few gyrations, I ended up installing [i3](http://www.i3wm.org/) a
 
    Which, for xmonad, "super-extensible" meant "not there by default" which meant "intimating for new users", so I never set one up.
 
-   With i3, it runs panel-less (as in no heavyweight Gnome/LXDE/etc. panel), but has an out-of-the-box status bar ([i3status](http://i3wm.org/i3status/)) that "just works" and is sufficiently-configurable (plain text). 
+   With i3, it runs panel-less (as in no heavyweight Gnome/LXDE/etc. panel), but has an out-of-the-box status bar ([i3status](http://i3wm.org/i3status/)) that "just works" and is sufficiently-configurable (plain text) that, for now, I see no reason to switch. 
 
 4. As a bonus bonus, per [this post](http://www.brentwalther.net/blog/how-to-replace-unity-with-i3-window-manager-on-ubuntu-1204), I was even able to uninstall the Unity and Compiz packages.
 
@@ -114,7 +114,7 @@ Tweaking i3
 
 So, while i3 worked right out of the box, it has taken me a few days of playing with it to get familiar and tweak it to my liking. I've done a few customizations:
 
-1. Tweaked the key bindings to be more like xmonad since that is why I like/am used to (especially for the common ones, like new terminal, kill window, etc.).
+1. Tweaked the key bindings to be more like xmonad since that is what I like/am used to (especially for the common ones, like new terminal, kill window, etc.).
 
 2. Added `nm-applet` to run on startup so I am not helpless:
 
@@ -123,7 +123,7 @@ So, while i3 worked right out of the box, it has taken me a few days of playing 
 
 3. Installed [`volnoti`](https://github.com/davidbrazdil/volnoti) to get the sexiest volume up/down setup I've had since switching to Linux
 
-4. Tweaked fonts/sizes/etc. (I'm a fan of [Source Code Pro](https://github.com/adobe/source-code-pro) these days.
+4. Tweaked fonts/sizes/etc. (I'm a fan of [Source Code Pro](https://github.com/adobe/source-code-pro) these days).
 
 5. Discovered i3's [scratchpad](http://build.i3wm.org/docs/userguide.html#_scratchpad)--very awesome.
 
@@ -131,22 +131,22 @@ So, while i3 worked right out of the box, it has taken me a few days of playing 
 
    [This](http://www.knopwob.org/dunst/dunstrc.1.0.0-1) is a nice `dunstrc` to start from, and shows some of the nifty things it can do based on the content/etc. of the notifications.
 
-Window resizing is still taking some getting used to. I liked xmonad's approach better, but that is probably because I still am not fully adjusted to i3 yet. I'd like to get the equivalent of `Mod-enter` == "switch to main window", but I don't think that's exactly how i3 works...there isn't really a "main" window.
+Window resizing is still taking some getting used to. I liked xmonad's approach better, but that is probably because I still am not fully adjusted to i3 yet. I'd like to get the equivalent of `Mod-enter` == "switch current window into the main content area", but I don't think that's exactly how i3 works...there isn't really a "main" content area. Dunno, we'll see.
 
 Various DPI Shenanigans
 -----------------------
 
-So, while i3 just worked, and I've spent an acceptable amount of time tweaking i3, I've spent an inordinate amount of time tweaking (or even finding) the stupid DPI settings for X/GTK/Linux/whatever--"stuff the goes on the screen".
+So, while i3 just worked, and I've spent an acceptable amount of time tweaking i3, I've spent an inordinate amount of time tweaking (or even finding) the stupid DPI settings for X/GTK/Linux/whatever--"stuff that goes on the screen".
 
 I am admittedly slightly OCD about having the OS use my laptop's native 143 DPI (yes, it's not a MBP; although there are 200+ DPI ThinkPads out these days...).
 
 Previously, I was in enough of a "mainstream" environment that `gnome-tweak-tool`/etc. was enough to, AFAICT, throb the right hidden font/DPI settings.
 
-But now that I'm in a more bare-bones environment, with no real master UI preferences/appearance control panel, it took quite a bit of fussing to get right, but I finally found What I believe is the magic incantation:
+But now that I'm in a more bare-bones environment, with no real master UI preferences/appearance control panel, it took quite a bit of fussing to get right, but I finally found what I believe is the magic incantation:
 
 1. `~/.Xresources`
 
-   This is the magic file that, AFAICT, sets the (okay one of the) default DPI for (all/most?) programs:
+   This is the magic file that, AFAICT, is one of the main (?) DPI settings for (all/most?) programs:
 
    I have just one line in `~/.Xresources`:
 
@@ -194,6 +194,8 @@ But now that I'm in a more bare-bones environment, with no real master UI prefer
 
    Which is annoying, but it turns out the LXAppearance tool will keep both up to date.
 
+   However, I still don't really know where the system-wide (or toolkit-wide?) default monospace font is configured...
+
 As a disclaimer, this works for me, and I'm happy with the size/display of my fonts, but I must admit I don't really know what's going on.
 
 I don't know why `xrandr` has one DPI setting, and `.Xresources` has another. There could be several other DPI settings for all I know. There are likely other default font/size locations for Qt/KDE/etc.
@@ -207,7 +209,7 @@ I've had a lot of fun over the last few days, getting i3 setup, and tweaking var
 
 At least until I go back to work and my desktop...which is still running xmonad.
 
-Hopefully I can avoid driving myself using both xmonad and i3 until I get a chance to switch the desktop over.
+Hopefully I can avoid driving myself crazy using both xmonad and i3 until I get a chance to switch the desktop over.
 
 
 
