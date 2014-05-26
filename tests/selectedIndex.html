@@ -1,0 +1,38 @@
+<html>
+<body>
+
+<select id="s1">
+  <option value="1">One</option>
+  <option value="2">Two</option>
+</select>
+
+<button id="b1">clear</button>
+
+<button id="b2">add</button>
+
+<script>
+  var s1 = document.getElementById("s1");
+  var b1 = document.getElementById("b1");
+  var b2 = document.getElementById("b2");
+  // alert(s1.selectedIndex);
+
+  s1.onchange = function() {
+    alert("now " + s1.selectedIndex);
+  }
+  s1.selectedIndex = -1;
+
+  b1.onclick = function() {
+    s1.options.length = 0;
+  }
+
+  b2.onclick = function() {
+    var option = document.createElement("option");
+    option.text = "Three";
+    s1.add(option);
+  }
+</script>
+
+
+</body>
+</html>
+
