@@ -17,22 +17,30 @@ Overview of Data in a Cluster
 
 Since your data is too big to store on one node, the primary feature of all map/reduce frameworks (Hadoop, Spark, etc.) is to:
 
-1. Know where the data currently is (ideally already on some node in the cluster, but the Hadoop File System API can also pull data in from, say, Amazon S3), and
+1. Know where the data currently is, and
 
-2. Take care of moving the data around for you automatically.
+   (Ideally your data is already on some node in the cluster, as then we can "ship the computation to the data", but the Hadoop File System API can also pull data in from, say, Amazon S3.)
 
-For example, if you're storing log files, the file for `traffic-2000-01-01.log` might be on node A, but `traffic-2000-01-02.log` is on node B.
+2. Move the data around for you automatically.
 
-Now say for a report, if you want to aggregate the data by user, you need to ask the map/reduce framework to take all the lines for, say, User 1 in `traffic-2000-01-01.log` and the lines for User 1 in `traffic-2000-01-02.log`, and somehow put them together so that your report logic can process them.
+For example, if you're storing log files, you might have:
 
-And, really, you don't even want to know about `traffic-2000-01-01.log` and `traffic-2000-01-02.log` as that's just bookkeeping that you shouldn't have to care about.
+* `traffic-2000-01-01-part1.log` lives on `machineA`, but
+* `traffic-2000-01-01-part2.log` lives on `machineB`.
 
-So, your report not having to care about all of this is what map/reduce frameworks handle: "where is the data now?" and "where does it need to go?"
+Now for a report, if you want to aggregate the data by user, you need to ask the map/reduce framework to take all the lines for, say, User 1 in `traffic-2000-01-01-part1.log` and the lines for User 1 in `traffic-2000-01-01-part2.log`, and somehow put them together so that your report logic can process them.
 
-Shuffles
---------
+And, really, you don't even want to know about `traffic-2000-01-01-part1.log` and `traffic-2000-01-01-part2.log` as that's just bookkeeping that you shouldn't have to care about.
 
-The process of moving data around, in Spark and most map/reduce frameworks, is called a shuffle.
+So, your report not having to care about all of this is what map/reduce frameworks handle:
+
+1. "Where is the data now?" and,
+2. "Where does it need to go?"
+
+Moving Data: Shuffles
+---------------------
+
+The process of moving data around, in Spark (and AFAIK most map/reduce frameworks), is called a shuffle.
 
 This is somewhat confusing, as in everyday usage, "shuffle" means random placement (like shuffling a deck of cards). Random placement would obviously be less than ideal, as Spark wouldn't know/control where the data is at, and User 1's data may end up on many different nodes.
 
