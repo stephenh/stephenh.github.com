@@ -5,8 +5,8 @@ layout: nil
 <feed xmlns="http://www.w3.org/2005/Atom">
  
  <title>Draconian Overlord</title>
- <link href="http://draconianoverlord.com/atom.xml" rel="self"/>
- <link href="http://draconianoverlord.com/"/>
+ <link href="http://www.draconianoverlord.com/atom.xml" rel="self"/>
+ <link href="http://www.draconianoverlord.com/"/>
  <updated>{{ site.time | date_to_xmlschema }}</updated>
  <id>http://draconianoverlord.com/</id>
  <author>
@@ -17,7 +17,7 @@ layout: nil
  {% for post in site.posts limit: 20 %}
  <entry>
    <title type="html">{{ post.title | xml_escape }}</title>
-   <link href="http://draconianoverlord.com{{ post.url }}"/>
+   <link href="http://www.draconianoverlord.com{{ post.url }}"/>
    <updated>{{ post.date | date_to_xmlschema }}</updated>
    <id>http://draconianoverlord.com{{ post.id }}</id>
    <content type="html">{{ post.content | xml_escape }}</content>
