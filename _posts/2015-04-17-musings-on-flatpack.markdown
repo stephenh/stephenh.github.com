@@ -222,3 +222,5 @@ Admittedly, having `type: "employee"` is a little odd, so maybe separate collect
 
 So, anyway, I won't claim this is new or amazing or perfect, but it's been floating in my head for awhile, and now I can finally finish this post and move on to something else.
 
+(As a final musing, I forgot to mention that a lot of this might be re-inventing what other "sync entities across clients" frameworks like Firebase do, and so it would be worth examining/stealing from/just reusing their protocols, or even platforms, but I've not had a chance to do any investigation there.)
+
