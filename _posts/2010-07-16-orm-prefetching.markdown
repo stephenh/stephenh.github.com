@@ -1,10 +1,10 @@
 ---
 layout: post
-title: ORM Prefetching
+title: Joist/ORM Prefetching
 ---
 
-ORM Prefetching
-===============
+{{page.title}}
+==============
 
 Prefetching is pretty well-known technique for optimizing ORM/database access. However, I was surprised at how much thought and cool stuff people are doing with it.
 
