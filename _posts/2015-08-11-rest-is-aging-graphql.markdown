@@ -37,6 +37,8 @@ My general approval said, I think there are a few interesting things:
 
 * So far GraphQL seems only like a query language; obviously the Create, Update, and Delete in CRUD are also important, and I can only anticipate that eventually GraphQL will incorporate writes back from the client to the server. (Surely Facebook's internal GraphQL systems already do this.) 
 
+  (Update: the day after I wrote this draft, Facebook released [Relay](https://github.com/facebook/relay), which does handle updates. I've not looked in to it yet.)
+
 * One of REST's advantages was that, given each end point was bespoke, it made it very easy for entities/endpoints to talk to completely separate backends. In large scale systems, it's pretty common to use a handful of data stores, each one fitting a certain use case.
 
   However, a simple/obvious GraphQL implementation would sit on top of a single database (whether that's relational or NoSQL, the point is it'd be the same for all entities).
