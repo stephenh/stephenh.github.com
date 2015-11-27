@@ -181,7 +181,9 @@ samp {
  */
 
 pre {
+  /* comment out because scrolling looks nicer
     white-space: pre-wrap;
+    */
 }
 
 /**

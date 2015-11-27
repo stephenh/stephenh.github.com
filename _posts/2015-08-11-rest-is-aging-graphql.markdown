@@ -1,6 +1,6 @@
 ---
 title: REST is Aging, GraphQL is the New Thing
-layout: draft
+layout: post
 ---
 
 {{page.title}}
