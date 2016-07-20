@@ -49,9 +49,11 @@ What I Like About Static Typing
 
    Assuming the type tests check, then you proceed to unit tests. Just like after unit tests check, you proceed to integration tests. Gradually progressing to slower, but more encompassing levels of tests.
 
-3. The ability to add methods/types/etc. at runtime is sometimes given as a benefit of dynamic languages (e.g. Rails adding `getter`/`setter` methods for each database column to ActiveRecord domain objects).
+3. Runtime meta-programming (adding new methods/types on the fly) is not as dynamic as one would think, and ideally can be done just as well with compile-time meta-programming.
 
-   This is true, but I assert most dynamic meta programming is done relatively immediately at program startup time, and then things settle down and start to look more static in nature--hence most of it could (in theory) just as well be done at compile-time (via similar, for the Rails example, "look at the database schema and generate code" code generation).
+   (In terms of meta-programming, I'm talking about Rails adding `getter`/`setter` methods for each database column to ActiveRecord domain objects, and other similar `method_missing` or `instance_eval` in Ruby or changing prototypes in JavaScript.)
+
+   I assert most dynamic/runtime meta programming is done relatively immediately at program startup time, and then things settle down and start to look more static in nature--hence most of it could (in theory) be done just as well at compile-time (e.g. per the Rails example, by a pre-compilation "look at the database schema and generate code" code generation).
 
    To explain, I think a generic timeline for all meta-programming (either run-time or compile-time) is:
 
@@ -141,8 +143,21 @@ Other Notes
 
    So, admittedly, the type checks, IDE tooling, etc. is quibbling, because a good programmer should be able to produce good code in either type of language.
 
-[hotswap]: http://wikis.sun.com/display/mlvm/HotSwap
-[jrebel]: http://www.zeroturnaround.com/jrebel
+4. As a thought experiment, let's say you're going to write a method `void foo(arg1, arg2)`.
+
+   I assert, when you write the `foo` method, you de facto already have the types of `arg1` and `arg2` in your head. You would never write `foo` thinking "eh, whatever the type of `arg1` is, I don't care"...(unless you legitimately are writing a method that will works on all `Object`s, but there again you still have the type `Object` in your head).
+
+   The types are actually there; all mainstream languages these days, static or dynamic, have types.
+
+   Now, you open a code review. As your reviewer, you're basically hiding information from me: you know in your head that `arg1` is supposed to be type `Xyz`. But I don't. I have to infer it. And I might get it wrong.
+
+   Now, someone (or you yourself) comes into the codebase 6 months later. They have to fix something in `foo`, and so look at `arg1`. They have to wonder, and again infer on their own, "what type did the author have in mind when they wrote this method?".
+
+   In this way, you can think of static typing in terms of information theory: it communicates demonstrably more information from the author to the reviewer to the maintainer.
+
+   This is basically a re-iteration of the "types as documentation" point, but with the thought experiment of a real-world scenario highlighting that the information is already there (at author time), in either static or dynamic languages, but effectively gets "lost" in dynamic languages.
+
+   As a disclaimer, this line of reasoning can actually extend to local variable type inference, e.g. that `val foo = ...` is a similar disservice to reviewers/maintainers (which is [Stephen Colebourne's view](http://blog.joda.org/2016/03/var-and-val-in-java.html)). My rationalization is that with local variable type inference, you already have known types (from the declared types of method parameters/etc.) to start from and to guide your programmer-type inference. And, in IDEs anyway (unfortunately not code reviews), you can hover for the compiler-inferred type.)
 
 Over Emphasis
 -------------
@@ -158,4 +173,6 @@ Which probably just means I put too much emphasis on static vs. dynamic typing d
 **Update July 2016**: Since writing this post, or at least during this current phase of my career, I'm starting to feel more bold about asserting static languages are demonstrably better *for large software projects*. I'll certainly accept everyone can have personal preferences for what they personally enjoy working in. But, when you start talking about 10+ person software projects, written over 3-5+ years, with new people joining and leaving the team, the types-as-documentation rationale I think becomes a very compelling argument that the team's net productivity will be higher in a statically typed language (of course controlling for the other more important factors like test coverage, a good architecture, attention to detail, etc.).
 
 
+[hotswap]: http://wikis.sun.com/display/mlvm/HotSwap
+[jrebel]: http://www.zeroturnaround.com/jrebel
 
