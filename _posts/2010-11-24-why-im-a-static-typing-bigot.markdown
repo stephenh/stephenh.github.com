@@ -41,7 +41,21 @@ What I Like About Static Typing
 
      While `method_missing` is occasionally very handy (see the meta-programming discussion later), in the far majority of cases, I assert simple method resolution semantics are going happen anyway (e.g. `foo.bar()` is going to call the explicitly-declared method `void bar()` in the `Foo` class), so the language might as well clue me in when this extremely common/simple case applies.
 
-2. A type system provides free, blazing-fast, pre-"unit test" type tests.
+2. Types make abstractions explicit. (**Added July 2016** based on [Victor Savkin's blog post](https://vsavkin.com/writing-angular-2-in-typescript-1fa77c78d8e8#.wxyd5yv7w).)
+
+   Really I should just copy/paste Victor's "Types make abstraction explicit" here, because it's a great point, and very well articulated.
+
+   My inadequate summary is basically that all programming involves finding the right abstractions, and building up those abstractions up into a coherent, well-designed system.
+
+   Writing code in either static or dynamic languages involves making these abstractions, so they are always there--the difference is that in dynamic languages, you don't even see them.
+
+   I base this "you don't even see them" on the assertion that abstractions are, in OO languages, basically always interfaces: contracts that a set of types implement. (Or maybe type classes/etc., but same sort of thing.)
+
+   In dynamic languages, you do have types, e.g. you can declare classes/etc., but you don't declare, or even come up with a name, the abstractions/interfaces that declare contracts across types.
+
+   Granted, you can assert "I don't need the compiler to enforce that I implemented a contract; I have a unit test to do that", but the nuance here is that it's not about compiler enforcement (although that is nice): it's about not even having a term, a common language, to connate what the abstraction is.
+
+3. A type system provides free, blazing-fast, pre-"unit test" type tests.
 
    Of course you still need real unit tests. Just like having unit tests doesn't absolve you from having acceptance tests, having type check tests does not absolve you from having unit tests.
 
@@ -49,7 +63,7 @@ What I Like About Static Typing
 
    Assuming the type tests check, then you proceed to unit tests. Just like after unit tests check, you proceed to integration tests. Gradually progressing to slower, but more encompassing levels of tests.
 
-3. Runtime meta-programming (adding new methods/types on the fly) is not as dynamic as one would think, and ideally can be done just as well with compile-time meta-programming.
+4. Runtime meta-programming (adding new methods/types on the fly) is not as dynamic as one would think, and ideally can be done just as well with compile-time meta-programming.
 
    (In terms of meta-programming, I'm talking about Rails adding `getter`/`setter` methods for each database column to ActiveRecord domain objects, and other similar `method_missing` or `instance_eval` in Ruby or changing prototypes in JavaScript.)
 
@@ -71,7 +85,7 @@ What I Like About Static Typing
 
    **Update:** This [blog post](http://gnuu.org/2010/12/13/too-lazy-to-type/) by Loren Segal states this point much better than I do and includes links to papers/profiling results that back up the assertion.
 
-4. Deep down all programmers want the features of a type-aware IDE.
+5. Deep down all programmers want the features of a type-aware IDE.
 
    Look at the success of IntelliJ's [RubyMine](http://www.jetbrains.com/ruby/) and Spring's [STS](http://www.springsource.com/developer/grails) for Groovy. (**Update in July 2016**: and now similar IntelliJ, Eclipse, and Visual Studio Code features for JavaScript.) They make programmers who've been using dynamic languages drool with their (inferred) type-aware hints (code completion), navigation, and refactoring.
 
