@@ -65,7 +65,7 @@ public void foo(String param1, String newParam,
 
 Note how `param2` was shifted down onto the next line, and `param2`/`param3` shifted over.
 
-Even with a diff/code review tool that is smart about white, and can inner highlight changes, this is a lot of parameters moving around for no reason. This was also a very vanilla addition/shift, diffs can easily get annoying where you have to stare at each line to see which parameters moved/were added/removed.
+Even with a diff/code review tool that is smart about white space, and can inner highlight changes, this is a lot of parameters moving around for no reason. This was also a very vanilla addition/shift, diffs can easily get annoying where you have to stare at each line to see which parameters moved/were added/removed.
 
 With wrap-all, adding a new parameter to already-wrapped lines results in a very nice diff:
 
