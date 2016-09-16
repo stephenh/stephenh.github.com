@@ -8,22 +8,23 @@ layout: post
 
 My preferred way of indentation is wrap-all, indent-by-one, which looks like:
 
-    // method call
-    foo(
-      param1,
-      param2,
-      param3,
-      param4);
+```java
+// method call
+foo(
+  param1,
+  param2,
+  param3,
+  param4);
 
-    // method declaration
-    public void foo(
-      String param1,
-      String param2,
-      String param3,
-      String param4) {
-      // implementation
-    }
-{: class="brush:java"}
+// method declaration
+public void foo(
+  String param1,
+  String param2,
+  String param3,
+  String param4) {
+  // implementation
+}
+```
 
 (Pretend that the lines were long enough to need wrapping.)
 
@@ -34,31 +35,33 @@ Why not wrap-when-needed
 
 For example, one alternate indentation is wrap-when-needed, so:
 
-    // method call
-    foo(param1, param2,
-      param3, param4);
+```java
+// method call
+foo(param1, param2,
+  param3, param4);
 
-    // method declaration
-    public void foo(String param1, String param2,
-        String param3, String param4) {
-      // implementation
-    }
-{: class="brush:java"}
+// method declaration
+public void foo(String param1, String param2,
+    String param3, String param4) {
+  // implementation
+}
+```
 
 There are several problems here, one is ugly diffs, and the other is just bad readability.
 
 Ugly diffs result because when we add/remove/reorder a parameter that is in the middle of the arguments, it's going to shift all of other parameters around. E.g. the new version might look like, adding `newParam`:
 
-    // method call
-    foo(param1, newParam,
-      param2, param3, param4);
+```java
+// method call
+foo(param1, newParam,
+  param2, param3, param4);
 
-    // method declaration
-    public void foo(String param1, String newParam,
-        String param2, String param3, String param4) {
-      // implementation
-    }
-{: class="brush:java"}
+// method declaration
+public void foo(String param1, String newParam,
+    String param2, String param3, String param4) {
+  // implementation
+}
+```
 
 Note how `param2` was shifted down onto the next line, and `param2`/`param3` shifted over.
 
@@ -66,47 +69,50 @@ Even with a diff/code review tool that is smart about white, and can inner highl
 
 With wrap-all, adding a new parameter to already-wrapped lines results in a very nice diff:
 
-    // method call
-    foo(
-      param1,
-    + newParam,
-      param2,
-      param3,
-      param4);
+```diff
+// method call
+foo(
+  param1,
++ newParam,
+  param2,
+  param3,
+  param4);
 
-    // method declaration
-    public void foo(
-      String param1,
-    + String newParam,
-      String param2,
-      String param3,
-      String param4) {
-      // implementation
-    }
-{: class="brush:java"}
+// method declaration
+public void foo(
+  String param1,
++ String newParam,
+  String param2,
+  String param3,
+  String param4) {
+  // implementation
+}
+```
 
 The issue with general readability is that if I have ~5-10 plus method parameters (and yes, we can talk about refactoring to parameter objects, etc., etc., but the reality is that real code looks like this), then my eye has too parse ~5-10 parameters out from a condensed line, e.g.:
 
-    // method declaration
-    def foo(param1: Option[String] = None, param2: Option[String] = None,
-      param3: Option[String] = None, param4: Option[String] = None) {
-      // implementation
-    }
-{: class="brush:java"}
+```scala
+// method declaration
+def foo(param1: Option[String] = None, param2: Option[String] = None,
+  param3: Option[String] = None, param4: Option[String] = None) {
+  // implementation
+}
+```
 
 I can't easily glance at that and see "okay, we have four parameters, `param1`, `param2`, `param3`, `param4`."
 
 If this was wrapped wrap-every, it's trivial to scan:
 
-    // method declaration
-    def foo(
-      param1: Option[String] = None,
-      param2: Option[String] = None,
-      param3: Option[String] = None,
-      param4: Option[String] = None) {
-      // implementation
-    }
-{: class="brush:java"}
+```scala
+// method declaration
+def foo(
+  param1: Option[String] = None,
+  param2: Option[String] = None,
+  param3: Option[String] = None,
+  param4: Option[String] = None) {
+  // implementation
+}
+```
 
 Easy, obvious to read, all the parameter names can be read with one eye sweep.
 
@@ -115,20 +121,21 @@ Why not indent-on-column
 
 Another option is indent-on-column, which looks like:
 
-    // method call
-    someMethodName(param1,
-                   param2,
-                   param3,
-                   param4);
+```java
+// method call
+someMethodName(param1,
+               param2,
+               param3,
+               param4);
 
-    // method declaration
-    public void someMethodName(String param1,
-                               String param2,
-                               String param3,
-                               String param4) {
-      // implementation
-    }
-{: class="brush:java"}
+// method declaration
+public void someMethodName(String param1,
+                           String param2,
+                           String param3,
+                           String param4) {
+  // implementation
+}
+```
 
 There are several problems here; ugly diffs, wasted white space, and general inconsistency.
 
@@ -138,19 +145,19 @@ For wasted white space, the wrapped lines are shifted way over to where ever `so
 
 For inconsistency, if I have multiple wrapped lines, my eye now has a random place to find the wrapped parameters, e.g.:
 
-    // method call
-    someMethodName(param1,
-                   param2,
-                   param3,
-                   param4);
+```java
+// method call
+someMethodName(param1,
+               param2,
+               param3,
+               param4);
 
-    // antoher method call
-    someNiceVariableName.withAnotherNiceName(param1,
-                                             param2,
-                                             param3,
-                                             param4);
-
-{: class="brush:java"}
+// antoher method call
+someNiceVariableName.withAnotherNiceName(param1,
+                                         param2,
+                                         param3,
+                                         param4);
+```
 
 Where `param2` ends up is basically random (based on the method name being called), instead of being consistent.
 
@@ -163,15 +170,16 @@ One good exception for indent-by-one is to use indent-by-two for method declarat
 
 This pushes the wrapped parameter declarations in another level, which is because then they are not aligned with the implementation code:
 
-    // method declaration
-    public void foo(
-        String param1,
-        String param2,
-        String param3,
-        String param4) {
-      // implementation
-    }
-{: class="brush:java"}
+```java
+// method declaration
+public void foo(
+    String param1,
+    String param2,
+    String param3,
+    String param4) {
+  // implementation
+}
+```
 
 One true way
 ============
