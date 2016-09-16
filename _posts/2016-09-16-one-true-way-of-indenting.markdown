@@ -45,7 +45,9 @@ For example, one alternate indentation is wrap-when-needed, so:
     }
 {: class="brush:java"}
 
-The problem with wrap-when-needed is that when we add/remove/reorder a parameter that is in the middle of the args, it's going to shift all of other parameters around. E.g. the new version might look like, adding `newParam`:
+There are several problems here, one is ugly diffs, and the other is just bad readability.
+
+Ugly diffs result because when we add/remove/reorder a parameter that is in the middle of the arguments, it's going to shift all of other parameters around. E.g. the new version might look like, adding `newParam`:
 
     // method call
     foo(param1, newParam,
@@ -82,6 +84,31 @@ With wrap-all, adding a new parameter to already-wrapped lines results in a very
       // implementation
     }
 {: class="brush:java"}
+
+The issue with general readability is that if I have ~5-10 plus method parameters (and yes, we can talk about refactoring to parameter objects, etc., etc., but the reality is that real code looks like this), then my eye has too parse ~5-10 parameters out from a condensed line, e.g.:
+
+    // method declaration
+    def foo(param1: Option[String] = None, param2: Option[String] = None,
+      param3: Option[String] = None, param4: Option[String] = None) {
+      // implementation
+    }
+{: class="brush:java"}
+
+I can't easily glance at that and see "okay, we have four parameters, `param1`, `param2`, `param3`, `param4`."
+
+If this was wrapped wrap-every, it's trivial to scan:
+
+    // method declaration
+    def foo(
+      param1: Option[String] = None,
+      param2: Option[String] = None,
+      param3: Option[String] = None,
+      param4: Option[String] = None) {
+      // implementation
+    }
+{: class="brush:java"}
+
+Easy, obvious to read, all the parameter names can be read with one eye sweep.
 
 Why not indent-on-column
 ========================
@@ -150,5 +177,8 @@ One true way
 ============
 
 Historically I've put indentation in the "personal preference" category, but now code reviews are such an integral part of software development, that I think the clean diff benefits of wrap-all, indent-by-one is basically a defacto best practice that new codebases should always use, and historical codebases should be migrated towards when/if possible.
+
+The differences seem small, but when you're reading a code review with a variety of changes, spread across files, in code you may/may not be familiar with, these little readability issues really add up, as the easier the code is to read syntactically, the more thought processes you can spend on understanding the semantics, which is the most important thing.
+
 
 
