@@ -189,4 +189,3 @@ Historically I've put indentation in the "personal preference" category, but now
 The differences seem small, but when you're reading a code review with a variety of changes, spread across files, in code you may/may not be familiar with, these little readability issues really add up, as the easier the code is to read syntactically, the more thought processes you can spend on understanding the semantics, which is the most important thing.
 
 
-
