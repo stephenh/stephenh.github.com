@@ -28,12 +28,20 @@ public void foo(
 
 (Pretend that the lines were long enough to need wrapping.)
 
-The reason this works well is that it minimizes ugly diffs and busywork moving fields around.
+"wrap-all" means, if a line passes the max line length (e.g. 120), don't just break it (say) into only two lines, but wrap each segment of the method call/method declaration on it's own line, even if this creates more lines than are technically necessary.
+
+"indent-by-one" means, when wrapping, put the wrapped line one indentation level (e.g. 2 spaces or whatever your project's configured indent level is) past the previous line's indentation.
+
+The reason these two styles work well is that they:
+
+1. Minimize ugly diffs, as wrap-all + indent-by-one is very resilient changes
+2. Reduces the busywork of re-wrapping/re-indenting (which granted should be done by a formatter anyway)
+3. Has the best readability/eye-friendly scanning for code reviews
 
 Why not wrap-when-needed
 ======================
 
-For example, one alternate indentation is wrap-when-needed, so:
+For example, one alternate indentation is wrap-when-needed, which looks like:
 
 ```java
 // method call
@@ -180,6 +188,124 @@ public void foo(
   // implementation
 }
 ```
+
+Wrap-all for fluent call chains
+===============================
+
+Wrap-all also works really well for fluent call chains, such as a series of `map`, `filter`, etc. calls on a collection, or a series of `setFirstName`, `setLastName`, etc., calls on a builder.
+
+For example calls on a collection with wrap-all:
+
+```scala
+someAccounts
+  .filter { _.hasSomethingSpecial() }
+  .flatMap { _.getTransactions() }
+  .sortBy { _.getDate }
+  .map { t => someFunctiont(t); }
+```
+
+Since each transformation is on it's own line, it's easy to scan down the list and track what is the current type in the collection.
+
+With wrap-when-necessary, the transformations become jumbled together and it's hard to tease out what each separate step is. E.g. with wrap-when-necessary:
+
+```scala
+someAccounts
+  .filter { _.hasSomethingSpecial() }.flatMap { _.getTransactions() }
+  .sortBy { _.getDate }.map { t => someFunctiont(t); }
+```
+
+When my eye hits the `.sortBy` on the 2nd line, it's not immediately clear which steps have happened before this; I see the `filter`, but I have to parse the entire 1st line (which in this case only has two steps, but in real code could have ~3-4) to see what type the `.sortBy` will have.
+
+I basically have to shift my thinking into mini-parser mode, and start paying (more) attention to matching `{` and `}` to see what the steps are.
+
+Which, of course I can do, and is trivial, but it subtly shifts my mind from "semantic mode" to "syntax mode", and then I'll have to shift back.
+
+I had mentioned builder call chains, and they similarly work well with wrap-all:
+
+```scala
+new Employee()
+  .setFirstName("foo")
+  .setLastName("bar")
+  .setAddress(
+    new Address()
+    .setStreet("street")
+    .setCity("city")
+    .build());
+```
+
+Fluent collections and builders are such a great use of wrap-all that I've noticed several times in codebases that otherwise uses wrap-when-necessary, programmers will naturally format collections/builders as wrap-all, because it works so well.
+
+IDE format on save
+==================
+
+One potentially controversial aspect of formatting is whether it should be programmer-enforced or IDE-/formatter-enforced (whether invoked from the IDE manually or automatically on save).
+
+There are pros/cons to each.
+
+IDE-enforced pros/cons:
+
+* Pro: keeps the codebase look and feel defacto consistent, because it's always kept in the formatter-dictated format
+* Pro: minimizes noisy format-only changes in diffs
+* Con: if you have mixed IDE environment, separate formatters, even if configured very similarily, will always handle certain boundary cases slightly differently
+* Con: the formatter may pick a bad formatting choice
+
+Programmer-enforced pros/cons:
+
+* Pro: Gives programmers very direct/personal control over formatting
+* Con: Leads to inconsistencies depending on the developer who wrote the code
+* Con: Leads to noisy diffs when/if someone does decide to auto-format the code
+
+All things considered, I think IDE-enforced formatting (via format on save) is a net win.
+
+Today's formatters (Eclipse's Java formatter is what I have the most experience with) are, in my experience, very good if you configure them correctly.
+
+For dealing with mixed-IDE environments, one interesting approach, for the Java/Eclipse/IntelliJ world, is that Eclipse's formatter can be used in standalone mode. So there is an [IntelliJ plugin](https://plugins.jetbrains.com/plugin/6546) that will run the Eclipse formatter, with your project's Eclipse formatter settings, from within IntelliJ. I have briefly tried it, and it was surprisingly seamless. In theory you could apply this to other IDEs, and even integrate it into vim/CLI builds.
+
+Also, if you're in a mixed-IDE environment, two other potential options are:
+
+1. Configure the IDE to only format changed lines
+
+   For Eclipse, this only works in Save Actions, so if you hit `Control Shift F`, it will still format the whole file.
+
+   But if you rely on the Save Action formatting, then you won't make noisy diffs in parts of the file you don't touch.
+
+2. Configure the IDE to never join already wrapped lines
+
+   This would mean IDE won't re-evaluate already-wrapped lines and so come to potentially different conclusions than whoever (person or other IDE) originally wrapped the line.
+
+   (There is an Eclipse option for this, I don't know about IntelliJ.)
+
+I've not personally used either of these options, and so just from experience prefer letting the IDE reformat the entire file on every save. But if that causes too many noisy diffs, I'd definitely explore using these to avoid the constant annoyance of noisy diffs.
+
+The Heller-special formatter trick
+==================================
+
+Although IDE formatters typically make good choices, it is occasionally useful to tweak where the formatter wraps.
+
+(Or, if you're working on a project that uses wrap-when-necessary, but you have a collection/builder call chain that would be dramatically easier to read with wrap-all...)
+
+You can do this by using a trick a colleague of mine discovered ~10 years ago, which is using fake comment entries, `//`, to force line breaks.
+
+When the formatter sees the start of the `//` comment, even if you don't put any text after it, it must wrap the next line, because condensing the lines means the following code would be commented out.
+
+So, you can do something like:
+
+```java
+someAccounts //
+  .stream() //
+  .filter { a -> a.hasSomethingSpecial() } //
+  .flatMap { a -> a.getTransactions().stream() } //
+  .sortBy { t -> t.getDate() } //
+  .map { t -> someFunctiont(t) }
+```
+
+The first few times people see this, they have a very "wtf is that" reaction. And rightly so. 
+
+This trick is not at all something I'd recommend using liberally in your codebase. If you use it all the time, it insinuates your formatter settings are wrong, or your project is using wrap-when-necessary when you really want wrap-all, or something like that.
+
+That said, used judiciously, teams that I've worked on have had success with this.
+
+(We have admittedly used it more than we should on projects that use wrap-when-necessary, when really we should stop beating around the bush and push for moving the projects over to wrap-all.)
 
 The one true way
 ================
