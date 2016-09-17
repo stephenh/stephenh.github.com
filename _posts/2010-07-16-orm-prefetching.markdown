@@ -163,12 +163,13 @@ So, initially you'll get the worst case `n+1` selects, but after a few iteration
 
 * 1 query of:
 
-      SELECT b.*, p.*, c.*
-      FROM blog b
-      LEFT OUTER JOIN posts p ON b.id = p.blog_id
-      LEFT OUTER JOIN comments c ON p.id = c.post_id
-      WHERE b.id = 1
-  {: class="brush:sql"}
+  ```sql
+  SELECT b.*, p.*, c.*
+  FROM blog b
+  LEFT OUTER JOIN posts p ON b.id = p.blog_id
+  LEFT OUTER JOIN comments c ON p.id = c.post_id
+  WHERE b.id = 1
+  ```
 
   That loads the entire blog/posts/comments object graph
 

@@ -24,38 +24,39 @@ Here's a few things I've learned:
 
 * I use a small variation of the Ivy documentation's bootstrapping logic to auto-install Ivy (and JSch) into `~/.ivy2` so that Ant users do not need to download it by hand
 
-      <project name="ivybootstrap" xmlns:ivy="antlib:org.apache.ivy.ant">
-        <!--
-        The "ivy.bootstrap" target ensures ivy and JSCH are downloaded and installed
-        in the user's $HOME/.ivy2 directory so we can implicitly taskdef them into
-        this ant context without messing with the $ANT_HOME/lib directory or
-        otherwise having the user explicitly go download ivy.
-        -->
+  ```xml
+  <project name="ivybootstrap" xmlns:ivy="antlib:org.apache.ivy.ant">
+    <!--
+    The "ivy.bootstrap" target ensures ivy and JSCH are downloaded and installed
+    in the user's $HOME/.ivy2 directory so we can implicitly taskdef them into
+    this ant context without messing with the $ANT_HOME/lib directory or
+    otherwise having the user explicitly go download ivy.
+    -->
 
-        <property name="ivy.jar.version" value="2.0.0"/>
-        <property name="ivy.jar.name" value="ivy-${ivy.jar.version}.jar"/>
-        <property name="ivy.home" value="${user.home}/.ivy2"/>
-        <available property="ivy.installed" file="${ivy.home}/${ivy.jar.name}"/>
+    <property name="ivy.jar.version" value="2.0.0"/>
+    <property name="ivy.jar.name" value="ivy-${ivy.jar.version}.jar"/>
+    <property name="ivy.home" value="${user.home}/.ivy2"/>
+    <available property="ivy.installed" file="${ivy.home}/${ivy.jar.name}"/>
 
-        <property name="jsch.jar.version" value="0.1.29"/>
-        <property name="jsch.jar.name" value="jsch-${jsch.jar.version}.jar"/>
-        <available property="jsch.installed" file="${ivy.home}/${jsch.jar.name}"/>
+    <property name="jsch.jar.version" value="0.1.29"/>
+    <property name="jsch.jar.name" value="jsch-${jsch.jar.version}.jar"/>
+    <available property="jsch.installed" file="${ivy.home}/${jsch.jar.name}"/>
 
-        <target name="ivy.install" unless="ivy.installed">
-          <mkdir dir="${ivy.home}"/>
-          <get src="http://repo1.maven.org/maven2/org/apache/ivy/ivy/${ivy.jar.version}/${ivy.jar.name}" dest="${ivy.home}/${ivy.jar.name}"/>
-        </target>
+    <target name="ivy.install" unless="ivy.installed">
+      <mkdir dir="${ivy.home}"/>
+      <get src="http://repo1.maven.org/maven2/org/apache/ivy/ivy/${ivy.jar.version}/${ivy.jar.name}" dest="${ivy.home}/${ivy.jar.name}"/>
+    </target>
 
-        <target name="jsch.install" unless="jsch.installed">
-          <get src="http://repo1.maven.org/maven2/jsch/jsch/${jsch.jar.version}/${jsch.jar.name}" dest="${ivy.home}/${jsch.jar.name}"/>
-        </target>
+    <target name="jsch.install" unless="jsch.installed">
+      <get src="http://repo1.maven.org/maven2/jsch/jsch/${jsch.jar.version}/${jsch.jar.name}" dest="${ivy.home}/${jsch.jar.name}"/>
+    </target>
 
-        <target name="ivy.bootstrap" depends="ivy.install,jsch.install" unless="ivy.bootstrapped">
-          <taskdef resource="org/apache/ivy/ant/antlib.xml" uri="antlib:org.apache.ivy.ant" classpath="${ivy.home}/${ivy.jar.name};${ivy.home}/${jsch.jar.name}"/>
-          <property name="ivy.bootstrapped" value="true"/> <!-- Avoid re-bootstrapping because it causes classloader issues. -->
-        </target>
-      </project>
-  {: class="brush:xml"}
+    <target name="ivy.bootstrap" depends="ivy.install,jsch.install" unless="ivy.bootstrapped">
+      <taskdef resource="org/apache/ivy/ant/antlib.xml" uri="antlib:org.apache.ivy.ant" classpath="${ivy.home}/${ivy.jar.name};${ivy.home}/${jsch.jar.name}"/>
+      <property name="ivy.bootstrapped" value="true"/> <!-- Avoid re-bootstrapping because it causes classloader issues. -->
+    </target>
+  </project>
+  ```
 
 * The default settings gave me a fit trying to get SNAPSHOTs to work--Ivy is pretty insistent about caching as much as it possibly can.
 
@@ -63,25 +64,26 @@ Here's a few things I've learned:
 
   I ended up using a `local-snapshot` resolver to bust through: 
 
-      <ivysettings>
-        <settings defaultResolver="default"/>
-        <include url="${ivy.default.settings.dir}/ivysettings-public.xml"/>
-        <include url="${ivy.default.settings.dir}/ivysettings-local.xml"/>
-        <resolvers>
-          <!-- Copy/paste from ivysettings-local.xml with with changingPattern to bust the cache for snapshots. -->
-          <filesystem name="local-snapshot" changingPattern=".*SNAPSHOT">
-            <ivy pattern="${ivy.local.default.root}/${ivy.local.default.ivy.pattern}" />
-            <artifact pattern="${ivy.local.default.root}/${ivy.local.default.artifact.pattern}" />
-          </filesystem>
+  ```xml
+  <ivysettings>
+    <settings defaultResolver="default"/>
+    <include url="${ivy.default.settings.dir}/ivysettings-public.xml"/>
+    <include url="${ivy.default.settings.dir}/ivysettings-local.xml"/>
+    <resolvers>
+      <!-- Copy/paste from ivysettings-local.xml with with changingPattern to bust the cache for snapshots. -->
+      <filesystem name="local-snapshot" changingPattern=".*SNAPSHOT">
+        <ivy pattern="${ivy.local.default.root}/${ivy.local.default.ivy.pattern}" />
+        <artifact pattern="${ivy.local.default.root}/${ivy.local.default.artifact.pattern}" />
+      </filesystem>
 
-          <!-- Repeating the changingPattern incantation here is very important. -->
-          <chain name="default" changingPattern=".*SNAPSHOT">
-            <resolver ref="local-snapshot"/>
-            <resolver ref="public"/>
-          </chain>
-        </resolvers>
-      </ivysettings>
-  {: class="brush:xml"}
+      <!-- Repeating the changingPattern incantation here is very important. -->
+      <chain name="default" changingPattern=".*SNAPSHOT">
+        <resolver ref="local-snapshot"/>
+        <resolver ref="public"/>
+      </chain>
+    </resolvers>
+  </ivysettings>
+  ```
 
   **Update:** I previously had `checkmodified=true` set on both `localhost-snapshot` and `chain` resolvers, however, I don't believe this is required.
 

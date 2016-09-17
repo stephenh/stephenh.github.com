@@ -185,72 +185,76 @@ The idea behind `sourcegen` is to break away from Velocity-style templates and a
 
   For example, implementing an interface with some methods is done via simple, DSL-ish calls:
 
-      outputClass.implementsInterface(List.class);
+  ```java
+  outputClass.implementsInterface(List.class);
 
-      outputClass.addField("foo").type(String.class);
-      outputClass.addMethod("getFoo").returnType(String.class).body.line("return foo;");
+  outputClass.addField("foo").type(String.class);
+  outputClass.addMethod("getFoo").returnType(String.class).body.line("return foo;");
 
-      outputClass.addField("bar").type(Integer.class);
-      outputClass.addMethod("getBar").returnType(Integer.class).body.line("return bar;");
-  {: class="brush:java"}
+  outputClass.addField("bar").type(Integer.class);
+  outputClass.addMethod("getBar").returnType(Integer.class).body.line("return bar;");
+  ```
 
   `sourcegen` will then output the class declaration boilerplate:
 
-      import java.util.List;
+  ```java
+  import java.util.List;
 
-      public class Foo implements List {
-        private String foo; // private by default
-        private Integer bar;
+  public class Foo implements List {
+    private String foo; // private by default
+    private Integer bar;
 
-        public String getFoo() {
-          return foo;
-        }
+    public String getFoo() {
+      return foo;
+    }
 
-        public Integer getBar() {
-          return bar;
-        }
-      }
-  {: class="brush:java"}
+    public Integer getBar() {
+      return bar;
+    }
+  }
+  ```
 
 * Any program generating Java code is going to have to handle imports. Instead of pessimistically including any possible import a template might need at the start of the file (e.g. single pass, and resulting in a slew of detested "Unused import" warnings), a program should be able to say half-way through the file "btw, I need `foo.bar.Zaz` imported".
 
-      // we've already added methods/fields/etc. to outputClass
-      // but now we hit a conditional and need Zaz as well
-      outputClass.addImports(Zaz.class);
-  {: class="brush:java"}
+  ```java
+  // we've already added methods/fields/etc. to outputClass
+  // but now we hit a conditional and need Zaz as well
+  outputClass.addImports(Zaz.class);
+  ```
 
   (`sourcegen` actually goes further and implements auto-import--if you add a field of type `foo.bar.Zaz`, `sourcegen` will change the type to just `Zaz` in the output if a) you are already in the `foo.bar` package or b) the `Zaz` class does not clash with an existing import.)
 
 With this internal DSL in place, code generation can now read like regular programs. For example, this snippet from joist's getter/setter/collection generation:
 
-    public void pass(Codegen codegen) {
-      // Entity is a DTO for the domain object information sucked in from the schema
-      for (Entity entity : codegen.getEntities().values()) {
-          if (entity.isCodeEntity()) {
-             continue;
-          }
+```java
+public void pass(Codegen codegen) {
+  // Entity is a DTO for the domain object information sucked in from the schema
+  for (Entity entity : codegen.getEntities().values()) {
+      if (entity.isCodeEntity()) {
+         continue;
+      }
 
-          // domainCodegen is the base class where we put all the
-          // getters and setters, e.g. entity Employee will get
-          // EmployeeCodegen. Real hand-written code can then go
-          // in the Employee class, which extends EmployeeCodegen.
-          GClass domainCodegen = codegen.getOutputCodegenDirectory().getClass(entity.getFullCodegenClassName());
-          domainCodegen.setAbstract();
-          domainCodegen.baseClassName(entity.getParentClassName());
+      // domainCodegen is the base class where we put all the
+      // getters and setters, e.g. entity Employee will get
+      // EmployeeCodegen. Real hand-written code can then go
+      // in the Employee class, which extends EmployeeCodegen.
+      GClass domainCodegen = codegen.getOutputCodegenDirectory().getClass(entity.getFullCodegenClassName());
+      domainCodegen.setAbstract();
+      domainCodegen.baseClassName(entity.getParentClassName());
 
-          domainCodegen.getConstructor().setProtected().body.line("this.addExtraRules();");
-          domainCodegen.getMethod("addExtraRules").setPrivate();
+      domainCodegen.getConstructor().setProtected().body.line("this.addExtraRules();");
+      domainCodegen.getMethod("addExtraRules").setPrivate();
 
-          this.addQueries(domainCodegen, entity);
-          this.primitiveProperties(domainCodegen, entity);
-          this.manyToOneProperties(domainCodegen, entity);
-          this.oneToManyProperties(domainCodegen, entity);
-          this.manyToManyProperties(domainCodegen, entity);
-          this.changed(domainCodegen, entity);
-          this.clearAssociations(domainCodegen, entity);
-        }
+      this.addQueries(domainCodegen, entity);
+      this.primitiveProperties(domainCodegen, entity);
+      this.manyToOneProperties(domainCodegen, entity);
+      this.oneToManyProperties(domainCodegen, entity);
+      this.manyToManyProperties(domainCodegen, entity);
+      this.changed(domainCodegen, entity);
+      this.clearAssociations(domainCodegen, entity);
     }
-  {: class="brush:java"}
+}
+```
 
 Now instead of one huge template, code generation can be broken into discrete chunks, e.g. `this.manyToOneProperties`, and at the end all of the classes/methods/fields can be output at once via a single `toCode()` call.
 

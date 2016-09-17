@@ -17,16 +17,17 @@ I really enjoyed xmonad, and want to still highly recommend it, but I consistent
   
    Here is an example from my config file:
 
-       myKeys =
-         [
-           -- additional keys
-         ]
-         ++
-         [ (mask ++ "M-" ++ [key], screenWorkspace scr >>= flip whenJust (windows . action))
-           | (key, scr)  <- zip "wer" [2,0,1]
-           , (action, mask) <- [ (W.view, "") , (W.shift, "S-")]
-         ]
-   {: class="brush:plain"}
+   ```haskell
+   myKeys =
+     [
+       -- additional keys
+     ]
+     ++
+     [ (mask ++ "M-" ++ [key], screenWorkspace scr >>= flip whenJust (windows . action))
+       | (key, scr)  <- zip "wer" [2,0,1]
+       , (action, mask) <- [ (W.view, "") , (W.shift, "S-")]
+     ]
+   ```
 
    This snippet of code maps `Mod-w`, `Mod-e`, and `Mod-r` to my left, center, and right monitors, which are not just magically in the right order when detected by machine at boot.
 
@@ -76,12 +77,13 @@ After trying a few gyrations, I ended up installing [i3](http://www.i3wm.org/) a
 
    Here's a few lines from the my config file:
 
-       # start a terminal
-       bindsym $mod+Shift+Return exec i3-sensible-terminal
+   ```
+   # start a terminal
+   bindsym $mod+Shift+Return exec i3-sensible-terminal
 
-       # kill focused window
-       bindsym $mod+Shift+c kill
-   {: class="brush:plain"}
+   # kill focused window
+   bindsym $mod+Shift+c kill
+   ```
 
    How readable!
 
@@ -118,8 +120,9 @@ So, while i3 worked right out of the box, it has taken me a few days of playing 
 
 2. Added `nm-applet` to run on startup so I am not helpless:
 
-       exec --no-startup-id nm-applet
-   {: class="brush:plain"}
+   ```
+   exec --no-startup-id nm-applet
+   ```
 
 3. Installed [`volnoti`](https://github.com/davidbrazdil/volnoti) to get the sexiest volume up/down setup I've had since switching to Linux
 
@@ -150,13 +153,15 @@ But now that I'm in a more bare-bones environment, with no real master UI prefer
 
    I have just one line in `~/.Xresources`:
 
-       Xft.dpi: 143
-   {: class="brush:plain"}
+   ```
+   Xft.dpi: 143
+   ```
 
    You'll know this is working if you can run:
 
-       $ xrdb -query | grep dpi
-   {: class="brush:plain"}
+   ```bash
+   $ xrdb -query | grep dpi
+   ```
 
    And see your configured DPI as the output.
 
@@ -166,20 +171,23 @@ But now that I'm in a more bare-bones environment, with no real master UI prefer
 
    While `~/.Xresources` was kind of hard to find, most forums/posts mention `xrandr` as the primary place to set your DPI:
 
-       xrandr --dpi 143
-   {: class="brush:plain"}
+   ```
+   xrandr --dpi 143
+   ```
 
    You can verify this by running:
 
+   ```shell
        $ xdpyinfo | grep dots
-   {: class="brush:plain"}
+   ```
 
    And you should again see your configured resolution.
 
    For me, I put this into my `~/.i3/config` file to run on login:
 
-       exec --no-startup-id xrandr --dpi 143
-   {: class="brush:plain"}
+   ```
+   exec --no-startup-id xrandr --dpi 143
+   ```
 
    I believe editing an `X.org` config file is another, more permanent way to do this, but I've always been too scared of severely messing up my config and never being able to log in again to mess with those.
 

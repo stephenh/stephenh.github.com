@@ -32,16 +32,17 @@ So, my thoughts:
 
    One cool feature of ErraiUI is that'll strip headers/footers from your `.html` template file, so if you have a mockup from your designer that looks like:
 
-       <html>
-         <head><!--various js/style stuff--></head>
-         <body>
-           <!--common static header-->
-           <div data-field="template">
-             <!-- the HTML you really care about is here -->
-           <!--common static footer-->
-         </body>
-       </html>
-   {: class="brush:html"}
+   ```html
+   <html>
+     <head><!--various js/style stuff--></head>
+     <body>
+       <!--common static header-->
+       <div data-field="template">
+         <!-- the HTML you really care about is here -->
+       <!--common static footer-->
+     </body>
+   </html>
+   ```
 
    By using the `@Templated("#template")` annotation, ErraiUI will find the `data-field=template` element, use it as the root of your component's template, and drop all of the HTML before/after it.
 
@@ -55,23 +56,24 @@ So, my thoughts:
 
    ErraiUI templates, on the other hand, allows you have to take a single static template like:
 
-       <div data-field="parentTemplate">
-         <!-- some stuff -->
-         <div data-field="children">
-           <div data-field="childTemplate">
-             <!-- child markup -->
-             <span data-field="label">Child One</label>
-           </div>
-           <div>
-             <!--
-               markup for another child the designer included
-               for illustration, but stripped by ErraUI
-             -->
-             <span>Child Two</label>
-           </div>
-         </div>
+   ```html
+   <div data-field="parentTemplate">
+     <!-- some stuff -->
+     <div data-field="children">
+       <div data-field="childTemplate">
+         <!-- child markup -->
+         <span data-field="label">Child One</label>
        </div>
-   {: class="brush:html"}
+       <div>
+         <!--
+           markup for another child the designer included
+           for illustration, but stripped by ErraUI
+         -->
+         <span>Child Two</label>
+       </div>
+     </div>
+   </div>
+   ```
 
    And then you can have two separate component classes, `Parent` annotated with `@Templated("#parentTemplate")` and `Child` annotated with `@Templated("Parent.html#childTemplate")` getting their respective markup from the same file.
 
@@ -83,6 +85,7 @@ So, my thoughts:
 
    The markup for a complete form field (just one field), might look something like (making this up as I go):
 
+   ```html
        <div class="{style.controlGroup}">
          <div class="{style.controlLabel">
            <span>label</span>
@@ -95,7 +98,7 @@ So, my thoughts:
            errors go here
          </div>
        </div>
-   {: class="brush:html"}
+   ```
 
    Which isn't that bad.
 
@@ -107,12 +110,13 @@ So, my thoughts:
 
    With UiBinder, you can make an application-specific `TextBox` or `TextLine` component and then in your forms do something like:
 
+   ```html
        <form>
          <app:TextLine ui:field="name"/>
          <app:TextLine ui:field="title"/>
          <app:TextLine ui:field="description"/>
        </form>
-   {: class="brush:html"}
+   ```
 
    Which, personally, I think is a real boon for reducing boilerplate and increasing developer productivity.
 

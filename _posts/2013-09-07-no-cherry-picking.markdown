@@ -39,11 +39,12 @@ Several years ago (2008-ish), a friend and I were first starting to use git, and
   So you now have two physically distinct commits in your repository for the same logical change. And no metadata tying them together.
 
   Here is what the DAG would look like:
-  
+
+  ```plain
       A -- B -- C -- E'   trunk
        \
         D -- E            release
-  {: class="brush:plain"}
+  ```
 
   Where `E` is the original hot fix commit on the release branch, and `E'` is the copy of the `E` commit.
 

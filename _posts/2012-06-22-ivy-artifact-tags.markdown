@@ -172,12 +172,13 @@ And now, each of the variations:
 
 5. Add two `artifact` tags with `conf` attributes:
 
-       <dependency org="springframework" name="spring"
-           rev="3.0.6.RELEASE">
-         <artifact name="org.springframework.web" conf="default"/>
-         <artifact name="org.springframework.web-sources" type="sources" ext="jar" conf="sources"/>
-       </dependency>
-   {: class="brush:xml"}
+   ```xml
+   <dependency org="springframework" name="spring"
+       rev="3.0.6.RELEASE">
+     <artifact name="org.springframework.web" conf="default"/>
+     <artifact name="org.springframework.web-sources" type="sources" ext="jar" conf="sources"/>
+   </dependency>
+   ```
 
    Pulls in:
 

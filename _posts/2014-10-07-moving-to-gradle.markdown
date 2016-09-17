@@ -10,39 +10,35 @@ For my open source projects, for awhile I've been using [Ant](http://ant.apache.
 
 There were several things I liked about this setup:
 
-1. With Ant, I always new exactly what was happening, and why, and could fix it within minutes, albeit with some more lines of XML,
+1. With Ant, I always knew exactly what was happening, and why, and could fix it within minutes, albeit with some more lines of XML.
 
-   (As surprising as it is, even to me, we actually have a well-organized, low-boilerplate Ant build system at work that is a fork of the Spring's old [common-build](https://github.com/astubbs/spring-modules/tree/master/projects/common-build) project (it basically uses Maven-style conventions so that 90%+ of a project's build logic is imported for free), so I'm not much of an Ant hater.)
+   (As surprising as it is, even to me, at work we actually have a well-organized, low-boilerplate Ant-based build system that is a fork of the Spring's [common-build](https://github.com/astubbs/spring-modules/tree/master/projects/common-build) project. Spring's `common-build` has been long since abandoned, but it basically used Maven-style conventions so that 90%+ of a project's build logic could be imported for free.)
 
-2. With Ivy, I could get at Maven's transitive dependencies and repositories, without actually using Maven, and
+2. With Ivy, I could get at Maven's transitive dependencies and repositories, without actually using Maven.
 
 3. With IvyDE, I could open projects in Eclipse and have cross-project references automatically hooked up.
 
 All nice.
 
-However, there was one major downside:
+However, there was one major downside: **basically no one else used my setup**.
 
-* Basically no one else used this setup.
+Especially IvyDE, which is not a widely-used/"most Java programmers already have it" Eclipse plugin.
 
-  Especially IvyDE is very far from a "most Java programmers will already have it installed" Eclipse plugin.
-
-Nonetheless, for a few years, I persisted, rationalizing that the setup was "good enough" for me (because it was), and I had not found an obviously better alternative (buildr was close; if buildr had seen the uptake the Gradle has, I'd be happy with it).
+Nonetheless, for a few years, I persisted, rationalizing that the setup was "good enough for me" (because it was), and I had not found an obviously better alternative (buildr was close; if buildr had seen the uptake that Gradle has, I'd be happy with it).
 
 I am not entirely sure what changed, maybe it was the recent surge in new build systems (Gradle getting momentum, Pants from Twitter, and Buck from Facebook), or Ivy being a frustratingly dwindling community (despite it powering the Maven side of many of these new build systems, like Gradle; which is frustrating, because it should have a really robust community because of this huge shadow usage, but instead the Ivy dev community is small and slow).
 
 But whatever the catalyst, I decided to try growing as a person, and use Gradle for a few projects.
 
-Even more surprising, I eschewed a hacked-together "Gradle + Ivy + IvyDE" setup (because on principle I think dependencies should be in their own file, and not mixed into build script logic), and use stock Gradle.
+Even more surprising, I eschewed a hacked-together "Gradle + Ivy + IvyDE" setup (because on principle I think dependencies should be in their own file, and not mixed into build script logic), and used stock Gradle.
 
 Turns out it does not suck.
 
-The first project I converted was [pageobjects](https://github.com/stephenh/pageobjects), since it's very small and would be a could canary project. I also got it building on Travis, which due to wanting to `scp` the release artifacts to my Maven repo, was actually the most frustrating part (I needed the right combination of wagon ssh (not sshexe), ssh-keygen to white list the host as known, and password without a space in it; see [here](https://github.com/stephenh/pageobjects/blob/master/build.gradle) and [here](https://github.com/stephenh/pageobjects/blob/master/.travis.yml)).
+The first project I converted was [pageobjects](https://github.com/stephenh/pageobjects), since it's very small and would be a could canary project. I also got it building on Travis, which due to wanting to `scp` the release artifacts to my Maven repo, was actually the most frustrating part (I needed the right combination of wagon ssh (not `sshexe`), `ssh-keygen` to white list the host as known, and using a password without a space in it; see [here](https://github.com/stephenh/pageobjects/blob/master/build.gradle) and [here](https://github.com/stephenh/pageobjects/blob/master/.travis.yml)).
 
 After that, I converted [todomvc-tessell](https://github.com/stephenh/todomvc-tessell) to see how a GWT/Tessell project would go (fine), and then after that, [Tessell](http://www.tessell.org) proper. So far, so good.
 
-I think the most differentiating thing about Gradle (especially vs. my prior preferred build setup) is:
-
-* Lots of other people actually use it.
+I think the most differentiating thing about Gradle (especially vs. my prior preferred build setup) is: **Lots of other people actually use it.**
 
 Which of course means there are Stack Overflow articles, and forum posts, and active bug trackers, and great docs, and all sorts of goodies that make learning easy.
 
@@ -54,19 +50,22 @@ So, anyway, with that, here are my Gradle-so-far notes/gripes:
 
    I understand CI servers blah blah (can Gradle auto-detect when running in a terminal vs. headless?), but the out of the box experience without this flag is really awful.
 
+   **Update Sept 2016:** The gradle daemon is now the default behavior, which is great.
+
 2. Publishing source jars isn't the default, and isn't even a one-line opt-in. Wtf?
 
    It makes me think I'm missing something, as currently these eight lines will be in every `build.gradle` of my projects:
 
-       task sourcesJar(type: Jar, dependsOn: classes) {
-         classifier 'sources'
-         from sourceSets.main.allSource
-       }
+   ```gradle
+   task sourcesJar(type: Jar, dependsOn: classes) {
+     classifier 'sources'
+     from sourceSets.main.allSource
+   }
  
-       artifacts {
-         archives sourcesJar
-       }
-   {: class="brush:plain"}
+   artifacts {
+     archives sourcesJar
+   }
+   ```
 
    Not exactly great, but not a huge deal.
 
@@ -76,8 +75,9 @@ So, anyway, with that, here are my Gradle-so-far notes/gripes:
 
    Previously, I'd have Eclipse run a `java` command, with the classpath set to whatever jars Ivy/IvyDE had copied into my local project `./lib` directory, e.g.:
 
-       java -cp ./lib/'*' com.foo.MyGenerator some args
-   {: class="brush:plain"}
+   ```plain
+   java -cp ./lib/'*' com.foo.MyGenerator some args
+   ```
 
    This worked well, as invoking `java` is quick, and the jars are already copied to lib, so it's fast enough to be ran on file save, and not get annoying.
 
@@ -85,8 +85,9 @@ So, anyway, with that, here are my Gradle-so-far notes/gripes:
 
    Fortunately, and very surprisingly, solely to do the should-be-the-default daemon flag, Gradle is actually fast enough to just run the entire gradle command on each wave, e.g. an external tool builder that runs:
 
-       ./gradlew my-codegen-target
-   {: class="brush:plain"}
+   ```plain
+   ./gradlew my-codegen-target
+   ```
 
    Every time is technically slower, but still acceptably fast, and has the bonus of reusing the `my-codegen-target` logic that the CLI build is going to need anyway.
 
@@ -106,11 +107,12 @@ So, anyway, with that, here are my Gradle-so-far notes/gripes:
 
    What this allows is some conditional logic in the `.travis.yml` file to only publish artifacts for builds that are for a tag (e.g. the `TRAVIS_TAG` variable is set):
 
-       after_success:
-         - test -n "$TRAVIS_TAG"
-            && ssh-keyscan -H repo.joist.ws >> ~/.ssh/known_hosts
-            && gradle uploadArchives
-   {: class="brush:plain"}
+   ```yaml
+   after_success:
+     - test -n "$TRAVIS_TAG"
+        && ssh-keyscan -H repo.joist.ws >> ~/.ssh/known_hosts
+        && gradle uploadArchives
+   ```
 
    This means I can make a change, push master, and see if it builds. Then, and only then, once it's built, I can make a tag, and push the tag, and it will also get built (without needing a new commit).
 
