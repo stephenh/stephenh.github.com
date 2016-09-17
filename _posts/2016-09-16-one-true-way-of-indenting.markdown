@@ -137,11 +137,11 @@ public void someMethodName(String param1,
 }
 ```
 
-There are several problems here; ugly diffs, wasted white space, and general inconsistency.
+There are several problems here: again ugly diffs, but now wasted white space, and also general inconsistency.
 
-For diffs, when `someMethodName` is every renamed, all of the wrapped parameter lines are going to shift. Which, yes sophisticated diff/code review tools can hopefully ignore this, but it's still needless noise
+For diffs, when `someMethodName` is every renamed, all of the wrapped parameter lines are going to shift. Which, yes sophisticated diff/code review tools can hopefully ignore this white space-only change, but it's still needless noise
 
-For wasted white space, the wrapped lines are shifted way over to where ever `someMethodName` ends, which means they have less space for their own names, and all of the white space before them is wasted. (Granted, if indent-on-column is used with wrap-every, this is not as bad, because in theory each wrapped line should itself be short. However, if you combine indent-on-column with wrap-when-needed, that space is more valuable.)
+For wasted white space, the wrapped lines are shifted way over to where ever `someMethodName` ends, which means they have less space for their own names. (Granted, if indent-on-column is used with wrap-every, this is not as bad, because in theory each wrapped line should itself be short. However, if you combine indent-on-column with wrap-when-needed, that space is more valuable.)
 
 For inconsistency, if I have multiple wrapped lines, my eye now has a random place to find the wrapped parameters, e.g.:
 
@@ -161,7 +161,7 @@ someNiceVariableName.withAnotherNiceName(param1,
 
 Where `param2` ends up is basically random (based on the method name being called), instead of being consistent.
 
-In contrast, indent-by-one handles all of these; nice diffs, no wasted space, and wrapping is consistent.
+In contrast, indent-by-one handles all of these: nice diffs, no wasted space, and wrapping is consistent.
 
 Indent-by-two for method declarations
 =====================================
@@ -181,11 +181,15 @@ public void foo(
 }
 ```
 
-One true way
-============
+The one true way
+================
 
-Historically I've put indentation in the "personal preference" category, but now code reviews are such an integral part of software development, that I think the clean diff benefits of wrap-all, indent-by-one is basically a defacto best practice that new codebases should always use, and historical codebases should be migrated towards when/if possible.
+Historically, I've considered indentation to be in the "personal preference" category of software decision making.
 
-The differences seem small, but when you're reading a code review with a variety of changes, spread across files, in code you may/may not be familiar with, these little readability issues really add up, as the easier the code is to read syntactically, the more thought processes you can spend on understanding the semantics, which is the most important thing.
+But now that code reviews are an integral part of software development, I think the easy readability and clean diff benefits of wrap-all, indent-by-one means it should be the standard/best practice indentation that new codebases use, and historical codebases should be migrated towards this when/if possible.
+
+The differences seem small, but when you're reading a code review with a variety of changes, spread across several files, in code you may/may not be familiar with, then these little readability issues really add up.
+
+Because the easier the code (and code reviews) is to read syntactically, the more thought processes you can spend on understanding the semantics, which is the most important thing.
 
 
