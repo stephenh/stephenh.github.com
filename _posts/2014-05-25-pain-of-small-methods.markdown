@@ -39,12 +39,13 @@ One aspect of small methods that I wanted to focus on in particular, which seems
 
 If you have a public method:
 
-    public void someFoo() {
-      while (some || complex || condition) {
-        ...
-      }
-    }
-{: class="brush:java"}
+```java
+public void someFoo() {
+  while (some || complex || condition) {
+    ...
+  }
+}
+```
 
 And we want to extract the complex condition:
 
@@ -54,10 +55,11 @@ And we want to extract the complex condition:
       }
     }
 
-    private void someComplexCondition() {
-      return some || complex || condition;
-    }
-{: class="brush:java"}
+```java
+private void someComplexCondition() {
+  return some || complex || condition;
+}
+```
 
 Where's the best place for `someComplexCondition` in the source file? There are several options:
 
@@ -87,11 +89,12 @@ Another way to avoid "where do I put helper methods" is to build nested methods 
         some || complex || condition
       }
 
-      while (someComplexCondition()) {
-        ...
-      }
-    }
-{: class="brush:scala"}
+```scala
+  while (someComplexCondition()) {
+    ...
+  }
+}
+```
 
 Obviously this only works for helper methods that are only called by one method, but I think that is fine.
 
@@ -108,11 +111,12 @@ And, finally, if you're passing type parameter, it gets even more distracting as
         some || foo.complex() || bar.condition()
       }
 
-      while (someComplexCondition(foo, bar)) {
-        ...
-      }
-    }
-{: class="brush:scala"}
+```scala
+  while (someComplexCondition(foo, bar)) {
+    ...
+  }
+}
+```
 
 Here I'm only passing two parameters, and the line is already long enough that it should be wrapped.
 
@@ -123,11 +127,12 @@ Tangentially, I wonder if Scala couldn't just infer the parameter types of inner
         some || foo.complex() || bar.condition()
       }
 
-      while (someComplexCondition(foo, bar)) {
-        ...
-      }
-    }
-{: class="brush:scala"}
+```scala
+  while (someComplexCondition(foo, bar)) {
+    ...
+  }
+}
+```
 
 That aside, all of my complaints about nesting methods inside of `someFoo` boil down to it being distracting, which makes sense because if our goal is small methods, putting nested methods inside of `someFoo` basically itself means, that, `someFoo` itself won't be small anymore.
 

@@ -15,10 +15,11 @@ It turns out there is a way to mark output folders as optional, but I pull my ha
 So, for posterity and my own sanity, the syntax is:
 
 
-    <classpathentry kind="src" path="target/gen-java-src">
-      <attributes>
-        <attribute name="optional" value="true"/>
-      </attributes>
-    </classpathentry>
-{: class="brush:xml"}
+```xml
+<classpathentry kind="src" path="target/gen-java-src">
+  <attributes>
+    <attribute name="optional" value="true"/>
+  </attributes>
+</classpathentry>
+```
 

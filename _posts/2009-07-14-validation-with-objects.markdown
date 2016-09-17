@@ -13,13 +13,14 @@ Annotations are really popular these days for marking up validation rules.
 
 I'm forcing myself to go through a Seam tutorial, and their example is fairly representative:
 
-    public class FooDomainObject {
-        @NotNull @Length(max=100)
-        public String getTitle() {
-            return title;
-        }
+```java
+public class FooDomainObject {
+    @NotNull @Length(max=100)
+    public String getTitle() {
+        return title;
     }
-{: class="brush:java"}
+}
+```
 
 I cringe every time I see this--annotations are not inherently bad, but I see the annotation-hammer as having replaced the XML-hammer is the Java world. Specifying validation rules as annotations has its strength, but also its weaknesses, which I think are not always evaluated.
 
@@ -58,29 +59,30 @@ For type-safety, this approach leverages [bindgen](http://joist.ws/bindgen.html)
 
 So, an example of a domain object would be:
 
-    public class FooDomainObject extends BaseClassWithAddRulesEtc {
-      public FooDomainObject() {
-          this.addExtraRules();
-      }
+```java
+public class FooDomainObject extends BaseClassWithAddRulesEtc {
+  public FooDomainObject() {
+      this.addExtraRules();
+  }
 
-      private void addExtraRules() {
-          FooDomainObjectBinding b = new FooDomainObjectBinding(this);
-          this.addRule(new NotNullRule(b.title()));
-          this.addRule(new SaneDateRule(b.start(), b.stop()));
-      }
+  private void addExtraRules() {
+      FooDomainObjectBinding b = new FooDomainObjectBinding(this);
+      this.addRule(new NotNullRule(b.title()));
+      this.addRule(new SaneDateRule(b.start(), b.stop()));
+  }
 
-      // ... title, start, stop getters &amp; setters ...
+  // ... title, start, stop getters &amp; setters ...
 
-      // ... in the base class:
-      public ValidationErrors validate() {
-          ValidationErrors errors = new ValidationErrors();
-          for (Rule rule : this.getRules()) {
-              rule.validate(errors, this);
-          }
-          return errors;
+  // ... in the base class:
+  public ValidationErrors validate() {
+      ValidationErrors errors = new ValidationErrors();
+      for (Rule rule : this.getRules()) {
+          rule.validate(errors, this);
       }
-    }
-{: class="brush:java"}
+      return errors;
+  }
+}
+```
 
 This first alternative has a few trade-offs:
 
@@ -92,55 +94,57 @@ This first alternative has a few trade-offs:
 
 * Turning off rules requires promoting rules to a static field, as in this 2nd example:
 
-      public class FooDomainObject {
+  ```java
+  public class FooDomainObject {
 
-          private static FooDomainObjectBinding b = new FooDomainObjectBinding();
-          private static Rule titleNotNull = new NotNullRule(b.title());
-          private static Rule saneDateRule = new SaneDateRule(b.start(), b.end());
+      private static FooDomainObjectBinding b = new FooDomainObjectBinding();
+      private static Rule titleNotNull = new NotNullRule(b.title());
+      private static Rule saneDateRule = new SaneDateRule(b.start(), b.end());
 
-          public FooDomainObject() {
-              this.addExtraRules();
-          }
-
-          private void addExtraRules() {
-              this.addRule(FooDomainObject.titleNotNull);
-              this.addRule(FooDomainObject.saneDateRule);
-          }
-
-          public void disableTitleRule() {
-              this.removeRule(FooDomainObject.titleNotNull);
-          }
-
-          // ... title, start, stop getters &amp; setters ...
+      public FooDomainObject() {
+          this.addExtraRules();
       }
 
-      // ... sometime later ...
-      fooDomainObject.disableTitleRule();
-  {: class="brush:java"}
+      private void addExtraRules() {
+          this.addRule(FooDomainObject.titleNotNull);
+          this.addRule(FooDomainObject.saneDateRule);
+      }
+
+      public void disableTitleRule() {
+          this.removeRule(FooDomainObject.titleNotNull);
+      }
+
+      // ... title, start, stop getters &amp; setters ...
+  }
+
+  // ... sometime later ...
+  fooDomainObject.disableTitleRule();
+  ```
 
 A variation of this theme would be to kill the `addExtraRules` and use a list utility in the declarations:
 
-    public class FooDomainObject {
+```java
+public class FooDomainObject {
 
-        private static FooDomainObjectBinding b = new FooDomainObjectBinding();
-        private static DefaultRules rules = new DefaultRules();
-        private static Rule titleNotNull = rules.ref(new NotNullRule(b.title()));
-        private static Rule saneDateRule = rules.ref(new SaneDateRule(b.start(), b.end()));
+    private static FooDomainObjectBinding b = new FooDomainObjectBinding();
+    private static DefaultRules rules = new DefaultRules();
+    private static Rule titleNotNull = rules.ref(new NotNullRule(b.title()));
+    private static Rule saneDateRule = rules.ref(new SaneDateRule(b.start(), b.end()));
 
-        public FooDomainObject() {
-            FooDomainObject.rules.copyTo(this);
-        }
-
-        public void disableTitleRule() {
-            this.removeRule(FooDomainObject.titleNotNull);
-        }
-
-        // ... title, start, stop getters &amp; setters ...
+    public FooDomainObject() {
+        FooDomainObject.rules.copyTo(this);
     }
 
-    // ... sometime later ...
-    fooDomainObject.disableTitleRule();
-{: class="brush:java"}
+    public void disableTitleRule() {
+        this.removeRule(FooDomainObject.titleNotNull);
+    }
+
+    // ... title, start, stop getters &amp; setters ...
+}
+
+// ... sometime later ...
+fooDomainObject.disableTitleRule();
+```
 
 This:
 
@@ -157,20 +161,21 @@ A Scala Alternative
 
 And, actually, since two-way binding is not required, Scala's call-by-name functionality would work here:
 
-    class FooDomainObject {
-      addRule(new NotNullRule(title))
+```scala
+class FooDomainObject {
+  addRule(new NotNullRule(title))
+
+  // ... title ...
+}
    
-      // ... title ...
+class NotNullRule[T](value: => AnyRef) implements Rule[T] {
+  def validate(T instance) = {
+    if (value == null) {
+      // ... add error ...
     }
-   
-    class NotNullRule[T](value: => AnyRef) implements Rule[T] {
-      def validate(T instance) = {
-        if (value == null) {
-          // ... add error ...
-        }
-      }
-    }
-{: class="brush:scala"}
+  }
+}
+```
 
 However, this has one major trade-off:
 
@@ -178,10 +183,11 @@ However, this has one major trade-off:
 
   I think having the attribute name is required, so we'd have to pass another string parameter:
 
-      class FooDomainObject extends BaseClassWithAddRulesEtc {
-        addRule(new NotNullRule("title", title))
-      }
-  {: class="brush:scala"}
+  ```scala
+  class FooDomainObject extends BaseClassWithAddRulesEtc {
+    addRule(new NotNullRule("title", title))
+  }
+  ```
 
 But, even then, that's pretty slick and lightweight. If scala's call-by-name had something like "set-by-name" to make it two-way, and perhaps throw in a `getName()` for good measure, it would easily trump the need for [bindgen](http://joist.ws/bindgen.html)-like hacks.
 

@@ -12,45 +12,47 @@ To understand "east", think of a map, like north, south, east, west; the idea, a
 
 As an example, this is normal/stateful/return-oriented programming:
 
-    class Customer {
-      val name: String
-      val description: String 
-    }
+```scala
+class Customer {
+  val name: String
+  val description: String 
+}
 
-    // print a customer
-    println(customer.name)
-    println(customer.description))
-{: class="brush:scala"}
+// print a customer
+println(customer.name)
+println(customer.description))
+```
 
 Where as this is stateless/east-oriented programming:
 
-    class Customer {
-      private val name: String
-      private val description: String 
-      def printOn(writer: CustomerWriter) {
-        writer.printName(name)
-        writer.printDescription(description)
-      }
-    }
+```scala
+class Customer {
+  private val name: String
+  private val description: String 
+  def printOn(writer: CustomerWriter) {
+    writer.printName(name)
+    writer.printDescription(description)
+  }
+}
 
-    trait CustomerWriter {
-      def printName(name: String)
-      def printDescription(name: Description)
-    }
+trait CustomerWriter {
+  def printName(name: String)
+  def printDescription(name: Description)
+}
 
-    // print a customer
-    customer.printOn(new CustomerWriter() {
-      override def printName(name: String) {
-        println(name)
-      }
+// print a customer
+customer.printOn(new CustomerWriter() {
+  override def printName(name: String) {
+    println(name)
+  }
 
-      override def printDescription(desc: String) {
-        println(desc)
-      }
-    });
-    // could have a suite of CustomerWriter implementations,
-    // e.g. System.out/JSON/etc., decorators, etc.
-{: class="brush:scala"}
+  override def printDescription(desc: String) {
+    println(desc)
+  }
+});
+// could have a suite of CustomerWriter implementations,
+// e.g. System.out/JSON/etc., decorators, etc.
+```
 
 The topic of east-oriented programming came up because east-oriented programming is the one style where I think you could use a mocking library extensively and not have crappy tests.
 

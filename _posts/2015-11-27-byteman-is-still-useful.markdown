@@ -18,11 +18,12 @@ The handlers/notifications would work fine when our processes booted up, but aft
 
 The first hint was that the console log output changed, e.g. after anywhere from ~2 to 40 minutes after process start, it'd go from "INFO" first format (which was the one we'd configured) to "timestamp" first (which was foreign to us):
 
-    INFO   11/27/15 14:40:20 Foo3$               - WorkingA
-    INFO   11/27/15 14:40:20 Foo3$               - WorkingA
-    2015-11-27 14:40:20 INFO [Foo3$] WorkingD
-    2015-11-27 14:40:20 INFO [Foo3$] WorkingD
-{: class="brush:plain"}
+```plain
+INFO   11/27/15 14:40:20 Foo3$               - WorkingA
+INFO   11/27/15 14:40:20 Foo3$               - WorkingA
+2015-11-27 14:40:20 INFO [Foo3$] WorkingD
+2015-11-27 14:40:20 INFO [Foo3$] WorkingD
+```
 
 My first guess that was our beta CloudWatch Logs handler was somehow filling up it's buffer/something, and blowing up `j.l.logging`, such that `j.u.logging` entered some sort of failure mode and reset itself.
 
@@ -34,39 +35,42 @@ But who? It was nothing in our source code. So it must be some random jar on our
 
 So, on a hunch, I decided to use Byteman as an "poor man's breakpoint", and used this Byteman script:
 
-    RULE Blow up LogManager.reset
-    CLASS java.util.logging.LogManager
-    METHOD reset()
-    IF true
-    DO THROW new RuntimeException("reset!")
-    ENDRULE
-{: class="brush:plain"}
+```plain
+RULE Blow up LogManager.reset
+CLASS java.util.logging.LogManager
+METHOD reset()
+IF true
+DO THROW new RuntimeException("reset!")
+ENDRULE
+```
 
 With a simple addition to our application's JVM parameters:
 
-    -javaagent:byteman.jar=script:reset.btm,boot:byteman.jar
-{: class="brush:plain"}
+```plain
+-javaagent:byteman.jar=script:reset.btm,boot:byteman.jar
+```
 
 And tada:
 
-    Caused by: java.lang.RuntimeException: reset!
-    at sun.reflect.NativeConstructorAccessorImpl.newInstance0(Native Method)
-    at sun.reflect.NativeConstructorAccessorImpl.newInstance(NativeConstructorAccessorImpl.java:62)
-    at sun.reflect.DelegatingConstructorAccessorImpl.newInstance(DelegatingConstructorAccessorImpl.java:45)
-    at java.lang.reflect.Constructor.newInstance(Constructor.java:422)
-    at org.jboss.byteman.rule.expression.ThrowExpression.interpret(ThrowExpression.java:230)
-    at org.jboss.byteman.rule.Action.interpret(Action.java:144)
-    at org.jboss.byteman.rule.helper.InterpretedHelper.fire(InterpretedHelper.java:171)
-    at org.jboss.byteman.rule.helper.InterpretedHelper.execute0(InterpretedHelper.java:139)
-    at org.jboss.byteman.rule.helper.InterpretedHelper.execute(InterpretedHelper.java:101)
-    at org.jboss.byteman.rule.Rule.execute(Rule.java:717)
-    at org.jboss.byteman.rule.Rule.execute(Rule.java:686)
-    at java.util.logging.LogManager.reset(LogManager.java)
-    at java.util.logging.LogManager.readConfiguration(LogManager.java:1406)
-    at org.xeril.log.JDKLogFactory.<init>(JDKLogFactory.java:59)
-    at org.xeril.log.Log.<clinit>(Log.java:18)
-    ... 10 more
-{: class="brush:plain"}
+```plain
+Caused by: java.lang.RuntimeException: reset!
+at sun.reflect.NativeConstructorAccessorImpl.newInstance0(Native Method)
+at sun.reflect.NativeConstructorAccessorImpl.newInstance(NativeConstructorAccessorImpl.java:62)
+at sun.reflect.DelegatingConstructorAccessorImpl.newInstance(DelegatingConstructorAccessorImpl.java:45)
+at java.lang.reflect.Constructor.newInstance(Constructor.java:422)
+at org.jboss.byteman.rule.expression.ThrowExpression.interpret(ThrowExpression.java:230)
+at org.jboss.byteman.rule.Action.interpret(Action.java:144)
+at org.jboss.byteman.rule.helper.InterpretedHelper.fire(InterpretedHelper.java:171)
+at org.jboss.byteman.rule.helper.InterpretedHelper.execute0(InterpretedHelper.java:139)
+at org.jboss.byteman.rule.helper.InterpretedHelper.execute(InterpretedHelper.java:101)
+at org.jboss.byteman.rule.Rule.execute(Rule.java:717)
+at org.jboss.byteman.rule.Rule.execute(Rule.java:686)
+at java.util.logging.LogManager.reset(LogManager.java)
+at java.util.logging.LogManager.readConfiguration(LogManager.java:1406)
+at org.xeril.log.JDKLogFactory.<init>(JDKLogFactory.java:59)
+at org.xeril.log.Log.<clinit>(Log.java:18)
+... 10 more
+```
 
 Turns out the flow was that:
 

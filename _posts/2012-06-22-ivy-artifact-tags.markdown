@@ -10,18 +10,20 @@ title: How to Sanely Use Ivy's Artifact Tags
 
 While Maven has only project-to-project dependencies (i.e. you get all the jars in each upstream project whether you want them or not), Ivy adds the concept of configurations to select subsets of artifacts within your dependencies. E.g., in an `ivy.xml` file:
 
-    <dependency org="upstream" name="project" rev="1.0"
-        conf="default->someSubsetConf" />
-{: class="brush:xml"}
+```xml
+<dependency org="upstream" name="project" rev="1.0"
+    conf="default->someSubsetConf" />
+```
 
 By using `someSubsetConf`, you can select a specific set of artifacts (only those that its own `ivy.xml` file declares as part of it's `someSubsetConf`) from the upstream project.
 
 Ivy goes further, and that if the upstream project doesn't have a configuration in its `ivy.xml` file that suits your needs, you can request specific artifacts directly, e.g.:
 
-    <dependency org="upstream" name="project" rev="1.0">
-      <artifact name="onlyTheOneYouWant"/>
-    </dependency>
-{: class="brush:xml"}
+```xml
+<dependency org="upstream" name="project" rev="1.0">
+  <artifact name="onlyTheOneYouWant"/>
+</dependency>
+```
 
 While this flexibility, which is very characteristic of Ivy, is often times nice, I do sometimes wonder whether Maven's non-flexibility and hence simplicity in not having confs and artifact overrides is the better choice in the long run.
 
@@ -40,12 +42,13 @@ The Short Version
 
 For example:
 
-    <dependency org="upstream" name="project"
-        rev="1.0" conf="conf1,conf2">
-      <artifact name="artifact1" conf="conf1"/>
-      <artifact name="artifact2" conf="conf2"/>
-    </dependency>
-{: class="brush:xml"}
+```xml
+<dependency org="upstream" name="project"
+    rev="1.0" conf="conf1,conf2">
+  <artifact name="artifact1" conf="conf1"/>
+  <artifact name="artifact2" conf="conf2"/>
+</dependency>
+```
 
 Will put `artifact1` in your `conf1` and `artifact2` in your `conf2`, just as you would expect. Simple.
 
@@ -62,29 +65,31 @@ Note that I used Ivy 2.3.0-rc1, which as of this writing is current, and the `sp
 
 The base `ivy.xml` file I was using looked like:
 
-    ...
+```xml
+...
 
-    <configurations>
-      <conf name="default"/>
-      <conf name="buildtime" visibility="private"/>
-      <conf name="test" visibility="private"/>
-      <conf name="sources"/>
-    </configurations>
+<configurations>
+  <conf name="default"/>
+  <conf name="buildtime" visibility="private"/>
+  <conf name="test" visibility="private"/>
+  <conf name="sources"/>
+</configurations>
 
-    <dependencies
-        defaultconfmapping="sources->sources();%->default"
-        defaultconf="default;sources">
-      ...
-    </dependencies>
-{: class="brush:xml"}
+<dependencies
+    defaultconfmapping="sources->sources();%->default"
+    defaultconf="default;sources">
+  ...
+</dependencies>
+```
 
 And now, each of the variations:
 
 1. Just a regular `dependency` tag:
 
-       <dependency org="springframework" name="spring"
+   ```xml
+   <dependency org="springframework" name="spring"
            rev="3.0.6.RELEASE"/>
-   {: class="brush:xml"}
+   ```
 
    Pulls in:
 
@@ -100,11 +105,12 @@ And now, each of the variations:
 
 2. Add just an `artifact` tag:
 
-       <dependency org="springframework" name="spring"
-           rev="3.0.6.RELEASE">
-         <artifact name="org.springframework.web" />
-       </dependency>
-   {: class="brush:xml"}
+   ```xml
+   <dependency org="springframework" name="spring"
+       rev="3.0.6.RELEASE">
+     <artifact name="org.springframework.web" />
+   </dependency>
+   ```
 
    Pulls in:
 
@@ -126,11 +132,12 @@ And now, each of the variations:
 
 3. Add an `artifact` tag with `conf` attribute:
 
-       <dependency org="springframework" name="spring"
-           rev="3.0.6.RELEASE">
-         <artifact name="org.springframework.web" conf="default"/>
-       </dependency>
-   {: class="brush:xml"}
+   ```xml
+   <dependency org="springframework" name="spring"
+       rev="3.0.6.RELEASE">
+     <artifact name="org.springframework.web" conf="default"/>
+   </dependency>
+   ```
 
    Pulls in:
 
@@ -148,11 +155,12 @@ And now, each of the variations:
 
 4. Add an `artifact` tag with `conf` attribute and `dependency` `conf`:
 
-       <dependency org="springframework" name="spring"
-           rev="3.0.6.RELEASE" conf="default">
-         <artifact name="org.springframework.web" conf="default"/>
-       </dependency>
-   {: class="brush:xml"}
+   ```
+   <dependency org="springframework" name="spring"
+       rev="3.0.6.RELEASE" conf="default">
+     <artifact name="org.springframework.web" conf="default"/>
+   </dependency>
+   ```
 
    Pulls in:
 
@@ -181,12 +189,13 @@ And now, each of the variations:
 
 6. Add two `artifact` tags with one non-"master" `conf` attribute:
 
-       <dependency org="springframework" name="spring"
-           rev="3.0.6.RELEASE">
-         <artifact name="org.springframework.web" conf="default"/>
-         <artifact name="org.springframework.test" conf="test"/>
-       </dependency>
-   {: class="brush:xml"}
+   ```xml
+   <dependency org="springframework" name="spring"
+       rev="3.0.6.RELEASE">
+     <artifact name="org.springframework.web" conf="default"/>
+     <artifact name="org.springframework.test" conf="test"/>
+   </dependency>
+   ```
 
    Pulls in:
 
@@ -205,12 +214,13 @@ And now, each of the variations:
 
 7. Two `artifact` tags, both with "master" `conf` attributes:
 
-       <dependency org="springframework" name="spring"
-           rev="3.0.6.RELEASE" conf="default,test">
-         <artifact name="org.springframework.web" conf="default"/>
-         <artifact name="org.springframework.test" conf="test"/>
-       </dependency>
-   {: class="brush:xml"}
+   ```xml
+   <dependency org="springframework" name="spring"
+       rev="3.0.6.RELEASE" conf="default,test">
+     <artifact name="org.springframework.web" conf="default"/>
+     <artifact name="org.springframework.test" conf="test"/>
+   </dependency>
+   ```
 
    Pulls in:
 

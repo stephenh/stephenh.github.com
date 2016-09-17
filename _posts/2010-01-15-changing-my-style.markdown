@@ -50,39 +50,41 @@ Joist Example
 
 Anyway, when building [Joist](http://joist.ws), I wasn't as anti-static as I am becoming, so I'd have code that looks like:
 
-    public class SomeBusinessLogic {
-      public void doSomeBusinessLogic(final Integer fooId) {
-        // UoW is a static that reaches out and starts a transaction
-        UoW.go(new Block() {
-          public void go() {
-            // Foo.queries is another static that reaches out for a FoodQueries instance
-            final Foo foo = Foo.queries.findById(fooId);
-            // do stuff with foo
-          }
-        });
+```java
+public class SomeBusinessLogic {
+  public void doSomeBusinessLogic(final Integer fooId) {
+    // UoW is a static that reaches out and starts a transaction
+    UoW.go(new Block() {
+      public void go() {
+        // Foo.queries is another static that reaches out for a FoodQueries instance
+        final Foo foo = Foo.queries.findById(fooId);
+        // do stuff with foo
       }
-    }
-{: class="brush:java"}
+    });
+  }
+}
+```
 
 I think I would write this now as:
 
-    public class SomeBusinessLogic {
-      private final Repository repo;
+```java
+public class SomeBusinessLogic {
+  private final Repository repo;
 
-      public SomeBusinessLogic(final Repository repo) {
-        this.repo = repo;
-      }
+  public SomeBusinessLogic(final Repository repo) {
+    this.repo = repo;
+  }
 
-      public void doSomeBusinessLogic(final Integer fooId) {
-        repo.go(new Block() {
-          public void go() {
-            final Foo foo = repo.getFooQueries().findById(fooId);
-            // do stuff with foo
-          }
-        });
+  public void doSomeBusinessLogic(final Integer fooId) {
+    repo.go(new Block() {
+      public void go() {
+        final Foo foo = repo.getFooQueries().findById(fooId);
+        // do stuff with foo
       }
-    }
-{: class="brush:java"}
+    });
+  }
+}
+```
 
 The odd thing is that I don't know how useful this would actually be.
 
@@ -107,49 +109,51 @@ I still like Fowler's pattern of the Registry being the one singleton in the app
 
 So, even though my previous Registries were the only singleton, I still exposed their resources via static getter methods, e.g.:
 
-    public class Registry {
-      public static ResourceA getResourceA() { ... }
-      public static ResourceB getResourceB() { ... }
-    }
+```java
+public class Registry {
+  public static ResourceA getResourceA() { ... }
+  public static ResourceB getResourceB() { ... }
+}
 
-    public class Client {
-      public void doStuffWith() {
-        Registry.getResourceB().doStuff();
-      }
-    }
-{: class="brush:java"}
+public class Client {
+  public void doStuffWith() {
+    Registry.getResourceB().doStuff();
+  }
+}
+```
 
 But now, yeah, the static `Registry.getResourceB()` call hurts and I'm changing to something like:
 
-    public interface Registry {
-      ResourceA getResourceA();
-      ResourceB getResourceB();
-    }
+```java
+public interface Registry {
+  ResourceA getResourceA();
+  ResourceB getResourceB();
+}
 
-    public class RegistryInstance implements Registry {
-      public static Registry get() { ... }
-    }
+public class RegistryInstance implements Registry {
+  public static Registry get() { ... }
+}
 
-    public class Client {
-      private final Registry registry;
+public class Client {
+  private final Registry registry;
 
-      // Ideally use this constructor when you've got a registry
-      // on hand already
-      public Client(final Registry registry) {
-        this.registry = registry;
-      }
+  // Ideally use this constructor when you've got a registry
+  // on hand already
+  public Client(final Registry registry) {
+    this.registry = registry;
+  }
 
-      // Only use the default constructor if you don't control
-      // class instantation, e.g. a servlet or domain object
-      public Client() {
-        this(RegistryInstance.get());
-      }
+  // Only use the default constructor if you don't control
+  // class instantation, e.g. a servlet or domain object
+  public Client() {
+    this(RegistryInstance.get());
+  }
 
-      public void doStuffWith() {
-        registry.getResourceA().doStuff();
-      }
-    }
-{: class="brush:java"}
+  public void doStuffWith() {
+    registry.getResourceA().doStuff();
+  }
+}
+```
 
 Such that now `Registry` can be mocked/stubbed out.
 
@@ -166,30 +170,32 @@ Inner-Class Dependency Interfaces
 
 One approach I want to play more with is using a GWT MVP-style dependency declaration. E.g. instead of service components being in an application-wide `Registry` interface, or a huge list of constructor arguments, I think an inner-interface would be interesting:
 
-    public class SomeBusinessLogic {
-      public interface Deps {
-        Repository getRepository()
-      }
+```java
+public class SomeBusinessLogic {
+  public interface Deps {
+    Repository getRepository()
+  }
 
-      private final Deps deps;
+  private final Deps deps;
 
-      public SomeBusinessLogic(Deps deps) {
-        this.deps = deps;
-      }
-    }
+  public SomeBusinessLogic(Deps deps) {
+    this.deps = deps;
+  }
+}
 
-    // off in your Registry
-    public interface Registry extends SomeBusinessLogic, ... {
-    }
-{: class="brush:java"}
+// off in your Registry
+public interface Registry extends SomeBusinessLogic, ... {
+}
+```
 
 What I like about this is that each class gets its own declaration of the dependencies it requires. For very common dependencies, you could use inheritance, e.g.:
 
-    public class SomeBusinessLogic {
-      public interface Deps extends CommonAppDeps {
-      }
-    }
-{: class="brush:java"}
+```java
+public class SomeBusinessLogic {
+  public interface Deps extends CommonAppDeps {
+  }
+}
+```
 
 But, without some structural typing tricks, your `Registry` interface is going to have an explosion of `extends XxxLogic, YyyLogic, etc`.
 

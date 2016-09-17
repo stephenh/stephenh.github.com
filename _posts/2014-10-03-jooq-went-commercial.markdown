@@ -14,11 +14,12 @@ jOOQ is a Java database access library that focuses on being a low-level DSL for
 
 See [their website](http://www.jooq.org) for more examples, but just to give you an idea, here's a select statement:
 
-    create
-      .selectFrom(BOOK)
-      .where(BOOK.PUBLISHED_IN.eq(2011))
-      .orderBy(BOOK.TITLE)
-{: class="brush:java"}
+```java
+create
+  .selectFrom(BOOK)
+  .where(BOOK.PUBLISHED_IN.eq(2011))
+  .orderBy(BOOK.TITLE)
+```
 
 As usual with database libraries, jOOQ has various adaptors/backends, e.g. MySQL, PostgreSQL, Oracle, etc.
 

@@ -14,60 +14,63 @@ One chord that I like is what I'll call "private static factory method", which i
 
 This is often used for test data, e.g. if you have:
 
-    Employee e1 = new Employee();
-    e1.setName("e1");
-    e1.setAge(50);
-    e1.setDescription("great employee");
-    Employee e2 = new Employee();
-    e2.setName("e2");
-    e2.setAge(51);
-    e2.setDescription("awesome employee");
-    Employee e3 = new Employee();
-    e3.setName("e3");
-    e3.setAge(52);
-    e3.setDescription("wtf employee");
-    doSomethingWith(e1, e2, e3);
-{: class="brush:java"}
+```java
+Employee e1 = new Employee();
+e1.setName("e1");
+e1.setAge(50);
+e1.setDescription("great employee");
+Employee e2 = new Employee();
+e2.setName("e2");
+e2.setAge(51);
+e2.setDescription("awesome employee");
+Employee e3 = new Employee();
+e3.setName("e3");
+e3.setAge(52);
+e3.setDescription("wtf employee");
+doSomethingWith(e1, e2, e3);
+```
 
 This sort of code burns my eyes. I can't keep track of the `e1`, `e2`, `e3` variables, and often make copy/paste typos of missing a change from `e1` to `e3`.
 
 Just grouping the assignments is a little better:
 
-    Employee e1 = new Employee();
-    e1.setName("e1");
-    e1.setAge(50);
-    e1.setDescription("great employee");
+```java
+Employee e1 = new Employee();
+e1.setName("e1");
+e1.setAge(50);
+e1.setDescription("great employee");
 
-    Employee e2 = new Employee();
-    e2.setName("e2");
-    e2.setAge(51);
-    e2.setDescription("awesome employee");
+Employee e2 = new Employee();
+e2.setName("e2");
+e2.setAge(51);
+e2.setDescription("awesome employee");
 
-    Employee e3 = new Employee();
-    e3.setName("e3");
-    e3.setAge(52);
-    e3.setDescription("wtf employee");
+Employee e3 = new Employee();
+e3.setName("e3");
+e3.setAge(52);
+e3.setDescription("wtf employee");
 
-    doSomethingWith(e1, e2, e3);
-{: class="brush:java"}
+doSomethingWith(e1, e2, e3);
+```
 
 As now each variable declaration is very close to it's use site and you can reason about `e1` for awhile, then `e2` for awhile, and finally `e3`.
 
 However, the multiple `setName`, `setAge`, `setDescription` calls are a good candidate for [Extract Method](http://martinfowler.com/refactoring/catalog/extractMethod.html):
 
-    Employee e1 = newEmployee("e1", 50, "great employee");
-    Employee e2 = newEmployee("e2", 51, "awesome employee");
-    Employee e3 = newEmployee("e3", 52, "wtf employee");
-    doSomethingWith(e1, e2, e3);
+```java
+Employee e1 = newEmployee("e1", 50, "great employee");
+Employee e2 = newEmployee("e2", 51, "awesome employee");
+Employee e3 = newEmployee("e3", 52, "wtf employee");
+doSomethingWith(e1, e2, e3);
 
-    private static Employee newEmployee(String name, int age, String description) {
-      Employee e = new Employee();
-      e.setName(name);
-      e.setAge(age);
-      e.setDescription(description);
-      return e;
-    }
-{: class="brush:java"}
+private static Employee newEmployee(String name, int age, String description) {
+  Employee e = new Employee();
+  e.setName(name);
+  e.setAge(age);
+  e.setDescription(description);
+  return e;
+}
+```
 
 Nothing ground breaking, and we're basically just adding a custom constructor/factory method for our own use. Obviously if you controlled the `Employee` source and had several clients wanting a `newEmployee` method, you could move it into the `Employee` class.
 
@@ -75,11 +78,12 @@ However, I typically find these private factory methods make several use-case sp
 
 Anyway, to make this a chord instead of just a normal Extract Method, I've seen this work really well by following up with an Inline Variable:
 
-    doSomethingWith(
-      newEmployee("e1", 50, "great employee"),
-      newEmployee("e2", 51, "awesome employee"),
-      newEmployee("e3", 52, "wtf employee"));
-{: class="brush:java"}
+```java
+doSomethingWith(
+  newEmployee("e1", 50, "great employee"),
+  newEmployee("e2", 51, "awesome employee"),
+  newEmployee("e3", 52, "wtf employee"));
+```
 
 The combination here (Extract Method + Inline Variable) I think results in much more readable code as we went from 13 LOC to accomplish what we really want (calling `doSomethingWith`) to 4 LOC. ~3x less.
 

@@ -8,27 +8,29 @@ title: GWT Handler Registrations
 
 Being a fat-client technology, GWT involves a lot of event listeners. The idiom for using them is pretty simple:
 
-    widget.addValueChangeHandler(
-      new ValueChangeHandler<String>() {
-        public void onValueChange(ValueChangeEvent<String> event) {
-          // do logic here
-        }
-      }
-    );
-{: class="brush:java"}
+```java
+widget.addValueChangeHandler(
+  new ValueChangeHandler<String>() {
+    public void onValueChange(ValueChangeEvent<String> event) {
+      // do logic here
+    }
+  }
+);
+```
 
 One interesting question is what to do with the `HandlerRegistration` return value of the `addValueChangeHandler` method:
 
-    HandlerRegistration r = widget.addValueChangeHandler(
-      new ValueChangeHandler<String>() {
-        public void onValueChange(ValueChangeEvent<String> event) {
-          // do logic here
-        }
-      }
-    );
-    // when do you call this?
-    r.removeHandler();
-{: class="brush:java"}
+```java
+HandlerRegistration r = widget.addValueChangeHandler(
+  new ValueChangeHandler<String>() {
+    public void onValueChange(ValueChangeEvent<String> event) {
+      // do logic here
+    }
+  }
+);
+// when do you call this?
+r.removeHandler();
+```
 
 Is Calling `removeHandler()` Required?
 --------------------------------------
@@ -49,15 +51,16 @@ There are two relative points about calling `removeHandler()` on a `HandlerRegis
 
 For example, if you have a `FooPlacePresenter` in a framework like [Tessell](http://www.tessell.org):
 
-    public class FooPlacePresenter {
-      public void onBind() {
-        super.onBind();
-        eventBus.addHandler(
-          BlahEvent.getType(),
-          new BlahEventHandler() { ... });
-      }
-    }
-{: class="brush:java"}
+```java
+public class FooPlacePresenter {
+  public void onBind() {
+    super.onBind();
+    eventBus.addHandler(
+      BlahEvent.getType(),
+      new BlahEventHandler() { ... });
+  }
+}
+```
 
 Each time the user visits the `#foo` place, a new instance of `FooPlacePresenter` will get created and it will start listening for `BlahEvent`s on the application-wide `EventBus`.
 

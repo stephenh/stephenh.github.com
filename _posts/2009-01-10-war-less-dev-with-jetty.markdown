@@ -17,51 +17,53 @@ The idea is to be able to start Jetty as your server against your web project an
 
 This assumes you have a war-like directory structure of:
 
-    yourapp
-      - WebContent
-        - ...content...
-        - WEB-INF
-          - web.xml
-{: class="brush:plain"}
+```plain
+yourapp
+  - WebContent
+    - ...content...
+    - WEB-INF
+      - web.xml
+```
 
 If for whatever reason your project's source tree doesn't match this, or needs several build steps to generate/massage a web.xml file, then YMMV.
 
 Instead of a standard jetty script, I typically create a `Jetty` wrapper class directly in the project (either `src/main` or `src/bootstrap`) that resembles:
 
-    public class Jetty {
-        private static final Server SERVER = new Server();
+```java
+public class Jetty {
+    private static final Server SERVER = new Server();
 
-        public static void main(String[] args) {
-            String webapp = "./WebContent";
-            if (args.length > 0) {
-                webapp = args[0];
-            }
+    public static void main(String[] args) {
+        String webapp = "./WebContent";
+        if (args.length > 0) {
+            webapp = args[0];
+        }
 
-            WebAppContext app = new WebAppContext();
-            app.setContextPath("/yourapp");
-            app.setWar(webapp);
-            // Avoid the taglib configuration because its a PITA if you don't have a net connection
-            app.setConfigurationClasses(new String[] { WebInfConfiguration.class.getName(), WebXmlConfiguration.class.getName() });
-            app.setParentLoaderPriority(true);
+        WebAppContext app = new WebAppContext();
+        app.setContextPath("/yourapp");
+        app.setWar(webapp);
+        // Avoid the taglib configuration because its a PITA if you don't have a net connection
+        app.setConfigurationClasses(new String[] { WebInfConfiguration.class.getName(), WebXmlConfiguration.class.getName() });
+        app.setParentLoaderPriority(true);
 
-            // We explicitly use the SocketConnector because the SelectChannelConnector locks files
-            Connector connector = new SocketConnector();
-            connector.setPort(Integer.parseInt(System.getProperty("jetty.port", "8080")));
-            connector.setMaxIdleTime(60000);
+        // We explicitly use the SocketConnector because the SelectChannelConnector locks files
+        Connector connector = new SocketConnector();
+        connector.setPort(Integer.parseInt(System.getProperty("jetty.port", "8080")));
+        connector.setMaxIdleTime(60000);
 
-            Jetty.SERVER.setConnectors(new Connector[] { connector });
-            Jetty.SERVER.setHandlers(new Handler[] { app });
-            Jetty.SERVER.setAttribute("org.mortbay.jetty.Request.maxFormContentSize", 0);
-            Jetty.SERVER.setStopAtShutdown(true);
+        Jetty.SERVER.setConnectors(new Connector[] { connector });
+        Jetty.SERVER.setHandlers(new Handler[] { app });
+        Jetty.SERVER.setAttribute("org.mortbay.jetty.Request.maxFormContentSize", 0);
+        Jetty.SERVER.setStopAtShutdown(true);
 
-            try {
-                Jetty.SERVER.start();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+        try {
+            Jetty.SERVER.start();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
-{: class="brush:java"}
+}
+```
 
 And run this Java class from Eclipse with a `Jetty.launch` target. You'll need `jetty-6.X.jar` and `jetty-util-6.X.jar` on your classpath--either in `lib/main` or a `lib/bootstrap` as you won't need the Jetty jars ending up in your production war.
 

@@ -79,14 +79,15 @@ This is intuitive, because you want to ignore all of the commits in "develop" (u
 
 So, per their diagram, you commit on the hot fix branch, and merge it into both master and develop. It'd look like:
 
-    A --- C ---- F           develop
-     \          /
-      ..       /             (last release branch)
-       \      /
-        B -- E               master (release)
-         \  /
-          D                  hot fix
-{: class="brush:plain"}
+```plain
+A --- C ---- F           develop
+ \          /
+  ..       /             (last release branch)
+   \      /
+    B -- E               master (release)
+     \  /
+      D                  hot fix
+```
 
 Where `D` is the hot fix commit, and `E` is where it is merged into master (for release to production) and `F` is where it is merged into develop.
 
@@ -103,14 +104,15 @@ So, we need another place to branch from, that doesn't have the latest develop w
 
 E.g. we want the DAG to look like:
 
-    A --- C ----- F           develop
-    |\            |
-    | ..          |           (last release branch)
-    \  \          /
-     \  B -- E   /            master (release)
-      \     /   /
-       --- D --               hot fix
-{: class="brush:plain"}
+```plain
+A --- C ----- F           develop
+|\            |
+| ..          |           (last release branch)
+\  \          /
+ \  B -- E   /            master (release)
+  \     /   /
+   --- D --               hot fix
+```
 
 Where, again, the `D` is the hot fix (but branched off `A` instead of `B`), `E` is where we merged into master, and `F` into develop.
 
@@ -122,9 +124,10 @@ Turns out we can ask git. `A` is what git calls the merge base of develop and ma
 
 So, to make a hot fix branch off of `A` when develop has already moved on to `C`, we can run:
 
-    git checkout -b hot_fix_branch \
-      $(git merge-base origin/release origin/develop)
-{: class="brush:shell"}
+```shell
+git checkout -b hot_fix_branch \
+  $(git merge-base origin/release origin/develop)
+```
 
 This is admittedly not as simple as `-b hot_fix_branch master`, but it is still copy/paste-able and doesn't require the developer to manually identify the commit.
 

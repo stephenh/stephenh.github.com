@@ -8,15 +8,16 @@ layout: post
 
 [Quill](http://getquill.io/) looks like the latest "embedded SQL DSL" for Scala, and so far I think it looks fairly compelling:
 
-    case class Person(name: String, age: Int)
+```plain
+case class Person(name: String, age: Int)
 
-    val q = quote {
-      query[Person].filter { _.name == "John" }.map { _.age }
-    }
+val q = quote {
+  query[Person].filter { _.name == "John" }.map { _.age }
+}
 
-    // SELECT age FROM person WHERE name = 'John'
-    testDb.run(q)
-{: class="brush:plain"}
+// SELECT age FROM person WHERE name = 'John'
+testDb.run(q)
+```
 
 They even have compile-time validation of your queries against the database.
 

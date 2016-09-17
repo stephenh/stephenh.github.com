@@ -78,19 +78,20 @@ This is the build setup for my [pageobjects](https://github.com/stephenh/pageobj
 
 This is where dependencies are declared. The Ivy confs are a lot like Maven's scopes, so you can differentiate compile-time vs. build-time dependencies.
 
-    <ivy-module version="2.0">
-      <info organisation="com.bizo" module="pageobjects" revision="${version}"/>
-      <configurations>
-        <conf name="default" extends="compile"/>
-        <conf name="compile"/>
-        <conf name="sources"/>
-      </configurations>
-      <dependencies defaultconfmapping="%->default;sources->sources()">
-        <dependency org="org.seleniumhq.selenium" name="selenium" rev="r9790" conf="compile;sources" />
-        <dependency org="junit" name="junit" rev="4.8.1" conf="compile;sources" />
-      </dependencies>
-    </ivy-module>
-{: class="brush:xml"}
+```xml
+<ivy-module version="2.0">
+  <info organisation="com.bizo" module="pageobjects" revision="${version}"/>
+  <configurations>
+    <conf name="default" extends="compile"/>
+    <conf name="compile"/>
+    <conf name="sources"/>
+  </configurations>
+  <dependencies defaultconfmapping="%->default;sources->sources()">
+    <dependency org="org.seleniumhq.selenium" name="selenium" rev="r9790" conf="compile;sources" />
+    <dependency org="junit" name="junit" rev="4.8.1" conf="compile;sources" />
+  </dependencies>
+</ivy-module>
+```
 
 Things to note:
 
@@ -102,21 +103,22 @@ Things to note:
 
 Ivy uses a separate file to configure, among other things, the repositories you want to pull artifacts from. The `ibiblio` resolver works great for any Maven repository.
 
-    <ivysettings>
-      <settings defaultResolver="default"/>
-      <include url="${ivy.default.settings.dir}/ivysettings-public.xml"/>
-      <property name="version" value="SNAPSHOT" override="false"/>
-      <resolvers>
-        <ibiblio name="local-m2" m2compatible="true" root="file://${user.home}/.m2/repository" changingPattern=".*SNAPSHOT"/>
-        <ibiblio name="joist-m2" m2compatible="true" root="http://repo.joist.ws"/>
-        <chain name="default" changingPattern=".*SNAPSHOT">
-          <resolver ref="public"/>
-          <resolver ref="local-m2"/>
-          <resolver ref="joist-m2"/>
-        </chain>
-      </resolvers>
-    </ivysettings>
-{: class="brush:xml"}
+```xml
+<ivysettings>
+  <settings defaultResolver="default"/>
+  <include url="${ivy.default.settings.dir}/ivysettings-public.xml"/>
+  <property name="version" value="SNAPSHOT" override="false"/>
+  <resolvers>
+    <ibiblio name="local-m2" m2compatible="true" root="file://${user.home}/.m2/repository" changingPattern=".*SNAPSHOT"/>
+    <ibiblio name="joist-m2" m2compatible="true" root="http://repo.joist.ws"/>
+    <chain name="default" changingPattern=".*SNAPSHOT">
+      <resolver ref="public"/>
+      <resolver ref="local-m2"/>
+      <resolver ref="joist-m2"/>
+    </chain>
+  </resolvers>
+</ivysettings>
+```
 
 Things to note:
 
@@ -128,14 +130,15 @@ Things to note:
 
 This, of course, is the Eclipse classpath file.
 
-    <?xml version="1.0" encoding="UTF-8"?>
-    <classpath>
-      <classpathentry kind="src" path="src/main/java"/>
-      <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-      <classpathentry kind="con" path="org.apache.ivyde.eclipse.cpcontainer.IVYDE_CONTAINER/?ivyXmlPath=ivy.xml&amp;confs=*&amp;ivySettingsPath=%24%7Bworkspace_loc%3Apageobjects%2Fivysettings.xml%7D&amp;loadSettingsOnDemand=false&amp;propertyFiles="/>
-      <classpathentry kind="output" path="target/eclipse"/>
-    </classpath>
-{: class="brush:xml"}
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+  <classpathentry kind="src" path="src/main/java"/>
+  <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+  <classpathentry kind="con" path="org.apache.ivyde.eclipse.cpcontainer.IVYDE_CONTAINER/?ivyXmlPath=ivy.xml&amp;confs=*&amp;ivySettingsPath=%24%7Bworkspace_loc%3Apageobjects%2Fivysettings.xml%7D&amp;loadSettingsOnDemand=false&amp;propertyFiles="/>
+  <classpathentry kind="output" path="target/eclipse"/>
+</classpath>
+```
 
 Things to note:
 
@@ -145,30 +148,31 @@ Things to note:
 
 This is what drives the Buildr build. It's like a `build.xml` file, but written in Ruby, and baked by [Rake](http://rake.rubyforge.org/):
 
-    require 'buildr/ivy_extension'
+```ruby
+require 'buildr/ivy_extension'
 
-    VERSION_NUMBER = ENV['version'] || 'SNAPSHOT'
+VERSION_NUMBER = ENV['version'] || 'SNAPSHOT'
 
-    repositories.remote << "http://www.ibiblio.org/maven2/"
-    repositories.release_to = 'sftp://joist.ws/var/joist.repo'
-    repositories.release_to[:permissions] = 0644
+repositories.remote << "http://www.ibiblio.org/maven2/"
+repositories.release_to = 'sftp://joist.ws/var/joist.repo'
+repositories.release_to[:permissions] = 0644
 
-    # to resolve the ${version} in the ivy.xml
-    Java.java.lang.System.setProperty("version", VERSION_NUMBER)
+# to resolve the ${version} in the ivy.xml
+Java.java.lang.System.setProperty("version", VERSION_NUMBER)
 
-    define "pageobjects" do
-      project.version = VERSION_NUMBER
-      project.group = 'com.bizo'
-      ivy.compile_conf('compile')
+define "pageobjects" do
+  project.version = VERSION_NUMBER
+  project.group = 'com.bizo'
+  ivy.compile_conf('compile')
 
-      package_with_sources
+  package_with_sources
 
-      package(:jar).pom.tap do |pom|
-        pom.enhance [task('ivy:makepom')]
-        pom.from 'target/pom.xml'
-      end
-    end
-{: class="brush:ruby"}
+  package(:jar).pom.tap do |pom|
+    pom.enhance [task('ivy:makepom')]
+    pom.from 'target/pom.xml'
+  end
+end
+```
 
 Things to note:
 

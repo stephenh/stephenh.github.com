@@ -76,38 +76,40 @@ If I were to pick up VoltDB, I think I would try to keep a traditional domain mo
 
 So, if my middleware did something like:
 
-    orm.beginTxn();
+```scala
+orm.beginTxn();
 
-    // one call to VoltDB
-    val b1 = BankAccount.load(1);
-    b1.balance += 10;
+// one call to VoltDB
+val b1 = BankAccount.load(1);
+b1.balance += 10;
 
-    // another call to VoltDB
-    val b2 = BankAccount.load(2);
-    b2.balance -= 10;
+// another call to VoltDB
+val b2 = BankAccount.load(2);
+b2.balance -= 10;
 
-    // sends update b1 and b2 as 1 call/transaction
-    orm.commitTxn();
-{: class="brush:scala"}
+// sends update b1 and b2 as 1 call/transaction
+orm.commitTxn();
+```
 
 The UPDATEs for `b1` and `b2` would happen atomically.
 
 But what about read isolation? I think optimistic locking would work for this, e.g. the SQL on the wire would really be:
 
-    -- b1 = BankAccount.load(1)
-    SELECT id, balance, version FROM bank_account WHERE id = 1;
-    -- b1.balance += 10
+```sql
+-- b1 = BankAccount.load(1)
+SELECT id, balance, version FROM bank_account WHERE id = 1;
+-- b1.balance += 10
 
-    -- b2 = BankAccount.load(2)
-    SELECT id, balance, version FROM bank_account WHERE id = 2;
-    -- b2.balance += 10
+-- b2 = BankAccount.load(2)
+SELECT id, balance, version FROM bank_account WHERE id = 2;
+-- b2.balance += 10
 
-    -- orm.commitTxn
-    UPDATE bank_account SET balance = 20, version = 2
-      WHERE id = 1 AND version = 1;
-    UPDATE bank_account SET balance = 0, version = 3
-      WHERE id = 2 AND version = 2;
-{: class="brush:sql"}
+-- orm.commitTxn
+UPDATE bank_account SET balance = 20, version = 2
+  WHERE id = 1 AND version = 1;
+UPDATE bank_account SET balance = 0, version = 3
+  WHERE id = 2 AND version = 2;
+```
 
 So, now if anyone else has touched either `bank_account` in between my read and my write, the `version = 2` clause will fail, and I'd know the data is stale.
 

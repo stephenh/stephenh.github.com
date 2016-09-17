@@ -8,12 +8,13 @@ Scala Per-Instance Singletons
 
 I was reading about [Lift](http://liftweb.com) and came across a funky scala syntax:
 
-    class Foo {
-      object bar {
-        val name = "bob"
-      }
-    }
-{: class="brush:scala"}
+```scala
+class Foo {
+  object bar {
+    val name = "bob"
+  }
+}
+```
 
 This:
 
@@ -50,22 +51,24 @@ Looking at the decompiled code, it makes more sense:
             return bar$module;
         }
 
-        public int $tag() throws RemoteException {
-            return scala.ScalaObject.class.$tag(this);
-        }
+```java
+    public int $tag() throws RemoteException {
+        return scala.ScalaObject.class.$tag(this);
     }
-{: class="brush:java"}
+}
+```
 
 My one curiosity is the lack of synchronization in the lazy initialization. I don't know about the official Scala docs, but Lift insinuated an "inner object" declaration was a singleton, not a singleton-unless-you-have-lots-of-threads.
 
 If you use top-level `object` declarations, it seems to make more sense:
 
-    object Bar {
-      def zaz() = {
-        println("hi")
-      }
-    }
-{: class="brush:scala"}
+```scala
+object Bar {
+  def zaz() = {
+    println("hi")
+  }
+}
+```
 
 As this is decompiled to:
 
@@ -94,11 +97,12 @@ As this is decompiled to:
         Predef..MODULE$.println("hi");
       }
 
-      public int $tag() throws RemoteException {
-        return ScalaObject.class.$tag(this);
-      }
-    }
-{: class="brush:java"}
+```java
+  public int $tag() throws RemoteException {
+    return ScalaObject.class.$tag(this);
+  }
+}
+```
 
 This uses the `Bar$` static initializer to ensure there is just one instance of `Bar$`. Which works great.
 

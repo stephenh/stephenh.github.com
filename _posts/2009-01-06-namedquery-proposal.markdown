@@ -12,15 +12,16 @@ queries seems like an admirable goal.
 
 However, I would propose a different implementation: instead of the "name" part of the query being in an non-referrable annotation, the annotation should be used solely as a marker on an otherwise pure Java construct. For example:
 
-    @Sql
-    private static final String FIND_FOO = "select * from foo ...";
+```java
+@Sql
+private static final String FIND_FOO = "select * from foo ...";
 
-    public List&lt;Foo&gt; findFoo() {
-        Query q = em.createQuery(FIND_FOO);
-        q.setParameter(...);
-        return q.getResultList();
-    }
-{: class="brush:java"}
+public Lis<Foo> findFoo() {
+    Query q = em.createQuery(FIND_FOO);
+    q.setParameter(...);
+    return q.getResultList();
+}
+```
 
 This would alleviate my concerns about type-safety and SQL encapsulation, but still allow the `EntityManager` to find all of the annotated queries on startup for validation.
 

@@ -22,37 +22,39 @@ Note that the places we use this are very limited/special, so we're assuming the
 Anyway, here's the code:
 
 
-    public static String replaceBetween(
-        final String s,
-        final String startToken,
-        final String endToken,
-        final String replacement) {
-      final int i = s.indexOf(startToken);
-      final int j = s.indexOf(endToken, i + startToken.length());
-      return s.substring(0, i + startToken.length())
-        + replacement
-        + s.substring(j);
-    }
-{: class="brush:java"}
+```java
+public static String replaceBetween(
+    final String s,
+    final String startToken,
+    final String endToken,
+    final String replacement) {
+  final int i = s.indexOf(startToken);
+  final int j = s.indexOf(endToken, i + startToken.length());
+  return s.substring(0, i + startToken.length())
+    + replacement
+    + s.substring(j);
+}
+```
 
 Bad Test
 --------
 
 So, this is the test I started out with:
 
-    @Test
-    public void testReplaceBetween() {
-      assertThat(
-        replaceBetween("one two three four", "two", "three", "!"),
-        is("one two!three four"));
-      assertThat(
-        replaceBetween("aaaabccaa", "b", "a", "CC"),
-        is("aaaabCCaa"));
-      assertThat(
-        replaceBetween("starttoken ... tend", "starttoken", "t", " !!! "),
-        is("starttoken !!! tend"));
-    }
-{: class="brush:java"}
+```java
+@Test
+public void testReplaceBetween() {
+  assertThat(
+    replaceBetween("one two three four", "two", "three", "!"),
+    is("one two!three four"));
+  assertThat(
+    replaceBetween("aaaabccaa", "b", "a", "CC"),
+    is("aaaabCCaa"));
+  assertThat(
+    replaceBetween("starttoken ... tend", "starttoken", "t", " !!! "),
+    is("starttoken !!! tend"));
+}
+```
 
 This test covers 3 boundary cases that I cared about, but while setting up the review, I found several things confusing about it:
 
@@ -67,27 +69,28 @@ Good Test
 
 This is what I ended up refactoring the test to:
 
-    @Test
-    public void testReplaceBetween() {
-      assertThat(
-        replaceBetween("start middle end", "start", "end", "!"),
-        is("start!end"));
-    }
+```java
+@Test
+public void testReplaceBetween() {
+  assertThat(
+    replaceBetween("start middle end", "start", "end", "!"),
+    is("start!end"));
+}
 
-    @Test
-    public void testWhenEndTokenIsAlsoBeforeTheStartToken() {
-      assertThat(
-        replaceBetween("end start middle end", "start", "end", "!"),
-        is("end start!end"));
-    }
+@Test
+public void testWhenEndTokenIsAlsoBeforeTheStartToken() {
+  assertThat(
+    replaceBetween("end start middle end", "start", "end", "!"),
+    is("end start!end"));
+}
 
-    @Test
-    public void testWhenEndTokenIsWithinTheStartToken() {
-      assertThat(
-        replaceBetween("startendstart middle end", "startendstart", "end", "!"),
-        is("startendstart!end"));
-    }
-{: class="brush:java"}
+@Test
+public void testWhenEndTokenIsWithinTheStartToken() {
+  assertThat(
+    replaceBetween("startendstart middle end", "startendstart", "end", "!"),
+    is("startendstart!end"));
+}
+```
 
 I think this version is demonstrably better:
 

@@ -22,16 +22,17 @@ GWT uses Ant/`javac` to build, with the `-source 1.6` and `-target 1.6` flags se
 
 However, when running this built-with-1.8 version GWT on a JDK 1.7 JVMs, an exception occurred:
 
-    Caused by: java.lang.ClassNotFoundException: java.lang.reflect.Executable
-      at java.net.URLClassLoader$1.run(URLClassLoader.java:366)
-      at java.net.URLClassLoader$1.run(URLClassLoader.java:355)
-      at java.security.AccessController.doPrivileged(Native Method)
-      at java.net.URLClassLoader.findClass(URLClassLoader.java:354)
-      at java.lang.ClassLoader.loadClass(ClassLoader.java:425)
-      at sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:308)
-      at java.lang.ClassLoader.loadClass(ClassLoader.java:358)
-      at com.google.gwt.dev.shell.JavaDispatchImpl.getMethod(JavaDispatchImpl.java:122)
-{: class="brush:bash"}
+```bash
+Caused by: java.lang.ClassNotFoundException: java.lang.reflect.Executable
+  at java.net.URLClassLoader$1.run(URLClassLoader.java:366)
+  at java.net.URLClassLoader$1.run(URLClassLoader.java:355)
+  at java.security.AccessController.doPrivileged(Native Method)
+  at java.net.URLClassLoader.findClass(URLClassLoader.java:354)
+  at java.lang.ClassLoader.loadClass(ClassLoader.java:425)
+  at sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:308)
+  at java.lang.ClassLoader.loadClass(ClassLoader.java:358)
+  at com.google.gwt.dev.shell.JavaDispatchImpl.getMethod(JavaDispatchImpl.java:122)
+```
 
 Normally these sorts of errors are expected when a library uses new JDK 1.8  methods/classes. Then all downstream users also have to use JDK 1.8. 
 
@@ -57,22 +58,23 @@ A cursory `javap -c -constants` of every GWT `.class` file showed no reference, 
 
 Looking back at the offending stack trace, the last method in the stack trace, `JavaDispatchImpl.getMethod` looks innocent:
 
-    @Override
-    public MethodAdaptor getMethod(int dispId) {
-      if (dispId < 0) {
-        throw new RuntimeException("Method does not exist.");
-      }
+```java
+@Override
+public MethodAdaptor getMethod(int dispId) {
+  if (dispId < 0) {
+    throw new RuntimeException("Method does not exist.");
+  }
 
-      Member m = getMember(dispId);
-      if (m instanceof Method) {
-        return new MethodAdaptor((Method) m);
-      } else if (m instanceof Constructor<?>) {
-        return new MethodAdaptor((Constructor<?>) m);
-      } else {
-        throw new RuntimeException();
-      }
-    }
-{: class="brush:java"}
+  Member m = getMember(dispId);
+  if (m instanceof Method) {
+    return new MethodAdaptor((Method) m);
+  } else if (m instanceof Constructor<?>) {
+    return new MethodAdaptor((Constructor<?>) m);
+  } else {
+    throw new RuntimeException();
+  }
+}
+```
 
 The `instanceof Method` check passes as true, but the stack trace doesn't get into `MethodAdaptor`, it first goes off and loads `Executable`, which fails and we end up stuck.
 
@@ -83,35 +85,37 @@ Given the JVM was about to call into `MethodAdaptor`, and that it typically load
 
 It turns out `javap` has a verbose flag, so trying that:
 
-    javap -s -constants -c -v ./com/google/gwt/dev/shell/MethodAdaptor.class 
-{: class="brush:bash"}
+```bash
+javap -s -constants -c -v ./com/google/gwt/dev/shell/MethodAdaptor.class 
+```
 
 Resulted in a lot of interesting output, but most pertinently, we finally found the smoking gun:
 
-    public java.lang.reflect.AccessibleObject getUnderlyingObject();
-      descriptor: ()Ljava/lang/reflect/AccessibleObject;
-      flags: ACC_PUBLIC
-      Code:
-        stack=1, locals=1, args_size=1
-           0: aload_0       
-           1: getfield      #3                  // Field method:Ljava/lang/reflect/Method;
-           4: ifnull        14
-           7: aload_0       
-           8: getfield      #3                  // Field method:Ljava/lang/reflect/Method;
-          11: goto          18
-          14: aload_0       
-          15: getfield      #2                  // Field constructor:Ljava/lang/reflect/Constructor;
-          18: areturn       
-        LineNumberTable:
-          line 91: 0
-        LocalVariableTable:
-          Start  Length  Slot  Name   Signature
-              0      19     0  this   Lcom/google/gwt/dev/shell/MethodAdaptor;
-        StackMapTable: number_of_entries = 2
-             frame_type = 14 /* same */
-             frame_type = 67 /* same_locals_1_stack_item */
-            stack = [ class java/lang/reflect/Executable ]
-{: class="brush:bash"}
+```bash
+public java.lang.reflect.AccessibleObject getUnderlyingObject();
+  descriptor: ()Ljava/lang/reflect/AccessibleObject;
+  flags: ACC_PUBLIC
+  Code:
+    stack=1, locals=1, args_size=1
+       0: aload_0       
+       1: getfield      #3                  // Field method:Ljava/lang/reflect/Method;
+       4: ifnull        14
+       7: aload_0       
+       8: getfield      #3                  // Field method:Ljava/lang/reflect/Method;
+      11: goto          18
+      14: aload_0       
+      15: getfield      #2                  // Field constructor:Ljava/lang/reflect/Constructor;
+      18: areturn       
+    LineNumberTable:
+      line 91: 0
+    LocalVariableTable:
+      Start  Length  Slot  Name   Signature
+          0      19     0  this   Lcom/google/gwt/dev/shell/MethodAdaptor;
+    StackMapTable: number_of_entries = 2
+         frame_type = 14 /* same */
+         frame_type = 67 /* same_locals_1_stack_item */
+        stack = [ class java/lang/reflect/Executable ]
+```
 
 Notice the very last line: `stack = [ class java/lang/reflect/Executable ]`.
 
@@ -119,10 +123,11 @@ What?!
 
 Here is the source of `getUnderlingObject`:
 
-    public AccessibleObject getUnderlyingObject() {
-      return (method != null) ? method : constructor;
-    }
-{: class="brush:java"}
+```java
+public AccessibleObject getUnderlyingObject() {
+  return (method != null) ? method : constructor;
+}
+```
 
 It's very tiny. And no reference to `Executable`.
 
@@ -143,72 +148,78 @@ Okay, so, sure, this problem happens in the large GWT codebase, but can we repro
 
 It turns out, yes, it's very easy. Here is a simple, standalone Java file to reproduce this behavior, `Foo.java`:
 
-    import java.lang.reflect.AccessibleObject;
-    import java.lang.reflect.Method;
-    import java.lang.reflect.Constructor;
+```java
+import java.lang.reflect.AccessibleObject;
+import java.lang.reflect.Method;
+import java.lang.reflect.Constructor;
 
-    public class Foo {
-      private Method method;
-      private Constructor constructor;
+public class Foo {
+  private Method method;
+  private Constructor constructor;
 
-      public static void main(String[] args) throws Exception {
-        Foo f = new Foo();
-        System.out.println("done");
-      }
+  public static void main(String[] args) throws Exception {
+    Foo f = new Foo();
+    System.out.println("done");
+  }
 
-      public Foo() throws Exception {
-        Class<?> c = Class.forName("java.util.HashMap");
-        method = c.getMethods()[0];
-        constructor = c.getConstructors()[0];
-      }
+  public Foo() throws Exception {
+    Class<?> c = Class.forName("java.util.HashMap");
+    method = c.getMethods()[0];
+    constructor = c.getConstructors()[0];
+  }
 
-      public AccessibleObject pickOne() {
-        return method != null ? method : constructor;
-      }
-    }
-{: class="brush:java"}
+  public AccessibleObject pickOne() {
+    return method != null ? method : constructor;
+  }
+}
+```
 
 So, we'll start out compiling with JDK 1.8:
 
-    $ javac -version
-    javac 1.8.0
-    $ javac Foo.java
-    $ java Foo
-    done
-{: class="brush:bash"}
+```bash
+$ javac -version
+javac 1.8.0
+$ javac Foo.java
+$ java Foo
+done
+```
 
 It compiles. And, if we look at the bytecode, our stack verification data looks just fine:
 
-    $ javap -v Foo | grep 'stack ='
-          stack = [ class java/lang/reflect/AccessibleObject 
-{: class="brush:bash"}
+```bash
+$ javap -v Foo | grep 'stack ='
+      stack = [ class java/lang/reflect/AccessibleObject 
+```
 
 It's using `AccessibleObject`, which will work in a JDK 1.7 JVM.
 
 However, when we run `Foo` when JDK 1.7, it actually fails, although due to the typical `major.minor` mismatch error:
 
-    $ /usr/lib/jvm/java-7-oracle/bin/java Foo
-    Exception in thread "main" java.lang.UnsupportedClassVersionError: Foo :
-      Unsupported major.minor version 52.0
-{: class="brush:bash"}
+```bash
+$ /usr/lib/jvm/java-7-oracle/bin/java Foo
+Exception in thread "main" java.lang.UnsupportedClassVersionError: Foo :
+  Unsupported major.minor version 52.0
+```
 
 Okay, fair enough, so let's compile with `-source 1.7` and `-target 1.7`:
 
-    $ javac -version
-    javac 1.8.0
-    $ javac -source 1.7 -target 1.7
-    warning: [options] bootstrap class path not set in conjunction with -source 1.7
-    $ java Foo
-    done
-    $ /usr/lib/jvm/java-7-oracle/bin/java Foo
-    Exception in thread "main" java.lang.NoClassDefFoundError: java/lang/reflect/Executable
-{: class="brush:bash"}
+```bash
+$ javac -version
+javac 1.8.0
+$ javac -source 1.7 -target 1.7
+warning: [options] bootstrap class path not set in conjunction with -source 1.7
+$ java Foo
+done
+$ /usr/lib/jvm/java-7-oracle/bin/java Foo
+Exception in thread "main" java.lang.NoClassDefFoundError: java/lang/reflect/Executable
+```
 
 Agh! It worked fine, until we ran with JDK 1.7, and we got the `Executable` error. And, sure enough, the offending `Executable` reference is back in the bytecode:
 
-    $ javap -v Foo | grep 'stack ='
-          stack = [ class java/lang/reflect/Executable 
-{: class="brush:bash"}
+```bash
+$ javap -v Foo | grep 'stack ='
+      stack = [ class java/lang/reflect/Executable 
+```
 
 It seems like the JDK 1.8 compiler must have different algorithms for calculating the Stack Map Table, and when set to `-source 1.7`, it changes to an algorithm, that, ironically, picks a different type (`Executable` instead of `AccessibleObject`) for the table even though that type won't be available on JDK 1.7.
 
@@ -223,22 +234,24 @@ The `javac` compiler, understandably, doesn't really have this "what's in 1.7 vs
 
 And, it turns out, if we heed the warning and use the bootstrap classpath:
 
-    $ javac -version
-    1.8.0
-    $ javac -source 1.7 -target 1.7 -bootclasspath /usr/lib/jvm/java-7-oracle/jre/lib/rt.jar Foo.java 
-    $ java Foo
-    done
-    $ /usr/lib/jvm/java-7-oracle/bin/java Foo
-    done
-{: class="brush:bash"}
+```bash
+$ javac -version
+1.8.0
+$ javac -source 1.7 -target 1.7 -bootclasspath /usr/lib/jvm/java-7-oracle/jre/lib/rt.jar Foo.java 
+$ java Foo
+done
+$ /usr/lib/jvm/java-7-oracle/bin/java Foo
+done
+```
 
 Then order is restored to the world, and we can run 1.8-compiled classes on both JDK 1.8 and JDK 1.7.
 
 The bytecode has gone back to only knowing about `AccessibleObject`:
 
-    $ javap -v Foo | grep 'stack ='
-          stack = [ class java/lang/reflect/AccessibleObject 
-{: class="brush:bash"}
+```bash
+$ javap -v Foo | grep 'stack ='
+      stack = [ class java/lang/reflect/AccessibleObject 
+```
 
 As (I assume), even though `javac` is using it's "JDK 1.7" algorithm for the Stack Map Table, `Executable` isn't even on the classpath at all, for it to find and reference. So the algorithm ends up with `AccessibleObject` instead, which is what we want.
 

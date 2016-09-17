@@ -31,57 +31,58 @@ Since GWT itself does not put interfaces between your code and the browser, GWT 
 
 To show an example, a regular form that would edit a `Foo` object in GWT MVP is usually a `FooPresenter`/`FooView` pair that looks something like:
 
-    public class FooPresenter extends BasicPresenter<Display> {
-      // inner-interface defines the UI contract
-      // our FooPresenter modifies
-      public interface Display {
-        // these HasXxx are all interfaces
-        HasValue nameField();
-        HasValue descriptionField();
-        HasClickHandlers saveButton();
-      }
+```java
+public class FooPresenter extends BasicPresenter<Display> {
+  // inner-interface defines the UI contract
+  // our FooPresenter modifies
+  public interface Display {
+    // these HasXxx are all interfaces
+    HasValue nameField();
+    HasValue descriptionField();
+    HasClickHandlers saveButton();
+  }
 
-      private final Foo foo;
+  private final Foo foo;
 
-      public FooPresenter(Display display, Foo foo) {
-        // display is an implementation of our view, either
-        // provided by the real view that uses GWT widgets
-        // (typically named FooView) or a mock/stub
-        super(display);
-        this.foo = foo;
-      }
+  public FooPresenter(Display display, Foo foo) {
+    // display is an implementation of our view, either
+    // provided by the real view that uses GWT widgets
+    // (typically named FooView) or a mock/stub
+    super(display);
+    this.foo = foo;
+  }
 
-      // Called when the page/tab for our foo loads
-      public void onBind() {
-        // hook up business logic to the display's
-        // HasXxx interfaces
-        display.nameField().setText(foo.getName());
-        display.nameField().addValueChangeHandler(new OnNameChanged());
-        display.descriptionField().setText(foo.getDescription());
-        display.descriptionField().addValueChangeHandler(new OnDescriptionChanged());
-      }
+  // Called when the page/tab for our foo loads
+  public void onBind() {
+    // hook up business logic to the display's
+    // HasXxx interfaces
+    display.nameField().setText(foo.getName());
+    display.nameField().addValueChangeHandler(new OnNameChanged());
+    display.descriptionField().setText(foo.getDescription());
+    display.descriptionField().addValueChangeHandler(new OnDescriptionChanged());
+  }
 
-      private class OnNameChanged implements ValueChangedHandler<String> {
-        public void onChange(String newValue) {
-          foo.setName(newValue);
-        }
-      }
-
-      private class OnDescriptionChanged implements ValueChangedHandler<String> {
-        // etc.
-      }
+  private class OnNameChanged implements ValueChangedHandler<String> {
+    public void onChange(String newValue) {
+      foo.setName(newValue);
     }
+  }
 
-    public class FooView implements FooPresenter.Display {
-      // uibinder code...
-      @UiField
-      TextBox nameField;
+  private class OnDescriptionChanged implements ValueChangedHandler<String> {
+    // etc.
+  }
+}
 
-      public nameField() {
-        return nameField;
-      }
-    }
-{: class="brush:java"}
+public class FooView implements FooPresenter.Display {
+  // uibinder code...
+  @UiField
+  TextBox nameField;
+
+  public nameField() {
+    return nameField;
+  }
+}
+```
 
 The idea is that the `Display` interface is easily mockable, so you can write a `FooPresenterTest` that creates a mock `Display`, with mock `HasValue`/etc., and test all of your `FooPresenter` business logic without actually using any GWT widgets that would require running in a browser environment (like `GWTTestCase`).
 
@@ -101,44 +102,45 @@ Instead, the usual MVP approach is to use a `TableModel`. The presenter gathers 
 
 One of the GWT examples uses a `List<String[]>` as a very naive `TableModel`, but it works well to show the basic idea:
 
-    // displays a parent and its list of Foo children
-    public class ParentPresenter extends BasicPresenter<Display> {
-      public interface Display {
-        void setData(List<String[]> model);
-      }
+```java
+// displays a parent and its list of Foo children
+public class ParentPresenter extends BasicPresenter<Display> {
+  public interface Display {
+    void setData(List<String[]> model);
+  }
 
-      private final Parent parent; // set by constructor
+  private final Parent parent; // set by constructor
 
-      // Called when the page/tab for our parent loads
-      public void onBind() {
-        List<String[]> model = new ArrayList<String[]>();
-        for (Foo foo : parent.getFoos()) {
-          model.add(newLine(foo));
-        }
-        display.setData(model);
-      }
-
-      // translate Foo domain object into strings for each cell
-      private String[] newLine(Foo foo) {
-        return new String[] { foo.getName(), foo.getDescription() };
-      }
+  // Called when the page/tab for our parent loads
+  public void onBind() {
+    List<String[]> model = new ArrayList<String[]>();
+    for (Foo foo : parent.getFoos()) {
+      model.add(newLine(foo));
     }
+    display.setData(model);
+  }
 
-    public class ParentView implements ParentPresenter.Display {
-      // uibinder code...
-      @UiField
-      HTMLTable table;
-      public void setData(List<String[]> model) {
-        table.resizeRows(model.size());
-        int i = 0;
-        for (String[] row : model) {
-          table.setText(i, 0, row[0]);
-          table.setText(i, 1, row[1]);
-          i++;
-        }
-      }
+  // translate Foo domain object into strings for each cell
+  private String[] newLine(Foo foo) {
+    return new String[] { foo.getName(), foo.getDescription() };
+  }
+}
+
+public class ParentView implements ParentPresenter.Display {
+  // uibinder code...
+  @UiField
+  HTMLTable table;
+  public void setData(List<String[]> model) {
+    table.resizeRows(model.size());
+    int i = 0;
+    for (String[] row : model) {
+      table.setText(i, 0, row[0]);
+      table.setText(i, 1, row[1]);
+      i++;
     }
-{: class="brush:java"}
+  }
+}
+```
 
 The GWT incubator has a much more powerful, elaborate `TableModel` for their [`PagingScrollTable`](http://code.google.com/p/google-web-toolkit-incubator/wiki/PagingScrollTable) that is worth checking out if this approach works for you.
 
@@ -164,31 +166,32 @@ I looked at [Hupa](http://james.apache.org/hupa/index.html) and others, but did 
 
 There is an idiom where you can attach a listener to the entire table, and then ask the view to derive which element it is for:
 
-    public class ParentPresenter extends BasicPresenter<Display> {
-      public interface Display {
-        // fired for any click anywhere in the table
-        HasClickHandlers tableClicked();
-        // translate event -> int
-        int getRowForClick(ClickEvent event);
-        // then any changing row method requires an int
-        changeStyle(int row, String otherParams);
-      }
+```java
+public class ParentPresenter extends BasicPresenter<Display> {
+  public interface Display {
+    // fired for any click anywhere in the table
+    HasClickHandlers tableClicked();
+    // translate event -> int
+    int getRowForClick(ClickEvent event);
+    // then any changing row method requires an int
+    changeStyle(int row, String otherParams);
+  }
 
-      public void onBind() {
-        display.tableClicked().addClickHandler(new OnTableClick());
-      }
+  public void onBind() {
+    display.tableClicked().addClickHandler(new OnTableClick());
+  }
 
-      private class OnTableClick implements ClickHandler {
-        public void onClick(ClickEvent event) {
-          int row = display.getRowForClick(event);
-          if (row != -1) {
-            // perform action against row
-            display.changeStyle(row, "foo");
-          }
-        }
+  private class OnTableClick implements ClickHandler {
+    public void onClick(ClickEvent event) {
+      int row = display.getRowForClick(event);
+      if (row != -1) {
+        // perform action against row
+        display.changeStyle(row, "foo");
       }
     }
-{: class="brush:java"}
+  }
+}
+```
 
 However this seems less than ideal to me. The view becomes more complicated, and the presenter no longer has concrete `HasXxx` interfaces that are easy to wire up and stub out. There is also no clear place to store per-cell/per-row state, except perhaps in maps or other fields in the parent presenter.
 
@@ -201,30 +204,31 @@ It also fits very nicely with the GWT `HTMLTable` API, which is all about cells 
 
 This approach would look something like:
 
-    public class ParentPresenter extends BasicPresenter<Display> {
-      public interface Display {
-        void setCell(int row, int column, WidgetDisplay display);
-      }
+```java
+public class ParentPresenter extends BasicPresenter<Display> {
+  public interface Display {
+    void setCell(int row, int column, WidgetDisplay display);
+  }
 
-      public void onBind() {
-        int i = 0;
-        for (Foo foo : parent.getFoos()) {
-          display.setCell(i, 0, new CellOnePresenter(foo).getDisplay());
-          display.setCell(i, 1, new CellTwoPresenter(foo).getDisplay());
-          i++;
-        }
-      }
+  public void onBind() {
+    int i = 0;
+    for (Foo foo : parent.getFoos()) {
+      display.setCell(i, 0, new CellOnePresenter(foo).getDisplay());
+      display.setCell(i, 1, new CellTwoPresenter(foo).getDisplay());
+      i++;
     }
-    
-    public class ParentView implements ParentPresenter.Display {
-      // uibinder code...
-      @UiField
-      HTMLTable fooTable;
-      public void setCell(int row, int column, WidgetDisplay display) {
-        fooTable.setWidget(row, column, display.asWidget());
-      }
-    }
-{: class="brush:java"}
+  }
+}
+
+public class ParentView implements ParentPresenter.Display {
+  // uibinder code...
+  @UiField
+  HTMLTable fooTable;
+  public void setCell(int row, int column, WidgetDisplay display) {
+    fooTable.setWidget(row, column, display.asWidget());
+  }
+}
+```
 
 Just looking at this example, it doesn't seem that bad. I thought it'd work out nicely.
 
@@ -241,88 +245,91 @@ A dashboard-style table is not really a table--it's a vertical listing of per-ro
 
 A per-row presenter, with its parent presenter as well, would look like:
 
-    public interace HasRows {
-      void addRow(WidgetDisplay display);
-    }
+```java
+public interace HasRows {
+  void addRow(WidgetDisplay display);
+}
 
-    // this is the parent presenter which
-    // has the dashboard on its page
-    public class ParentPresenter extends BasicPresenter<Display> {
-      public interface Display {
-        HasRows dashboard();
-      }
-      public void onBind() {
-        for (Foo foo : parent.getFoos()) {
-          FooRowPresenter p = new FooRowPresenter(foo);
-          display.dashboard().addRow(p.getDisplay());
-        }
-      }
+// this is the parent presenter which
+// has the dashboard on its page
+public class ParentPresenter extends BasicPresenter<Display> {
+  public interface Display {
+    HasRows dashboard();
+  }
+  public void onBind() {
+    for (Foo foo : parent.getFoos()) {
+      FooRowPresenter p = new FooRowPresenter(foo);
+      display.dashboard().addRow(p.getDisplay());
     }
+  }
+}
 
-    // this is the per-row presenter that will be instantiated once-per-Foo
-    // and have its view added to the parent's dashboard table
-    public class FooRowPresenter extends BasicPresenter<Display> {
-      // here are the per-row HasXxx interfaces
-      public interface Display {
-        HasCss columnCss();
-        HasText nameCellText();
-        HasText descriptionCellText();
-        HasClickHandlers actionFooLink();
-      }
-      private final Foo foo; // set by constructor
-      public void onBind() {
-        // finally here is our per-row business logic
-        display.nameCellText().setText(foo.getName());
-        display.descriptionCellText().setText(foo.getDescription());
-        display.actionFooLink().addClickHandler(new OnActionClick());
-      }
-      private class OnActionClick implements ClickHandler {
-        public void onClick(ClickEvent click) {
-          // hit server, etc.
-          display.columnCss().addStyleName("nowRed");
-        }
-      }
+// this is the per-row presenter that will be instantiated once-per-Foo
+// and have its view added to the parent's dashboard table
+public class FooRowPresenter extends BasicPresenter<Display> {
+  // here are the per-row HasXxx interfaces
+  public interface Display {
+    HasCss columnCss();
+    HasText nameCellText();
+    HasText descriptionCellText();
+    HasClickHandlers actionFooLink();
+  }
+  private final Foo foo; // set by constructor
+  public void onBind() {
+    // finally here is our per-row business logic
+    display.nameCellText().setText(foo.getName());
+    display.descriptionCellText().setText(foo.getDescription());
+    display.actionFooLink().addClickHandler(new OnActionClick());
+  }
+  private class OnActionClick implements ClickHandler {
+    public void onClick(ClickEvent click) {
+      // hit server, etc.
+      display.columnCss().addStyleName("nowRed");
     }
-{: class="brush:java"}
+  }
+}
+```
 
 As far as how each row's concrete view class is implemented, I did some hacking so that the entire row has its own UiBinder file. E.g. `FooRowView.ui.xml` might look like:
 
-    <ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder' xmlns:gwt='urn:import:com.google.gwt.user.client.ui'>
-      <gwt:HTMLPanel tag="table">
-        <tr ui:field="column">
-          <td ui:field="nameCell" />
-          <td ui:field="descriptionCell" />
-          <td><gwt:Anchor ui:field="actionFoo"/></td>
-        </tr>
-      </gwt:HTMLPanel>
-    </ui:UiBinder>
-{: class="brush:xml"}
+```xml
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder' xmlns:gwt='urn:import:com.google.gwt.user.client.ui'>
+  <gwt:HTMLPanel tag="table">
+    <tr ui:field="column">
+      <td ui:field="nameCell" />
+      <td ui:field="descriptionCell" />
+      <td><gwt:Anchor ui:field="actionFoo"/></td>
+    </tr>
+  </gwt:HTMLPanel>
+</ui:UiBinder>
+```
 
 This `ui.xml` file initially looks a little odd because each row has its own `<table>` tag--however, this is just a necessary hack because `HTMLPanel` does not like its `tag` attribute to be set to `tr`. I guess when browsers do `innerHTML`, they don't like a `tr` running around without its parent `table`.
 
 So, to get around this, plus `HTMLTable`'s lack of a per-row API, I wrote a `RowTable` widget that knows how to assemble rows (not cells) of content:
 
-    public class RowTable extends Panel implements HasRows {
-      // copy/paste some boilerplate from HTMLTable
+```java
+public class RowTable extends Panel implements HasRows {
+  // copy/paste some boilerplate from HTMLTable
 
-      // here is the key method--display is the HTMLPanel
-      // with tag=table from FooRowView.ui.xml
-      public void addRow(final WidgetDisplay display) {
-        // get actual widget from the view interface
-        Widget widget = display.asWidget();
-        // Detaches if necessary
-        widget.removeFromParent();
-        // Logical attach
-        rows.add(widget);
-        // Physical attach (all TRs)
-        final NodeList<Element> nodes = widget.getElement().getElementsByTagName("TR");
-        for (int i = 0; i < nodes.getLength(); i++) {
-          bodyElement.appendChild(nodes.getItem(i));
-        }
-        // Adopt
-        adopt(widget);
-      }
-{: class="brush:java"}
+  // here is the key method--display is the HTMLPanel
+  // with tag=table from FooRowView.ui.xml
+  public void addRow(final WidgetDisplay display) {
+    // get actual widget from the view interface
+    Widget widget = display.asWidget();
+    // Detaches if necessary
+    widget.removeFromParent();
+    // Logical attach
+    rows.add(widget);
+    // Physical attach (all TRs)
+    final NodeList<Element> nodes = widget.getElement().getElementsByTagName("TR");
+    for (int i = 0; i < nodes.getLength(); i++) {
+      bodyElement.appendChild(nodes.getItem(i));
+    }
+    // Adopt
+    adopt(widget);
+  }
+```
 
 So, we logically attach the entire `HTMLPanel` widget (to get the usual `Widget`/`attach` magic), but for physically attaching we raid the `HTMLPanel`'s table element of all of its `TR` elements (which should be just one given this display is for one row) and append them to our own `bodyElement`.
 

@@ -17,26 +17,27 @@ A Sample Test
 
 So, here's a sample spec-based test that we'd like to run with Eclipse:
 
-    import org.junit.runner.RunWith
-    import org.scalatest.Spec
-    import org.scalatest.matchers.MustMatchers
+```scala
+import org.junit.runner.RunWith
+import org.scalatest.Spec
+import org.scalatest.matchers.MustMatchers
 
-    @RunWith(classOf[JUnit4Runner])
-    class ZazTest extends Spec with MustMatchers {
-      describe("something") {
-        it("should do something fancy") {
-          println("fancy")
-        }
-        it ("should do something plain") {
-          println("plain")
-        }
-        it ("should also fail") {
-          println("fail")
-          1 must equal (2)
-        }
-      }
+@RunWith(classOf[JUnit4Runner])
+class ZazTest extends Spec with MustMatchers {
+  describe("something") {
+    it("should do something fancy") {
+      println("fancy")
     }
-{: class="brush:scala"}
+    it ("should do something plain") {
+      println("plain")
+    }
+    it ("should also fail") {
+      println("fail")
+      1 must equal (2)
+    }
+  }
+}
+```
 
 Note the `"should do something fancy"` test names that JUnit really isn't going to understand (because they are not methods, they're anonymous inner classes ScalaTest keeps track of in an internal data structure).
 
@@ -49,50 +50,51 @@ The `JUnit4Runner` then just has to translate a JUnit run into something the Spe
 
 This turned out to be not that bad:
 
-    import org.junit.runner.{Description => JuDescription}
-    import org.junit.runner.{Runner => JuRunner}
-    import org.junit.runner.notification.{Failure => JuFailure}
-    import org.junit.runner.notification.{RunNotifier => JuRunNotifer}
-    import org.junit.runners.{Suite => JuSuite}
-    import org.scalatest.{Filter => StFilter}
-    import org.scalatest.{Reporter => StReporter}
-    import org.scalatest.{Stopper => StStopper}
-    import org.scalatest.{Suite => StSuite}
-    import org.scalatest.{Tracker => StTracker}
-    import org.scalatest.events._
+```scala
+import org.junit.runner.{Description => JuDescription}
+import org.junit.runner.{Runner => JuRunner}
+import org.junit.runner.notification.{Failure => JuFailure}
+import org.junit.runner.notification.{RunNotifier => JuRunNotifer}
+import org.junit.runners.{Suite => JuSuite}
+import org.scalatest.{Filter => StFilter}
+import org.scalatest.{Reporter => StReporter}
+import org.scalatest.{Stopper => StStopper}
+import org.scalatest.{Suite => StSuite}
+import org.scalatest.{Tracker => StTracker}
+import org.scalatest.events._
 
-    class JUnit4Runner(val testClass: Class[_]) extends JuSuite(testClass, new java.util.ArrayList[JuRunner]()) {
-      val suite = testClass.newInstance.asInstanceOf[StSuite]
-      suite.testNames.foreach((testName) => getChildren.add(new TestAdapter(this, testName)))
-    }
+class JUnit4Runner(val testClass: Class[_]) extends JuSuite(testClass, new java.util.ArrayList[JuRunner]()) {
+  val suite = testClass.newInstance.asInstanceOf[StSuite]
+  suite.testNames.foreach((testName) => getChildren.add(new TestAdapter(this, testName)))
+}
 
-    class TestAdapter(runner: JUnit4Runner, testName: String) extends JuRunner {
-      override def run(notifier: JuRunNotifer): Unit = {
-        val reporter = new ReporterAdapter(this, notifier)
-        val stopper = new StopperAdapter
-        val filter = new StFilter(None, Set())
-        val tracker = new StTracker()
-        runner.suite.run(Some(testName), reporter, stopper, filter, Map(), None, tracker)
-      }
-      override def getDescription() = JuDescription.createTestDescription(runner.testClass, testName)
-    }
+class TestAdapter(runner: JUnit4Runner, testName: String) extends JuRunner {
+  override def run(notifier: JuRunNotifer): Unit = {
+    val reporter = new ReporterAdapter(this, notifier)
+    val stopper = new StopperAdapter
+    val filter = new StFilter(None, Set())
+    val tracker = new StTracker()
+    runner.suite.run(Some(testName), reporter, stopper, filter, Map(), None, tracker)
+  }
+  override def getDescription() = JuDescription.createTestDescription(runner.testClass, testName)
+}
 
-    class ReporterAdapter(test: TestAdapter, notifier: JuRunNotifer) extends StReporter {
-      override def apply(event: Event): Unit = {
-        event match {
-          case e: TestStarting => notifier.fireTestStarted(test.getDescription)
-          case e: TestSucceeded => notifier.fireTestFinished(test.getDescription)
-          case e: TestFailed => notifier.fireTestFailure(new JuFailure(test.getDescription, e.throwable.get))
-          case e: InfoProvided => // ignore
-          case e => println(e)
-        }
-      }
+class ReporterAdapter(test: TestAdapter, notifier: JuRunNotifer) extends StReporter {
+  override def apply(event: Event): Unit = {
+    event match {
+      case e: TestStarting => notifier.fireTestStarted(test.getDescription)
+      case e: TestSucceeded => notifier.fireTestFinished(test.getDescription)
+      case e: TestFailed => notifier.fireTestFailure(new JuFailure(test.getDescription, e.throwable.get))
+      case e: InfoProvided => // ignore
+      case e => println(e)
     }
+  }
+}
 
-    class StopperAdapter extends StStopper {
-      override def apply = false
-    }
-{: class="brush:scala"}
+class StopperAdapter extends StStopper {
+  override def apply = false
+}
+```
 
 It basically just translates ScalaTest `Events` into JUnit `RunNotifier` events.
 
@@ -123,4 +125,12 @@ Anyway, I haven't decided if I'll completely jump ship on traditional `TestCase`
 ----------
 
 Turns out this feature [already exists](http://www.artima.com/forums/flat.jsp?forum=284&thread=254074) in ScalaTest [trunk](https://scalatest.dev.java.net/source/browse/scalatest/trunk/app/src/main/scala/org/scalatest/junit/JUnitRunner.scala?rev=1789&view=markup) and should be in the next release as `org.scalatest.junit.JUnitRunner`.
+
+
+
+
+
+
+
+
 

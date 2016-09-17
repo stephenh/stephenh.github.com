@@ -24,12 +24,13 @@ I originally wrote it to invoke PgAdmin/MySQL commands to backup/restore the dev
 
 The usage is very straight forward:
 
-    val result = new Execute("ls")
-      .arg("-l")
-      .arg("/some/path")
-      .toSystemOut()
-    println(result.exitCode)
-{: class="brush:scala"}
+```scala
+val result = new Execute("ls")
+  .arg("-l")
+  .arg("/some/path")
+  .toSystemOut()
+println(result.exitCode)
+```
 
 So, if you're doing similar things, you might find it useful. You can check out:
 

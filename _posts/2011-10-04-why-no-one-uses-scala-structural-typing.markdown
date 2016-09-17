@@ -24,14 +24,15 @@ This means that, when declaring a method, you decide then whether or not *all* c
         foo.doFoo()
       }
 
-      // structural typing method, callers can pass
-      // any type that has a "doFoo" method
-      def structuralMethod(foo: { def doFoo(): Unit }) {
-        // structural dispatching (reflection)
-        foo.doFoo()
-      }
-    }
-{: class="brush:scala"}
+```scala
+  // structural typing method, callers can pass
+  // any type that has a "doFoo" method
+  def structuralMethod(foo: { def doFoo(): Unit }) {
+    // structural dispatching (reflection)
+    foo.doFoo()
+  }
+}
+```
 
 Okay, so what?
 
@@ -65,10 +66,11 @@ I'm not sure. Previously, I mulled about how some languages do [Caller-Side Stru
       void doFoo() { ... }
     }
 
-    // as generates a delegate that
-    // implements Foo for LikeFoo
-    takesFoo(new LikeFoo() as Foo);
-{: class="brush:java"}
+```java
+// as generates a delegate that
+// implements Foo for LikeFoo
+takesFoo(new LikeFoo() as Foo);
+```
 
 However, these approaches (on a pre-[interface-injection](http://openjdk.java.net/projects/mlvm/subprojects.html#InterfaceInjection) JVM anyway), usually just end up as the compiler/JVM auto-writing the adaptor for you (and can only be used for interfaces). Which is cool, but may/may not be structural typing anymore.
 

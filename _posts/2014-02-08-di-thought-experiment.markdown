@@ -13,10 +13,11 @@ With a Servlet
 
 Let's start with a servlet that just writes out "Hello World". I'm going to use a pseudo API instead of something like `javax.servlet` to facilitate the thought experiment.
 
-    public void service(Writer w) {
-      w.write("Hello World");
-    }
-{: class="brush:java"}
+```java
+public void service(Writer w) {
+  w.write("Hello World");
+}
+```
 
 Simple enough. We can fake-out `Writer` (use a mock `Writer` or a `StubWriter`) and put the `service` method under test.
 
@@ -24,59 +25,63 @@ I'll skip the test code as, regardless of whether you mock or stub, it'll be pre
 
 So, now let's say our code needs access to the query parameters:
 
-    public void service(Writer w, Map<String, String> params) {
-      w.write("Hello World " + params.get("queryParam"));
-    }
-{: class="brush:java"}
+```java
+public void service(Writer w, Map<String, String> params) {
+  w.write("Hello World " + params.get("queryParam"));
+}
+```
 
 We now have 2 method parameters. Fair enough.
 
 But now let's say we also want the HTTP headers:
 
-    public void service(
-        Writer w,
-        Map<String, String> params,
-        Map<String, String> headers) {
-      w.write("Hello World " +
-        params.get("queryParam") +
-        " using " +
-        headers.get("User-Agent"));
-    }
-{: class="brush:java"}
+```java
+public void service(
+    Writer w,
+    Map<String, String> params,
+    Map<String, String> headers) {
+  w.write("Hello World " +
+    params.get("queryParam") +
+    " using " +
+    headers.get("User-Agent"));
+}
+```
 
 We have 3 method parameters. Still fine.
 
 But then next we need the session:
 
-    public void service(
-        Writer w,
-        Map<String, String> params,
-        Map<String, String> headers,
-        Map<String, String> session) {
-      w.write("Hello World " +
-        params.get("queryParam") +
-        " using " +
-        headers.get("User-Agent") +
-        session.get("username"));
-    }
-{: class="brush:java"}
+```java
+public void service(
+    Writer w,
+    Map<String, String> params,
+    Map<String, String> headers,
+    Map<String, String> session) {
+  w.write("Hello World " +
+    params.get("queryParam") +
+    " using " +
+    headers.get("User-Agent") +
+    session.get("username"));
+}
+```
 
 Oh, and now we also want to set the response Content-Type header:
 
-    public void service(
-        Writer w,
-        Map<String, String> params,
-        Map<String, String> headers,
-        Map<String, String> session,
-        Map<String, String> outHeaders) {
-      outHeaders.put("Content-Type", "text/html");
-      w.write("Hello World " +
-        params.get("queryParam") +
-        " using " +
-        headers.get("User-Agent") +
-        session.get("username"));
-    }
-{: class="brush:java"}
+```java
+public void service(
+    Writer w,
+    Map<String, String> params,
+    Map<String, String> headers,
+    Map<String, String> session,
+    Map<String, String> outHeaders) {
+  outHeaders.put("Content-Type", "text/html");
+  w.write("Hello World " +
+    params.get("queryParam") +
+    " using " +
+    headers.get("User-Agent") +
+    session.get("username"));
+}
+```
 
 Eesh. Now we're at 5 method parameters.
 
@@ -84,75 +89,78 @@ How about one last thing--so far our `service` method has been stateless, which 
 
 But, illustration purposes, let's pretend our "servlet" component it actually stateful (e.g. one is created per-request):
 
-    public class Servlet {
-      private final Writer w;
-      private final Map<String, String> params;
-      private final Map<String, String> headers;
-      private final Map<String, String> session;
-      private final Map<String, String> outHeaders;
+```java
+public class Servlet {
+  private final Writer w;
+  private final Map<String, String> params;
+  private final Map<String, String> headers;
+  private final Map<String, String> session;
+  private final Map<String, String> outHeaders;
 
-      public Servlet(
-          final Writer w,
-          final Map<String, String> params,
-          final Map<String, String> headers,
-          final Map<String, String> session,
-          final Map<String, String> outHeaders) {
-        this.w = w;
-        this.params = params;
-        this.headers = headers;
-        this.session = session;
-        this.outHeaders = outHeaders;
-      }
+  public Servlet(
+      final Writer w,
+      final Map<String, String> params,
+      final Map<String, String> headers,
+      final Map<String, String> session,
+      final Map<String, String> outHeaders) {
+    this.w = w;
+    this.params = params;
+    this.headers = headers;
+    this.session = session;
+    this.outHeaders = outHeaders;
+  }
 
-      public void service() {
-        outHeaders.put("Content-Type", "text/html");
-        w.write("Hello World " +
-          params.get("queryParam") +
-          " using " +
-          headers.get("User-Agent") +
-          session.get("username"));
-      }
-    }
-{: class="brush:java"}
+  public void service() {
+    outHeaders.put("Content-Type", "text/html");
+    w.write("Hello World " +
+      params.get("queryParam") +
+      " using " +
+      headers.get("User-Agent") +
+      session.get("username"));
+  }
+}
+```
 
 At this point, passing around the parameter list is getting out of hand.
 
 Which is fine, we can apply a well known refactoring, [Introduce Parameter Object](http://www.refactoring.com/catalog/introduceParameterObject.html), and make `Request` and `Response` interfaces:
 
-    public interface Request {
-      Map<String, String> getParams();
-      Map<String, String> getHeaders();
-      Map<String, String> getSession();
-    }
+```java
+public interface Request {
+  Map<String, String> getParams();
+  Map<String, String> getHeaders();
+  Map<String, String> getSession();
+}
 
-    public interface Response {
-      setHeader(String name, String value);
-      Writer getWriter();
-    }
-{: class="brush:java"}
+public interface Response {
+  setHeader(String name, String value);
+  Writer getWriter();
+}
+```
 
 And now have our `Servlet` class use them:
 
-    public class Servlet {
-      private final Request request;
-      private final Response response;
+```java
+public class Servlet {
+  private final Request request;
+  private final Response response;
 
-      public Servlet(Request request, Response response) {
-        this.request = request;
-        this.response = response;
-      }
+  public Servlet(Request request, Response response) {
+    this.request = request;
+    this.response = response;
+  }
 
-      public void service() {
-        request.setHeader("Content-Type", "text/html");
-        response.getWriter().write(
-          "Hello World" +
-          request.getParams().get("queryParam") +
-          " using " +
-          request.getHeaders().get("User-Agent") +
-          request.getSession().get("username"));
-      }
-    }
-{: class="brush:java"}
+  public void service() {
+    request.setHeader("Content-Type", "text/html");
+    response.getWriter().write(
+      "Hello World" +
+      request.getParams().get("queryParam") +
+      " using " +
+      request.getHeaders().get("User-Agent") +
+      request.getSession().get("username"));
+  }
+}
+```
 
 This looks a lot better.
 
@@ -169,40 +177,42 @@ Previously we could pass fake `Writer`, `Map`, etc. instances directly as parame
 
 If you're mocking, you just mock out the parts of `Request` you need:
 
-    private Request request = mock(Request.class);
-    private Response response = mock(Response.class);
+```java
+private Request request = mock(Request.class);
+private Response response = mock(Response.class);
 
-    public void testServletOne() {
-      // ServletOne only needs Writer
-      when(response.getWriter()).thenReturn(mockWriter);
-      servlet = new ServletOne(request, response);
-      // ...rest of test...
-    }
+public void testServletOne() {
+  // ServletOne only needs Writer
+  when(response.getWriter()).thenReturn(mockWriter);
+  servlet = new ServletOne(request, response);
+  // ...rest of test...
+}
 
-    public void testServletTwo() {
-      // ServletTwo needs headers and Writer
-      when(request.getHeaders()).thenReturn(mockHeaders);
-      when(response.getWriter()).thenReturn(mockWriter);
-      servlet = new ServletTwo(request, response);
-      // ..rest of test ...
-    }
-{: class="brush:java"}
+public void testServletTwo() {
+  // ServletTwo needs headers and Writer
+  when(request.getHeaders()).thenReturn(mockHeaders);
+  when(response.getWriter()).thenReturn(mockWriter);
+  servlet = new ServletTwo(request, response);
+  // ..rest of test ...
+}
+```
 
 Personally, I [prefer stubbing](/2010/07/09/why-i-dont-like-mocks.html) in this scenario, and would use something akin Spring's misnamed [MockHttpServletRequest](http://static.springsource.org/spring/docs/2.0.x/api/org/springframework/mock/web/MockHttpServletRequest.html) (it's really a [stub](http://martinfowler.com/articles/mocksArentStubs.html)):
 
-    private Request request = new StubRequest();
-    private Response response = new StubResponse();
+```java
+private Request request = new StubRequest();
+private Response response = new StubResponse();
 
-    public void testServletOne() {
-      servlet = new ServletOne(request, response);
-      // ...rest of test...
-    }
+public void testServletOne() {
+  servlet = new ServletOne(request, response);
+  // ...rest of test...
+}
 
-    public void testServletTwo() {
-      servlet = new ServletTwo(request, response);
-      // ...rest of test ...
-    }
-{: class="brush:java"}
+public void testServletTwo() {
+  servlet = new ServletTwo(request, response);
+  // ...rest of test ...
+}
+```
 
 But, which ever style you prefer, this extra level of mocking/stubbing in tests is pretty standard for `Request` interfaces.
 
@@ -213,28 +223,29 @@ So far, whether you prefer a stateful or stateless `Servlet` class aside, I thin
 
 But let's be pedantic and focus on the API change of our constructor (using the stateful `Servlet` class), both pre- and post-`Request` refactoring:
 
-    // before
-    public Servlet(
-        final Writer w,
-        final Map<String, String> params,
-        final Map<String, String> headers,
-        final Map<String, String> session,
-        final Map<String, String> outHeaders) {
-      this.w = w;
-      this.params = params;
-      this.headers = headers;
-      this.session = session;
-      this.outHeaders = outHeaders;
-    }
+```java
+// before
+public Servlet(
+    final Writer w,
+    final Map<String, String> params,
+    final Map<String, String> headers,
+    final Map<String, String> session,
+    final Map<String, String> outHeaders) {
+  this.w = w;
+  this.params = params;
+  this.headers = headers;
+  this.session = session;
+  this.outHeaders = outHeaders;
+}
 
-    // after
-    public Servlet(
-      final Request request,
-      final Response response) {
-      this.request = request;
-      this.response = response;
-    }
-{: class="brush:java"}
+// after
+public Servlet(
+  final Request request,
+  final Response response) {
+  this.request = request;
+  this.response = response;
+}
+```
 
 What are the pros and cons of the change?
 
@@ -251,23 +262,24 @@ Now with Services
 
 Instead of a servlet, let's now write a service, some sort of stateless "bean" (it's 2014, I really should stop using that word) in your application that needs application-scoped dependencies:
 
-    public class Service {
-      private final EmailSender emailSender;
-      private final FooDao fooDao;
-      private final BlahService blahService
+```java
+public class Service {
+  private final EmailSender emailSender;
+  private final FooDao fooDao;
+  private final BlahService blahService
 
-      public Service(
-          final EmailSender emailSender,
-          final FooDao fooDao,
-          final BlahService blahService) {
-        this.emailSender = emailSender;
-        this.fooDao = fooDao;
-        this.blahService = blahService;
-      }
+  public Service(
+      final EmailSender emailSender,
+      final FooDao fooDao,
+      final BlahService blahService) {
+    this.emailSender = emailSender;
+    this.fooDao = fooDao;
+    this.blahService = blahService;
+  }
 
-      // ...service methods...
-    }
-{: class="brush:java"}
+  // ...service methods...
+}
+```
 
 I've made up `EmailSender`, `FooDao`, and `BlahService` as dependencies of `Service`--what the actual dependencies are isn't important. The main point is that they are all application-scoped dependencies.
 
@@ -281,38 +293,40 @@ Which makes sense if you're forcing yourself to stick with the `Service(EmailSen
 
 But what if we apply the same refactoring that we just applied to `Servlet`? We applied Introduce Parameter Object and made a `Request` interface--let's apply it here and make an `AppContext` interface:
 
-    public interface AppContext {
-      EmailSender getEmailSender();
-      FooDao getFooDao();
-      BlahService getBlahService();
-    }
-{: class="brush:java"}
+```java
+public interface AppContext {
+  EmailSender getEmailSender();
+  FooDao getFooDao();
+  BlahService getBlahService();
+}
+```
 
 And now let's use it:
 
-    // style 1
-    public class Service {
-      private final AppContext appContext;
-      public Service(final AppContext appContext) {
-        this.appContext=appContext;
-      }
-      // service method calls appContext.getBlahService().xxx();
-    }
+```java
+// style 1
+public class Service {
+  private final AppContext appContext;
+  public Service(final AppContext appContext) {
+    this.appContext=appContext;
+  }
+  // service method calls appContext.getBlahService().xxx();
+}
 
-    // style 2
-    public class Service {
-      private final EmailSender emailSender;
-      private final FooDao fooDao;
-      private final BlahService blahService
+// style 2
+public class Service {
+  private final EmailSender emailSender;
+  private final FooDao fooDao;
+  private final BlahService blahService
 
-      public Service(final AppContext appContext) {
-        this.emailSender = appContext.getEmailSender();
-        this.fooDao = appContext.getFooDao();
-        this.blahService = appContext.getBlahService();
-      }
-      // service method calls blahService.xxx();
-    }
-{: class="brush:java"}
+  public Service(final AppContext appContext) {
+    this.emailSender = appContext.getEmailSender();
+    this.fooDao = appContext.getFooDao();
+    this.blahService = appContext.getBlahService();
+  }
+  // service method calls blahService.xxx();
+}
+```
 
 Whichever style you prefer, we've drastically simplified our constructor--instead of saying "I need X, Y, Z, ...", it's "I need some of my application's app-scoped dependencies".
 
@@ -323,38 +337,40 @@ Much like Servlet Testing earlier, adding an `AppContext` adds a level of indire
 
 You can either mock:
 
-    private AppContext appContext = mock(AppContext.class);
+```java
+private AppContext appContext = mock(AppContext.class);
 
-    public void testServiceOne() {
-      // ServiceOne only needs FooDao
-      when(appContext.getFooDao()).thenReturn(mockFooDao);
-      service = new ServiceOne(appContext);
-      // ...rest of test...
-    }
+public void testServiceOne() {
+  // ServiceOne only needs FooDao
+  when(appContext.getFooDao()).thenReturn(mockFooDao);
+  service = new ServiceOne(appContext);
+  // ...rest of test...
+}
 
-    public void testServiceTwo() {
-      // ServiceTwo needs needs FooDao and EmailSender
-      when(appContext.getFooDao()).thenReturn(mockFooDao);
-      when(appContext.getEmailSender()).thenReturn(mockEmailSender);
-      service = new ServiceTwo(appContext);
-      // ...rest of test ...
-    }
-{: class="brush:java"}
+public void testServiceTwo() {
+  // ServiceTwo needs needs FooDao and EmailSender
+  when(appContext.getFooDao()).thenReturn(mockFooDao);
+  when(appContext.getEmailSender()).thenReturn(mockEmailSender);
+  service = new ServiceTwo(appContext);
+  // ...rest of test ...
+}
+```
 
 Or, stub:
 
-    private StubAppContext appContext = new StubAppContext();
+```java
+private StubAppContext appContext = new StubAppContext();
 
-    public void testServiceOne() {
-      service = new ServiceOne(appContext);
-      // ...rest of test...
-    }
+public void testServiceOne() {
+  service = new ServiceOne(appContext);
+  // ...rest of test...
+}
 
-    public void testServiceTwo() {
-      service = new ServiceTwo(appContext);
-      // ...rest of test ...
-    }
-{: class="brush:java"}
+public void testServiceTwo() {
+  service = new ServiceTwo(appContext);
+  // ...rest of test ...
+}
+```
 
 Thoughts on Service Refactoring
 -------------------------------

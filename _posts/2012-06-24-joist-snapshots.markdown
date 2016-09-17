@@ -13,17 +13,18 @@ The Use Case
 
 Specifically, I worked on an enterprise system once that had a fairly common pattern of:
 
-    // as part of the nightly batch cycle
-    for (Integer parentId : allParentIds) {
-      for (Integer childId : loadParent(parentId).getChildIds()) {
-        for (Integer grandId : loadChild(childId).getGrandChildrenIds()) {
-          // load parent
-          // load child
-          // perform business logic on the grand child
-        }
-      }
+```java
+// as part of the nightly batch cycle
+for (Integer parentId : allParentIds) {
+  for (Integer childId : loadParent(parentId).getChildIds()) {
+    for (Integer grandId : loadChild(childId).getGrandChildrenIds()) {
+      // load parent
+      // load child
+      // perform business logic on the grand child
     }
-{: class="brush:java"}
+  }
+}
+```
 
 Each 3rd-level/grand child entity was processed in its own transaction. But, for an ORM, that generally means a new session, which means re-querying the database for the parent, the child, etc., on each iteration of the loop.
 
@@ -59,27 +60,28 @@ I.e., in the above loop, we don't need `Parent` cached for the entire JVM, and t
 
 Snapshots then, allow the programmer to do this, e.g.:
 
-    // as part of the nightly batch cycle
-    for (Integer parentId : allParentIds) {
-      // load parent data just once
-      Snapshot s1 = UoW.snapshot(repo, new Block() {
-        public void go() {
-          // load parent, any other parent-level objects
-        }
-      };
-      for (Integer childId : loadParent(parentId).getChildIds()) {
-        Snapshot s2 = UoW.snapshot(repo, s1, new Block() {
-          public void go() {
-            // load child, any other child-level objects
-          }
-        };
-        for (Integer grandId : loadChild(childId).getGrandChildrenIds()) {
-          // now use cached parent/child data:
-          UoW.go(repo, s2, ...);
-        }
-      }
+```java
+// as part of the nightly batch cycle
+for (Integer parentId : allParentIds) {
+  // load parent data just once
+  Snapshot s1 = UoW.snapshot(repo, new Block() {
+    public void go() {
+      // load parent, any other parent-level objects
     }
-{: class="brush:java"}
+  };
+  for (Integer childId : loadParent(parentId).getChildIds()) {
+    Snapshot s2 = UoW.snapshot(repo, s1, new Block() {
+      public void go() {
+        // load child, any other child-level objects
+      }
+    };
+    for (Integer grandId : loadChild(childId).getGrandChildrenIds()) {
+      // now use cached parent/child data:
+      UoW.go(repo, s2, ...);
+    }
+  }
+}
+```
 
 Thanks to Java's anonymous inner classes, this is a tad verbose, but should show the basic idea.
 

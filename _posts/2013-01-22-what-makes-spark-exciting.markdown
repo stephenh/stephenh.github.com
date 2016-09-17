@@ -71,17 +71,18 @@ primary shortcomings, and turns them into huge strengths. Specifically:
 
 Writing a test in Spark is as easy as:
 
-    class SparkTest {
-      @Test
-      def test() {
-        // this is real code...
-        val sc = new SparkContext("local", "MyUnitTest')
-        // and now some psuedo code...
-        val output = runYourCodeThatUsesSpark(sc)
-        assertAgainst(output)
-      }
-    }
-{: class="brush:scala"}
+```scala
+class SparkTest {
+  @Test
+  def test() {
+    // this is real code...
+    val sc = new SparkContext("local", "MyUnitTest')
+    // and now some psuedo code...
+    val output = runYourCodeThatUsesSpark(sc)
+    assertAgainst(output)
+  }
+}
+```
 
 (I will go into more detail about `runYourCodeThatUsesSpark` in a future post.)
 
@@ -99,26 +100,28 @@ Spark's primary API is a Scala DSL, oriented around what they call an [`RDD`](ht
 
 Some really short, made up example code is:
 
-    // RDD[String] is like a collection of lines
-    val in: RDD[String] = sc.textFile("s3://bucket/path/")
-    // perform some operation on each line
-    val suffixed = in.map { line => line + "some suffix" }
-    // now save the new lines back out
-    suffixed.saveAsTextFile("s3://bucket/path2")
-{: class="brush:scala"}
+```scala
+// RDD[String] is like a collection of lines
+val in: RDD[String] = sc.textFile("s3://bucket/path/")
+// perform some operation on each line
+val suffixed = in.map { line => line + "some suffix" }
+// now save the new lines back out
+suffixed.saveAsTextFile("s3://bucket/path2")
+```
 
 Spark's job is to package up your `map` closure, and run it against that extra large text file across your cluster. And it does so by, after shuffling the code and data around, *actually calling your closure* (i.e. there is no [LINQ](http://msdn.microsoft.com/en-us/library/vstudio/bb397926.aspx)-like introspection of the closure's AST).
 
 This may seem minor, but it's huge, because it means there is no framework code or APIs standing between your running closure and any custom functions you'd want to run. Let's say you want to use `SomeUtilityClass` (or the venerable [`StringUtils`](http://commons.apache.org/lang/api-2.5/org/apache/commons/lang/StringUtils.html)), just do:
 
-    import com.company.SomeUtilityClass
-    val in: RDD[String] = sc.textFile("s3://bucket/path/")
-    val processed = in.map { line =>
-      // just call it, it's a normal method call
-      SomeUtilityClass.process(line) 
-    }
-    processed.saveAsTextFile("s3://bucket/path2")
-{: class="brush:scala"}
+```scala
+import com.company.SomeUtilityClass
+val in: RDD[String] = sc.textFile("s3://bucket/path/")
+val processed = in.map { line =>
+  // just call it, it's a normal method call
+  SomeUtilityClass.process(line) 
+}
+processed.saveAsTextFile("s3://bucket/path2")
+```
 
 Notice how `SomeUtilityClass` doesn't have to know it's running within a Spark RDD in the cluster. It just takes a String. Done.
 

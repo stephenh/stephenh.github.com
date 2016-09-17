@@ -17,8 +17,9 @@ It's a CLI-friendly paste bin.
 
 So, say you have some log file/snippet/whatever, off on your headless server, and you'd like your coworkers to take a look at it. Assuming you don't have sensitive information in it, Sprunge makes this trivial:
 
-    curl -F 'sprunge=@somefile.txt' sprunge.us
-{: class="brush:bash"}
+```bash
+curl -F 'sprunge=@somefile.txt' sprunge.us
+```
 
 This uses `curl` to do an HTTP POST to `http://sprunge.us` with a multi-part form containing `sprunge=<the contents of somefile.txt>`.
 
@@ -26,8 +27,9 @@ In the response, Sprunge will give you a unique URL that you can then send to yo
 
 Note if you don't want all of `somefile.txt`, you can also use `stdin`, e.g.:
 
-    cat somefile.txt | grep ERROR | curl -F 'sprunge=&lt;-' sprunge.us
-{: class="brush:bash"}
+```bash
+cat somefile.txt | grep ERROR | curl -F 'sprunge=&lt;-' sprunge.us
+```
 
 Being CLI-friendly is Sprunge's main act--it doesn't have much else, e.g. no syntax highlighting, commenting, whatever. But for what I've used it for, sharing snippets of files, it works just great.
 
@@ -44,8 +46,9 @@ Which I'm sure is exactly what you want for 2-way sync, normal Dropbox awesomene
 
 So, riffing on Sprunge, I'd like to be able to do:
 
-    curl -F 'data=@somefile.bin' -F 'name=myfolder/somefile.bin' -u me:password https://dropbox.com
-{: class="brush:bash"}
+```bash
+curl -F 'data=@somefile.bin' -F 'name=myfolder/somefile.bin' -u me:password https://dropbox.com
+```
 
 This would use basic auth to identify me, but that's fine given the connection is over HTTPS anyway.
 

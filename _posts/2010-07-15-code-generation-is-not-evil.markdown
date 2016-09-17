@@ -17,70 +17,72 @@ I will readily admit that most of code generation's reputation is well-deserved,
 
 For example, this snippet from the [Torque's](http://db.apache.org/torque) ORM [templates](http://svn.apache.org/viewvc/db/torque/templates/trunk/src/templates/om/bean/Bean.vm?revision=524492&view=markup):
 
-    #if ($objectIsCaching)
-      #foreach ($fk in $table.Referrers)
-        #set ( $tblFK = $fk.Table )
-        #if ( !($tblFK.Name.equals($table.Name)) )
-          #set ( $className = $tblFK.JavaName )
-          #set ( $relatedByCol = "" )
-          #foreach ($columnName in $fk.LocalColumns)
-            #set ( $column = $tblFK.getColumn($columnName) )
-            #if ($column.isMultipleFK())
-              #set ($relatedByCol= "$relatedByCol$column.JavaName")
-            #end
-          #end
-
-          #if ($relatedByCol == "")
-            #set ( $relCol = "${className}${beanSuffix}s" )
-          #else
-            #set ( $relCol= "${className}${beanSuffix}sRelatedBy$relatedByCol" )
-          #end
-          #set ( $collName = "coll$relCol" )
-
-      protected List#if($enableJava5Features)<${className}${beanSuffix}>#end $collName;
-
-      public List#if($enableJava5Features)<${className}${beanSuffix}>#end get${relCol}()
-      {
-          return $collName;
-      }
-
-      public void set${relCol}(List#if($enableJava5Features)<${className}${beanSuffix}>#end list)
-      {
-          if (list == null)
-          {
-              $collName = null;
-          }
-          else
-          {
-              $collName = new ArrayList#if($enableJava5Features)<${className}${beanSuffix}>#end(list);
-          }
-      }
-
+```java
+#if ($objectIsCaching)
+  #foreach ($fk in $table.Referrers)
+    #set ( $tblFK = $fk.Table )
+    #if ( !($tblFK.Name.equals($table.Name)) )
+      #set ( $className = $tblFK.JavaName )
+      #set ( $relatedByCol = "" )
+      #foreach ($columnName in $fk.LocalColumns)
+        #set ( $column = $tblFK.getColumn($columnName) )
+        #if ($column.isMultipleFK())
+          #set ($relatedByCol= "$relatedByCol$column.JavaName")
+        #end
       #end
-    #end
-{: class="brush:java"}
+
+      #if ($relatedByCol == "")
+        #set ( $relCol = "${className}${beanSuffix}s" )
+      #else
+        #set ( $relCol= "${className}${beanSuffix}sRelatedBy$relatedByCol" )
+      #end
+      #set ( $collName = "coll$relCol" )
+
+  protected List#if($enableJava5Features)<${className}${beanSuffix}>#end $collName;
+
+  public List#if($enableJava5Features)<${className}${beanSuffix}>#end get${relCol}()
+  {
+      return $collName;
+  }
+
+  public void set${relCol}(List#if($enableJava5Features)<${className}${beanSuffix}>#end list)
+  {
+      if (list == null)
+      {
+          $collName = null;
+      }
+      else
+      {
+          $collName = new ArrayList#if($enableJava5Features)<${className}${beanSuffix}>#end(list);
+      }
+  }
+
+  #end
+#end
+```
 
 Complex templates like this make both the initial development and long-term maintenance of code generators painful.
 
 Another example is this generated output from [GXP](http://code.google.com/p/gxp/):
 
-    package com.bizo.selfservice.services.email.templates;
+```java
+package com.bizo.selfservice.services.email.templates;
 
-    import com.google.gxp.base.*; // causes unused warning
-    import com.google.gxp.css.*; // causes unused warning
-    import com.google.gxp.html.*; // causes unused warning
-    import com.google.gxp.js.*; // causes unused warning
-    import com.google.gxp.text.*; // causes unused warning
+import com.google.gxp.base.*; // causes unused warning
+import com.google.gxp.css.*; // causes unused warning
+import com.google.gxp.html.*; // causes unused warning
+import com.google.gxp.js.*; // causes unused warning
+import com.google.gxp.text.*; // causes unused warning
 
-    public class FooEmail extends com.google.gxp.base.GxpTemplate {
+public class FooEmail extends com.google.gxp.base.GxpTemplate {
 
-      private static final String GXP$MESSAGE_SOURCE = "com.foo.templates"; // causes unused warning
+  private static final String GXP$MESSAGE_SOURCE = "com.foo.templates"; // causes unused warning
 
-      public static void write(final java.lang.Appendable gxp$out, final com.google.gxp.base.GxpContext gxp_context) throws java.io.IOException {
-        final java.util.Locale gxp_locale = gxp_context.getLocale(); // caused unused warning
-        // ...more generated output...
-      }
-{: class="brush:java"}
+  public static void write(final java.lang.Appendable gxp$out, final com.google.gxp.base.GxpContext gxp_context) throws java.io.IOException {
+    final java.util.Locale gxp_locale = gxp_context.getLocale(); // caused unused warning
+    // ...more generated output...
+  }
+```
 
 Ugly, warning-filled output makes developers turn up their noses when they invariably glance at the generated output as they use it.
 
@@ -101,36 +103,39 @@ This percolation becomes extra nice in IDEs like Eclipse/IntelliJ/etc., which se
 
 Good examples of this are [joist](http://joist.ws/orm.html) making types that the mirror database schema so developers can write type-safe queries:
 
-    public Child findByName(String name) {  
-      // the ChildAlias class is generated and contains fields (c.name)
-      // for each column in the db. If the db changes, the fields change,
-      // and this query would no longer compile
-      ChildAlias c = new ChildAlias("c");  
-      return Select.from(c).where(c.name.equals(name)).unique();  
-    }  
-{: class="brush:java"}
+```java
+public Child findByName(String name) {  
+  // the ChildAlias class is generated and contains fields (c.name)
+  // for each column in the db. If the db changes, the fields change,
+  // and this query would no longer compile
+  ChildAlias c = new ChildAlias("c");  
+  return Select.from(c).where(c.name.equals(name)).unique();  
+}  
+```
 
 Or [Tessell](http://www.tessell.org/viewgeneration.html) making boilerplate Java classes based on HTML-like XML UI templates:
 
-    <ui:UiBinder ...>
-      <gwt:HTMLPanel>
-        <h2 ui:field="heading">Client</h2>
-        <gwt:TextBox ui:field="name"/><br/>
-        <gwt:TextBox ui:field="description"/>
-        <div><gwt:SubmitButton ui:field="submit" text="Submit"/></div>
-      </gwt:HTMLPanel>
-    </ui:UiBinder>
-{: class="brush:xml"}
+```xml
+<ui:UiBinder ...>
+  <gwt:HTMLPanel>
+    <h2 ui:field="heading">Client</h2>
+    <gwt:TextBox ui:field="name"/><br/>
+    <gwt:TextBox ui:field="description"/>
+    <div><gwt:SubmitButton ui:field="submit" text="Submit"/></div>
+  </gwt:HTMLPanel>
+</ui:UiBinder>
+```
 
 That is turned into, among other things, an interface for the developer to code against:
 
-    public interface IsClientView {
-      IsElement heading();
-      IsTextBox name();
-      IsTextBox description();
-      IsSubmitButton submit();
-    }
-{: class="brush:java"}
+```java
+public interface IsClientView {
+  IsElement heading();
+  IsTextBox name();
+  IsTextBox description();
+  IsSubmitButton submit();
+}
+```
 
 Or any of the SOAP/RPC projects like [Axis](http://ws.apache.org/axis/), [Thrift](http://incubator.apache.org/thrift/), or [protobuf](http://code.google.com/p/protobuf/) creating in-language DTOs for cross-process communications.
 

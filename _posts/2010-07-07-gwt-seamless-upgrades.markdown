@@ -27,15 +27,16 @@ A Typical RPC Request
 
 Here's what a typical RPC request might look like:
 
-    POST https://app.com/gwtapp/dispatch
-    Content-Type: text/x-gwt-rpc; charset=UTF-8
-    Origin: https://app.com
-    Referer: https://app.com/gwtapp/361924868514EB67231B0C48DC4B136A.cache.html
-    X-GWT-Module-Base: https://app.com/gwtapp/
-    X-GWT-Permutation: 361924868514EB67231B0C48DC4B136A
+```plain
+POST https://app.com/gwtapp/dispatch
+Content-Type: text/x-gwt-rpc; charset=UTF-8
+Origin: https://app.com
+Referer: https://app.com/gwtapp/361924868514EB67231B0C48DC4B136A.cache.html
+X-GWT-Module-Base: https://app.com/gwtapp/
+X-GWT-Permutation: 361924868514EB67231B0C48DC4B136A
 
-    <serialized-objects-here>
-{: class="brush:plain"}
+<serialized-objects-here>
+```
 
 The interesting thing to notice is the `X-GWT-Permutation` header--this is the strong name (hash) of the browser/locale/etc. code base the client is currently running.
 

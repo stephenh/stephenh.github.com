@@ -45,30 +45,31 @@ That being said, we wanted to tweak a few things:
 
 Illustrated in code, our approach had, very simplified, been:
 
-    class TheServlet {
-      public void doGet() {
-        int configId = request.getParameter("configId");
-        Config config = configService.getConfig(configId);
-        // continue processing with config settings
-      }
-    }
+```java
+class TheServlet {
+  public void doGet() {
+    int configId = request.getParameter("configId");
+    Config config = configService.getConfig(configId);
+    // continue processing with config settings
+  }
+}
 
-    class ConfigService {
-      // actually thread-safe/ehcache-managed, flushed every 30m
-      Map<Integer, Config> cached = new HashMap<Integer, Config>();
+class ConfigService {
+  // actually thread-safe/ehcache-managed, flushed every 30m
+  Map<Integer, Config> cached = new HashMap<Integer, Config>();
 
-      public Config getConfig(int configId) {
-        Config config = cached.get(configId);
-        if (config == null) {
-          // hit mysql for the data, blocks the request thread
-          config = configJpaRepository.find(configId);
-          // cache it
-          cached.put(configId, config);
-        }
-        return config;
-      }
+  public Config getConfig(int configId) {
+    Config config = cached.get(configId);
+    if (config == null) {
+      // hit mysql for the data, blocks the request thread
+      config = configJpaRepository.find(configId);
+      // cache it
+      cached.put(configId, config);
     }
-{: class="brush:java"}
+    return config;
+  }
+}
+```
 
 ### Potential "Big Data" Approaches
 
@@ -102,49 +103,50 @@ When these are put together, a solution emerges where we can have a in-memory, a
 
 In code, this looks like:
 
-    class TheServlet {
-      public void doGet() {
-        // note: no changes from before, which made migrating easy
-        int configId = request.getParameter("configId");
-        Config config = configService.getConfig(configId);
-        // continue processing with config settings
+```java
+class TheServlet {
+  public void doGet() {
+    // note: no changes from before, which made migrating easy
+    int configId = request.getParameter("configId");
+    Config config = configService.getConfig(configId);
+    // continue processing with config settings
+  }
+}
+
+class ConfigService {
+  // the current cache of all of the config data
+  AtomicReference<Map> cached = new AtomicReference();
+
+  public void init() {
+    // use java.util.Timer to refresh the cache
+    // on a background thread
+    new Timer(true).schedule(new TimerTask() {
+      public void run() {
+        Map newCache = reloadFromS3("bucket/config.json.gz");
+        cached.set(newCache);
       }
+    }, 0, TimeUnit.MINUTES.toMillis(30));
+  }
+
+  public Config getConfig(int configId) {
+    // now always return whatever is in the cache--if a
+    // configId isn't present, that means it was not in
+    // the last S3 file and is treated the same as it
+    // not being in the MySQL database previously
+    Map currentCache = cached.get();
+    if (currentCache == null) {
+      return null; // data hasn't been loaded yet
+    } else {
+      return currentCache.get(configId);
     }
+  }
 
-    class ConfigService {
-      // the current cache of all of the config data
-      AtomicReference<Map> cached = new AtomicReference();
-
-      public void init() {
-        // use java.util.Timer to refresh the cache
-        // on a background thread
-        new Timer(true).schedule(new TimerTask() {
-          public void run() {
-            Map newCache = reloadFromS3("bucket/config.json.gz");
-            cached.set(newCache);
-          }
-        }, 0, TimeUnit.MINUTES.toMillis(30));
-      }
-
-      public Config getConfig(int configId) {
-        // now always return whatever is in the cache--if a
-        // configId isn't present, that means it was not in
-        // the last S3 file and is treated the same as it
-        // not being in the MySQL database previously
-        Map currentCache = cached.get();
-        if (currentCache == null) {
-          return null; // data hasn't been loaded yet
-        } else {
-          return currentCache.get(configId);
-        }
-      }
-
-      private Map reloadFromS3(String path) {
-        // uses AWS SDK to load the data from S3
-        // and Jackson to deserialize it to a map
-      }
-    }
-{: class="brush:java"}
+  private Map reloadFromS3(String path) {
+    // uses AWS SDK to load the data from S3
+    // and Jackson to deserialize it to a map
+  }
+}
+```
 
 ### A Few Wrinkles: Real-Time Reads and Writes
 
@@ -170,18 +172,19 @@ With [Jackson](http://jackson.codehaus.org/) and [Scalatra](https://github.com/s
 
 As an example for how simple Jackson and Scalatra made writing the JSON API, here is the code for serving real-time request requests:
 
-    class JsonApiService extends ScalatraServlet {
-      get("/getConfig") {
-        // config is the domain object fresh from MySQL
-        val config = configRepo.find(params("configId").toLong)
-        // configDto is just the data we want to serialize
-        val configDto = ConfigMapper.toDto(configDto)
-        // jackson magic to make json
-        val json = jackson.writeValueAsString(configDto)
-        json
-      }
-    }
-{: class="brush:scala"}
+```scala
+class JsonApiService extends ScalatraServlet {
+  get("/getConfig") {
+    // config is the domain object fresh from MySQL
+    val config = configRepo.find(params("configId").toLong)
+    // configDto is just the data we want to serialize
+    val configDto = ConfigMapper.toDto(configDto)
+    // jackson magic to make json
+    val json = jackson.writeValueAsString(configDto)
+    json
+  }
+}
+```
 
 ### Background Writes
 
@@ -191,40 +194,41 @@ This means there is no need to perform them on the request-serving thread. Inste
 
 This generally looks like:
 
-    class ConfigWriteService {
-      // create a background thread pool of (for now) size 1
-      private ExecutorService executor = new ThreadPoolExector(...);
+```java
+class ConfigWriteService {
+  // create a background thread pool of (for now) size 1
+  private ExecutorService executor = new ThreadPoolExector(...);
 
-      // called by the request thread, won't block
-      public void writeUsage(int configId, int usage) {
-        offer("https://json-api-service/writeUsage?configId=" +
-          configId +
-          "&usage=" +
-          usage);
-        }
-      }
-
-      private void offer(String url) {
-        try {
-          executor.submit(new BackgroundWrite(url));
-        } catch (RejectedExecutionException ree) {
-          // queue full, writes aren't critical, so ignore
-        }
-      }
-
-      private static class BackgroundWrite implements Runnable {
-        private String url;
-
-        private BackgroundWrite(String url) {
-          this.url = url;
-        }
-
-        public void run() {
-          // make call using commons-http to url
-        }
-      }
+  // called by the request thread, won't block
+  public void writeUsage(int configId, int usage) {
+    offer("https://json-api-service/writeUsage?configId=" +
+      configId +
+      "&usage=" +
+      usage);
     }
-{: class="brush:java"}
+  }
+
+  private void offer(String url) {
+    try {
+      executor.submit(new BackgroundWrite(url));
+    } catch (RejectedExecutionException ree) {
+      // queue full, writes aren't critical, so ignore
+    }
+  }
+
+  private static class BackgroundWrite implements Runnable {
+    private String url;
+
+    private BackgroundWrite(String url) {
+      this.url = url;
+    }
+
+    public void run() {
+      // make call using commons-http to url
+    }
+  }
+}
+```
 
 ### tl;dr We Implemented Command Query Responsibility Segregation
 

@@ -13,13 +13,14 @@ Prefetching is pretty well-known technique for optimizing ORM/database access. H
 
 The problem prefetching solves is known as `n+1` selects. It is best seen by a code example:
 
-    Blog blog = loadBlog(1); // load from somewhere
-    for (Post post : blog.getPosts()) {
-        for (Comment comment : post.getComments()) {
-            render(comment);
-        }
+```java
+Blog blog = loadBlog(1); // load from somewhere
+for (Post post : blog.getPosts()) {
+    for (Comment comment : post.getComments()) {
+        render(comment);
     }
-{: class="brush:java"}
+}
+```
 
 This usage almost always means:
 
@@ -38,24 +39,26 @@ Traditionally, ORMs required explicit custom queries to prefetch an entire objec
 
 For example, with Hibernate you'd do [something like](http://docs.jboss.org/hibernate/stable/core/reference/en/html_single/#querycriteria-dynamicfetching):
 
-    public Blog loadViaCustomQuery(int id) {
-      List blogs = sess.createCriteria(Blog.class)
-        .add(Restrictions.equal("id", id))
-        .setFetchMode("posts", FetchMode.EAGER)
-        .list();
-      return blogs.get(0);
-    }
-{: class="brush:java"}
+```java
+public Blog loadViaCustomQuery(int id) {
+  List blogs = sess.createCriteria(Blog.class)
+    .add(Restrictions.equal("id", id))
+    .setFetchMode("posts", FetchMode.EAGER)
+    .list();
+  return blogs.get(0);
+}
+```
 
 The code then becomes:
 
-    Blog blog = loadViaCustomQuery(1);
-    for (Post post : blog.getPosts()) {
-        for (Comment comment : post.getComments()) {
-            render(comment);
-        }
+```java
+Blog blog = loadViaCustomQuery(1);
+for (Post post : blog.getPosts()) {
+    for (Comment comment : post.getComments()) {
+        render(comment);
     }
-{: class="brush:java"}
+}
+```
 
 This usage means:
 
@@ -78,24 +81,26 @@ What seems more novel to me is eschewing custom queries and the ORM just being m
 
 One trick that Hibernate actually already implements is [subselect fetching](http://docs.jboss.org/hibernate/stable/core/reference/en/html_single/#performance-fetching-subselect). The idea is that when you're mapping your `Post` class, you set `fetch=subselect` on the `comments` element:
 
-    <class name="Post">
-        <!-- ... other mappings ... -->
-        <set name="comments" fetch="subselect">
-            <key column="post_id" not-null="true"/>
-            <one-to-many class="Comment"/>
-        </set>
-    </class>
-{: class="brush:xml"}
+```xml
+<class name="Post">
+    <!-- ... other mappings ... -->
+    <set name="comments" fetch="subselect">
+        <key column="post_id" not-null="true"/>
+        <one-to-many class="Comment"/>
+    </set>
+</class>
+```
 
 Now our original code snippet:
 
-    Blog blog = loadBlog(1); // load from somewhere
-    for (Post post : blog.getPosts()) {
-        for (Comment comment : post.getComments()) {
-            render(comment);
-        }
+```java
+Blog blog = loadBlog(1); // load from somewhere
+for (Post post : blog.getPosts()) {
+    for (Comment comment : post.getComments()) {
+        render(comment);
     }
-{: class="brush:java"}
+}
+```
 
 Will result in these queries:
 
@@ -105,35 +110,36 @@ Will result in these queries:
 
 **Update**: I reproduced this behavior in a project with `Parent`/`Child`/`GrandChild`, here is SQL Hibernate generated:
 
-    select
-      parent0_.id as id0_0_,
-      parent0_.version as version0_0_,
-      parent0_."name" as name3_0_0_
-      from "parent" parent0_
-      where parent0_.id=?
-    select
-      childs0_.parent_id as parent3_1_,
-      childs0_.id as id1_,
-      childs0_.id as id1_0_,
-      childs0_.version as version1_0_,
-      childs0_."parent_id" as parent3_1_0_,
-      childs0_."name" as name4_1_0_
-      from "child" childs0_
-      where childs0_.parent_id=?
-    select
-      grandchild0_.child_id as child3_1_,
-      grandchild0_.id as id1_,
-      grandchild0_.id as id2_0_,
-      grandchild0_.version as version2_0_,
-      grandchild0_."child_id" as child3_2_0_,
-      grandchild0_."name" as name4_2_0_
-      from "grand_child" grandchild0_
-      where grandchild0_.child_id in (
-        select childs0_.id
-        from "child" childs0_
-        where childs0_.parent_id=?
-      )
-{: class="brush:sql"}
+```sql
+select
+  parent0_.id as id0_0_,
+  parent0_.version as version0_0_,
+  parent0_."name" as name3_0_0_
+  from "parent" parent0_
+  where parent0_.id=?
+select
+  childs0_.parent_id as parent3_1_,
+  childs0_.id as id1_,
+  childs0_.id as id1_0_,
+  childs0_.version as version1_0_,
+  childs0_."parent_id" as parent3_1_0_,
+  childs0_."name" as name4_1_0_
+  from "child" childs0_
+  where childs0_.parent_id=?
+select
+  grandchild0_.child_id as child3_1_,
+  grandchild0_.id as id1_,
+  grandchild0_.id as id2_0_,
+  grandchild0_.version as version2_0_,
+  grandchild0_."child_id" as child3_2_0_,
+  grandchild0_."name" as name4_2_0_
+  from "grand_child" grandchild0_
+  where grandchild0_.child_id in (
+    select childs0_.id
+    from "child" childs0_
+    where childs0_.parent_id=?
+  )
+```
 
 What happened is that Hibernate applied a heuristic of saying: "okay, you have `Post A`, and you want its `Comments`...but you also have `Post B`, `Post C`, etc., in your session, I'm going to go ahead and get the `Comments` for all of those `Posts` at the same time."
 

@@ -14,25 +14,27 @@ Anyway, collapsed margins--it seems like I really should have known this by now,
 
 Here's a simple example. Given this HTML:
 
-    <div class="parent">
-      <div class="child"></div>
-    </div>
-{: class="brush:xml"}
+```xml
+<div class="parent">
+  <div class="child"></div>
+</div>
+```
 
 We just have a parent/child. Let's style them as nested boxes with this CSS:
 
-    .parent {
-      background: blue;
-      width: 200px;
-      height: 200px;
-    }
-    .child {
-      background: red;
-      width: 100px;
-      height: 100px;
-      margin: 50px;
-    }
-{: class="brush:css"}
+```css
+.parent {
+  background: blue;
+  width: 200px;
+  height: 200px;
+}
+.child {
+  background: red;
+  width: 100px;
+  height: 100px;
+  margin: 50px;
+}
+```
 
 We expect a 200x200 blue box with a 100x100 red box inside of it, with 50px of blue showing all around the red box.
 
@@ -49,11 +51,12 @@ Welcome to collapsing margins--briefly, it two (vertical) margins touch, the big
 
 The unintuitive fix is to add `overflow: auto` to the parent:
 
-    <div class="parent" style="overflow: auto;">
-      <div class="child">
-      </div>
-    </div>
-{: class="brush:xml"}
+```xml
+<div class="parent" style="overflow: auto;">
+  <div class="child">
+  </div>
+</div>
+```
 
 And now it works as expected:
 

@@ -25,25 +25,28 @@ Java 8 is already addressing this, of course, but it has been the biggest pain p
 
 After you've written cute code like this all day:
 
-    val bar = foo.filter { _.getColor == "red" }
-{: class="brush:scala"}
+```scala
+val bar = foo.filter { _.getColor == "red" }
+```
 
 Going back to:
 
-    List<SomeType> bar = new ArrayList<SomeType>();
-    for (SomeType foo : foos) {
-      if (foo.getColor().equals("red")) {
-        bar.add(foo);
-      }
-    }
-{: class="brush:java"}
+```java
+List<SomeType> bar = new ArrayList<SomeType>();
+for (SomeType foo : foos) {
+  if (foo.getColor().equals("red")) {
+    bar.add(foo);
+  }
+}
+```
 
 Is brutal. So many Java methods are 2-4x longer than they need to be solely due to this.
 
 But, the future is (almost) here:
 
-    List<SomeType> bar = foos.filter(f -> f.getColor().equals("red"));
-{: class="brush:java"}
+```java
+List<SomeType> bar = foos.filter(f -> f.getColor().equals("red"));
+```
 
 I'll readily admit that I still prefer the Scala version (the `_` placeholder, no `;`, no parenthesis, etc.), but I'd still take the Java version.
 
@@ -56,23 +59,26 @@ You need type declarations at method boundaries (so you need to document your pa
 
 After typing:
 
-    val bar = getSomeDataStructure();
-{: class="brush:scala"}
+```scala
+val bar = getSomeDataStructure();
+```
 
 Going back to explicit types for every single little variable:
 
-    final Map<OneTypeThatIsReallyLong, List<SomeTypeThatIsReallyLong>> bar =
-        getSomeDataStructure();
-{: class="brush:scala"}
+```scala
+final Map<OneTypeThatIsReallyLong, List<SomeTypeThatIsReallyLong>> bar =
+    getSomeDataStructure();
+```
 
 Makes my fingers cry a little each time.
 
 I would love to have `val` in for loops as well:
 
-    for (val foo : foos) {
-      foo.whatever();
-    }
-{: class="brush:java"}
+```java
+for (val foo : foos) {
+  foo.whatever();
+}
+```
 
 Unfortunately, I suspect that `val` is never going to happen in Java (aside from [Lombok](http://projectlombok.org/), those crazy, wonderful guys), because it goes against the ethos of "be boring and explicit everywhere".
 
@@ -89,13 +95,14 @@ I'm not going to try and do a good of explanation of this, but Scala's feature w
 
 I'll try a small example. Here's some code in Java:
 
-    public void processFruit(List<? extends Fruit> fruits) {
-      // do something with fruits...
-    }
+```java
+public void processFruit(List<? extends Fruit> fruits) {
+  // do something with fruits...
+}
 
-    List<Apple> apples = new ArrayList<Apple>();
-    processFruit(apples);
-{: class="brush:java"}
+List<Apple> apples = new ArrayList<Apple>();
+processFruit(apples);
+```
 
 Note the really ugly `<? extends Fruit>`. In Java, you just get used to typing these all the time when you want to pass lists around with polymorphism.
 
@@ -103,20 +110,22 @@ Note the really ugly `<? extends Fruit>`. In Java, you just get used to typing t
 
 Scala has a much better solution:
 
-    def processFruit(fruits: Seq[Fruit]) = {
-      // do something with fruits
-    }
+```scala
+def processFruit(fruits: Seq[Fruit]) = {
+  // do something with fruits
+}
 
-    val apples: Seq[Apple] = Buffer[Apple]();
-    processFruit(apples)
-{: class="brush:scala"}
+val apples: Seq[Apple] = Buffer[Apple]();
+processFruit(apples)
+```
 
 Note we can just type `Seq[Fruit]`. How short and sweet!
 
 This is because the `Seq` type was declared like:
 
-    trait Set[+T] { ... }
-{: class="brush:scala"}
+```scala
+trait Set[+T] { ... }
+```
 
 Note that `+` before `T`. That basically tells the type system that "you can always assume the user really meant `Seq[? extends T]`" whenever they actually typed `Seq[T]`.
 
@@ -133,21 +142,23 @@ I almost did include traits, and it's not on my official list, because I only oc
 
 But, hey, Java 8 is getting [default methods](http://zeroturnaround.com/rebellabs/java-8-explained-default-methods/).
 
-    public interface A {
-      default void foo(){
-        System.out.println("foo called");
-      }
-    }
-{: class="brush:java"}
+```java
+public interface A {
+  default void foo(){
+    System.out.println("foo called");
+  }
+}
+```
 
 Which is the same as:
 
-    trait A {
-      def foo(): Unit = {
-        println("foo called")
-      }
-    }
-{: class="brush:scala"}
+```scala
+trait A {
+  def foo(): Unit = {
+    println("foo called")
+  }
+}
+```
 
 So we might as well mention it.
 

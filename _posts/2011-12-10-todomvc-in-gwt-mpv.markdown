@@ -55,34 +55,37 @@ Models
 
 To start with, all rich UI frameworks typically define models for the domain objects involved. In Tessell, this is done simply with a [Todo](https://github.com/stephenh/todomvc-tessell/blob/master/src/main/java/org/tessell/todomvc/client/model/Todo.java) class:
 
-    public class Todo {
-      public final BooleanProperty done = booleanProperty("done", false);
-      public final StringProperty name = stringProperty("name");
+```java
+public class Todo {
+  public final BooleanProperty done = booleanProperty("done", false);
+  public final StringProperty name = stringProperty("name");
 
-      public Todo(String name) {
-        this.name.set(name);
-      }
-    }
-{: class="brush:java"}
+  public Todo(String name) {
+    this.name.set(name);
+  }
+}
+```
 
 Instead of traditional Java fields + getters/setters, Tessell models have property objects. Property objects fire events when they change, which allows the rest of the application to react accordingly.
 
 You can also have lists of model objects, which fire events when items are added/removed to the list, e.g. in [AppState](https://github.com/stephenh/todomvc-tessell/blob/master/src/main/java/org/tessell/todomvc/client/model/AppState.java):
 
-    public class AppState {
-      public final ListProperty<Todo> allTodos = listProperty("allTodos");
-      public final ListProperty<Todo> doneTodos = listProperty("doneTodos");
-    }
-{: class="brush:java"}
+```java
+public class AppState {
+  public final ListProperty<Todo> allTodos = listProperty("allTodos");
+  public final ListProperty<Todo> doneTodos = listProperty("doneTodos");
+}
+```
 
 As with the JS frameworks, Tessell also supports derived properties, e.g. in [AppState](https://github.com/stephenh/todomvc-tessell/blob/master/src/main/java/org/tessell/todomvc/client/model/AppState.java#L18):
 
-    numberLeft = integerProperty(new DerivedValue<Integer>() {
-      public Integer get() {
-        return allTodos.get().size() - doneTodos.get().size();
-      }
-    });
-{: class="brush:java"}
+```java
+numberLeft = integerProperty(new DerivedValue<Integer>() {
+  public Integer get() {
+    return allTodos.get().size() - doneTodos.get().size();
+  }
+});
+```
 
 Tessell models can also do validation of properties (required, length checks, etc.), but that wasn't needed for the todo application.
 
@@ -93,17 +96,18 @@ Tessell's views build on GWT's [UiBinder](http://code.google.com/webtoolkit/doc/
 
 For example, [ListTodoItem.ui.xml](https://github.com/stephenh/todomvc-tessell/blob/master/src/main/java/org/tessell/todomvc/client/views/ListTodoItem.ui.xml#L76):
 
-    <gwt:HTMLPanel ui:field="li" tag="li" styleName="{style.todo}">
-      <div ui:field="displayPanel">
-        <gwt:CheckBox ui:field="checkBox" styleName="{style.check}" />
-        <gwt:Label ui:field="content" styleName="{style.todo-content}" />
-        <gwt:Anchor ui:field="destroyAnchor" styleName="{style.todo-destroy}" />
-      </div>
-      <div ui:field="editPanel">
-        <gwt:TextBox ui:field="editBox" styleName="{style.editBox}" />
-      </div>
-    </gwt:HTMLPanel>
-{: class="brush:html"}
+```html
+<gwt:HTMLPanel ui:field="li" tag="li" styleName="{style.todo}">
+  <div ui:field="displayPanel">
+    <gwt:CheckBox ui:field="checkBox" styleName="{style.check}" />
+    <gwt:Label ui:field="content" styleName="{style.todo-content}" />
+    <gwt:Anchor ui:field="destroyAnchor" styleName="{style.todo-destroy}" />
+  </div>
+  <div ui:field="editPanel">
+    <gwt:TextBox ui:field="editBox" styleName="{style.editBox}" />
+  </div>
+</gwt:HTMLPanel>
+```
 
 (If you're not familiar with the todo app, it alternates between the `displayPanel` when the user is viewing a todo and the `editPanel` when a user double-clicks to edit a todo.)
 
@@ -127,17 +131,18 @@ The main feature that Tessell provides for views is generating derivative artifa
 
 For an example, the generated `IsListTodoItemView` looks like:
 
-    interface IsListTodoItemView extends IsWidget {
-      IsHTMLPanel li();
-      IsElement displayPanel();
-      IsCheckBox checkBox();
-      IsLabel content();
-      IsAnchor destroyAnchor();
-      IsElement editPanel();
-      IsTextBox editBox();
-      ListTodoItemStyle style();
-    }
-{: class="brush:java"}
+```java
+interface IsListTodoItemView extends IsWidget {
+  IsHTMLPanel li();
+  IsElement displayPanel();
+  IsCheckBox checkBox();
+  IsLabel content();
+  IsAnchor destroyAnchor();
+  IsElement editPanel();
+  IsTextBox editBox();
+  ListTodoItemStyle style();
+}
+```
 
 Where each `ui:field`-annotated element/widget in the `ui.xml` file is exposed, but only as an abstract `IsXxx` interface which themselves can be substituted for fake DOM-less versions at test time. We'll cover this more later when talking about testing.
 
@@ -148,52 +153,56 @@ Presenters are the glue between your model and view. Ideally presenters simply b
 
 An extremely simple presenter is [AppPresenter](https://github.com/stephenh/todomvc-tessell/blob/master/src/main/java/org/tessell/todomvc/client/app/AppPresenter.java), which just assembles the three separate panels of the application:
 
-    public class AppPresenter extends BasicPresenter<IsAppView> {
+```java
+public class AppPresenter extends BasicPresenter<IsAppView> {
 
-      private final AppState state = new AppState();
-      private final CreateTodoPresenter createTodo = addPresenter(new CreateTodoPresenter(state.allTodos));
-      private final StatsTodoPresenter statsTodo = addPresenter(new StatsTodoPresenter(state));
-      private final ListTodoPresenter listTodos = addPresenter(new ListTodoPresenter(state));
+  private final AppState state = new AppState();
+  private final CreateTodoPresenter createTodo = addPresenter(new CreateTodoPresenter(state.allTodos));
+  private final StatsTodoPresenter statsTodo = addPresenter(new StatsTodoPresenter(state));
+  private final ListTodoPresenter listTodos = addPresenter(new ListTodoPresenter(state));
 
-      public AppPresenter() {
-        super(newAppView());
-      }
+  public AppPresenter() {
+    super(newAppView());
+  }
 
-      @Override
-      public void onBind() {
-        super.onBind();
-        view.createPanel().add(createTodo.getView());
-        view.listPanel().add(listTodos.getView());
-        view.statsPanel().add(statsTodo.getView());
-        view.creditsPanel().add(newCreditsView());
-      }
-    }
-{: class="brush:java"}
+  @Override
+  public void onBind() {
+    super.onBind();
+    view.createPanel().add(createTodo.getView());
+    view.listPanel().add(listTodos.getView());
+    view.statsPanel().add(statsTodo.getView());
+    view.creditsPanel().add(newCreditsView());
+  }
+}
+```
 
 Obviously usually presenters do a bit more; in the todo app, the most busy presenter is the [ListTodoItemPresenter](https://github.com/stephenh/todomvc-tessell/blob/master/src/main/java/org/tessell/todomvc/client/app/ListTodoItemPresenter.java), which, amongst other things, binds the `todo.name` property to the view:
 
-    binder.bind(todo.name).to(view.editBox());
-    binder.bind(todo.name).toTextOf(view.content());
-    binder.bind(todo.done).to(view.checkBox());
-{: class="brush:java"}
+```java
+binder.bind(todo.name).to(view.editBox());
+binder.bind(todo.name).toTextOf(view.content());
+binder.bind(todo.done).to(view.checkBox());
+```
 
 These three one-liners setup two-way data binding between the model and the view. If `todo.name` changes, both `view.editBox()` and `view.content()` will be updated with the new name. If the user enters a new name into `view.editBox()`, it will flow back into `todo.name` (and subsequently into `view.content()`)).
 
 Besides just binding fields, the binder DSL can also be used for performing other common view actions on model change, such as showing/hiding or setting/removing CSS classes:
 
-    binder.when(editing).is(true).show(view.editPanel());
-    binder.when(editing).is(true).hide(view.displayPanel());
-    binder.when(editing).is(true).set(s.editing()).on(view.li());
-{: class="brush:java"}
+```java
+binder.when(editing).is(true).show(view.editPanel());
+binder.when(editing).is(true).hide(view.displayPanel());
+binder.when(editing).is(true).set(s.editing()).on(view.li());
+```
 
 Finally, looking at [ListTodoPresenter](https://github.com/stephenh/todomvc-tessell/blob/master/src/main/java/org/tessell/todomvc/client/app/ListTodoPresenter.java), keeping the view's `ul` list of one-`li`-per-todo in sync with the `allTodos` list model can also be done with binding:
 
-    binder.bind(state.allTodos).to(this, view.ul(), new ListPresenterFactory<Todo>() {
-      public Presenter create(Todo todo) {
-        return new ListTodoItemPresenter(state, todo);
-      }
-    });
-{: class="brush:java"}
+```java
+binder.bind(state.allTodos).to(this, view.ul(), new ListPresenterFactory<Todo>() {
+  public Presenter create(Todo todo) {
+    return new ListTodoItemPresenter(state, todo);
+  }
+});
+```
 
 Hopefully you can see that, besides view boilerplate reduction, rich models and a fluent binding DSL are the other main strengths Tessell brings to the table to succinctly, declaratively wire together your application's behavior.
 
@@ -210,26 +219,28 @@ For the todomvc port, this means we can test the "add a new todo" functionality 
 
 So a test starts out looking like [CreateTodoPresenterTest](https://github.com/stephenh/todomvc-tessell/blob/master/src/test/java/org/tessell/todomvc/client/app/CreateTodoPresenterTest.java):
 
-    public class CreateTodoPresenterTest extends AbstractPresenterTest {
-      final ListProperty<Todo> todos = listProperty("todos");
-      final CreateTodoPresenter p = bind(new CreateTodoPresenter(todos));
-      final StubCreateTodoView v = (StubCreateTodoView) p.getView();
-{: class="brush:java"}
+```java
+public class CreateTodoPresenterTest extends AbstractPresenterTest {
+  final ListProperty<Todo> todos = listProperty("todos");
+  final CreateTodoPresenter p = bind(new CreateTodoPresenter(todos));
+  final StubCreateTodoView v = (StubCreateTodoView) p.getView();
+```
 
 And then goes right into testing features:
 
-    @Test
-    public void enterOnSomeContentCreatesTask() {
-      // model starts out empty
-      assertThat(todos.get().size(), is(0));
-      // user enters a new task, hits enter
-      v.newTodo().type("new task");
-      v.newTodo().keyDown(KeyCodes.KEY_ENTER);
-      // model now has a new task with the right name
-      assertThat(todos.get().size(), is(1));
-      assertThat(todos.get().get(0).getName(), is("new task"));
-    }
-{: class="brush:java"}
+```java
+@Test
+public void enterOnSomeContentCreatesTask() {
+  // model starts out empty
+  assertThat(todos.get().size(), is(0));
+  // user enters a new task, hits enter
+  v.newTodo().type("new task");
+  v.newTodo().keyDown(KeyCodes.KEY_ENTER);
+  // model now has a new task with the right name
+  assertThat(todos.get().size(), is(1));
+  assertThat(todos.get().get(0).getName(), is("new task"));
+}
+```
 
 The `newTodo().type(...)` method emulates a user typing into the "new todo" text box. `newTodo().keyDown(...)` is the enter key being pressed. And then we can assert our model was changed, and the new model object created with the right name.
 
@@ -267,37 +278,39 @@ GWT's `ui.xml` files seem like the most static/most dumb view templates. Whether
 
 Some JS frameworks, like backbone, use more server-side-style templates:
 
-    <script type="text/template" id="item-template">
-      <div class="todo <%= done ? 'done' : '' %>">
-        <div class="display">
-          <input class="check" type="checkbox" <%= done ? 'checked="checked"' : '' %> />
-          <div class="todo-content"></div>
-          <span class="todo-destroy"></span>
-        </div>
-        <div class="edit">
-          <input class="todo-input" type="text" value="" />
-        </div>
-      </div>
-    </script>
-{: class="brush:html"}
+```html
+<script type="text/template" id="item-template">
+  <div class="todo <%= done ? 'done' : '' %>">
+    <div class="display">
+      <input class="check" type="checkbox" <%= done ? 'checked="checked"' : '' %> />
+      <div class="todo-content"></div>
+      <span class="todo-destroy"></span>
+    </div>
+    <div class="edit">
+      <input class="todo-input" type="text" value="" />
+    </div>
+  </div>
+</script>
+```
 
 Where others use data-binding attributes, like knockout:
 
-    <script id="todoitemtemplate" type="text/html">
-      <li data-bind="css: {editing: editing}">
-        <div data-bind="attr: { class : done() ? 'todo done' : 'todo'}">
-          <div class="display">
-            <input class="check" type="checkbox" data-bind="checked: done" />
-            <div class="todo-content" data-bind="text: content, click: edit" style="cursor: pointer;"></div>
-            <span class="todo-destroy" data-bind="click: viewModel.remove"></span>
-          </div>
-          <div class="edit">
-            <input class="todo-input" type="text" data-bind="value: content, event: { keyup: editkeyup, blur: stopEditing }"/>
-          </div>
-        </div>
-      </li>
-    </script>
-{: class="brush:html"}
+```html
+<script id="todoitemtemplate" type="text/html">
+  <li data-bind="css: {editing: editing}">
+    <div data-bind="attr: { class : done() ? 'todo done' : 'todo'}">
+      <div class="display">
+        <input class="check" type="checkbox" data-bind="checked: done" />
+        <div class="todo-content" data-bind="text: content, click: edit" style="cursor: pointer;"></div>
+        <span class="todo-destroy" data-bind="click: viewModel.remove"></span>
+      </div>
+      <div class="edit">
+        <input class="todo-input" type="text" data-bind="value: content, event: { keyup: editkeyup, blur: stopEditing }"/>
+      </div>
+    </div>
+  </li>
+</script>
+```
 
 These approaches typically require rendering the DOM elements to test the view logic. I generally think this is a bad thing, although I was surprised to learn that, if you avoid the traditional Selenium/etc., approaches, in-browser DOM testing can be [quite fast](http://tinnedfruit.com/2011/04/26/testing-backbone-apps-with-jasmine-sinon-3.html) these days.
 
@@ -315,39 +328,44 @@ In GWT, you typically already have references to the DOM objects you want to mut
 
 The is different than most of the JS frameworks. For example, in the backbone implementation, to update a list item's text when it changes, the code uses a selector to reach out and grab the text box:
 
-    this.$('.todo-content').text(content);
-{: class="brush:jscript"}
+```jscript
+this.$('.todo-content').text(content);
+```
 
 Where as in the [ListTodoItemPresenter](https://github.com/stephenh/todomvc-tessell/blob/master/src/main/java/org/tessell/todomvc/client/app/ListTodoItemPresenter.java#L66), the view kept a reference to the DOM element while building itself (done by UiBinder), so now we can just call it directly:
 
-    view.content().setText(view.editBox().getText());
-{: class="brush:java"}
+```java
+view.content().setText(view.editBox().getText());
+```
 
 (The `content()` method is just a getter than returns the view's `content` field, which is a GWT Label component, which just wraps a DOM `div` tag.)
 
 Several of the JS frameworks also like to use selectors for event handling, again backbone:
 
-    events: {
-      "click .check"              : "toggleDone",
-      "dblclick div.todo-content" : "edit",
-      "click span.todo-destroy"   : "clear",
-      "keypress .todo-input"      : "updateOnEnter"
-    },
-{: class="brush:jscript"}
+```jscript
+events: {
+  "click .check"              : "toggleDone",
+  "dblclick div.todo-content" : "edit",
+  "click span.todo-destroy"   : "clear",
+  "keypress .todo-input"      : "updateOnEnter"
+},
+```
 
 Where as GWT typically uses old-school anonymous inner classes:
 
-    view.newTodo().addKeyDownHandler(new KeyDownHandler() {
-      public void onKeyDown(KeyDownEvent event) {
-        // ...
-      }
-    });
-{: class="brush:java"}
+```java
+view.newTodo().addKeyDownHandler(new KeyDownHandler() {
+  public void onKeyDown(KeyDownEvent event) {
+    // ...
+  }
+});
+```
 
 Although if you're just updating a model, this can be cleaned up by using the binder DSL:
 
-    binder.bind(done).to(view.checkBox());
-{: class="brush:java"}
+```java
+binder.bind(done).to(view.checkBox());
+```
 
 Even though anonymous inner classes are not the most awesome thing ever, avoiding selectors has a few up-shots:
 

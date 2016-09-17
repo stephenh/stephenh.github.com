@@ -21,24 +21,26 @@ Tutorials only go so far though, so I downloaded the JavaFX SDK, made sure I sti
 
 After a few tests, I ended up with `foo.fx`:
 
-    var num = 1;
-    var x = bind f(num);
+```plain
+var num = 1;
+var x = bind f(num);
 
-    println("num={num}, x={x}");
+println("num={num}, x={x}");
 
-    num = 3;
-    println("num={num}, x={x}");
+num = 3;
+println("num={num}, x={x}");
 
-    function f(arg:Integer) {
-        return arg + 1;
-    }
-{: class="brush:plain"}
+function f(arg:Integer) {
+    return arg + 1;
+}
+```
 
 Running `javafxc foo.fx` to compile it and then `javafx foo` to run it produces this output:
 
-    num=1, x=2
-    num=3, x=4
-{: class="brush:plain"}
+```plain
+num=1, x=2
+num=3, x=4
+```
 
 Okay, cool, the `f(num)` function is being lazily bound to `x`, such that `x` changes with `num`.
 
@@ -46,70 +48,71 @@ How'd they do that?
 
 Run `jad foo.class` and we get:
 
-    import com.sun.javafx.runtime.*;
-    import com.sun.javafx.runtime.location.*;
-    import com.sun.javafx.runtime.sequence.Sequence;
-    import javafx.lang.Builtins;
+```java
+import com.sun.javafx.runtime.*;
+import com.sun.javafx.runtime.location.*;
+import com.sun.javafx.runtime.sequence.Sequence;
+import javafx.lang.Builtins;
 
-    public class foo implements Intf, FXObject {
-        public static final IntVariable $num = IntVariable.make();
-        public static final IntVariable $x = IntVariable.make();
+public class foo implements Intf, FXObject {
+    public static final IntVariable $num = IntVariable.make();
+    public static final IntVariable $x = IntVariable.make();
 
-        public static Object javafx$run$(Sequence sequence) {
-            $num.setAsInt(1);
-            $x.bind(IntVariable.make(false, new IntBindingExpression() {
-                private IntLocation arg$0;
-                { arg$0 = foo.$num; }
-                protected Location[] getStaticDependents() {
-                    return (new Location[] { arg$0 });
-                }
-                public int computeValue() {
-                    return foo.f(arg$0.getAsInt());
-                }
-            }, new Location[0]));
-            Builtins.println(String.format("num=%s, x=%s", new Object[] {
-                Integer.valueOf($num.getAsInt()), Integer.valueOf($x.getAsInt())
-            }));
-            $num.setAsInt(3);
-            Builtins.println(String.format("num=%s, x=%s", new Object[] {
-                Integer.valueOf($num.getAsInt()), Integer.valueOf($x.getAsInt())
-            }));
-            return null;
-        }
-
-        public static int f(int i) {
-            return i + 1;
-        }
-
-        public void initialize$() {
-            addTriggers$(this);
-            userInit$(this);
-            postInit$(this);
-            InitHelper.finish(new AbstractVariable[0]);
-        }
-
-        public static void addTriggers$(Intf intf) {
-        }
-
-        public foo() {
-            this(false);
-            initialize$();
-        }
-
-        public foo(boolean flag) {
-        }
-
-        public static void userInit$(Intf intf) {
-        }
-
-        public static void postInit$(Intf intf) {
-        }
-
-        public static void main(String args[]) throws Throwable {
-            Entry.start(foo, args);
-        }
+    public static Object javafx$run$(Sequence sequence) {
+        $num.setAsInt(1);
+        $x.bind(IntVariable.make(false, new IntBindingExpression() {
+            private IntLocation arg$0;
+            { arg$0 = foo.$num; }
+            protected Location[] getStaticDependents() {
+                return (new Location[] { arg$0 });
+            }
+            public int computeValue() {
+                return foo.f(arg$0.getAsInt());
+            }
+        }, new Location[0]));
+        Builtins.println(String.format("num=%s, x=%s", new Object[] {
+            Integer.valueOf($num.getAsInt()), Integer.valueOf($x.getAsInt())
+        }));
+        $num.setAsInt(3);
+        Builtins.println(String.format("num=%s, x=%s", new Object[] {
+            Integer.valueOf($num.getAsInt()), Integer.valueOf($x.getAsInt())
+        }));
+        return null;
     }
-{: class="brush:java"}
+
+    public static int f(int i) {
+        return i + 1;
+    }
+
+    public void initialize$() {
+        addTriggers$(this);
+        userInit$(this);
+        postInit$(this);
+        InitHelper.finish(new AbstractVariable[0]);
+    }
+
+    public static void addTriggers$(Intf intf) {
+    }
+
+    public foo() {
+        this(false);
+        initialize$();
+    }
+
+    public foo(boolean flag) {
+    }
+
+    public static void userInit$(Intf intf) {
+    }
+
+    public static void postInit$(Intf intf) {
+    }
+
+    public static void main(String args[]) throws Throwable {
+        Entry.start(foo, args);
+    }
+}
+```
 
 A *lot* of syntactic sugar is going on here.
 

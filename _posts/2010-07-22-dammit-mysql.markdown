@@ -42,11 +42,12 @@ No Deferred Foreign Key Constraints
 
 Deferred foreign key constraints mean you can do:
 
-    BEGIN;
-    INSERT INTO child (id, parent_id, name) VALUES (2, 1, 'child');
-    INSERT INTO parent (id, name) VALUES (1, 'parent');
-    COMMIT;
-{: class="brush:sql"}
+```sql
+BEGIN;
+INSERT INTO child (id, parent_id, name) VALUES (2, 1, 'child');
+INSERT INTO parent (id, name) VALUES (1, 'parent');
+COMMIT;
+```
 
 Note that technically we've inserted `child.parent_id=1`, but `parent.id=1` is not in the database yet.
 
@@ -58,11 +59,12 @@ While this doesn't seem to be a big deal, the ability to defer foreign keys and 
 
 It also becomes crucial if you have a two-way relationship between rows, e.g.:
 
-    BEGIN;
-    INSERT INTO child (id, parent_id, name) VALUES (2, 1, 'child');
-    INSERT INTO parent (id, name, current_child_id) VALUES (1, 'parent', 1);
-    COMMIT;
-{: class="brush:sql"}
+```sql
+BEGIN;
+INSERT INTO child (id, parent_id, name) VALUES (2, 1, 'child');
+INSERT INTO parent (id, name, current_child_id) VALUES (1, 'parent', 1);
+COMMIT;
+```
 
 Both statements depend on the other--there is no way to execute these two statements if you lack deferred foreign key constraints.
 
@@ -75,26 +77,28 @@ No Deferred Unique Key Constraints
 
 Deferred unique constraints are similar, but mean you can temporarily violate a unique constraint, as long as you clean things up before the transaction commits. E.g.:
 
-    BEGIN;
-    INSERT INTO user (id, username) VALUES (1, 'bob');
-    INSERT INTO user (id, username) VALUES (2, 'fred');
-    COMMIT;
+```sql
+BEGIN;
+INSERT INTO user (id, username) VALUES (1, 'bob');
+INSERT INTO user (id, username) VALUES (2, 'fred');
+COMMIT;
 
-    -- want to change bob->fred, fred->bob
-    BEGIN;
-    UPDATE user SET username = 'fred' WHERE id = 1;
-    UPDATE user SET username = 'bob' WHERE id = 2;
-    COMMIT;
-{: class="brush:sql"}
+-- want to change bob->fred, fred->bob
+BEGIN;
+UPDATE user SET username = 'fred' WHERE id = 1;
+UPDATE user SET username = 'bob' WHERE id = 2;
+COMMIT;
+```
 
 Without deferred unique constraints, changing `bob -> fred` would blow up immediately. Instead you have to dance around the issue by using a temporary value, e.g.:
 
-    BEGIN;
-    UPDATE user SET username = 'temp' WHERE id = 1;
-    UPDATE user SET username = 'bob' WHERE id = 2;
-    UPDATE user SET username = 'fred' WHERE id = 1;
-    COMMIT;
-{: class="brush:sql"}
+```sql
+BEGIN;
+UPDATE user SET username = 'temp' WHERE id = 1;
+UPDATE user SET username = 'bob' WHERE id = 2;
+UPDATE user SET username = 'fred' WHERE id = 1;
+COMMIT;
+```
 
 Like foreign key constraints, this extra hoop means two explicit unit of work flushes as you change `User1` to a temp value, flush, change `User2` to the right value, flush, and finally change `User1` to the right value, flush and commit.
 
@@ -123,26 +127,27 @@ Also hidden in the [sql-mode](http://dev.mysql.com/doc/refman/5.1/en/server-sql-
 
 For example, adding the `TRADITIONAL` SQL mode restores the sanity:
 
-    mysql> create table user (username varchar(50) not null);
-    Query OK, 0 rows affected (0.00 sec)
+```sql
+mysql> create table user (username varchar(50) not null);
+Query OK, 0 rows affected (0.00 sec)
 
-    -- this works when it really should not
-    mysql> insert into user () values ();
-    Query OK, 1 row affected, 1 warning (0.00 sec)
+-- this works when it really should not
+mysql> insert into user () values ();
+Query OK, 1 row affected, 1 warning (0.00 sec)
 
-    mysql> set sql_mode='ANSI';
-    Query OK, 0 rows affected (0.00 sec)
+mysql> set sql_mode='ANSI';
+Query OK, 0 rows affected (0.00 sec)
 
-    mysql> insert into user () values ();
-    Query OK, 1 row affected, 1 warning (0.00 sec)
+mysql> insert into user () values ();
+Query OK, 1 row affected, 1 warning (0.00 sec)
 
-    mysql> set sql_mode='ANSI,TRADITIONAL';
-    Query OK, 0 rows affected (0.00 sec)
+mysql> set sql_mode='ANSI,TRADITIONAL';
+Query OK, 0 rows affected (0.00 sec)
 
-    -- finally, it blows up
-    mysql> insert into user () values ();
-    ERROR 1364 (HY000): Field 'username' doesn't have a default value
-{: class="brush:sql"}
+-- finally, it blows up
+mysql> insert into user () values ();
+ERROR 1364 (HY000): Field 'username' doesn't have a default value
+```
 
 So, does your MySQL database have some `NOT NULL` columns? Are you really sure they don't have `null` values in them? Have you checked your SQL mode?
 
@@ -155,18 +160,20 @@ Auto-Changing Timestamps
 
 What would most developers assume happens if today you run:
 
-    CREATE TABLE employee (
-      id int,
-      name varchar(50),
-      created timestamp
-    );
-    INSERT INTO employee (id, name, timestamp) (1, 'bob', NOW());
-{: class="brush:sql"}
+```sql
+CREATE TABLE employee (
+  id int,
+  name varchar(50),
+  created timestamp
+);
+INSERT INTO employee (id, name, timestamp) (1, 'bob', NOW());
+```
 
 Then tomorrow you do:
 
-    UPDATE employee SET name = 'fred';
-{: class="brush:sql"}
+```sql
+UPDATE employee SET name = 'fred';
+```
 
 Quick, what's `created`? Yesterday, right? Ah ha! No. It's [today](http://dev.mysql.com/doc/refman/5.0/en/timestamp.html):
 
@@ -181,8 +188,9 @@ Crappy Error Messages
 
 To top it all off, MySQL error messages are a joke. This beauty:
 
-    Can't create table 'foo.#sql-338_90' (errno: 150)
-{: class="brush:plain"}
+```plain
+Can't create table 'foo.#sql-338_90' (errno: 150)
+```
 
 Simply means "you tried to reference a non-existent table".
 

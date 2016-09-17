@@ -38,26 +38,27 @@ Falling Short
 
 But then you see the implementation:
 
-    <html> 
-    ... 
-    <lift:Show.myForm form="POST"> 
-    <tr> 
-      <td>Name</td> 
-      <td><f:name><input type="text"/></f:name></td> 
-    </tr> 
-    <tr> 
-      <td>Birthyear</td> 
-      <td><f:year> 
-          <select><option>2007</option></select> 
-      </f:year></td> 
-    </tr> 
-    <tr> 
-      <td>&nbsp;</td> 
-      <td><input type="submit" value="Add"/></td> 
-    </tr> 
-    </lift:Show.myForm> 
-    </html>
-{: class="brush:html"}
+```html
+<html> 
+... 
+<lift:Show.myForm form="POST"> 
+<tr> 
+  <td>Name</td> 
+  <td><f:name><input type="text"/></f:name></td> 
+</tr> 
+<tr> 
+  <td>Birthyear</td> 
+  <td><f:year> 
+      <select><option>2007</option></select> 
+  </f:year></td> 
+</tr> 
+<tr> 
+  <td>&nbsp;</td> 
+  <td><input type="submit" value="Add"/></td> 
+</tr> 
+</lift:Show.myForm> 
+</html>
+```
 
 And...what? What happened to no separation? Designer friendly? Is Dreamweaver really going to like that `<tr>` tag coming after a `<left:Show.myForm>` tag instead of a `<table>` tag?
 
@@ -76,32 +77,34 @@ The Lift crowd needs to look at [pure](http://beebole.com/pure/) instead.
 
 If you look at the [demos](http://beebole.com/pure/demos/), one of pure's table examples is:
 
-    <table class="playerList">
-      <thead>
-        <tr><th>Player</th></tr>
-      </thead>
-      <tbody>
-        <tr class="player">
-         <td>Chloe</td>
-       </tr>
-      </tbody>
-    </table>
-{: class="brush:html"}
+```html
+<table class="playerList">
+  <thead>
+    <tr><th>Player</th></tr>
+  </thead>
+  <tbody>
+    <tr class="player">
+     <td>Chloe</td>
+   </tr>
+  </tbody>
+</table>
+```
 
 Now **this** is designer friendly. There really are no programming symbols in this.
 
 Now, admittedly, pure requires a few hoops for the programmer to jump through, e.g. this directive:
 
-    {
-      "tbody tr": {
-        "player<-players": {
-          "td": "player",
-          "td@style": "\"cursor:pointer\"",
-          "td@onclick": "\"clickLine(this);\""
-        }
-      }
+```jscript
+{
+  "tbody tr": {
+    "player<-players": {
+      "td": "player",
+      "td@style": "\"cursor:pointer\"",
+      "td@onclick": "\"clickLine(this);\""
     }
-{: class="brush:jscript"}
+  }
+}
+```
 
 And this could probably be cleaned up.
 
@@ -120,18 +123,20 @@ Even a project like Lift could build a code generator that, after parsing your t
 
 For example, take something like `foo.html`:
 
-    <table id="playerList">
-      ...
-    </table>
-{: class="brush:html"}
+```html
+<table id="playerList">
+  ...
+</table>
+```
 
 And after running `lift generate-templates` on the command line (ideally ran automatically each time your HTML files change), Lift would spit out a class:
 
-    object FooHtml {
-      val playerList = new TableElement("playerList")
-      // other elements/etc.
-    }
-{: class="brush:scala"}
+```scala
+object FooHtml {
+  val playerList = new TableElement("playerList")
+  // other elements/etc.
+}
+```
 
 This output may get somewhat ugly, but its basically going to be the same code Lift is interpreting at runtime (or, in the case of joys like [Tapestry](http://tapestry.apache.org/), are bytecode compiling at runtime).
 
@@ -152,18 +157,19 @@ Which again is ironic given how Lift just ragged on `HttpSession`, again from th
 
 Well, good for you, Lift, you avoid magic Strings in session usage--but then go right back to magic Strings all over your templating layer.
 
-    private def doList(reDraw: () => JsCmd)(html: NodeSeq): NodeSeq = 
-      toShow.flatMap(td => 
-        bind("todo", html, 
-          "check" -> ajaxCheckbox(
-                  td.done, 
-                  v => {td.done(v).save; reDraw()}), 
-          "priority" -> ajaxSelect(
-                  ToDo.priorityList, Full(td.priority.toString), 
-                  v => {td.priority(v.toInt).save; reDraw()}), 
-          "desc" -> desc(td, reDraw) 
-      ))
-{: class="brush:scala"}
+```scala
+private def doList(reDraw: () => JsCmd)(html: NodeSeq): NodeSeq = 
+  toShow.flatMap(td => 
+    bind("todo", html, 
+      "check" -> ajaxCheckbox(
+              td.done, 
+              v => {td.done(v).save; reDraw()}), 
+      "priority" -> ajaxSelect(
+              ToDo.priorityList, Full(td.priority.toString), 
+              v => {td.priority(v.toInt).save; reDraw()}), 
+      "desc" -> desc(td, reDraw) 
+  ))
+```
 
 See `"todo"`, `"check"`, `"priority"`, etc.--all untyped, magic strings.
 

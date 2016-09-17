@@ -18,53 +18,54 @@ git svn init
 
 Here is what I do, from the existing local git repo:
 
-    # Create the project directory in subversion
-    $ /usr/bin/svn mkdir
-      https://foo.com/svn/parent/trunk/project
-      -m "Make project directory."
-    Committed revision 200.
+```bash
+# Create the project directory in subversion
+$ /usr/bin/svn mkdir
+  https://foo.com/svn/parent/trunk/project
+  -m "Make project directory."
+Committed revision 200.
 
-    # Initialize git-svn, doesn't fetch anything yet
-    $ git svn init https://foo.com/svn/
-      -T parent/trunk/project
-      -t parent/tags/project
-      -b parent/branches/project
-      --prefix=svn/
+# Initialize git-svn, doesn't fetch anything yet
+$ git svn init https://foo.com/svn/
+  -T parent/trunk/project
+  -t parent/tags/project
+  -b parent/branches/project
+  --prefix=svn/
 
-    # Set authors so we get prettier authors
-    $ git config svn.authorsfile ../authors
+# Set authors so we get prettier authors
+$ git config svn.authorsfile ../authors
 
-    # Now pull down the svn commits
-    $ git svn fetch
-    W: Ignoring error from SVN, ...
-    W: Do not be alarmed at the above message git-svn ...
-    This may take a while on large repositories
-    r200 = (guid) (refs/remotes/svn/trunk)
+# Now pull down the svn commits
+$ git svn fetch
+W: Ignoring error from SVN, ...
+W: Do not be alarmed at the above message git-svn ...
+This may take a while on large repositories
+r200 = (guid) (refs/remotes/svn/trunk)
 
-    # We should now see our svn trunk setup under our svn remote
-    $ git branch -av
-    * master            c3a7161 The latest git commit.
-      remotes/svn/trunk 3b7fed6 Make project directory.
+# We should now see our svn trunk setup under our svn remote
+$ git branch -av
+* master            c3a7161 The latest git commit.
+  remotes/svn/trunk 3b7fed6 Make project directory.
 
-    # Now we want to take all of our local commits and 
-    # rebase them on top of the new svn/trunk
-    $ git rebase svn/trunk
-    First, rewinding head to replay your work on top of it...
-    Applying: First git commit
-    Applying: The latest git commit
+# Now we want to take all of our local commits and 
+# rebase them on top of the new svn/trunk
+$ git rebase svn/trunk
+First, rewinding head to replay your work on top of it...
+Applying: First git commit
+Applying: The latest git commit
 
-    # Now we should see our local commits applied
-    # on top of svn/trunk
-    $ git lg
-    * 52b7977 (HEAD, master) The latest git commit
-    * a34e162 First git commit
-    * 3b7fed6 (svn/trunk) Make project directory.
+# Now we should see our local commits applied
+# on top of svn/trunk
+$ git lg
+* 52b7977 (HEAD, master) The latest git commit
+* a34e162 First git commit
+* 3b7fed6 (svn/trunk) Make project directory.
 
-    # Everything is cool, push it back to svn
-    $ git svn dcommit
-    Committing to https://foo.com/svn/parent/trunk/project
-    ...
-{: class="brush:bash"}
+# Everything is cool, push it back to svn
+$ git svn dcommit
+Committing to https://foo.com/svn/parent/trunk/project
+...
+```
 
 --prefix=svn
 ------------
@@ -75,22 +76,24 @@ This will prefix all of your tracking branches of the remote Subversion branches
 
 With the tracking branches having a prefix, you can also use them as local branch names, e.g.:
 
-    # Name your copy of svn/trunk "trunk" instead of "master"
-    $ git checkout -b trunk master
-    Switched to a new branch 'trunk'
+```bash
+# Name your copy of svn/trunk "trunk" instead of "master"
+$ git checkout -b trunk master
+Switched to a new branch 'trunk'
 
-    $ git branch -d master
-    Deleted branch master (was 33c3136).
+$ git branch -d master
+Deleted branch master (was 33c3136).
 
-    $ git branch -av
-    * trunk             33c3136 Latest svn commit
-    * remotes/svn/trunk 33c3136 Latest svn commit
-{: class="brush:bash"}
+$ git branch -av
+* trunk             33c3136 Latest svn commit
+* remotes/svn/trunk 33c3136 Latest svn commit
+```
 
 Then if you have other branches you want to track:
 
-    $ git checkout -b featurea svn/featurea
-{: class="brush:bash"}
+```bash
+$ git checkout -b featurea svn/featurea
+```
 
 Almost Really Sweet
 -------------------

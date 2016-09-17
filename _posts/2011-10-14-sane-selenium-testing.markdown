@@ -12,10 +12,11 @@ Selenium is great for Web 1.0 applications, which involve a page load after each
 
 But that goes away in AJAX applications--no page load. There are a variety of ways to compensate, most of which are what I call pre-assertion waiting--before asserting "did X happen" poll for a little bit to ensure "X" is there. E.g.:
 
-    ajaxSubmit.click();
-    waitForErrorToShowUp();
-    assertErrorIs(...);
-{: class="brush:java"}
+```java
+ajaxSubmit.click();
+waitForErrorToShowUp();
+assertErrorIs(...);
+```
 
 In my experience, pre-assertion waiting in tests is not ideal. They're verbose, often fickle, and at a higher risk of rotting when the application is refactored ("Is this wait really needed? Better leave it in, just in case.").
 
@@ -53,25 +54,27 @@ For JQuery/etc., something in [Extending AJAX](http://api.jquery.com/extending-a
 
 Anyway, once you have this in place, you've basically got page loads back--any time an AJAX request is in-flight, Selenium can know about it by watching if `outstanding != 0`. E.g. with Selenium's new `ExpectedConditions` API, it might look like:
 
-    /** Waits until all async calls are complete. */
-    public static ExpectedCondition<Boolean> outstanding() {
-      return new ExpectedCondition<Boolean>() {
-        public Boolean apply(final WebDriver from) {
-          final String outstanding = from
-            .findElement(By.id("outstanding"))
-            .getText();
-          return "0".equals(outstanding);
-        }
-      };
+```java
+/** Waits until all async calls are complete. */
+public static ExpectedCondition<Boolean> outstanding() {
+  return new ExpectedCondition<Boolean>() {
+    public Boolean apply(final WebDriver from) {
+      final String outstanding = from
+        .findElement(By.id("outstanding"))
+        .getText();
+      return "0".equals(outstanding);
     }
-{: class="brush:java"}
+  };
+}
+```
 
 So, then you could use this in a test like:
 
-    ajaxSubmit.click();
-    WebDriverUtil.waitFor(outstanding());
-    assertErrorIs(...);
-{: class="brush:java"}
+```java
+ajaxSubmit.click();
+WebDriverUtil.waitFor(outstanding());
+assertErrorIs(...);
+```
 
 Post-Action Waiting
 -------------------
@@ -91,32 +94,35 @@ So, that's the core of the approach. I think this just by itself will work quite
 
 However, I've also been going one step further and, with my [pageobjects](https://github.com/stephenh/pageobjects) implementation, centralizing the waiting declarations within the page objects themselves. So, I might have:
 
-    // each page/fragment in the app has an XxxPage class
-    class EmployeePage extends AbstractPageObject {
-      // each element on the page has a field of XxxObject
-      public TextBoxObect name = new TextBoxObect("employeeName");
+```java
+// each page/fragment in the app has an XxxPage class
+class EmployeePage extends AbstractPageObject {
+  // each element on the page has a field of XxxObject
+  public TextBoxObect name = new TextBoxObect("employeeName");
 
-      // fluently add `outstanding` to submit
-      public ButtonObject submit = new ButtonObject("submit")
-        .afterClickWaitFor(outstanding());
+  // fluently add `outstanding` to submit
+  public ButtonObject submit = new ButtonObject("submit")
+    .afterClickWaitFor(outstanding());
 
-      // cstr, other fields...
-    }
-{: class="brush:java"}
+  // cstr, other fields...
+}
+```
 
 The `afterClickWaitFor` means there is just *one place* in all of the functional tests that says "after this button is clicked, we will probably have to wait for the server".
 
 So the test can now look even simpler, with no mention of waiting:
 
-    employeePage.submit.click();
-    assertErrorIs(...);
-{: class="brush:java"}
+```java
+employeePage.submit.click();
+assertErrorIs(...);
+```
 
 And if you're extra spiffy, you might even encapsulate the error gathering logic into the `EmployeePage` as well, so then you're test is:
 
-    employeePage.submit.click();
-    assertThat(employeePage.getErrors(), contains("..."));
-{: class="brush:java"}
+```java
+employeePage.submit.click();
+assertThat(employeePage.getErrors(), contains("..."));
+```
 
 To me, this is a pretty nice test to read. No explicit waiting, pretty high level (the ids/lookup logic are encapsulated in the page objects). It's probably not as flowing as a [GooS](http://www.growing-object-oriented-software.com/)-style functional tests, which are awesome, but personally I find this level of abstraction to be a sweet spot in the trade off between effort and benefit.
 

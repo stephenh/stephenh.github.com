@@ -24,69 +24,70 @@ While Ivy-to-Maven works well, it did take me a few tries to get it right, so he
 
 This is the [ivysettings.xml](https://github.com/stephenh/joist/blob/master/ivysettings.xml) to Joist, with comments added.
 
-    <ivysettings>
+```xml
+<ivysettings>
+  <!--
+    This property is used later in the ivy.xml file to set
+    the project's revision. Unless overridden, it defaults
+    to the Maven SNAPSHOT convention, as that it works well
+    for publishing local test builds to ~/.m2/repository.
+  -->
+  <property name="revision" value="SNAPSHOT" override="false"/>
+
+  <!-- "default" is defined later in the file. -->
+  <settings defaultResolver="default"/>
+
+  <!-- Pulls in the "public" resolver for ibiblio-hosted jars. -->
+  <include url="${ivy.default.settings.dir}/ivysettings-public.xml"/>
+
+  <resolvers>
+    <!-- add any 3rd-party maven repos here... -->
+    <ibiblio name="joist" m2compatible="true" root="http://repo.joist.ws"/>
+
+    <!--
+      for *retrieving* artifacts for local testing builds,
+      we'll use maven's own .m2/repository.
+    -->
+    <ibiblio
+      name="local-m2"
+      m2compatible="true"
+      root="file://${user.home}/.m2/repository"/
+      changingPattern=".*SNAPSHOT">
+
+    <!--
+      for *publishing* artifacts for local testing builds,
+      as the previous ibiblio resolver does not support
+      publishing
+    -->
+    <filesystem name="local-m2-publish" m2compatible="true">
+      <artifact pattern="${user.home}/.m2/repository/[organisation]/[module]/[revision]/[artifact]-[revision](-[classifier]).[ext]"/>
+    </filesystem>
+
+    <!--
+      for publishing release artifacts via an sshfs-mounted share
+    -->
+    <filesystem name="share-m2" m2compatible="true">
+      <artifact pattern="${user.home}/repo/[organisation]/[module]/[revision]/[artifact]-[revision](-[classifier]).[ext]"/>
+    <filesystem>
+
+    <!-- strings the separate resolvers all together -->
+    <chain name="default" changingPattern=".*SNAPSHOT">
+      <resolver ref="public"/>
+      <resolver ref="joist"/>
       <!--
-        This property is used later in the ivy.xml file to set
-        the project's revision. Unless overridden, it defaults
-        to the Maven SNAPSHOT convention, as that it works well
-        for publishing local test builds to ~/.m2/repository.
+        Potential gotcha: you want your local-m2 to be last, or at least
+        after the public repo. Otherwise maven proper might partially
+        download a project into ~/.m2, but not include sources, and if
+        local-m2 is first, ivy will pull the artifacts out of ~/.m2 and
+        cache the partially-downloaded view of the repo (i.e. no sources).
+        If public is first, ivy will always try to get artifacts from their
+        canonical source.
       -->
-      <property name="revision" value="SNAPSHOT" override="false"/>
-
-      <!-- "default" is defined later in the file. -->
-      <settings defaultResolver="default"/>
-
-      <!-- Pulls in the "public" resolver for ibiblio-hosted jars. -->
-      <include url="${ivy.default.settings.dir}/ivysettings-public.xml"/>
-
-      <resolvers>
-        <!-- add any 3rd-party maven repos here... -->
-        <ibiblio name="joist" m2compatible="true" root="http://repo.joist.ws"/>
-
-        <!--
-          for *retrieving* artifacts for local testing builds,
-          we'll use maven's own .m2/repository.
-        -->
-        <ibiblio
-          name="local-m2"
-          m2compatible="true"
-          root="file://${user.home}/.m2/repository"/
-          changingPattern=".*SNAPSHOT">
-
-        <!--
-          for *publishing* artifacts for local testing builds,
-          as the previous ibiblio resolver does not support
-          publishing
-        -->
-        <filesystem name="local-m2-publish" m2compatible="true">
-          <artifact pattern="${user.home}/.m2/repository/[organisation]/[module]/[revision]/[artifact]-[revision](-[classifier]).[ext]"/>
-        </filesystem>
-
-        <!--
-          for publishing release artifacts via an sshfs-mounted share
-        -->
-        <filesystem name="share-m2" m2compatible="true">
-          <artifact pattern="${user.home}/repo/[organisation]/[module]/[revision]/[artifact]-[revision](-[classifier]).[ext]"/>
-        <filesystem>
-
-        <!-- strings the separate resolvers all together -->
-        <chain name="default" changingPattern=".*SNAPSHOT">
-          <resolver ref="public"/>
-          <resolver ref="joist"/>
-          <!--
-            Potential gotcha: you want your local-m2 to be last, or at least
-            after the public repo. Otherwise maven proper might partially
-            download a project into ~/.m2, but not include sources, and if
-            local-m2 is first, ivy will pull the artifacts out of ~/.m2 and
-            cache the partially-downloaded view of the repo (i.e. no sources).
-            If public is first, ivy will always try to get artifacts from their
-            canonical source.
-          -->
-          <resolver ref="local-m2"/>
-        </chain>
-      </resolvers>
-    </ivysettings>
-{: class="brush:xml"}
+      <resolver ref="local-m2"/>
+    </chain>
+  </resolvers>
+</ivysettings>
+```
 
 The primary gotcha in this `ivysettings.xml` was having to use two separate resolvers for the same `~/.m2/repository`. This is because:
 
@@ -103,134 +104,136 @@ So, with the current Ivy 2.1.0 capabilities, it takes two resolvers for a single
 
 This is the [Tessell `ivy.xml`](http://github.com/stephenh/tessell/tree/master/dev/ivy.xml), again with comments. 
 
-    <ivy-module version="2.0" xmlns:m="http://ant.apache.org/ivy/maven">
-      <!--
-        We set the revision to the revision property from
-        ivysettings.xml, which defaults to SNAPSHOT. This
-        is overriden when publishing.
-      -->
-      <info organisation="org.tessell" module="tessell-dev" revision="${revision}"/>
+```xml
+<ivy-module version="2.0" xmlns:m="http://ant.apache.org/ivy/maven">
+  <!--
+    We set the revision to the revision property from
+    ivysettings.xml, which defaults to SNAPSHOT. This
+    is overriden when publishing.
+  -->
+  <info organisation="org.tessell" module="tessell-dev" revision="${revision}"/>
 
-      <!--
-        I'm not a huge fan of a separate sources conf,
-        but that is how Ivy's ibiblio resolver converts
-        poms, so we'll stay consistent with that.
-      -->
-      <configurations>
-        <conf name="default"/>
-        <conf name="sources"/>
-      </configurations>
+  <!--
+    I'm not a huge fan of a separate sources conf,
+    but that is how Ivy's ibiblio resolver converts
+    poms, so we'll stay consistent with that.
+  -->
+  <configurations>
+    <conf name="default"/>
+    <conf name="sources"/>
+  </configurations>
 
-      <publications>
-        <!--
-          We explicitly list a pom as an artifact of our
-          project. This way the Ivy publish task will
-          upload the pom to the maven repo, along with
-          the jars and sources.
-        -->
-        <artifact type="pom" ext="pom" conf="default"/>
+  <publications>
+    <!--
+      We explicitly list a pom as an artifact of our
+      project. This way the Ivy publish task will
+      upload the pom to the maven repo, along with
+      the jars and sources.
+    -->
+    <artifact type="pom" ext="pom" conf="default"/>
 
-        <!--
-          This is the main jar, nothing special.
-        -->
-        <artifact type="jar" ext="jar" conf="default"/>
+    <!--
+      This is the main jar, nothing special.
+    -->
+    <artifact type="jar" ext="jar" conf="default"/>
 
-        <!--
-          To publish sources to a maven repo, the
-          m:classifier="sources" is required.
-        -->
-        <artifact type="source" ext="jar" conf="sources" m:classifier="sources"/>
-      </publications>
+    <!--
+      To publish sources to a maven repo, the
+      m:classifier="sources" is required.
+    -->
+    <artifact type="source" ext="jar" conf="sources" m:classifier="sources"/>
+  </publications>
 
-      <!--
-        defaultconf == we want the jars + sources for our dependencies
-        defaultconfmapping == unless specified otherwise, our confs map
-          to default for our dependencies
-      -->
-      <dependencies defaultconfmapping="sources->sources();%->default" defaultconf="default;sources">
-        <!--
-          tessell-user is published simultaneously with
-          tessell-dev, so depend on the same exact revision.
-        -->
-        <dependency org="org.tessell" name="tessell-user" rev="${revision}" conf="default"/>
+  <!--
+    defaultconf == we want the jars + sources for our dependencies
+    defaultconfmapping == unless specified otherwise, our confs map
+      to default for our dependencies
+  -->
+  <dependencies defaultconfmapping="sources->sources();%->default" defaultconf="default;sources">
+    <!--
+      tessell-user is published simultaneously with
+      tessell-dev, so depend on the same exact revision.
+    -->
+    <dependency org="org.tessell" name="tessell-user" rev="${revision}" conf="default"/>
 
-        <!-- other dependencies -->
-        <dependency org="com.google.gwt" name="gwt-dev" rev="2.1.0.M1" conf="default"/>
-      </dependencies>
-    </ivy-module>
-{: class="brush:xml"}
+    <!-- other dependencies -->
+    <dependency org="com.google.gwt" name="gwt-dev" rev="2.1.0.M1" conf="default"/>
+  </dependencies>
+</ivy-module>
+```
 
 `build.xml`
 -----------
 
 Finally, here is the Ivy-related part of the [Tessell `build.xml`](http://github.com/stephenh/tessell/tree/master/dev/build.xml):
 
-    <property name="ivy.jar.version" value="2.1.0"/>
-    <property name="ivy.jar.name" value="ivy-${ivy.jar.version}.jar"/>
-    <property name="ivy.home" value="${user.home}/.ivy2"/>
-    <available property="ivy.installed" file="${ivy.home}/${ivy.jar.name}"/>
+```xml
+<property name="ivy.jar.version" value="2.1.0"/>
+<property name="ivy.jar.name" value="ivy-${ivy.jar.version}.jar"/>
+<property name="ivy.home" value="${user.home}/.ivy2"/>
+<available property="ivy.installed" file="${ivy.home}/${ivy.jar.name}"/>
 
-    <!-- 
-      this is called once and auto-installs the ivy jar into
-      ~/.ivy2 so that users only have to have ant to build.
-    -->
-    <target name="ivy-install" unless="ivy.installed">
-      <mkdir dir="${ivy.home}"/>
-      <get src="http://repo1.maven.org/maven2/org/apache/ivy/ivy/${ivy.jar.version}/${ivy.jar.name}" dest="${ivy.home}/${ivy.jar.name}"/>
-    </target>
+<!-- 
+  this is called once and auto-installs the ivy jar into
+  ~/.ivy2 so that users only have to have ant to build.
+-->
+<target name="ivy-install" unless="ivy.installed">
+  <mkdir dir="${ivy.home}"/>
+  <get src="http://repo1.maven.org/maven2/org/apache/ivy/ivy/${ivy.jar.version}/${ivy.jar.name}" dest="${ivy.home}/${ivy.jar.name}"/>
+</target>
 
+<!--
+  this is called automatically and just inits ivy
+-->
+<target name="ivy-init" depends="ivy-install">
+  <taskdef resource="org/apache/ivy/ant/antlib.xml" uri="antlib:org.apache.ivy.ant" classpath="${ivy.home}/${ivy.jar.name}"/>
+  <ivy:resolve/>
+</target>
+
+<!--
+  called by the user to download jars into bin/lib/
+-->
+<target name="ivy-retrieve" depends="ivy-init" description="downloads jars for the project">
+  <ivy:retrieve pattern="bin/lib/[conf]/[type]s/[artifact].[ext]" conf="*" type="*"/>
+</target>
+
+<!--
+  makes a pom for the project based off the ivy.xml file
+-->
+<target name="gen-pom" depends="ivy-init">
+  <ivy:makepom ivyfile="ivy.xml" pomfile="bin/poms/${ant.project.name}.pom">
     <!--
-      this is called automatically and just inits ivy
+      Mapping confs to scopes is important, otherwise
+      unmapped confs are included as optional. If you
+      have private confs, the best option seems to
+      be marking them as provided or system. See
+      IVY-1201 for an ehancement request.
     -->
-    <target name="ivy-init" depends="ivy-install">
-      <taskdef resource="org/apache/ivy/ant/antlib.xml" uri="antlib:org.apache.ivy.ant" classpath="${ivy.home}/${ivy.jar.name}"/>
-      <ivy:resolve/>
-    </target>
+    <mapping conf="default" scope="compile"/>
+  </ivy:makepom>
+</target>
 
-    <!--
-      called by the user to download jars into bin/lib/
-    -->
-    <target name="ivy-retrieve" depends="ivy-init" description="downloads jars for the project">
-      <ivy:retrieve pattern="bin/lib/[conf]/[type]s/[artifact].[ext]" conf="*" type="*"/>
-    </target>
+<!--
+  publishes to ~/.m2/repository so that other testing
+  builds on our local machine can see it
+-->
+<target name="ivy-publish-local" depends="jar,ivy-init,gen-pom" description="publish jar/source to maven repo mounted at ~/.m2/repository">
+  <ivy:publish resolver="local-m2-publish" forcedeliver="true" overwrite="true" publishivy="false">
+    <artifacts pattern="bin/[type]s/[artifact].[ext]"/>
+  </ivy:publish>
+</target>
 
-    <!--
-      makes a pom for the project based off the ivy.xml file
-    -->
-    <target name="gen-pom" depends="ivy-init">
-      <ivy:makepom ivyfile="ivy.xml" pomfile="bin/poms/${ant.project.name}.pom">
-        <!--
-          Mapping confs to scopes is important, otherwise
-          unmapped confs are included as optional. If you
-          have private confs, the best option seems to
-          be marking them as provided or system. See
-          IVY-1201 for an ehancement request.
-        -->
-        <mapping conf="default" scope="compile"/>
-      </ivy:makepom>
-    </target>
-
-    <!--
-      publishes to ~/.m2/repository so that other testing
-      builds on our local machine can see it
-    -->
-    <target name="ivy-publish-local" depends="jar,ivy-init,gen-pom" description="publish jar/source to maven repo mounted at ~/.m2/repository">
-      <ivy:publish resolver="local-m2-publish" forcedeliver="true" overwrite="true" publishivy="false">
-        <artifacts pattern="bin/[type]s/[artifact].[ext]"/>
-      </ivy:publish>
-    </target>
-
-    <!--
-      pubishes to the ~/repo directory, which should be something
-      like an sshfs-mount of the public maven repository you are
-      publishing to
-    -->
-    <target name="ivy-publish-share" depends="jar,ivy-init,gen-pom" description="publish jar/source to maven repo mounted at ~/repo">
-      <ivy:publish resolver="share-m2" forcedeliver="true" overwrite="true" publishivy="false">
-        <artifacts pattern="bin/[type]s/[artifact].[ext]" />
-      </ivy:publish>
-    </target>
-{: class="brush:xml"}
+<!--
+  pubishes to the ~/repo directory, which should be something
+  like an sshfs-mount of the public maven repository you are
+  publishing to
+-->
+<target name="ivy-publish-share" depends="jar,ivy-init,gen-pom" description="publish jar/source to maven repo mounted at ~/repo">
+  <ivy:publish resolver="share-m2" forcedeliver="true" overwrite="true" publishivy="false">
+    <artifacts pattern="bin/[type]s/[artifact].[ext]" />
+  </ivy:publish>
+</target>
+```
 
 Making Poms
 -----------
@@ -248,8 +251,9 @@ Local Testing Builds
 
 So far I have not published `SNAPSHOT` versions publicly, but they are very handy for sharing in-development changes between projects on your local machine. Just doing:
 
-    ant ivy-publish-local
-{: class="brush:plain"}
+```plain
+ant ivy-publish-local
+```
 
 Will publish a jar to `~/.m2` for other local projects to pull in your latest/uncommitted changes.
 
@@ -262,8 +266,9 @@ Doing Releases
 
 With the above setup, I can now publish Tessell to the [joist repo](http://repo.joist.ws/org/tessell) via:
 
-    ant -Drevision=x.y ivy-publish-share
-{: class="brush:plain"}
+```plain
+ant -Drevision=x.y ivy-publish-share
+```
 
 It Works
 --------

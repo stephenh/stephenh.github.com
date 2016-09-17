@@ -31,21 +31,23 @@ Providing a cross-platform API is a fairly common goal these days, but there are
 
    So, instead of an employer/employee being sent like:
 
-       { employer: {
-         name: "er1",
-         employees: [
-           { name: "ee1" },
-           { name: "ee2" }
-         ]
-       }
-   {: class="brush:jscript"}
+   ```json
+   { employer: {
+     name: "er1",
+     employees: [
+       { name: "ee1" },
+       { name: "ee2" }
+     ]
+   }
+   ```
 
    The employees are flattened out:
 
-       { employer: [ { id: <uuid>, name: "er1" } ] },
-       { employee: [ { name: "ee1", employerId: <uuid> }, },
-                     { name: "ee2", employerId: <uuid> } ] }
-   {: class="brush:jscript"}
+   ```json
+   { employer: [ { id: <uuid>, name: "er1" } ] },
+   { employee: [ { name: "ee1", employerId: <uuid> }, },
+                 { name: "ee2", employerId: <uuid> } ] }
+   ```
 
    (Note that I'm using pseudo-JSON here; their actual JSON has more structure.)
 
@@ -57,25 +59,26 @@ Providing a cross-platform API is a fairly common goal these days, but there are
 
    However, a weakness, IMO, of the nested approach is modeling it with objects in a client library, e.g.:
 
-       // update an employee, makes sense...
-       s.updateEmployee(Employee(
-         id = ...,
-         name = ...,
-         salary = ...))
+   ```scala
+   // update an employee, makes sense...
+   s.updateEmployee(Employee(
+     id = ...,
+     name = ...,
+     salary = ...))
 
-       // now update an employer:
-       s.updateEmployer(Employer(
-         id = ...,
-         name = ...))
+   // now update an employer:
+   s.updateEmployer(Employer(
+     id = ...,
+     name = ...))
 
-       // update employees nested in employer
-       s.updateEmployer(Employer(
-         id = ...,
-         employees = Seq(
-           // can we really set salary here? it's in the object...
-           Employee(name = ..., salary = ...),
-           Employee(name = ..., salary = ...)))
-   {: class="brush:scala"}
+   // update employees nested in employer
+   s.updateEmployer(Employer(
+     id = ...,
+     employees = Seq(
+       // can we really set salary here? it's in the object...
+       Employee(name = ..., salary = ...),
+       Employee(name = ..., salary = ...)))
+   ```
 
    Notice how `Employee` is used both as a top-level entity, e.g. for `POST /employees`, and also nested within a `POST /employer` call.
 
@@ -85,13 +88,14 @@ Providing a cross-platform API is a fairly common goal these days, but there are
 
    Which means to really model this correctly, you'd need like an "ErEmployee" type, and something ugly like:
 
-       s.updateEmployer(Employer(
-         id = ...,
-         employees = Seq(
-           // no salary field is available
-           ErEmployee(name = ...),
-           ErEmployee(name = ...)))
-   {: class="brush:scala"}
+   ```scala
+   s.updateEmployer(Employer(
+     id = ...,
+     employees = Seq(
+       // no salary field is available
+       ErEmployee(name = ...),
+       ErEmployee(name = ...)))
+   ```
 
    The idea being that `ErEmployee` would not have the `salary` method defined, as it's not supported for reading/updating through the `/employer` endpoint.
 
@@ -99,16 +103,17 @@ Providing a cross-platform API is a fairly common goal these days, but there are
 
 3. It uses very [normal-looking](https://github.com/perka/flatpack-java/blob/master/demo-server/src/main/java/com/getperka/flatpack/demo/server/DemoResource.java#L103) REST/Jersey endpoints:
 
-       /**
-        * Return the list of products.
-        */
-       @GET
-       @Path("products")
-       @FlatPackResponse({ List.class, Product.class })
-       public List<Product> productsGet() {
-         return db.get(Product.class);
-       }
-   {: class="brush:java"}
+   ```java
+   /**
+    * Return the list of products.
+    */
+   @GET
+   @Path("products")
+   @FlatPackResponse({ List.class, Product.class })
+   public List<Product> productsGet() {
+     return db.get(Product.class);
+   }
+   ```
 
    That said, I'm a little curious how you specific the depth of the returned object graph.
 
@@ -116,15 +121,16 @@ Providing a cross-platform API is a fairly common goal these days, but there are
 
    Ah, there is a [TraversalMode](https://github.com/perka/flatpack-java/blob/master/core/src/main/java/com/getperka/flatpack/TraversalMode.java), which I guess allows something like:
 
-       @GET
-       @Path("products")
-       @FlatPackResponse(
-         value = { List.class, Product.class },
-         traversalMode = TraversalMode.DEEP)
-       public List<Product> productsGet() {
-         return db.get(Product.class);
-       }
-   {: class="brush:java"}
+   ```java
+   @GET
+   @Path("products")
+   @FlatPackResponse(
+     value = { List.class, Product.class },
+     traversalMode = TraversalMode.DEEP)
+   public List<Product> productsGet() {
+     return db.get(Product.class);
+   }
+   ```
 
    You still need ability to control which fields to return (even just statically), and more fun things like access control, etc., all of which Flatpack handles, AFAICT, and I'm going to defer to their docs and avoid that tangent.
 
@@ -155,8 +161,9 @@ So, that is flatpack. It seems very reasonable. But it has some hints of things,
 
    Perhaps implementations of Flatpack already do this, as the errors section is already a map:
 
-       errors : { "Some key" : "Some message" },
-   {: class="brush:jscript"}
+   ```json
+   errors : { "Some key" : "Some message" },
+   ```
 
    But I would go further and suggest/document explicit keys, like:
 
@@ -190,33 +197,35 @@ Anyway, wrapping all of those musings up, here is what my protocol might look li
 
 A request, e.g. `POST /entities`:
 
-    {
-      entities : [ {
-        id: -1, // new employee
-        type: "employee",
-        name: "Bob",
-        employerId: 10 // fk to parent
-      }, {
-        id: 10, // existing employer
-        type: "employer",
-        ...
-      }
-{: class="brush:jscript"}
+```json
+{
+  entities : [ {
+    id: -1, // new employee
+    type: "employee",
+    name: "Bob",
+    employerId: 10 // fk to parent
+  }, {
+    id: 10, // existing employer
+    type: "employer",
+    ...
+  }
+```
 
 And a potential response:
 
-    {
-      // would only be returned if transaction committed
-      idMappings: { "employee#-1": 5, "employer#-2", 6 }
-      // object/field errors
-      entityErrors: {
-        "employee#-1.name": [ "Name is required" ],
-        "employer#10": [ "Access is denied" ],
-      },
-      // misc errors
-      otherErrors: [ "Something bad happened" ]
-    }
-{: class="brush:jscript"}
+```json
+{
+  // would only be returned if transaction committed
+  idMappings: { "employee#-1": 5, "employer#-2", 6 }
+  // object/field errors
+  entityErrors: {
+    "employee#-1.name": [ "Name is required" ],
+    "employer#10": [ "Access is denied" ],
+  },
+  // misc errors
+  otherErrors: [ "Something bad happened" ]
+}
+```
 
 Admittedly, having `type: "employee"` is a little odd, so maybe separate collections per entity would be better, and the string-based `"employee#-1.name"` keys are a little odd, maybe having it be a dictionary of `type`, `id`, `field` would be better.
 

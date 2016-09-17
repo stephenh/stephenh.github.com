@@ -12,17 +12,18 @@ But I think, compared to production code, there is generally less discussion abo
 
 Anyway, the pattern I strive for with most tests is (ha) BDD inspired:
 
-    public void someTest() {
-      // given <some business condition>
-      setupTheBusinessCondition();
+```java
+public void someTest() {
+  // given <some business condition>
+  setupTheBusinessCondition();
 
-      // when <some business event happens>
-      invokeTheEvent();
+  // when <some business event happens>
+  invokeTheEvent();
 
-      // then <some business artifact is observable>
-      assertSomething();
-    }
-{: class="brush:java"}
+  // then <some business artifact is observable>
+  assertSomething();
+}
+```
 
 Where ideally the comments of "given, when, then" document the why, the meaning of what's going on, so that 6 months from now, any programmer, yourself included, could glance at the comments and follow what is going on.
 
@@ -39,27 +40,30 @@ One trick I've occasionally used, specifically within the "then" assertion secti
 
 E.g. often you'll see code that wants to assert "there are two $50 credit transactions", but it takes 5 lines of code to accomplish:
 
-    assertThat(txns.getSize(), is(5));
-    assertThat(txns.get(0).getAmount(), is(Money.dollars(50.00));
-    assertThat(txns.get(0).getType(), is(CREDIT));
-    assertThat(txns.get(1).getAmount(), is(Money.dollars(50.00));
-    assertThat(txns.get(1).getType(), is(CREDIT));
-{: class="brush:java"}
+```java
+assertThat(txns.getSize(), is(5));
+assertThat(txns.get(0).getAmount(), is(Money.dollars(50.00));
+assertThat(txns.get(0).getType(), is(CREDIT));
+assertThat(txns.get(1).getAmount(), is(Money.dollars(50.00));
+assertThat(txns.get(1).getType(), is(CREDIT));
+```
 
 We just ate more than half of our 7 LOC budget.
 
 So, in thinking how we can make this assertion simpler, and more direct, I've wound up occasionally using strings (gasp) to encode a high-/business-level meaning, e.g.:
 
-    assertTxns(txns, "1/1 $50 CREDIT", "1/1 $50 CREDIT");
-{: class="brush:java"}
+```java
+assertTxns(txns, "1/1 $50 CREDIT", "1/1 $50 CREDIT");
+```
 
 Or, if you have attributes about an account (like overpaid or overdue), you might do:
 
-    // then the 1st account is bad
-    assertAccount(account1, "#1234 CHECKING (overpaid, overdue)");
-    // and the 2nd account is okay
-    assertAccount(account2, "#5678 CHECKING");
-{: class="brush:java"}
+```java
+// then the 1st account is bad
+assertAccount(account1, "#1234 CHECKING (overpaid, overdue)");
+// and the 2nd account is okay
+assertAccount(account2, "#5678 CHECKING");
+```
 
 Note how ideally information you normally wouldn't care about, like an account being overpaid (which is hopefully unusual), is not included in the default description, as it would be noise that most test cases don't care about.
 
@@ -98,20 +102,21 @@ Potential Alternative
 
 I haven't tried it yet, but I could see addressing the cons with an assertion method that used optional parameters, e.g. in Scala:
 
-    assertAccount(account1, id = 1234, type = Checking);
+```scala
+assertAccount(account1, id = 1234, type = Checking);
 
-    // here's the custom assertion method:
-    def assertAccount(
-      account: Account,
-      id: Int = 0,
-      type: AccountType = null,
-      overpaid: Boolean = null) {
-      // only assert against parameters that were provided
-      if (overpaid != null) {
-        assertThat(account.getOverpaid, is (overpaid))
-      }
-    }
-{: class="brush:scala"}
+// here's the custom assertion method:
+def assertAccount(
+  account: Account,
+  id: Int = 0,
+  type: AccountType = null,
+  overpaid: Boolean = null) {
+  // only assert against parameters that were provided
+  if (overpaid != null) {
+    assertThat(account.getOverpaid, is (overpaid))
+  }
+}
+```
 
 This way each test method could opt-in to only asserting the attributes it cares about. ...although this sounds very similar to the imperative approach, and is just kind of hacking it to be one 1 line.
 

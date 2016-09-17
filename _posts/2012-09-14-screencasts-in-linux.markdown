@@ -43,13 +43,14 @@ Using FlowPlayer
 
 So, along with the regular setup instructions of including their JavaScript file/etc., my current incantation that works in a jekyll/Markdown page is:
 
-    <p>
-      <a href="http://.../screencast.flv" style="display:block;width:520px;height:330px;margin-left:1em;" id="player"> </a>
-      <script type="text/javascript"><!-- 
-        flowplayer("player", "casts/flowplayer-3.2.7.swf", { clip: { autoPlay: false } });
-      --></script>
-    </p>
-{: class="brush:html"}
+```html
+<p>
+  <a href="http://.../screencast.flv" style="display:block;width:520px;height:330px;margin-left:1em;" id="player"> </a>
+  <script type="text/javascript"><!-- 
+    flowplayer("player", "casts/flowplayer-3.2.7.swf", { clip: { autoPlay: false } });
+  --></script>
+</p>
+```
 
 The subtle but important thing to note here is the space before the closing `</a>` tag; this keeps jekyll from munging the HTML into something that the FlowPlayer JavaScript doesn't like.
 

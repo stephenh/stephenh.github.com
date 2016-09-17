@@ -52,15 +52,16 @@ As an example of some Spark code, I thought I'd copy/paste one of my "let's try 
           (1, (Some("b"), 5.00)),
           (1, (Some("b"), 6.00)))
 
-        // cogroup, which is the primitive, and returns each
-        // key with the key's elements from both a and b
-        a.cogroup(b).collect() should be === Array(
-          (3, (Seq(), Seq(7.00))),
-          (1, (Seq("a", "b"), Seq(5.00, 6.00))),
-          (2, (Seq("c"), Seq())))
-      }
-    }
-{: class="brush:scala"}
+```scala
+    // cogroup, which is the primitive, and returns each
+    // key with the key's elements from both a and b
+    a.cogroup(b).collect() should be === Array(
+      (3, (Seq(), Seq(7.00))),
+      (1, (Seq("a", "b"), Seq(5.00, 6.00))),
+      (2, (Seq("c"), Seq())))
+  }
+}
+```
 
 A few things to note:
 

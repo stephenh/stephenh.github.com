@@ -19,20 +19,21 @@ Unit testing our reports is a big reason we like Spark, and being able to unit t
 
 So, while a naive Spark report might look like:
 
-    class SomeReport {
-      def main(args: Array[String]) {
-        val sc = ...
-        // load data from cluster/S3
-        val rdda = sc.textFile("s3n://bucket/input/")
+```scala
+class SomeReport {
+  def main(args: Array[String]) {
+    val sc = ...
+    // load data from cluster/S3
+    val rdda = sc.textFile("s3n://bucket/input/")
 
-        // apply report logic
-        val rddb = ...
+    // apply report logic
+    val rddb = ...
 
-        // now save the result
-        rddb.saveAsTextFile("s3n://bucket/output/")
-      }
-    }
-{: class="brush:scala"}
+    // now save the result
+    rddb.saveAsTextFile("s3n://bucket/output/")
+  }
+}
+```
 
 The code above is actually reminiscent of Hive code: some S3/HDFS URLs with input, interspersed with some logic, followed up by more S3/HDFS URLs for output.
 
@@ -42,52 +43,54 @@ Spark allows you to create "fake" RDDs quite easily, and so what we'd really lik
 
 So, we settled onto having a "Job" class, which handles loading/saving RDDs, and a "Report" class, which is just the logic:
 
-    class SomeJob {
-      def main(args: Array[String]) {
-        val sc = ...
-        // load data from cluster/S3
-        val rdda = sc.textFile("s3n://bucket/input/")
+```scala
+class SomeJob {
+  def main(args: Array[String]) {
+    val sc = ...
+    // load data from cluster/S3
+    val rdda = sc.textFile("s3n://bucket/input/")
 
-        // apply report logic
-        val rddb = new SomeReport(...).run(rdda)
+    // apply report logic
+    val rddb = new SomeReport(...).run(rdda)
 
-        // now save the result
-        rddb.saveAsTextFile("s3n://bucket/output/")
-      }
-    }
+    // now save the result
+    rddb.saveAsTextFile("s3n://bucket/output/")
+  }
+}
 
-    class SomeReport {
-      def run(rdda: RDD[String]): RDD[String] = {
-        rdda.filter { _.contains("user1") }
-      }
-    }
-{: class="brush:scala"}
+class SomeReport {
+  def run(rdda: RDD[String]): RDD[String] = {
+    rdda.filter { _.contains("user1") }
+  }
+}
+```
 
 The upshot is that `SomeReport` now only takes and returns RDDs, without any cluster/S3 coupling.
 
 This allows us to write a unit test:
 
-    class SomeReportTest {
-      val sc = new SparkContext("local", "SomeReportTest")
-      val report = new SomeReport(...)
+```scala
+class SomeReportTest {
+  val sc = new SparkContext("local", "SomeReportTest")
+  val report = new SomeReport(...)
 
-      @Test
-      def shouldFindUser1() {
-        // given we saw user1 and user2 in the logs
-        val input = Seq("line1 user1 ...", "line2 user2 ...")
+  @Test
+  def shouldFindUser1() {
+    // given we saw user1 and user2 in the logs
+    val input = Seq("line1 user1 ...", "line2 user2 ...")
 
-        // then only user1 is in the output
-        val result = run(input)
-        result.size shouldBe 1
-      }
+    // then only user1 is in the output
+    val result = run(input)
+    result.size shouldBe 1
+  }
 
-      private def run(fakeInput: Seq[String]): Seq[String] = {
-        val input: RDD[String] = sc.parallelize(fakeInput)
-        val result: RDD[String] = report.run(input)
-        result.collect().toList.sorted
-      }
-    }
-{: class="brush:scala"}
+  private def run(fakeInput: Seq[String]): Seq[String] = {
+    val input: RDD[String] = sc.parallelize(fakeInput)
+    val result: RDD[String] = report.run(input)
+    result.collect().toList.sorted
+  }
+}
+```
 
 Looking at `shouldFindUser1`, the idea is that we want a really easy to read test:
 
@@ -122,97 +125,101 @@ In the example above, `SomeReport` was taking an `RDD[String]`, where each strin
 
 To better encapsulate the log implementation details, we started using "Line" case classes. The report and unit test then concern themselves with the Line, instead of Strings. This would look like:
 
-    /** Line for our "request" logs. */
-    case class RequestLine(line: String) {
-      def timestamp: Long = parse(0).toLong
-      def userId: String = parse(1)
+```scala
+/** Line for our "request" logs. */
+case class RequestLine(line: String) {
+  def timestamp: Long = parse(0).toLong
+  def userId: String = parse(1)
 
-      private def parse(index: Int) = {
-       // Do some smart/efficient parsing of line; e.g. if it's
-       // tab-separated, lazily pull out columns, instead of
-       // creating 50-some substrings when 48 end up unused. 
-       // For now, being naive:
-       return line.split("\t")(index)
-    }
+  private def parse(index: Int) = {
+   // Do some smart/efficient parsing of line; e.g. if it's
+   // tab-separated, lazily pull out columns, instead of
+   // creating 50-some substrings when 48 end up unused. 
+   // For now, being naive:
+   return line.split("\t")(index)
+}
 
-    // now the report codes against the case class
-    class SomeReport {
-      def run(rdd: RDD[RequestLine]) = {
-        rdd.filter { _.userId == "user1" }
-      }
-    }
-{: class="brush:scala"}
+// now the report codes against the case class
+class SomeReport {
+  def run(rdd: RDD[RequestLine]) = {
+    rdd.filter { _.userId == "user1" }
+  }
+}
+```
 
 This is better, as we've moved any notion of parsing out of `SomeReport`, and it just calls type-safe methods (`userId`, `timestamp`) on our `RequestLine`.
 
 So, now our testing, we usually define a companion object for `RequestLine` to make constructing fake test lines super easy:
 
-    object RequestLine {
-      def apply(
-        userId: String = "user1",
-        timestamp: Long = 1L) = {
-        new RequestLine(Seq(timestamp, userId).mkString("\t"))
-      }
-    }
-{: class="brush:scala"}
+```scala
+object RequestLine {
+  def apply(
+    userId: String = "user1",
+    timestamp: Long = 1L) = {
+    new RequestLine(Seq(timestamp, userId).mkString("\t"))
+  }
+}
+```
 
 Using method parameter default values, this allows the test case to only fill in the columns it cares about. When there are 50 columns, and your boundary case only covers 2, this is very handy. The test then looks like:
 
-    class SomeReportTest {
-      val sc = new SparkContext("local", "SomeReportTest")
-      val report = new SomeReport(...)
+```scala
+class SomeReportTest {
+  val sc = new SparkContext("local", "SomeReportTest")
+  val report = new SomeReport(...)
 
-      @Test
-      def shouldFindUser1() {
-        // given we saw user1 and user2 in the logs
-        val input = Seq(
-          RequestLine(userId = "user1"),
-          RequestLine(userId = "user2"))
+  @Test
+  def shouldFindUser1() {
+    // given we saw user1 and user2 in the logs
+    val input = Seq(
+      RequestLine(userId = "user1"),
+      RequestLine(userId = "user2"))
 
-        // then only user1 is in the output
-        val result = run(input)
-        result.size shouldBe 1
-      }
+    // then only user1 is in the output
+    val result = run(input)
+    result.size shouldBe 1
+  }
 
-      private def run(fakeInput: Seq[RequestLine]):
-          Seq[RequestLine] = {
-        val input: RDD[RequestLine] = sc.parallelize(fakeInput)
-        val result: RDD[RequestLine] = report.run(input)
-        result.collect().toList.sorted
-      }
-    }
-{: class="brush:scala"}
+  private def run(fakeInput: Seq[RequestLine]):
+      Seq[RequestLine] = {
+    val input: RDD[RequestLine] = sc.parallelize(fakeInput)
+    val result: RDD[RequestLine] = report.run(input)
+    result.collect().toList.sorted
+  }
+}
+```
 
 Since we have the `RequestLine` object already, we also go ahead and add factory methods for the real data:
 
-    object RequestLine {
-      def newRDD(
-          sc: SparkContext,
-          range: CalendarInterval): RDD[RequestLine] = {
-        val paths = range.map { day =>
-          "s3n://bucket/input/year=...,month=...,day=.../"
-        }.mkString(",")
-        sc.textFile(paths).map { RequestLine(_) }
-      }
-    }
+```scala
+object RequestLine {
+  def newRDD(
+      sc: SparkContext,
+      range: CalendarInterval): RDD[RequestLine] = {
+    val paths = range.map { day =>
+      "s3n://bucket/input/year=...,month=...,day=.../"
+    }.mkString(",")
+    sc.textFile(paths).map { RequestLine(_) }
+  }
+}
 
-    // now various ReportJob classes can reuse `newRDD`:
-    class SomeReport {
-      def main(args: Array[String]) {
-        val sc = ...
-        val range = // parse from args
+// now various ReportJob classes can reuse `newRDD`:
+class SomeReport {
+  def main(args: Array[String]) {
+    val sc = ...
+    val range = // parse from args
 
-        // load data from cluster/S3
-        val rdda = RequestLine.newRDD(sc, range)
+    // load data from cluster/S3
+    val rdda = RequestLine.newRDD(sc, range)
 
-        // apply report logic
-        val rddb = ...
+    // apply report logic
+    val rddb = ...
 
-        // now save the result
-        rddb.saveAsTextFile("s3n://bucket/output/")
-      }
-    }
-{: class="brush:scala"}
+    // now save the result
+    rddb.saveAsTextFile("s3n://bucket/output/")
+  }
+}
+```
 
 The `newRDD` method here is fairly trivial, but the encapsulation becomes nice as it becomes more sophisticated (e.g. we have a generic "repartition data loaded from S3" routine that our `newRDD` methods reuse to try to jockey our data into the right partition sizes).
 
@@ -231,18 +238,19 @@ A lot of times in Spark, you'll read in some raw log lines, and then throw away 
 
 This is fine, and the initial way we did this was pretty simple:
 
-    val input: RDD[RequestLine] = ...
-    val idAndTime: RDD[(String, Long)] = input.map { line =>
-      (line.userId, line.timestamp)
-    }
+```scala
+val input: RDD[RequestLine] = ...
+val idAndTime: RDD[(String, Long)] = input.map { line =>
+  (line.userId, line.timestamp)
+}
 
-    // later on call a helper method
-    doSomeMoreWith(idAndTime)
+// later on call a helper method
+doSomeMoreWith(idAndTime)
 
-    def doSomeMoreWith(idAndTime: RDD[(String, Long)] = {
-      ... 
-    }
-{: class="brush:scala"}
+def doSomeMoreWith(idAndTime: RDD[(String, Long)] = {
+  ... 
+}
+```
 
 The problem with this is, after passing around `idAndTime` as just a `RDD[(String, Long)]`, it can become really, really easy to forget what exactly that `String` is. Was it...user id? Client id? Browser id?
 
@@ -254,30 +262,32 @@ With Spark reports, we've found the opposite is true; with Scala type aliases (w
 
 So, our type alias might look like:
 
-    // in the com/bizo/types/package.scala file
-    package com.bizo {
-      package object types {
-        type UserId = String
-        type Timestamp = Long
-        type ClientId = String
-      }
-    }
-{: class="brush:scala"}
+```scala
+// in the com/bizo/types/package.scala file
+package com.bizo {
+  package object types {
+    type UserId = String
+    type Timestamp = Long
+    type ClientId = String
+  }
+}
+```
 
 Then we'll use these aliases in our report:
 
-    val input: RDD[RequestLine] = ...
-    val idAndTime: RDD[(UserId, Timestamp)] = input.map { line =>
-      (line.userId, line.timestamp)
-    }
+```scala
+val input: RDD[RequestLine] = ...
+val idAndTime: RDD[(UserId, Timestamp)] = input.map { line =>
+  (line.userId, line.timestamp)
+}
 
-    // later on call a helper method
-    doSomeMoreWith(idAndTime)
+// later on call a helper method
+doSomeMoreWith(idAndTime)
 
-    def doSomeMoreWith(idAndTime: RDD[(UserId, Timestamp)] = {
-      ... 
-    }
-{: class="brush:scala"}
+def doSomeMoreWith(idAndTime: RDD[(UserId, Timestamp)] = {
+  ... 
+}
+```
 
 And, wow, look at how much more readable that `doSomeMoreWith` signature is. Applied across larger Spark reports, it has dramatically increased their readability.
 
@@ -292,13 +302,14 @@ One of my few criticisms of Spark is that it (understandably) heavily relies on 
 
 This is what we were doing in the previous example, by only keeping user id and timestamp:
 
-    val input: RDD[RequestLine] = ...
-    val idAndTime: RDD[(UserId, Timestamp)] = input.map { line =>
-      (line.userId, line.timestamp)
-    }
-    // later on...
-    idAndTime.filter { l => l._1 == "user1" }
-{: class="brush:scala"}
+```scala
+val input: RDD[RequestLine] = ...
+val idAndTime: RDD[(UserId, Timestamp)] = input.map { line =>
+  (line.userId, line.timestamp)
+}
+// later on...
+idAndTime.filter { l => l._1 == "user1" }
+```
 
 When we select just the user id and timestamp, we use the Scala syntax of `(line.userId, line.timestamp)`. This is just syntax sugar for `new Tuple2(line.userId, line.timestamp)`. (If we were selecting three things, it would be a `Tuple3`.)
 
@@ -310,29 +321,32 @@ So, if you look at our filter, this is obviously not very readable: `l._1 == "us
 
 What we usually try and do, and I think is a common Scala idiom, is use pattern matching to re-introduce meaningful variable names. So, instead of `filter`, we'd write:
 
-    idAndTime.collect { 
-      case (userId, _) => userId == "user1"
-    }
-{: class="brush:scala"}
+```scala
+idAndTime.collect { 
+  case (userId, _) => userId == "user1"
+}
+```
 
 This uses Scala's pattern matching to "match" against the `Tuple2` (it again uses the parens as syntax sugar), and introduces `userId` as a variable that is equivalent to `_1`. And since we aren't using `_2`, we just use `_` to mean "we don't care about this one".
 
 This has actually served as pretty well, and we continue to use it. We also use it a lot for joins:
 
-    logFooByUserId.cogroup(logBarByUserId).collect { 
-      case (userId, (foos, bars)) => ...
-    }
-{: class="brush:scala"}
+```scala
+logFooByUserId.cogroup(logBarByUserId).collect { 
+  case (userId, (foos, bars)) => ...
+}
+```
 
 Technically, this "use `collect`" idiom is not perfect--it is more verbose as we have to re-introduce `userId`, etc. as more variables.
 
 C# actually handles this scenario better than Scala by using [Anonymous Types](http://geekswithblogs.net/BlackRabbitCoder/archive/2012/06/21/c.net-little-wonders-the-joy-of-anonymous-types.aspx). It allows LINQ to do very similar things as `map`, but to introduce mini-classes along the way (from previous link):
 
-    transactions
-      .GroupBy(tx => new { tx.UserId, tx.At.Date })
-      .OrderBy(grp => grp.Key.Date)
-      .ThenBy(grp => grp.Key.UserId);
-{: class="brush:java"}
+```java
+transactions
+  .GroupBy(tx => new { tx.UserId, tx.At.Date })
+  .OrderBy(grp => grp.Key.Date)
+  .ThenBy(grp => grp.Key.UserId);
+```
 
 This means that, after the `new { tx.UserId, tx.At.Date }` line, LINQ has "kept" the `Date` and `UserId` accessors for use later in the query.
 
@@ -345,27 +359,28 @@ For Comprehensions for Filtering Logs
 
 Another construct we use quite a bit, although more an idiom than a pattern, is Scala's for compressions for applying multiple filters to log files. For example:
 
-    val lines: RDD[RequestLine] = ...
+```scala
+val lines: RDD[RequestLine] = ...
 
-    val views: RDD[(UserId, ClientId, Domain, Timestamp)] = for {
-      line <- lines
-      clientId <- line.clientId if activeClientIds.contains(clientId)
-      domain <- parseDomain(line.url)
-      userId <- line.userId
-      timestamp <- line.timestamp
-    } yield (userId, clientId, domain, timestamp)
+val views: RDD[(UserId, ClientId, Domain, Timestamp)] = for {
+  line <- lines
+  clientId <- line.clientId if activeClientIds.contains(clientId)
+  domain <- parseDomain(line.url)
+  userId <- line.userId
+  timestamp <- line.timestamp
+} yield (userId, clientId, domain, timestamp)
 
-    // this assumes a slightly different RequestLine:
-    case class RequestLine(...)
-      def clientId: Option[ClientId] = ...
-      def userId: Option[UserId] = ...
-      def timestamp: Option[Timestamp] = ...
-      def url: Option[Url] = ...
-    }
+// this assumes a slightly different RequestLine:
+case class RequestLine(...)
+  def clientId: Option[ClientId] = ...
+  def userId: Option[UserId] = ...
+  def timestamp: Option[Timestamp] = ...
+  def url: Option[Url] = ...
+}
 
-    // returns None if can't be parsed
-    def parseDomain(url: Url): Option[Domain] = ...
-{: class="brush:scala"}
+// returns None if can't be parsed
+def parseDomain(url: Url): Option[Domain] = ...
+```
 
 The change to `RequestLine` to return `Options` is mainly because that, for some of our logs, some columns are optional. However, hopefully very rarely, a log may be corrupted (perhaps due to application logic) and we just don't have a usable value for a certain column.
 
@@ -406,14 +421,15 @@ The basic idea is to:
 
 The routine looks like:
 
-    /** Partitions `rdd` based on the total size of `paths`. */
-    def partitionRDD[T](
-        rdd: RDD[T],
-        sourceData: Seq[FilePath]): RDD[T] = {
-      val number = sourceData.map { _.size }.sum / goalSize
-      rdd.coalesce(number.toInt)
-    }
-{: class="brush:scala"}
+```scala
+/** Partitions `rdd` based on the total size of `paths`. */
+def partitionRDD[T](
+    rdd: RDD[T],
+    sourceData: Seq[FilePath]): RDD[T] = {
+  val number = sourceData.map { _.size }.sum / goalSize
+  rdd.coalesce(number.toInt)
+}
+```
 
 Note that, technically, we're using `coalesce` instead of the new `repartition` method.
 
@@ -430,29 +446,31 @@ We frequently need to reduce the values of an RDD, either to `reduceByKey` to co
 
 If you have an RDD of key and just a tuple of stats, this can get pretty tedious:
 
-    val rdda: RDD[(UserId, (Clicks, Imps, Convs))] = ...
-    val rddb = rdda.reduceByKey { (v1, v2) => 
-      (v1._1 + v2._1, v1._2 + v2._2, v1._3 + v2._3)
-    }
-{: class="brush:scala"}
+```scala
+val rdda: RDD[(UserId, (Clicks, Imps, Convs))] = ...
+val rddb = rdda.reduceByKey { (v1, v2) => 
+  (v1._1 + v2._1, v1._2 + v2._2, v1._3 + v2._3)
+}
+```
 
 With all the `v1`, `v2`, `_1`, `_2`, etc., I made about 10 typos just typing that example for this post. Not pretty in a real job.
 
 What we like to do here is wrap the stats into a case class that defines an `+` operation:
 
-    case class Stats(clicks: Long, imps: Long, convs: Long) {
-      def +(other: Stats): Stats = {
-        Stats(
-          clicks + other.clicks,
-          imps + other.imps,
-          convs + other.convs)
-      }
-    }
+```scala
+case class Stats(clicks: Long, imps: Long, convs: Long) {
+  def +(other: Stats): Stats = {
+    Stats(
+      clicks + other.clicks,
+      imps + other.imps,
+      convs + other.convs)
+  }
+}
 
-    // now reduce is easy
-    val rdda: RDD[(UserId, Stats)] = ...
-    val rddb = rdda.reduceByKey { _ + _ }
-{: class="brush:scala"}
+// now reduce is easy
+val rdda: RDD[(UserId, Stats)] = ...
+val rddb = rdda.reduceByKey { _ + _ }
+```
 
 This moves the combination logic out into a specific method, and really makes the job read nicer.
 
@@ -469,24 +487,25 @@ However, this does result in launching a lot of clusters. To help with that, Lar
 
 To use spark-plug, you create a "plug" that will launch your EMR cluster, e.g.:
 
-    object SomePlug extends AbstractPlug {
-      // args can be passed in from cron jobs/CLI
-      def today = CalendarDate.from(args(0), "yyyyMMdd")
+```scala
+object SomePlug extends AbstractPlug {
+  // args can be passed in from cron jobs/CLI
+  def today = CalendarDate.from(args(0), "yyyyMMdd")
 
-      // the name of the 'job' class to run on the spark master
-      override def job = "SomeJob"
-      override def jobArgs = Seq(today.toString)
-      override def numberOfMachines = 20
+  // the name of the 'job' class to run on the spark master
+  override def job = "SomeJob"
+  override def jobArgs = Seq(today.toString)
+  override def numberOfMachines = 20
 
-      // these end up being EMR job steps
-      override def steps = {
-        val checkpath = new CheckS3Path(RequestLine.checkPath(today))
-        val jobStep = RunSparkJob("com.bizo." + job, jobArgs)
-        val otherSteps = Seq(...)
-        Seq(checkpath, jobStep) ++ otherSteps
-      }
-    }
-{: class="brush:scala"}
+  // these end up being EMR job steps
+  override def steps = {
+    val checkpath = new CheckS3Path(RequestLine.checkPath(today))
+    val jobStep = RunSparkJob("com.bizo." + job, jobArgs)
+    val otherSteps = Seq(...)
+    Seq(checkpath, jobStep) ++ otherSteps
+  }
+}
+```
 
 A few notes about this:
 

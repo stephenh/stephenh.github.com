@@ -12,40 +12,43 @@ The services might integrate with each other via JSON or Thrift or what not, alm
 
 For example, let's imagine a very trivial data service that provides an interface:
 
-    trait DataService {
-      def saveData(id: String, data: Array[Byte])
-      def getData(id: String): Array[Byte])
-    }
-{: class="brush:scala"}
+```scala
+trait DataService {
+  def saveData(id: String, data: Array[Byte])
+  def getData(id: String): Array[Byte])
+}
+```
 
 Real services would of course have more interesting contracts, but this is good enough for illustration purposes.
 
 So, the `DataService` codebase is going to ship a jar, say `data-service.jar`, with both it's `DataService` interface in it, as well as the implementation, say, `DataServiceJsonImpl`:
 
-    class DataServiceJsonImpl(server: String) extends DataService {
-      override def saveData(id: String, data: Array[Byte]) = {
-        // do JSON serialization
-      }
-      override def getData(id: String): Array[Byte]) = {
-        // do JSON serialization
-      }
-    }
-{: class="brush:scala"}
+```scala
+class DataServiceJsonImpl(server: String) extends DataService {
+  override def saveData(id: String, data: Array[Byte]) = {
+    // do JSON serialization
+  }
+  override def getData(id: String): Array[Byte]) = {
+    // do JSON serialization
+  }
+}
+```
 
 So, this is all well and good; the downstream client codebase can program against the `DataService` contract, and while testing use a fake, and in production use the real `DataServiceJsonImpl`.
 
 Okay, so let's look at the fake implementation...what should it look like? Per some [other posts](http://www.draconianoverlord.com/2010/07/09/why-i-dont-like-mocks.html), I generally prefer stubs, so we might write:
 
-    class DataServiceStub extends DataService {
-      private val data = Map[String, Array[Byte]]()
-      override def saveData(id: String, data: Array[Byte]) = {
-        data.put(id, data)
-      }
-      override def getData(id: String): Array[Byte]) = {
-        data.get(id).getOrElse { sys.error("Not found") }
-      }
-    }
-{: class="brush:scala"}
+```scala
+class DataServiceStub extends DataService {
+  private val data = Map[String, Array[Byte]]()
+  override def saveData(id: String, data: Array[Byte]) = {
+    data.put(id, data)
+  }
+  override def getData(id: String): Array[Byte]) = {
+    data.get(id).getOrElse { sys.error("Not found") }
+  }
+}
+```
 
 Great! We're done.
 

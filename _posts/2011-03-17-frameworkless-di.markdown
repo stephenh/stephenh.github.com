@@ -27,38 +27,39 @@ Example
 
 To frame the example, let's setup three class that respond to a user request. Something like:
 
-    public class Servlet {
-      private Handlers handlers = new Handlers();
+```java
+public class Servlet {
+  private Handlers handlers = new Handlers();
 
-      // called when user hits the service
-      public void handle(HttpRequest request) {
-        handlers.handle(request);
-      }
+  // called when user hits the service
+  public void handle(HttpRequest request) {
+    handlers.handle(request);
+  }
+}
+
+public class Handlers {
+  public void handle(HttpRequest request) {
+    // dispatches request to the right handler for the request type
+    if ("bar".equals(request.getParameter("type"))) {
+      new BarHandler(request).handle();
     }
+  }
+}
 
-    public class Handlers {
-      public void handle(HttpRequest request) {
-        // dispatches request to the right handler for the request type
-        if ("bar".equals(request.getParameter("type"))) {
-          new BarHandler(request).handle();
-        }
-      }
-    }
+// instantiated per request
+public class BarHandler {
+  private final HttpRequest request;
 
-    // instantiated per request
-    public class BarHandler {
-      private final HttpRequest request;
-      
-      public BarHandler(HttpRequest request) {
-        this.request = request;
-      }
+  public BarHandler(HttpRequest request) {
+    this.request = request;
+  }
 
-      public void handle() {
-        databaseRepo.lookupId(...);
-        emailRepo.sendAnEmail();
-      }
-    }
-{: class="brush:java"}
+  public void handle() {
+    databaseRepo.lookupId(...);
+    emailRepo.sendAnEmail();
+  }
+}
+```
 
 This is completely made-up, but the idea is that we have several objects involved in servicing the request. Some of them are stateless (`Servlet` and `Handlers`) but some are stateful (`BarHandler`).
 
@@ -82,100 +83,104 @@ AppRegistry Approach
 
 The approach I've settled on lately is based around an `AppRegistry` interface. All of the shared, application-scoped objects (`DatabaseRepo`, `EmailRepo`) go into this interface:
 
-    public interface AppRegistry {
-      DatabaseRepo getDatabaseRepo();
+```java
+public interface AppRegistry {
+  DatabaseRepo getDatabaseRepo();
 
-      EmailRepo getEmailRepo();
-    }
-{: class="brush:java"}
+  EmailRepo getEmailRepo();
+}
+```
 
 I use the term `Registry` in deference to Fowler's pattern, but you could just as well call it `AppContext`, which is more Spring-like. Which, speaking of Spring, you can basically think of `AppRegistry` as making a plain, strongly-typed interface with a `getXxx` method for each bean in your Spring config file.
 
 And now we just create a new instance of it and pass it around:
 
-    public class Servlet {
-      // registry can potentially be shared via the ServletContext
-      private AppRegistry registry = new AppRegistryInstance();
-      private Handlers handlers = new Handlers(registry);
+```java
+public class Servlet {
+  // registry can potentially be shared via the ServletContext
+  private AppRegistry registry = new AppRegistryInstance();
+  private Handlers handlers = new Handlers(registry);
 
-      // called when user hits the service
-      public void handle(HttpRequest request) {
-        handlers.handle(request);
-      }
+  // called when user hits the service
+  public void handle(HttpRequest request) {
+    handlers.handle(request);
+  }
+}
+
+public class Handlers {
+  private final AppRegistry registry;
+
+  public Handlers(AppRegistry registry) {
+    this.registry = registry;
+  }
+
+  public void handle(HttpRequest request) {
+    // dispatches request to the right handler for the request type
+    if ("bar".equals(request.getParameter("type"))) {
+      new BarHandler(registry, request).handle();
     }
+  }
+}
 
-    public class Handlers {
-      private final AppRegistry registry;
-      
-      public Handlers(AppRegistry registry) {
-        this.registry = registry;
-      }
+// instantiated per request
+public class BarHandler {
+  private final DatabaseRepo databaseRepo;
+  private final EmailRepo emailRepo;
+  private final HttpRequest request;
+  
+  public BarHandler(AppRegistry registry, HttpRequest request) {
+    this.databaseRepo = registry.getDatabaseRepo();
+    this.emailRepo = registry.getEmailRepo();
+    this.request = request;
+  }
 
-      public void handle(HttpRequest request) {
-        // dispatches request to the right handler for the request type
-        if ("bar".equals(request.getParameter("type"))) {
-          new BarHandler(registry, request).handle();
-        }
-      }
-    }
-
-    // instantiated per request
-    public class BarHandler {
-      private final DatabaseRepo databaseRepo;
-      private final EmailRepo emailRepo;
-      private final HttpRequest request;
-      
-      public BarHandler(AppRegistry registry, HttpRequest request) {
-        this.databaseRepo = registry.getDatabaseRepo();
-        this.emailRepo = registry.getEmailRepo();
-        this.request = request;
-      }
-
-      public void handle() {
-        databaseRepo.lookupId(...);
-        emailRepo.sendAnEmail();
-      }
-    }
-{: class="brush:java"}
+  public void handle() {
+    databaseRepo.lookupId(...);
+    emailRepo.sendAnEmail();
+  }
+}
+```
 
 And that's it. Pros/cons are discussed next, but the short of it is that we can still test the `BarHandler` class--a fake (stub or mock, but, no, really, [use a stub](/2010/07/09/why-i-dont-like-mocks.html)) `AppRegistry` can be passed into `BarHandler` with whatever fake versions of the dependencies you want to use for the test.
 
 Briefly, the `AppRegistryInstance` class just instantiates the dependencies and holds on to them:
 
-    public class AppRegistryInstance implements AppRegistry {
-      private final DatabaseRepo databaseRepo;
-      private final EmailRepo emailRepo;
+```java
+public class AppRegistryInstance implements AppRegistry {
+  private final DatabaseRepo databaseRepo;
+  private final EmailRepo emailRepo;
 
-      public AppRegistryInstance() {
-        databaseRepo = new DatabaseRepo(...settings...);
-        emailRepo = new EmailRepo(...settings...);
-      }
+  public AppRegistryInstance() {
+    databaseRepo = new DatabaseRepo(...settings...);
+    emailRepo = new EmailRepo(...settings...);
+  }
 
-      public DatabaseRepo getDatabaseRepo() {
-        return databaseRepo;
-      }
+  public DatabaseRepo getDatabaseRepo() {
+    return databaseRepo;
+  }
 
-      public EmailRepo getEmailRepo() {
-        return emailRepo;
-      }
-    }
-{: class="brush:java"}
+  public EmailRepo getEmailRepo() {
+    return emailRepo;
+  }
+}
+```
 
 And you could just as well create a `StubAppRegistryInstance` for all of your tests to reuse:
 
-    public clas StubAppRegistryInstance implements AppRegistry {
-      private final DummyDatabaseRepo databaseRepo = new DummyDatabaseRepo();
-      private final DummyEmailRepo emailRepo = new DummyEmailRepo();
+```java
+public clas StubAppRegistryInstance implements AppRegistry {
+  private final DummyDatabaseRepo databaseRepo = new DummyDatabaseRepo();
+  private final DummyEmailRepo emailRepo = new DummyEmailRepo();
 
-      public DummyDatabaseRepo getDatabaseRepo() {
-        return databaseRepo;
-      }
+  public DummyDatabaseRepo getDatabaseRepo() {
+    return databaseRepo;
+  }
 
-      public DummyEmailRepo getEmailRepo() {
-        return emailRepo;
-      }
-    }
-{: class="brush:java"}
+  public DummyEmailRepo getEmailRepo() {
+    return emailRepo;
+  }
+}
+```
 
 So that now instead of copy/paste setting up a lot of mock expectations/results, your test can pass a `StubAppRegistryInstance` to the `BarHandler` under test and then assert against the side affects that `BarHandler` makes to `DummyDatabaseRepo` and `DummyEmailRepo`.
 

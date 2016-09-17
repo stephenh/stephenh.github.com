@@ -26,41 +26,42 @@ The Imperative Approach
 
 Jumping straight to the code, this is a slightly simplified version of an imperative approach to building the tabs:
 
-    public class Tabs extends CompositeIsWidget {
+```java
+public class Tabs extends CompositeIsWidget {
 
-      private IsTabsView view = newTabsView();
-      private ArrayList<IsWidget> panels = new ArrayList<IsWidget>();
+  private IsTabsView view = newTabsView();
+  private ArrayList<IsWidget> panels = new ArrayList<IsWidget>();
 
-      public Tabs() {
-        setWidget(view);
-      }
+  public Tabs() {
+    setWidget(view);
+  }
 
-      public void addTab(String tabName, IsWidget panel) {
-        IsTabView itemView = newTabView();
-        panels.add(panel);
-        if (panels.size() == 1) {
-          itemView.listItem().addStyleName("active");
-          show(panel);
-        } else {
-          hide(panel);
-        }
-        itemView.anchor().setText(tabName);
-        itemView.anchor().addClickHandler(new ClickHandler() {
-          public void onClick(ClickEvent event) {
-            for (IsWidget p : panels) {
-              hide(p);
-            }
-            for (int i = 0; i < view.list().getWidgetCount(); i++) {
-              view.list().getIsWidget(i).removeStyleName("active");
-            }
-            show(panel);
-            itemView.listItem().addStyleName("active");
-          }
-        });
-        view.list().add(itemView);
-      }
+  public void addTab(String tabName, IsWidget panel) {
+    IsTabView itemView = newTabView();
+    panels.add(panel);
+    if (panels.size() == 1) {
+      itemView.listItem().addStyleName("active");
+      show(panel);
+    } else {
+      hide(panel);
     }
-{: class="brush:java"}
+    itemView.anchor().setText(tabName);
+    itemView.anchor().addClickHandler(new ClickHandler() {
+      public void onClick(ClickEvent event) {
+        for (IsWidget p : panels) {
+          hide(p);
+        }
+        for (int i = 0; i < view.list().getWidgetCount(); i++) {
+          view.list().getIsWidget(i).removeStyleName("active");
+        }
+        show(panel);
+        itemView.listItem().addStyleName("active");
+      }
+    });
+    view.list().add(itemView);
+  }
+}
+```
 
 This code might be a little foreign if you're not used to GWT/Tessell development, but I think in general it's pretty easy to follow.
 
@@ -95,38 +96,39 @@ Looking at these behaviors, the notion of a "current tab" is pretty apparent. Re
 
 So, let's pull out that notion into an abstraction; let's make a `Tab` and a `currentTab`:
 
-    public class Tabs extends CompositeIsWidget {
+```java
+public class Tabs extends CompositeIsWidget {
 
-      private IsTabsView view = newTabsView();
-      private Tab currentTab;
+  private IsTabsView view = newTabsView();
+  private Tab currentTab;
 
-      public void addTab(String tabName, IsWidget panel) {
-        Tab tab = new Tab(tabName, panel);
-        if (currentTab == null) {
-          setCurrentTab(tab);
+  public void addTab(String tabName, IsWidget panel) {
+    Tab tab = new Tab(tabName, panel);
+    if (currentTab == null) {
+      setCurrentTab(tab);
+    }
+    view.list().add(tab.view);
+  }
+
+  private void setCurrentTab(Tab tab) {
+    if (currentTab != null) {
+      // unstyle old active tab;
+    }
+    // style new tab
+    currentTab = tab;
+  }
+
+  private class Tab {
+    private IsTabView view = newTabView();
+    private Tab(String tabName, IsWidget panel) {
+      view.addClickHandler(new ClickHandler() {
+        public void onClick(ClickEvent e) {
+          setCurrentTab(Tab.this);
         }
-        view.list().add(tab.view);
-      }
-
-      private void setCurrentTab(Tab tab) {
-        if (currentTab != null) {
-          // unstyle old active tab;
-        }
-        // style new tab
-        currentTab = tab;
-      }
-
-      private class Tab {
-        private IsTabView view = newTabView();
-        private Tab(String tabName, IsWidget panel) {
-          view.addClickHandler(new ClickHandler() {
-            public void onClick(ClickEvent e) {
-              setCurrentTab(Tab.this);
-            }
-          });
-        }
-      }
-{: class="brush:java"}
+      });
+    }
+  }
+```
 
 This is better. We've moved the styling updates into one place, `setCurrentTab`, so things are not as spread out.
 
@@ -138,9 +140,10 @@ Rich UI frameworks, Tessell included, solve this by promoting simple fields into
 
 So, let's change `currentTab` to a property:
 
-    private BasicProperty<Tab> currentTab =
-      basicProperty("currentTab");
-{: class="brush:java"}
+```java
+private BasicProperty<Tab> currentTab =
+  basicProperty("currentTab");
+```
 
 Since we have an abstraction around the value instead of just the value, we can now setup declarations around the abstraction, the property, and not just the value itself.
 
@@ -148,18 +151,21 @@ To see how well this works out, we can re-examine our 3 behaviors, and see how t
 
 * "When I am the current tab, show my panel" can look like:
 
-      binder.when(currentTab).is(this).show(panel);
-  {: class="brush:java"}
+  ```java
+  binder.when(currentTab).is(this).show(panel);
+  ```
 
 * "When I am the current tab, set `active` on my `li` tag" can look like:
 
-      binder.when(currentTab).is(this).set(active).on(view.li());
-  {: class="brush:java"}
+  ```java
+  binder.when(currentTab).is(this).set(active).on(view.li());
+  ```
 
 * "When I am clicked, make myself the current tab" can look like:
 
-      binder.onClick(view.anchor()).set(currentTab).to(this);
-  {: class="brush:java"}
+  ```java
+  binder.onClick(view.anchor()).set(currentTab).to(this);
+  ```
 
 And that's it.
 
@@ -172,34 +178,35 @@ The Final Code
 
 So, here's the full refactored code example:
 
-    public class Tabs extends CompositeIsWidget {
+```java
+public class Tabs extends CompositeIsWidget {
 
-      private IsTabsView view = newTabsView();
-      private Binder binder = new Binder();
-      private BasicProperty<Tab> currentTab = basicProperty("currentTab");
+  private IsTabsView view = newTabsView();
+  private Binder binder = new Binder();
+  private BasicProperty<Tab> currentTab = basicProperty("currentTab");
 
-      public Tabs() {
-        setWidget(view);
-      }
+  public Tabs() {
+    setWidget(view);
+  }
 
-      public void addTab(String tabName, IsWidget panel) {
-        Tab tab = new Tab(tabName, panel);
-        currentTab.setIfNull(tab);
-        view.list().add(tab.view);
-      }
+  public void addTab(String tabName, IsWidget panel) {
+    Tab tab = new Tab(tabName, panel);
+    currentTab.setIfNull(tab);
+    view.list().add(tab.view);
+  }
 
-      private class Tab {
-        private IsTabView view = newTabView();
+  private class Tab {
+    private IsTabView view = newTabView();
 
-        private Tab(String tabName, IsWidget panel) {
-          view.anchor().setText(tabName);
-          binder.when(currentTab).is(this).show(panel);
-          binder.when(currentTab).is(this).set("active").on(view.listItem());
-          binder.onClick(view.anchor()).set(currentTab).to(this);
-        }
-      }
+    private Tab(String tabName, IsWidget panel) {
+      view.anchor().setText(tabName);
+      binder.when(currentTab).is(this).show(panel);
+      binder.when(currentTab).is(this).set("active").on(view.listItem());
+      binder.onClick(view.anchor()).set(currentTab).to(this);
     }
-{: class="brush:java"}
+  }
+}
+```
 
 When This Works
 ===============
