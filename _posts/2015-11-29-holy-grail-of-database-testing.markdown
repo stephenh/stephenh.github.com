@@ -8,7 +8,7 @@ layout: post
 
 [Quill](http://getquill.io/) looks like the latest "embedded SQL DSL" for Scala, and so far I think it looks fairly compelling:
 
-```plain
+```scala
 case class Person(name: String, age: Int)
 
 val q = quote {
