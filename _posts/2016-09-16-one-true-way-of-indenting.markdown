@@ -28,9 +28,11 @@ public void foo(
 
 (Pretend that the lines were long enough to need wrapping.)
 
-"wrap-all" means, if a line passes the max line length (e.g. 120), don't just break it (say) into only two lines, but wrap each segment of the method call/method declaration on it's own line, even if this creates more lines than are technically necessary.
+"wrap-all" means, if a line passes the max line length (e.g. 120), don't just break it (say) into only two lines, but wrap each segment of the method call/method declaration on it's own line, even if this creates more lines than are necessary.
 
-"indent-by-one" means, when wrapping, put the wrapped line one indentation level (e.g. 2 spaces or whatever your project's configured indent level is) past the previous line's indentation.
+So, in our hypothetical case above, we put all four parameters on their own line, taking 4 lines total, even though we could have also put `param1` and `param2` together, and then `param3` and `param4` together, and used only 2 lines.
+
+"indent-by-one" means, when wrapping, start the wrapped line one indentation level (e.g. 2 spaces or whatever your project's configured indent level is) past the current line's indentation.
 
 The reason these two styles work well is that they:
 
@@ -39,9 +41,9 @@ The reason these two styles work well is that they:
 3. Has the best readability/eye-friendly scanning for code reviews
 
 Why not wrap-when-needed
-======================
+========================
 
-For example, one alternate indentation is wrap-when-needed, which looks like:
+One alternate indentation style is wrap-when-needed, which looks like:
 
 ```java
 // method call
@@ -55,7 +57,7 @@ public void foo(String param1, String param2,
 }
 ```
 
-There are several problems here, one is ugly diffs, and the other is just bad readability.
+There are several problems here: one is ugly diffs, and the other is just bad readability.
 
 Ugly diffs result because when we add/remove/reorder a parameter that is in the middle of the arguments, it's going to shift all of other parameters around. E.g. the new version might look like, adding `newParam`:
 
@@ -109,7 +111,7 @@ def foo(param1: Option[String] = None, param2: Option[String] = None,
 
 I can't easily glance at that and see "okay, we have four parameters, `param1`, `param2`, `param3`, `param4`."
 
-If this was wrapped wrap-every, it's trivial to scan:
+If this was wrapped wrap-all, it's trivial to scan:
 
 ```scala
 // method declaration
@@ -122,7 +124,7 @@ def foo(
 }
 ```
 
-Easy, obvious to read, all the parameter names can be read with one eye sweep.
+Now all of the parameter names can be read with one eye sweep.
 
 Why not indent-on-column
 ========================
@@ -147,9 +149,9 @@ public void someMethodName(String param1,
 
 There are several problems here: again ugly diffs, but now wasted white space, and also general inconsistency.
 
-For diffs, when `someMethodName` is every renamed, all of the wrapped parameter lines are going to shift. Which, yes sophisticated diff/code review tools can hopefully ignore this white space-only change, but it's still needless noise
+For diffs, when `someMethodName` is every renamed, all of the wrapped parameter lines are going to shift. Which, yes, sophisticated diff/code review tools can hopefully ignore this white space-only change, but it's still needless noise.
 
-For wasted white space, the wrapped lines are shifted way over to where ever `someMethodName` ends, which means they have less space for their own names. (Granted, if indent-on-column is used with wrap-every, this is not as bad, because in theory each wrapped line should itself be short. However, if you combine indent-on-column with wrap-when-needed, that space is more valuable.)
+For wasted white space, the wrapped lines are shifted way over to where ever `someMethodName` ends, which means they have less space for their own names. (Granted, if indent-on-column is used with wrap-all, this is not as bad, because each parameter get it's own (shortened) line of space. However, if you combine indent-on-column with wrap-when-needed, that space is more valuable.)
 
 For inconsistency, if I have multiple wrapped lines, my eye now has a random place to find the wrapped parameters, e.g.:
 
@@ -176,7 +178,7 @@ Indent-by-two for method declarations
 
 One good exception for indent-by-one is to use indent-by-two for method declarations.
 
-This pushes the wrapped parameter declarations in another level, which is because then they are not aligned with the implementation code:
+This pushes the wrapped parameter declarations in another level, so that then they are not vertically aligned with the lines in the method body, and so don't accidentally blend into the method body:
 
 ```java
 // method declaration
@@ -220,7 +222,7 @@ I basically have to shift my thinking into mini-parser mode, and start paying (m
 
 Which, of course I can do, and is trivial, but it subtly shifts my mind from "semantic mode" to "syntax mode", and then I'll have to shift back.
 
-I had mentioned builder call chains, and they similarly work well with wrap-all:
+Builder call chains work similarly well with wrap-all:
 
 ```scala
 new Employee()
@@ -246,7 +248,7 @@ IDE-enforced pros/cons:
 
 * Pro: keeps the codebase look and feel defacto consistent, because it's always kept in the formatter-dictated format
 * Pro: minimizes noisy format-only changes in diffs
-* Con: if you have mixed IDE environment, separate formatters, even if configured very similarily, will always handle certain boundary cases slightly differently
+* Con: if you have a mixed IDE environment then, even if configured very similarily, the formatter results will be slightly different across IDEs
 * Con: the formatter may pick a bad formatting choice
 
 Programmer-enforced pros/cons:
