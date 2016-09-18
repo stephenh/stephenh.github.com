@@ -28,9 +28,9 @@ public void foo(
 
 (Pretend that the lines were long enough to need wrapping.)
 
-"wrap-all" means, if a line passes the max line length (e.g. 120), don't just break it (say) into only two lines, but wrap each segment of the method call/method declaration on it's own line, even if this creates more lines than are necessary.
+"wrap-all" means, if a line passes the max line length (e.g. 120), don't just break it into only two lines, but wrap each segment of the method call/method declaration on it's own line, even if this creates more lines than necessary.
 
-So, in our hypothetical case above, we put all four parameters on their own line, taking 4 lines total, even though we could have also put `param1` and `param2` together, and then `param3` and `param4` together, and used only 2 lines.
+So, in our example above, we put all four parameters on their own line, taking 4 lines total, even though we could have also put `param1` and `param2` together, and then `param3` and `param4` together, and used only 2 lines.
 
 "indent-by-one" means, when wrapping, start the wrapped line one indentation level (e.g. 2 spaces or whatever your project's configured indent level is) past the current line's indentation.
 
