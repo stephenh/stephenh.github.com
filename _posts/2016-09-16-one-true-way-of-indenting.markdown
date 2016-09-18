@@ -309,6 +309,45 @@ That said, used judiciously, teams that I've worked on have had success with thi
 
 (We have admittedly used it more than we should on projects that use wrap-when-necessary, when really we should stop beating around the bush and push for moving the projects over to wrap-all.)
 
+Application to other languages
+==============================
+
+My examples so far have all used Java or Scala, but wrap-all and indent-by-one applies to basically all mainstream programming languages (maybe not LISPs? not sure).
+
+For example, one of my pet peeves is SQL that is wrap-when-necessary, e.g.
+
+```sql
+SELECT first_name, last_name, street_1, street_2
+  city, state, zip, phone FROM table
+  WHERE first_name = '...' AND (city = '...'
+  OR city = '...')
+```
+
+This is a mess to read; it has the same flaws as the wrap-when-necessary Java code: hard to see which columns are returned, ugly diffs when we add/remove columns, seemingly arbitrary wrapping (e.g. in the middle of an `OR` clause).
+
+Using wrap-all + indent-by-one, you can format this as:
+
+
+```sql
+SELECT
+  first_name,
+  last_name,
+  street_1,
+  street_2
+  city,
+  state,
+  zip,
+  phone
+FROM table
+WHERE
+  first_name = '...'
+  AND (
+    city = '...'
+    OR city = '...')
+```
+
+Is it more lines of code? Yes. But is it also more readable and resilient to change? Definitely yes.
+
 The one true way
 ================
 
