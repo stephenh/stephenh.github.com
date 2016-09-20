@@ -36,7 +36,7 @@ So, in our example above, we put all four parameters on their own line, taking 4
 
 The reason these two styles work well is that they:
 
-1. Minimize ugly diffs, as wrap-all + indent-by-one is very resilient changes
+1. Minimize ugly diffs, as wrap-all + indent-by-one is very resilient to changes
 2. Reduces the busywork of re-wrapping/re-indenting (which granted should be done by a formatter anyway)
 3. Has the best readability/eye-friendly scanning for code reviews
 
@@ -149,9 +149,9 @@ public void someMethodName(String param1,
 
 There are several problems here: again ugly diffs, but now wasted white space, and also general inconsistency.
 
-For diffs, when `someMethodName` is every renamed, all of the wrapped parameter lines are going to shift. Which, yes, sophisticated diff/code review tools can hopefully ignore this white space-only change, but it's still needless noise.
+For diffs, when `someMethodName` is renamed, all of the wrapped parameter lines are going to shift. Which, yes, sophisticated diff/code review tools can hopefully ignore this white space-only change (although the one we use at work does not), but it's still needless noise.
 
-For wasted white space, the wrapped lines are shifted way over to where ever `someMethodName` ends, which means they have less space for their own names. (Granted, if indent-on-column is used with wrap-all, this is not as bad, because each parameter get it's own (shortened) line of space. However, if you combine indent-on-column with wrap-when-needed, that space is more valuable.)
+For wasted white space, the wrapped lines are shifted way over to where `someMethodName` ends, which means they have less space for their own names. (Granted, if indent-on-column is used with wrap-all, this is not as bad, because each parameter get it's own (shortened) line of space. However, if you combine indent-on-column with wrap-when-needed, that space is more valuable.)
 
 For inconsistency, if I have multiple wrapped lines, my eye now has a random place to find the wrapped parameters, e.g.:
 
@@ -162,14 +162,14 @@ someMethodName(param1,
                param3,
                param4);
 
-// antoher method call
+// another method call
 someNiceVariableName.withAnotherNiceName(param1,
                                          param2,
                                          param3,
                                          param4);
 ```
 
-Where `param2` ends up is basically random (based on the method name being called), instead of being consistent.
+Where `param2` ends up vertically is basically random (based on the method name being called), instead of being consistent.
 
 In contrast, indent-by-one handles all of these: nice diffs, no wasted space, and wrapping is consistent.
 
@@ -220,7 +220,7 @@ When my eye hits the `.sortBy` on the 2nd line, it's not immediately clear which
 
 I basically have to shift my thinking into mini-parser mode, and start paying (more) attention to matching `{` and `}` to see what the steps are.
 
-Which, of course I can do, and is trivial, but it subtly shifts my mind from "semantic mode" to "syntax mode", and then I'll have to shift back.
+Which of course I can do, and is trivial, but it subtly shifts my mind from "semantic mode" to "syntax mode", and then I'll have to shift back.
 
 Builder call chains work similarly well with wrap-all:
 
@@ -288,7 +288,7 @@ Although IDE formatters typically make good choices, it is occasionally useful t
 
 You can do this by using a trick a colleague of mine discovered ~10 years ago, which is using fake comment entries, `//`, to force line breaks.
 
-When the formatter sees the start of the `//` comment, even if you don't put any text after it, it must wrap the next line, because condensing the lines means the following code would be commented out.
+When the formatter sees the start of the `//` comment, even if you don't put any text after it, it must wrap the next line, because condensing the lines means the 2nd line of code would be commented out.
 
 So, you can do something like:
 
@@ -312,7 +312,7 @@ That said, used judiciously, teams that I've worked on have had success with thi
 Application to other languages
 ==============================
 
-My examples so far have all used Java or Scala, but wrap-all and indent-by-one applies to basically all mainstream programming languages (maybe not LISPs? not sure).
+My examples so far have all used Java or Scala, but wrap-all and indent-by-one apply to basically all mainstream programming languages (maybe not LISPs? not sure).
 
 For example, one of my pet peeves is SQL that is wrap-when-necessary, e.g.
 
@@ -326,7 +326,6 @@ SELECT first_name, last_name, street_1, street_2
 This is a mess to read; it has the same flaws as the wrap-when-necessary Java code: hard to see which columns are returned, ugly diffs when we add/remove columns, seemingly arbitrary wrapping (e.g. in the middle of an `OR` clause).
 
 Using wrap-all + indent-by-one, you can format this as:
-
 
 ```sql
 SELECT
