@@ -1,6 +1,6 @@
 ---
 title: Staffing a Front-End Team
-layout: draft
+layout: post
 ---
 
 {{page.title}} <br/><small>(with Back-End Programmers)</small>
