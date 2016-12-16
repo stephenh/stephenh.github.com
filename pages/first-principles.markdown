@@ -245,6 +245,19 @@ So, you should actively ask clarifying questions. Try to build a mental model of
 
 Saying "I don't understand" is not a bad thing, because the alternative is continuing with a fuzzy understanding that limits your effectiveness.
 
+Interruptions are okay
+----------------------
+
+Per the last principle of acquiring knowledge, if you have to interrupt a colleague, e.g. to ask a clarifying question or get you unstuck while investigating a bug, I personally feel you should not be embarrassed/shy about breaking their flow.
+
+My rationalization (because I do this all the time) is that, yes, you interrupt your colleague, but after that, instead of the organization having only one person being effective (your colleague), they now have two (both of you).
+
+Granted, it will take your colleague 10 minutes to get back into flow, but if it saved you 2 hours of banging your head against a wall, that is net benefit to the organization.
+
+(Of course/disclaimer, there is a limit where this does become annoying, and some people are more bothered by interruptions than others, so use good judgement. But I think the "annoyance" threshold is much higher than most people thinking it is.)
+
+(As a corollary, if you're in a position of leadership, either technical or management, you should cultivate an attitude of welcoming interruptions, because at that point a large portion your job is to make others more effective.)
+
 Read the source code
 --------------------
 
