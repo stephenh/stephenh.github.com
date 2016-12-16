@@ -23,7 +23,7 @@ They even have compile-time validation of your queries against the database.
 
 E.g. if you typo the `Person.age` field in the case class as `agee` (note the extra `e`), there will be a `testDb.run` compilation error, with error text from the MySQL database itself, where Quill tried to execute the query and it failed.
 
-(Although, for this specific feature, I wonder how having random queries executed against your database would mess with your local test data; e.g. AFAICT the query [is actually executed](https://github.com/getquill/quill/blob/master/quill-jdbc/src/main/scala/io/getquill/source/jdbc/JdbcSource.scala#L31), which I suppose means having two local databases: one for test data/selenium/unit tests, and one for Quill.)
+(Although, for this specific feature, I wonder how having random queries executed against your database would mess with your local test data; e.g. AFAICT the query [is actually executed](https://github.com/getquill/quill/blob/master/quill-jdbc/src/main/scala/io/getquill/source/jdbc/JdbcSource.scala#L31) *during compilation*, which I suppose means having two local databases: one for test data/selenium/unit tests, and one for Quill.)
 
 My biggest angst about query DSLs is that I think it's hard for them to support truly everything you'd want to do in a database query, and so you will always need an escape hatch down to raw SQL. E.g. this is the case for Joist's DSL, albeit it is much more amateur than Quill.
 
