@@ -1,5 +1,5 @@
 ---
-layout: draft
+layout: post
 title: First Principles
 ---
 
