@@ -85,6 +85,27 @@ When you start a new codebase, the most important thing is not getting Feature A
 
 All codebases look great when they're new and ~2,000 LOC. It takes discipline to have a mature codebase that is 50,000 LOC, 100,000 LOC, still look good, and be a productive, pleasant experience to development in.
 
+Deadlines are an anti-pattern
+-----------------------------
+
+For about 5+ years, I worked in a culture where deadlines were very rare (we had maybe 2 the entire time I was there).
+
+At first, I thought of this as a luxurious, engineer-specific perk, that should be savored, but is otherwise somewhat selfish of engineers to lobby for.
+
+However, despite having no deadlines, the execution at this company was very good. Because our code quality was good. And our engineer retention was very good.
+
+When you acquiesce to deadlines, "because the business needs them", my opinion is that you are actually *hurting* the long-term interests of the business itself.
+
+Once you have a deadline, you have no slack. Engineers can't take another day or two, or week or two, to get a feature right, to clean things up as they go, and create a good system. Instead, they take shortcuts.
+
+On the first project, it's not a big deal. Your a little late (because you're always late), but it's okay.
+
+On the second project, you're a little more late, because you're always late, but now you also had to work around the technical debt created in the 1st project. But you don't have slack to clean it up, so you keep going.
+
+On the third project, the cycle continues. You're constantly falling behind.
+
+The best option, in my experience, is for the organization to just accept deadlines don't work. That doesn't mean projects should take forever; practice Agile or MVP or what not.
+
 Always choose future pleasure
 -----------------------------
 
@@ -210,27 +231,6 @@ Invariably, Team A's work will require some amount of output from Team B.
 
 Avoid thrashing
 ---------------
-
-Deadlines are an anti-pattern
------------------------------
-
-For about 5+ years, I worked in a culture where deadlines were very rare (we had maybe 2 the entire time I was there).
-
-At first, I thought of this as a luxurious, engineer-specific perk, that should be savored, but is otherwise somewhat selfish of engineers to lobby for.
-
-However, despite having no deadlines, the execution at this company was very good. Because our code quality was good. And our engineer retention was very good.
-
-When you acquiesce to deadlines, "because the business needs them", my opinion is that you are actually *hurting* the long-term interests of the business itself.
-
-Once you have a deadline, you have no slack. Engineers can't take another day or two, or week or two, to get a feature right, to clean things up as they go, and create a good system. Instead, they take shortcuts.
-
-On the first project, it's not a big deal. Your a little late (because you're always late), but it's okay.
-
-On the second project, you're a little more late, because you're always late, but now you also had to work around the technical debt created in the 1st project. But you don't have slack to clean it up, so you keep going.
-
-On the third project, the cycle continues. You're constantly falling behind.
-
-The best option, in my experience, is for the organization to just accept deadlines don't work. That doesn't mean projects should take forever; practice Agile or MVP or what not.
 
 Selfishly acquire knowledge, generously share it
 ------------------------------------------------
