@@ -3,6 +3,8 @@ layout: post
 title: First Principles
 ---
 
+:speech_balloon: So, this is the best way I can think of to comment in-line. Just generally, I think that these are all important ideas. I do question a bit whether they are "first principles", which suggest something fundamental that guides more specific advice and best practices. For example, as you point out yourself, "Always choose future pleasure" is a higher-level view of a lot of the other points in this list. I would actually argue that almost everything on this list basically boils down to "invest in the long term", although that's perhaps a bit too vague to be useful.
+
 {{page.title}}
 ==============
 
@@ -11,6 +13,8 @@ This is my collection of first principles from which to reason about software en
 Note that my experience is predominantly from successful-startup/enterprise environments, so that is the context for which most of these are intended, e.g. a common thread is that you're on a project/codebase that will be around for the long term.
 
 I also make no claim that these are original; I'm just collecting them.
+
+:speech_balloon: Thanks for the collection! It's nice to have something that I can use to kick of discussions with both you and with other people.
 
 Principle of least surprise
 ---------------------------
@@ -44,6 +48,8 @@ It is hard to articulate how nice it is to work in a codebase like this. If you 
 
 To achieve this, you basically pick conventions and follow them. Advocate for them in code reviews. Adapt them as needed. If a convention is not working, that's fine, change it, but go change all of the old convention over to the new.
 
+:speech_balloon: The focus on readability is the point, but I'm a bit cautious about phrasing the specific advice as "you basically pick conventions and follow them". In particular, I would recommend being very explicit that this is a plural "you" representing the team that owns the codebase, not the singular developer "you". It's really easy to end up with a bad code review culture if the route to adopting code conventions is for individuals to propose and advocate for them on reviews.
+
 Concrete actions:
 
 * If you find yourself doing something different than existing convention, don't.
@@ -68,6 +74,8 @@ This is an unfortunate con of an otherwise good practice (feature flags/ramps), 
 
 (Kudos to Mark Dietz for this principle.)
 
+:speech_balloon: This strikes me as weaker than the previous point. For example, "don't abstract prematurely" is probably advice on the same level as a number of items on this list, but I wouldn't remove an abstraction if the number of uses later drops back down to one. I think that there's a reasonable argument that keeping an abstraction that has historically supported multiple real world use cases should have a lower bar to introducing an abstraction that does not yet have more than one concrete reason for existing.
+
 Design and code for a 5-year codebase
 -------------------------------------
 
@@ -84,6 +92,8 @@ Your job as an engineer, or engineering manager, is to protect the future. Yes, 
 When you start a new codebase, the most important thing is not getting Feature A shipped. It's ensuring the architecture, development environment, TDD cycle, deployment steps, are setup so that, over the next 5 years, Feature A will be easy, Feature B will be easy, and Feature Z will be easy.
 
 All codebases look great when they're new and ~2,000 LOC. It takes discipline to have a mature codebase that is 50,000 LOC, 100,000 LOC, still look good, and be a productive, pleasant experience to development in.
+
+:speech_balloon: Hmm, I would formulate this a bit differently and phrase it as "Design and code like the code base will live for another five years." I think that it's an antipattern to reduce quality investments just because the system is nearing its projected EOL. In my experience, it's worth keeping that investment level high because (if nothing else) you preserve the *option* of extending the lifetime of the code base, which may happen regardless.
 
 Deadlines are an anti-pattern
 -----------------------------
@@ -106,6 +116,8 @@ On the third project, the cycle continues. You're constantly falling behind.
 
 The best option, in my experience, is for the organization to just accept deadlines don't work. That doesn't mean projects should take forever; practice Agile or MVP or what not.
 
+:speech_balloon: Hmm...it seems like the benefits of this principle come from (1) trusting that engineers will choose to make long term investments in the codebase and (2) providing enough autonomy that they can make those choices. If enough space is set aside for this, I don't see a problem with deadlines. In particular, Agile is all about making sprint commitments and hitting your definition of done by the end of the sprint. If those count as deadlines, we had plenty of them at the company where deadlines were rare. (Aside: can we not mention that company by name?) I will agree, however, that deadlines must originate from the people closest to the implementation, not be imposed on them.
+
 Always choose future pleasure
 -----------------------------
 
@@ -120,6 +132,8 @@ Just that software development can be both very fun, and very, very frustrating.
 In my experience, if you don't practice delayed-gratification, it becomes frustrating very quickly. You get codebases that are not fun to development in. Features take a long time. Things break a lot. Developers are afraid to change things.
 
 If you slow down, and focus on making *your* future pleasant, while that initially sounds very selfish, you, by making your future job easier, are actually providing the most business value, the most features, the best ROI for the organization.
+
+:speech_balloon: I like this as a true first principle in the foundational sense of the word. I think that we often phrased this as "optimize for maintenance" at the-company-that-shall-not-be-named.
 
 Software development does not scale
 -----------------------------------
@@ -138,10 +152,14 @@ If instead you model your system as a series of 20,000 LOC modules, with nice AP
 
 On the team organization side, I think it makes a lot of sense to follow an approach like Spotify's squads (see the image [here](https://labs.spotify.com/2014/03/27/spotify-engineering-culture-part-1/), where you setup multiple, sibling teams working on feature teams, and leveraging shared infrastructure that are separate teams and repositories.
 
+:speech_balloon: Hmm, I feel like there is a lot of assumed context here when you talk about teams and repositories. For example, Google [famously has a single repository for all of its code](http://cacm.acm.org/magazines/2016/7/204032-why-google-stores-billions-of-lines-of-code-in-a-single-repository/fulltext), but they are able to run agile teams within that, and I don't think that it's because the overall quality of the codebase is significantly different than at other companies. I think that the most interesting part of this section is your advice to model the system as independent modules; the underlying principle here is that developers need to be empowered to optimize locally. Diffuse ownership and large teams, along with deadlines, is another way that developers end up being disempowered.
+
 Avoid rewrites, support incremental change
 ------------------------------------------
 
 Flush out.
+
+:speech_balloon: 100% yes, even if you have no particular reasons articulated yet. :) Incidentally, I'm not sure if "flush out" is a typo for "flesh out" or not, but I enjoy the phrasing as a directive to make a brain dump.
 
 Comments should explain why, not what
 -------------------------------------
@@ -182,6 +200,8 @@ The faster a developer can go through this loop, the more productive they will b
 
 As a rule of thumb, I think 5 seconds is the max time it should take for a developer to get feedback during their primary, day-to-day workflow. (E.g. they should spend 90% of their time in a tight TDD unit test cycle, and then maybe 10% of their time running slower integration/browser tests.)
 
+:speech_balloon: I will emphasize that compiler errors are a form of getting feedback quickly, which is also the third item on your linked blog post in that section.
+
 Your entire tool chain (IDE, build system, test framework, application framework) needs to be optimized for this.
 
 For example, if the application framework takes *even a minute* to start, then you either need to:
@@ -195,6 +215,8 @@ For example, if the application framework takes *even a minute* to start, then y
 As another example, if on a sufficiently large codebase, your chosen language's incremental compiler causes a noticeable interrupt to developers' flow, that is a significant con that you need to weight against the other pros of the language.
 
 Yet another example, when working on web applications, it's very common for the production Javascript to require lots of optimization/minification, etc. This is just fine, but this should expensive minification process should never be part of a developer's regularly, daily flow/TDD cycle. It's just too expensive and time consuming.
+
+:speech_balloon: I like the write-build-verify loop as a KPI for developer productivity. I don't think that I've explicitly thought about it in those terms, so thanks for writing this section!
 
 The less layers in your TDD cycle, the faster you will go
 ---------------------------------------------------------
@@ -216,6 +238,8 @@ The wrinkle here is that an ill-designed abstraction layer may make your tests l
 
 Abstractions are also expensive to create and maintain, so the ROI of creating one will likely not pay off in the short-term. But if you're in a 5 year codebase, and your abstraction allows you to keep the TDD cycle below the 5 second rule of thumb, even if it takes you a quarter+ to initially setup.then that is very likely to be a ROI win.
 
+:speech_balloon: This seems like basically just an elaboration of the previous point.
+
 Repositories are best owned by teams
 ------------------------------------
 
@@ -228,6 +252,8 @@ Avoid serialized development
 In complicated/enterprise environments, it's very common for a project to require output from multiple teams.
 
 Invariably, Team A's work will require some amount of output from Team B.
+
+:speech_balloon: I think that the important thing here is to minimize cross-team dependencies, not serialized development. I would actually argue that on a personal level, most developers would prefer serializing their work instead of context-switching between multiple threads.
 
 Avoid thrashing
 ---------------
@@ -245,6 +271,8 @@ So, you should actively ask clarifying questions. Try to build a mental model of
 
 Saying "I don't understand" is not a bad thing, because the alternative is continuing with a fuzzy understanding that limits your effectiveness.
 
+:speech_balloon: Related to your below "read the code" point, investing time in building a strong understanding of your stack is also a form of selfishly acquiring knowledge that should be embraced.
+
 Interruptions are okay
 ----------------------
 
@@ -257,6 +285,8 @@ Granted, it will take your colleague 10 minutes to get back into flow, but if it
 (Of course/disclaimer, there is a limit where this does become annoying, and some people are more bothered by interruptions than others, so use good judgement. But I think the "annoyance" threshold is much higher than most people thinking it is.)
 
 (As a corollary, if you're in a position of leadership, either technical or management, you should cultivate an attitude of welcoming interruptions, because at that point a large portion your job is to make others more effective.)
+
+:speech_balloon: I think of this as advice to nudge the typical team into a more productive state. In particular, what this should encourage is developers to unblock themselves more quickly by asking for help. Telling your sales team or your support team that interrupting developers is okay is a fast way to kill productivity. Perhaps the underlying principle here is that "talent is a priority" (as said by another-not-yet-named-company) because investing in people is one of the best long-term strategies that can be adopted.
 
 Read the source code
 --------------------
