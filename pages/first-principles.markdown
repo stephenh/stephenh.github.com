@@ -42,7 +42,7 @@ However, they should *look*, as much as possible, like they were written by one 
 
 It is hard to articulate how nice it is to work in a codebase like this. If you haven't, it can seem like not a big deal, e.g. why is this important? However, after you have worked in a codebase like this, you realize how nice life can be: you can easily find things, because they're all in their expected place. You can easily read code from other team members, because you all use the same convention/idioms/etc. You get to focus on the real business problems and logic.
 
-To achieve this, you basically pick conventions and follow them. Advocate for them in code reviews. Adapt them as needed. If a convention is not working, that's fine, change it, but go change all of the old convention over to the new.
+To achieve this, you (as in the team) basically pick conventions and follow them. Advocate for them in code reviews. Adapt them as needed. If a convention is not working, that's fine, change it (by discussing and agreeing to it at the team-level), but go change all of the old convention over to the new.
 
 Concrete actions:
 
@@ -194,7 +194,9 @@ For example, if the application framework takes *even a minute* to start, then y
 
 As another example, if on a sufficiently large codebase, your chosen language's incremental compiler causes a noticeable interrupt to developers' flow, that is a significant con that you need to weight against the other pros of the language.
 
-Yet another example, when working on web applications, it's very common for the production Javascript to require lots of optimization/minification, etc. This is just fine, but this should expensive minification process should never be part of a developer's regularly, daily flow/TDD cycle. It's just too expensive and time consuming.
+Yet another example, when working on web applications, it's very common for the production Javascript to require lots of optimization/minification, etc. This is just fine, but this expensive minification process should never be part of a developer's regular, daily flow/TDD cycle. It's just too expensive and time consuming.
+
+(Finally, while not technically part of the TDD cycle, the compilation errors provided by statically-typed languages are, for me, another form of fast feedback; see the blog post linked in the previous section for more details.)
 
 The less layers in your TDD cycle, the faster you will go
 ---------------------------------------------------------
@@ -219,8 +221,12 @@ Abstractions are also expensive to create and maintain, so the ROI of creating o
 Repositories are best owned by teams
 ------------------------------------
 
+Flush out.
+
 Full-stack/cross-functional teams
 ---------------------------------
+
+Flush out.
 
 Avoid serialized development
 ----------------------------
@@ -231,6 +237,8 @@ Invariably, Team A's work will require some amount of output from Team B.
 
 Avoid thrashing
 ---------------
+
+Flush out.
 
 Selfishly acquire knowledge, generously share it
 ------------------------------------------------
@@ -256,7 +264,9 @@ Granted, it will take your colleague 10 minutes to get back into flow, but if it
 
 (Of course/disclaimer, there is a limit where this does become annoying, and some people are more bothered by interruptions than others, so use good judgement. But I think the "annoyance" threshold is much higher than most people thinking it is.)
 
-(As a corollary, if you're in a position of leadership, either technical or management, you should cultivate an attitude of welcoming interruptions, because at that point a large portion your job is to make others more effective.)
+(Also, I'm specifically thinking of intra-team communication here, e.g. one engineer talking to another engineer; interruptions like fielding questions for sales and support teams is not what I'm advocating for.)
+
+(As a corollary, if you're in a position of leadership, either technical or management, you should cultivate an attitude of welcoming interruptions from your team members, because at that point a large portion your job is to make others more effective.)
 
 Read the source code
 --------------------
