@@ -231,9 +231,35 @@ Flush out.
 Avoid serialized development
 ----------------------------
 
-In complicated/enterprise environments, it's very common for a project to require output from multiple teams.
+In complicated/enterprise environments, it's common for a project to require output/artifacts from multiple teams.
 
-Invariably, Team A's work will require some amount of output from Team B.
+The primary way to handle this should be to avoid it all together, e.g. see the previous point on cross-functional teams.
+
+That said, if/when you cannot avoid this, then you should strive to start all teams working on their respective artifacts at the same time.
+
+Specifically, the anti-pattern to avoid is:
+
+* Backend team A delivers their artifact, takes ~a quarter
+* Middleware team B consumes A's output, produces their own, takes ~a quarter
+* Front-end team C consumes B's output, produces the final product, takes ~a quarter
+
+Besides the obvious problem of this now taking 3 quarters, it actually takes *more* than 3 quarters, due to the ramping and switching costs teams will incur from their disjoint timelines.
+
+E.g. in Q2, team B will start, begin reading the requirements, and invariably start to question why team A solved things the way they did (some of this questioning will be valid, given team B's different insight into the problem; some of it won't), and kick off a round of meetings with both teams A and B where everything is re-discussed and re-decided. Then repeat when team C comes on board.
+
+Or e.g. in Q3, team C will invariably find work that teams A and B needs to fix, either user scenarios that were missed, or outright bugs. However, those teams have likely moved on to the next thing, and now have to context switch back.
+
+In addition to higher ramping/switching costs, because team C starts last (effectively two quarters into the project), their engineers are placed in a disadvantaged scenario: they were not around when the founding decisions were made, so have little context for the "why" things exist the way they do; they are unlikely to feel any ownership because all of these founding decisions have been made, and changing them is very expensive. This lowers their overall motivation, effectiveness, and career growth.
+
+Finally, when team C starts work, they will inevitably face schedule pressure, because any scope increases/missed estimates in the teams head of them, and just general fact that the project is already "mostly done", means they are now what is "holding up" the project being completed, so if they could just hurry up a bit, that'd be great.
+
+To avoid this, team C should start work immediately when the other teams start.
+
+A typical protest for this is that team's A and B will not have any artifacts ready for team C to consume. Which is true. However, in my experience, it's best for team C to basically stub/fake output the expected artifacts and continue anyway.
+
+This does risk team C doing some re-work, as their faked artifacts will not exactly match the real artifacts when they become available; however, the upshot is that C's faked artifacts will provide excellent feedback and documentation as to what they expected from team's A and B.
+
+(An interesting wrinkle in this scenario is when team C is the organization's bottleneck, and, in theory of constraints terms, you want to subordinate the other teams' work to it, e.g. for the B and C output to be as-perfect, as-good-as-possible (reject defects early), when it hits the bottleneck. I'm not sure what to say here.)
 
 Avoid thrashing
 ---------------
@@ -253,14 +279,16 @@ So, you should actively ask clarifying questions. Try to build a mental model of
 
 Saying "I don't understand" is not a bad thing, because the alternative is continuing with a fuzzy understanding that limits your effectiveness.
 
-Interruptions are okay
-----------------------
+(Intra-team) Interruptions are okay
+-----------------------------------
 
 Per the last principle of acquiring knowledge, if you have to interrupt a colleague, e.g. to ask a clarifying question or get you unstuck while investigating a bug, I personally feel you should not be embarrassed/shy about breaking their flow.
 
 My rationalization (because I do this all the time) is that, yes, you interrupt your colleague, but after that, instead of the organization having only one person being effective (your colleague), they now have two (both of you).
 
 Granted, it will take your colleague 10 minutes to get back into flow, but if it saved you 2 hours of banging your head against a wall, that is net benefit to the organization.
+
+And ideally, while talking to your colleague, you've not just become unblocked, but you've also built up your mental model enough that, for this particular issue anyway, you can be more self-sufficient going forward.
 
 (Of course/disclaimer, there is a limit where this does become annoying, and some people are more bothered by interruptions than others, so use good judgement. But I think the "annoyance" threshold is much higher than most people thinking it is.)
 
@@ -278,6 +306,22 @@ A lot of my productivity when build tool X doesn't work, or framework Y is doing
 Maybe 80% of the time, you'll figure out what you're doing wrong (and will have significantly strengthened your mental model of how that system works), and 20% of the time, you'll have found a bug in their code, and can file a bug report (or even better a patch).
 
 Granted, you don't need to do on this on every little issue, e.g. of course google/Stack Overflow first, but the ability to do this when/as needed is something worth spending time on, and developing.
+
+Prefer Simplicity
+-----------------
+
+When considering technical decisions (architectures, frameworks, class designs), have a strong preference for the simplest approach.
+
+For example, the anti-thesis (IMO) of simplicity was mid-2000s era J2EE, where the J2EE container magically handled N layers of complexity, including fun things like distributed two-phase commits, and the developer was promised "it will just work". This was fine, and enticing, until it doesn't "just work", or you need to color outside the lines, and then it becomes very hard to understand.
+
+Complexity can be a siren call, especially for bright engineers that are looking for super-generic, fun/challenging abstractions, and who, by virtue of being really smart and the primary author, really can hold the complex approach in their head.
+
+However, the codebase, team, and business will be best served by focusing your intelligence into finding the simplest approach possible, because that is usually the quickest to implement, the easiest to reason about while debugging, and the easiest to change as needed.
+
+Granted, you will ocassionally have to, out of necessity, choose a complex approach, but if most your other choices were for the simple approach, then ideally a little complexity here and there will be tractable.
+
+
+
 
 
 
