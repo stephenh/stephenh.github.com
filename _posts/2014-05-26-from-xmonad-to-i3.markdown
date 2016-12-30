@@ -6,14 +6,14 @@ layout: post
 {{page.title}}
 ==============
 
-For several years now, I've been a faithful user of [xmonad](http://xmonad.org/), the Linux tiling window manager that is written in Haskell.
+For several years now, I've been a faithful user of [xmonad](http://xmonad.org/), the Linux tiling window manager that is written in Haskell but I just recently switched over to [i3](http://www.i3wm.org/).
 
 Why Move From xmonad?
 ---------------------
 
 I really enjoyed xmonad, and want to still highly recommend it, but I consistently ran into two issues:
 
-1. I consider myself an "expert-level" programmer, but after years of usage, I simply did not understand how my xmonad config file (which is a Haskell program) actually worked.
+1. I consider myself an expert-level programmer, but even after years of using xmonad, I simply did not understand how my xmonad config file (which is a Haskell program) actually worked.
   
    Here is an example from my config file:
 
@@ -29,40 +29,40 @@ I really enjoyed xmonad, and want to still highly recommend it, but I consistent
      ]
    ```
 
-   This snippet of code maps `Mod-w`, `Mod-e`, and `Mod-r` to my left, center, and right monitors, which are not just magically in the right order when detected by machine at boot.
+   This snippet of code maps the three shortcuts `Mod-w`, `Mod-e`, and `Mod-r` to my left, center, and right monitors, which unfortunately are not just magically in the right order when detected by machine at boot.
 
-   I like to think I "get" functional programming--I know what `zip` does, I can guess that `++` is list concat...but otherwise the rest of this is basically Greek.
+   I like to think I "get" functional programming--I know what `zip` does, I can guess that `++` is list concat...but otherwise the rest of this Haskell code is basically Greek to me.
 
-   For years I got by with copy/pasting and cargo culting code from other people's config files. But even trivial tasks, like "take snippet 1 and combine it with snippet 2", I just couldn't do.
+   For several years I manged to use xmonad by copy/pasting and cargo culting code from other people's config files. But even trivial tasks, like "take snippet 1 and combine it with snippet 2", I just couldn't do.
 
-   Eventually I resigned myself from "I'm sure I'll understand this soon" to "okay, this just isn't going to happen without a significant time investment".
+   Eventually I resigned myself from "I'm sure I'll understand this soon..." to "...okay, this just isn't going to happen without a significant time investment".
 
 2. xmonad just stopped working for Ubuntu 14.04
 
    xmonad has always been painful to setup, mostly due to my own admittedly personal preference of not running xmonad "bare bones", but as the window manager within a still-basically-Gnome environment.
 
-   Basically, I still wanted the Gnome panel, and I wanted that primarily because, to my naive skills, unless the Gnome panel started, the Network Manager applet wouldn't start, and so my wireless wouldn't connect.
+   Basically, I still wanted the Gnome panel (which is the top/bottom bar in an OS window environment that has the wireless status, message notifications, etc.), and I wanted that primarily because (somewhat embarrassingly) unless the Gnome panel started, the Network Manager applet wouldn't start, and so my wireless wouldn't connect.
 
    Yes, I must admit that I am not, nor really want to be, 1337 enough to manage my wireless connection solely from the CLI.
 
-   But, that was fine, as previous to this, I'd always been able to, eventually, get xmonad running within whatever Gnome environment was within Ubuntu (e.g. [Using xmonad in Gnome](http://www.haskell.org/haskellwiki/Xmonad/Using_xmonad_in_Gnome)), and was quite happy.
+   Previously that was fine, as I'd always been able to, eventually, get xmonad running within whatever Gnome environment was within Ubuntu (e.g. [Using xmonad in Gnome](http://www.haskell.org/haskellwiki/Xmonad/Using_xmonad_in_Gnome)), and was quite happy.
 
    In Saucy, the xmonad install was actually really slick--just `sudo apt-get install xmonad`, and then the LightDM login screen would give you a "Login with XMonad Gnome" (or something like that) option that, IIRC, just worked.
 
    But now for 14.04, it's back to just not working. I could probably figure it out, but Saucy spoiled me, and I now expect it to just work.
 
-Tried Lubuntu
--------------
+Tangent: Tried Lubuntu
+----------------------
 
-For Saucy, I had been using xmonad within [LXDE](http://lxde.org/) (because the Gnome 2 panel stopped working, so I switched to `lxpanel`), but I'd always used Xmonad after tweaking a stock (and technically upgraded) Ubuntu that still had vestiges of Unity/etc. installed.
+For Saucy, I had been using xmonad within [LXDE](http://lxde.org/) (because the Gnome 2 panel stopped working, so I switched to `lxpanel`, which provided the basic top/bottom bar applets), but I'd always used Xmonad after tweaking a stock Ubuntu that still had vestiges of Unity/etc. installed.
 
 This time around, I'd just gotten a new, larger SSD, and so had an excuse to do a clean install of Ubuntu, instead of my regular Saucy -> Trusty in-place upgrade path.
 
-So, I thought that would be a good excuse to try [Lubuntu](http://lubuntu.net/), which is built on top of LXDE, and from a clean install and skip Unity/etc. all together. Be super lightweight!
+So, I thought that would be a good excuse to try [Lubuntu](http://lubuntu.net/), which is built on top of LXDE, and from a clean install and skip the "bloat" of Unity/etc. all together. Super lightweight!
 
 Good plans, but for whatever reason, it just didn't work out. For one, I was surprised at how different Lubuntu looked vs. stock LXDE. Granted, it was just theming.
 
-However, the biggest issue was that xmonad didn't "just work", even after changing the LXDE window manager from the default `openbox` to `xmonad`.
+However, the biggest issue was that xmonad still didn't "just work", even after changing the LXDE window manager from the default `openbox` to `xmonad`.
 
 This had worked before, pre-14.04, but did not in Lubuntu.
 
@@ -71,7 +71,7 @@ So, I gave up on Lubuntu, and reinstalled the stock Ubuntu 14.04 as a clean inst
 Enter i3wm
 ----------
 
-After trying a few gyrations, I ended up installing [i3](http://www.i3wm.org/) and, so far, am very happy. For two reasons:
+After many gyrations, I ended up installing [i3](http://www.i3wm.org/) and, so far, am very happy. For two reasons:
 
 1. The config file is plain text!
 
@@ -95,7 +95,7 @@ After trying a few gyrations, I ended up installing [i3](http://www.i3wm.org/) a
 
    (Notice how both of these are exactly the opposite of what I disliked about xmonad.)
 
-3. As a bonus, i3 runs panel-less but is still newbie-friendly because it includes a basic status bar out-of-the-box.
+3. As a bonus, i3 runs panel-less (so no futzing with Gnome/LXDE/etc.) but is still newbie-friendly because it includes a basic applet-friendly status bar out-of-the-box.
 
    Per before, I was never brave enough to run xmonad without a "basically Gnome" panel, and so always went to the pain of having the Gnome/LXDE panels available for the various applets/etc. This was always the most annoying part of getting xmonad setup.
 
@@ -143,7 +143,7 @@ So, while i3 just worked, and I've spent an acceptable amount of time tweaking i
 
 I am admittedly slightly OCD about having the OS use my laptop's native 143 DPI (yes, it's not a MBP; although there are 200+ DPI ThinkPads out these days...).
 
-Previously, I was in enough of a "mainstream" environment that `gnome-tweak-tool`/etc. was enough to, AFAICT, throb the right hidden font/DPI settings.
+Previously, I was in enough of a "mainstream" environment (those panels) that `gnome-tweak-tool`/etc. was enough to, AFAICT, throb the right hidden font/DPI settings.
 
 But now that I'm in a more bare-bones environment, with no real master UI preferences/appearance control panel, it took quite a bit of fussing to get right, but I finally found what I believe is the magic incantation:
 
@@ -189,7 +189,7 @@ But now that I'm in a more bare-bones environment, with no real master UI prefer
    exec --no-startup-id xrandr --dpi 143
    ```
 
-   I believe editing an `X.org` config file is another, more permanent way to do this, but I've always been too scared of severely messing up my config and never being able to log in again to mess with those.
+   I believe editing an `X.org` config file (e.g. off in `/etc/X11/...`) is another, more permanent way to do this, but I've always been too scared of severely messing up my X11 config and never being able to log in again to mess with those.
 
 3. GTK Settings
 
