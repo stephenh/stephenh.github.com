@@ -8,6 +8,8 @@ layout: post
 
 For several years now, I've been a faithful user of [xmonad](http://xmonad.org/), the Linux tiling window manager that is written in Haskell but I just recently switched over to [i3](http://www.i3wm.org/).
 
+(Update Dec 2016: I'm still using i3, and here are the links to my config files: [~/.i3/config](/files/i3-config.txt), [~/.config/i3status/config](/files/i3-status-config.txt), and [~/.Xresources](/files/Xresources.txt).
+
 Why Move From xmonad?
 ---------------------
 
