@@ -103,7 +103,7 @@ After many gyrations, I ended up installing [i3](http://www.i3wm.org/) and, so f
 
    What real power users of xmonad use, instead of a panel, is a separate, non-Gnome/etc., "status bar" (like [xmobar](http://projects.haskell.org/xmobar/)), which sits in the same place as the panel, but differentiates itself by being primarily text-based, and super-extensible.
 
-   Which, for xmonad, "super-extensible" meant "not there by default" which meant "intimating for new users", so I never set one up.
+   Which, for xmonad, "super-extensible" meant "not there by default" which meant "intimidating for new users", so I never set one up.
 
    With i3, it runs panel-less (as in no heavyweight Gnome/LXDE/etc. panel), but has an out-of-the-box status bar ([i3status](http://i3wm.org/i3status/)) that "just works" and is sufficiently-configurable (plain text) that, for now, I see no reason to switch. 
 
