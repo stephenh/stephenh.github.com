@@ -168,3 +168,14 @@ Here is a trimmed-down example of my current work-related `filters.xml`. I delet
 </feed>
 ```
 
+Ease of Sharing
+---------------
+
+A final aspect of using the `filters.xml` approach is that it makes sharing filters really easy.
+
+E.g. when a new member joins the team, you can share either your personal or a sort of "team-defaults" `filters.xml` that handles the common email lists, alert lists, code review lists, etc., that everyone on the team is on.
+
+This way the new member will have a head start on an organized approach (assuming they want to use a label-based approach, again per personal preference), vs. dealing with a deluge of email and having to just figure it out as they go.
+
+In this vein, if anyone at LinkedIn is interested in my full `filters.xml` file (which is engineer-biased, e.g. filters GCNs, autoalerts, etc.) feel free to reach out.
+
