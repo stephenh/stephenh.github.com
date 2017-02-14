@@ -12,7 +12,7 @@ Note that these are not "how to learn language XYZ", as those language-specific 
 
 [The Pragmatic Programmer](http://a.co/3egf2bU) - One of the first "not language-specific" books I read. I need to re-read it so I can write a better summary, but it was my introduction to "programming as a craft" and very influential to me at the time.
 
-[Clean Code](http://a.co/ef0h37T) - Good discussion of low-level mechanics of making code look nice, e.g. visual chunking of lines/statements. Unfortunately I read this late in my career, so it was kind of a "yawn" read because the information was already obvious to me, but it's a great collection for newer programmers.
+[Clean Code](http://a.co/ef0h37T) - Good discussion of low-level mechanics of making code look nice, e.g. visual chunking of lines/statements. Unfortunately I read this late in my career, so it was kind of a "of course" read because the information was already obvious to me, but it's a great collection for newer programmers.
 
 [Refactoring](http://a.co/cNawl8K) - Awesome set of patterns to make code incrementally better. Anything by Fowler is great.
 
