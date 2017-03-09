@@ -76,6 +76,17 @@ If a paragraph hits five sentences, it's very likely your reader is going to ski
 
 So you might as well proactively copy edit your email down to be as succinct as possible.
 
+Single Responsibility Principle
+-------------------------------
+
+A colleague of mine, Ian, pointed out another good articulation that I use as well but had missed: keep your thread focused on one thing at a time.
+
+If you have a long email asking "well, this part of the system is doing ABC, can you explain that?", and then another few paragraphs about "but then there is also behavior XYZ that is odd as well, how should that work?", it will often be hard for the readers/responders to adequately reply to both issues without the thread becoming unwieldy.
+
+Note that some communities/cultures can handle this, e.g. open source projects with a mature community that are all good communicators can have long-winded threads with several different points/mini-threads and be effective. This is often because the community's communication is 100% electronic, 100% email-based, and all of the participants have a lot of practice and shared-context to juggle a complex email chain.
+
+But those communities are an exception, and I think in corporate environments it's better to purposefully focus a thread on only a single question/topic at a time.
+
 Conclusion
 ----------
 
