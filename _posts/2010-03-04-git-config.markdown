@@ -252,6 +252,21 @@ Since I defined most of the interesting aliases in the `.gitconfig` `[alias]` se
 
 It results in some duplication, but means they're usable from both inside and outside of `git-sh`, which I think is useful.
 
+git-prompt
+----------
+
+There a lot of snippets floating around the Internet about putting git status in your shell prompt. Here's what I currently have, in my `.bashrc`:
+
+```bash
+# git prompt integration
+function parse_git_branch {
+    git branch --no-color 2> /dev/null | sed -e '/^[^*]/d' -e "s/* \(.*\)/ \1/"
+}
+export PS1=$(echo "$PS1" | sed 's/\\W/\\W\\[\\033[1;34m\\]$(parse_git_branch)\\[\\033[0m\\]/')
+```
+
+For some reason I've found setting `PS1` works better than changing `PROMPT_COMMAND` (although I do change `PROMPT_COMMAND` for other things), but I forget why.
+
 That's It
 ---------
 
