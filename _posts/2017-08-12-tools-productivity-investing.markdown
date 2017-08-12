@@ -15,7 +15,7 @@ First- vs. Second-Order Effects
 
 Obviously with tools, there is the first-order effect/rationale of "immediate time saved" that enables a programmer to move more quickly when they leverage a tool.
 
-E.g. the raw "time saved by typing X keystrokes instead of Y keystrokes" by using emacs/vi bindings, or "time saved by using `ripgrep` instead of hunting/pecking around"; 10 seconds instead of 60 seconds.
+E.g. the raw "time saved by typing X keystrokes instead of Y keystrokes" by using emacs/vi bindings, or "time saved by using `ripgrep` instead of hunting/pecking around in random files"; 10 seconds instead of 60 seconds.
 
 These initial time-saved values seem, compared to the span of an 8-hour work day or a 3-month project, to be incredibly small. E.g. 5 seconds here vs. 60 seconds there. Big deal.
 
@@ -33,7 +33,7 @@ Note that this hesitation is likely rooted in reality, e.g. you're right to be s
 Flow/OODA Loop
 --------------
 
-Flow is a widely-discussed concept. For me, an interesting definition of flow is how long (or how many cycles) you can stay in the also-oft-quoted [OODA loop](https://en.wikipedia.org/wiki/OODA_loop) (orient, observe, decide, act).
+Flow is a widely-discussed concept. For me, an interesting definition of flow is how long you can stay (or how many uninterrupted cycles you can complete) in the also-oft-quoted [OODA loop](https://en.wikipedia.org/wiki/OODA_loop) (orient, observe, decide, act).
 
 E.g., to me, the "best" programmers can quickly cycle through an OODA loop of:
 
@@ -44,10 +44,10 @@ E.g., to me, the "best" programmers can quickly cycle through an OODA loop of:
 
 I use the term "best" in quotes, because there are obviously other factors in overall programmer effectiveness, e.g. what strategic-/design-level decisions you make.
 
-But my personal observation when comparing high-output vs. low-output programmers, at least in terms of most visible attributes, is the difference in speed of their OODA loop:
+But my personal observation when comparing high-output vs. low-output programmers, at least in terms of visible attributes, is the difference in speed of their OODA loop:
 
-* High-output programmers make changes quickly, they move around in the editor quickly, they decide what change to make quickly; it's like they're playing a game that they're intimately familiar with and are spinning the cycle quickly. In contrast,
-* Low-output programmers, for lack of a better term, "move slower"; they take longer to decide what change to make next, they take longer to make those changes, they take longer to determine the root cause of a test failure, etc.
+* Most "high-output" programmers make changes quickly, they move around in the editor quickly, they decide what change to make quickly; it's like they're playing a game that they're intimately familiar with and are spinning the cycle quickly. In contrast,
+* Most "low-output" programmers, for lack of a better term, "move slower"; they take longer to decide what change to make next, they take longer to make those changes, they take longer to determine the root cause of a test failure, etc.
 
 However, searching for a more useful articulation than "move slower", and more on topic for tools/productivity, I think high-output programmers have more "operations" ingrained in their mind/muscle memory that do not kick them out of the OODA loop. E.g.:
 
@@ -55,6 +55,9 @@ However, searching for a more useful articulation than "move slower", and more o
 * Does moving 20 lines of a method to another file kick you out of flow/OODA?
 * Does doing a git merge kick you out of flow/OODA?
 * Does using your shell to scan log output kick you out of flow/OODA?
+
+Note that the above reasons are tool-focused, how quickly can you leverage your tools, but then there are also cognitive aspects/"operations" within the OODA loop:
+
 * Does reading the business requirements kick you out of flow/OODA?
 * Does reasoning about your language's concurrency model kick you out of flow/OODA?
 * Does remembering your system's overall architecture kick you out of flow/OODA?
@@ -74,20 +77,20 @@ Which, earlier in my career, I did.
 
 But, as I've matured and learned more, I've decided that, if anything, that is just too depressing of a conclusion: that productivity is eternally cast as some sort of fixed/unchangeable personal attribute.
 
-To me, it's both more compassionate and pragmatic to purposefully avoid/ignore that conclusion, and instead to look at "OODA speed" in a more tactical, teachable manner.
+To me, it's both more compassionate and more pragmatic to purposefully avoid/ignore that conclusion, and instead to look at "OODA speed" in a more tactical, teachable manner.
 
 Which means, instead of casting "OODA speed" or "high-output" vs. "low-output" as innate productivity or intelligence, it's more like a muscle that starts small in everyone, and is continually grown by some, or atrophied by others.
 
 Suzuki Theory/Math Example
 --------------------------
 
-This small-muscle idea is a very popular theory these days (e.g. as described in the books Mindset, Grit, etc.), but my first exposure to it was through Suzuki educational theory, where they teach ~3-4 year-old kids to play tiny violins.
+This small-muscle idea is a very popular theory these days (e.g. as described in the books [Mindset](https://www.amazon.com/dp/B000FCKPHG), [Grit](https://www.amazon.com/dp/B010MH9V3W), [Peak](https://www.amazon.com/dp/B011H56MKS), etc.), but my first exposure to it was through Suzuki educational theory, where they teach ~3-4 year-old kids to play tiny violins.
 
 The assertion of Suzuki is that anyone can do anything, with the right environment and the right practice.
 
 So, when you observe individuals that have *currently-visible* excellence (say a violin virtuoso), their excellence is frequently miss-attributed as an innate talent/skill, instead of being recognized as the natural by-product of the *currently-invisible* years of continual small, compounded improvements.
 
-As an example (I'm ~80% sure this came from Suzuki's Ability Development from Age Zero book), take a teenager who is 15 and great at math. Are they just innately great at math? Maybe.
+As an example (I'm ~80% sure this came from Suzuki's [Ability Development from Age Zero](https://www.amazon.com/dp/B004HHOH1A) book, but it could have come from any of Mindset/Grit/etc.), take a teenager who is 15 and great at math. Are they just innately great at math? Maybe.
 
 But maybe at age 5, they found math to be interesting, so they spent 10 minutes doing their math problems instead of 5 minutes like the rest of the kids. Or maybe their parents enjoyed math, so they spent 5 extra minutes on it together. Or maybe a particular teacher/teaching style happened to resonate with them individually, and they spent that extra few minutes.
 
@@ -106,15 +109,19 @@ Do you Invest in Yourself?
 
 Coming back to programming, the origination of a "high OODA speed" in individuals, for me, is not innate ability, but that the "best" programmers are continually investing in themselves.
 
-When you pick up vim, do you use only the basic `h/j/k/l` movements, and that's it, for 10 years? Or do you invest the entire 1st day doing tutorials and learning more the complex movements like `dw`, `d}`, `2df.`, etc.? And then a few months later, take a half day to learn vim macros? And then every year or so, take another hour or two to explore the latest vim techniques and plugins?
+This post was initially about tools, and the assertion "tools make you faster"; but tools don't magically/immediately make you better. They are often very difficult to use initially, especially powerful ones.
+
+E.g. when you pick up vim, do you use only the basic `h/j/k/l` movements, and that's it, for 10 years? Or do you invest the entire 1st day doing tutorials and learning more the complex movements like `dw`, `d}`, `2df.`, etc.? And then a few months later, take a half day to learn vim macros? And then every year or so, take another hour or two to explore the latest vim techniques and plugins?
 
 When you use git, do you struggle for months/years with "well git rebase does magical things but I know these three incantations that someone told me to do", or do you spend your first few weeks/months of git (here and there) reading the "how git really works" tutorials and blog posts, and start to understand the DAG, and how commit hashes work, and where refs are stored in `.git/`, and eventually what the rebase operation is fundamentally doing?
 
 When you debug a production issue, do you do the minimal amount to get it fixed, and then move on? Or do you reproduce it first in a unit test? Do you try to dig into what is really going on, and why the fix works?
 
-It is ironic, but the "best" programmers, from my observation, take the cliched approach of "go slower to go faster". They spend the effort to get better at their editor, at their language, at their tools.
+It is ironic, but the "best" programmers, from my observation, have the stubbornness to work through these initial learning curves (of tools or business requirements or system architecture), and take the cliched approach of "go slower to go faster". They spend the effort to get better at their editor, at their language, at their tools.
 
-So while the "low-output" programmer is optimizing for "getting back on task *right now*", and the "high-output" programmer is distracted by digging deeper into the problem, which in the short-term seems less productive, in reality over the long-term these continual small investments add up like compound interest, and, to me, eventually surface as the mythical "10x" productivity difference.
+So where the "low-output" programmer, when they feel frustrated (with new tools, requirements, etc.), optimizes for "getting back on task *right now*", in contrast the "high-output" programmer, when similarly frustrated, doubles down on the frustration and digs deeper into the problem, basically allowing themselves to get "distracted" from the initial task at hand.
+
+Which in the short-term seems less productive, but over the long-term these continual small investments add up like compound interest, and, to me, eventually surface as the proverbial "10x" productivity difference.
 
 The Takeaway?
 -------------
@@ -131,7 +138,9 @@ Make the judgement call that it's in the company's best interests for you to lea
 
 Yes, I have an unreasonable infatuation with programming, so I've spent many nights and weekends reading and learning over the years. But I've also spent *many more* hours of work time investing in myself (e.g. taking an extra 30 minutes to research this or that).
 
-Don't let "I'll learn on the weekend" be an excuse. Take the time to learn it now. (Obviously this can be taken to an abusive extreme, so use good judgement.)
+Don't let "I'll learn on the weekend" be an excuse. Take the time to learn it now.
+
+Instead of fixing the bug in 30 minutes, spend 2 hours to really understand what happened. Instead of rushing a feature because your product manager says "now now now!", push back that you need to deliver a quality solution. (Obviously this can be taken to an abusive extreme, so use good judgement.)
 
 Eventually, after you've gone slower with yourself to invest in learning, make it a game to push yourself to go faster.
 
@@ -150,9 +159,9 @@ To me, you should always feel free to "be selfish" and:
 
 In my opinion, these knowledge investments basically always have a positive ROI, even *for all parties involved.*
 
-E.g. even if it looks like you're "wasting your colleague's time" by asking an annoying question, the net productivity gain to the organization will be higher, because now instead of you being stuck for 4 hours, you were unstuck after an hour with a 10 minute "interruption" investment from your colleague. So 10 minutes saved you 3 hours, which is huge to the organization.
+E.g. even if it looks like you're "wasting your colleague's time" by asking an annoying question, the net productivity gain to the organization will be higher, because now instead of you being stuck for 4 hours, you were unstuck after an hour with a 30 minute "interruption" investment from your colleague. So 30 minutes saved you 3 hours, which is huge to the organization.
 
-Or, even for your interrupted colleague themself, their investment should mean that, as your small improvements compound over time, the next week, next month, next year, you'll be that much more capable and be a net gain to their own work, e.g. their commits, code reviews, design docs, etc.
+And even for your interrupted colleague, who "lost" 30 real minutes + another hour to get back into their own flow, their investment in you should mean that, as your small improvements compound over time, the next week, next month, next year, you'll be that much more capable and be a net gain to their own work, by being able to bring value to their commits, their code reviews, their design docs, etc.
 
 Basically: be selfish in learning, but selfless in sharing.
 

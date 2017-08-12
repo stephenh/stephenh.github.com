@@ -5,6 +5,8 @@ title: git config
 
 <h2>{{ page.title }}</h2>
 
+**Update Aug 2017:** I'm using the fish shell now, so am no longer using `git-sh`, but I'm still using my various grep aliases by doing `git aa ...`. See my latest [.gitconfig](https://github.com/stephenh/config/blob/master/.gitconfig).
+
 I've got an enjoyable git environment set up, with various `.gitconfig`/etc. hacks. This is just a post to document those for my future self and others.
 
 First, you should start with [git-sh](http://github.com/rtomayko/git-sh). It adds some bash shell customizations like a nice `PS1` prompt, tab completion, and incredibly short git-specific aliases. I'll cover some of the aliases later, but this is the thing that started me down the "how cool can I get my git environment" path.
