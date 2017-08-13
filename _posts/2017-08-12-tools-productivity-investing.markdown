@@ -23,39 +23,45 @@ These initial time-saved values seem, compared to the span of an 8-hour work day
 
 But I assert there are several second-order productivity gains, beyond the initial "only a few seconds saved", which are:
 
-1. being empowered by feeling you can make non-trivial changes quickly, and
-2. good tools can relieve drudgery
-3. staying in your state of flow while doing so.
+1. being empowered by feeling you can make non-trivial changes quickly,
+2. good tools can relieve drudgery, and
+3. staying in your state of flow.
 
-Feeling Empowered to Do More
+Feeling Empowered To Do More
 ----------------------------
 
-I assert one of the second-order productivity effects from being skilled with tools is the increased confidence you have in yourself and your own productivity means you'll often "go the extra mile" to produce higher-quality output.
+I assert one of the second-order productivity effects from being skilled with tools is that the increased confidence you have in yourself and your own productivity means you'll often "go the extra mile" to produce higher-quality output.
 
-Without this feeling of confidence, you'll often not even attempt these "extra-effort" improvements, because you're scared of it being a time sink that you'll get stuck in, so instead settle for something that works but could have been better.
+E.g. you'll go ahead and break the large `doSomethingTricky()` method into a few smaller `trickyButNowReadble()` methods. Or do some renames that touch a lot of code, but update it to consistently use the new terminology that the team/business is now using.
 
-Note that this hesitation is likely rooted in reality, e.g. you're right to be scared, because if making changes is awkward for you, it's more likely to interrupt your flow, and seriously reduce your short-term output.
+If you don't feel confident in your own tools, skills, and productivity, you'll often not even attempt these "extra-effort" improvements, because you're scared of it being a time sink that you'll get stuck in.
+
+Instead, you settle for something that works but could have been better.
+
+Note that this hesitation is likely rooted in reality, because your intuition is correct: if making changes is awkward for you, it's more likely to interrupt your flow and seriously reduce your short-term output.
+
+But it doesn't have to be that way.
 
 Good Tools (and Skills) Can Relieve Drudgery
 --------------------------------------------
 
-Somewhat related to feeling empowered due to your own productivity, is good tools just making the more tedious aspects of your job more fun.
+Somewhat related to feeling empowered due to your own productivity, is good tools and skills just making the more tedious aspects of your job more fun.
 
 The first example I remember of this, I swear comes from Donald Knuth, but Google is failing to confirm my recollection.
 
-The story I remember was about Knuth's grandma, who was a stereotypical old German housewife. He relates that every day, his Grandma would clean the kitchen, and the dining room table, and wipe off the crumbs and polish it to a shine. Every day, the same tedious task, wipe off the crumbs, polish the table, wipe off the crumbs, clean the table.
+The story I remember was about Knuth's grandma, who was a stereotypical old German housewife. He relates that every day, his Grandma would clean the kitchen, and the dining room table, and wipe off the crumbs and polish it to a shine. Every day, the same tedious task, wipe off the crumbs, clean the table, wipe off the crumbs, clean the table.
 
-But what made the story unique, to Knuth, was that his grandma's dining room table was one of the old-world, hand-made, solid-wood works of art. So, when she cleaned it, she was not thinking "blah, cleaning this table sucks", but "I enjoy this table looking nice, so I look forward to cleaning it".
+But what made the story unique, and hence Knuth telling it, was that his grandma's dining room table was one of the old-world, hand-made, solid-wood works of art. So, when she cleaned it, she was not thinking "blah, cleaning this table sucks", but "I enjoy this table looking nice, so I look forward to cleaning it".
 
 (I'm really reaching for the exact phrasing he used to tell the story, and someone in the comments please correct me if I've miss-attributed this story.)
 
 But, basically, if you have nice things, and you keep those things nice, it can turn tasks that are otherwise boring and tedious into a craft that you take pride in.
 
-As another non-programming example, I have historically hated lawn work. But, owning a house, even with judicious outsourcing, that is just my lot in life now. However, I've found that if I look for good tools, e.g. a garden hose I like, or quick-connect couplings (fancy!), or what not, I can basically trick myself into researching "fine, what's the best way to do this", and then when the task comes up, replace my previous loathing for the overall task with appreciation for the tools I've selected and (hopefully) how well they are working.
+As another non-programming example, I have historically hated lawn work. But, owning a house, even with judicious outsourcing, semi-regular lawn work is just my lot in life now. However, I've found that if I look for good tools, e.g. a garden hose I like, or quick-connect couplings (fancy!), or what not, I can basically trick myself into researching "fine, what's the best way to do this", and then when the task comes up, replace my previous loathing for the overall task with appreciation for the tools I've selected and (hopefully) how well they are working.
 
 Finally, relating this back to programming, for me this is how editing code works. I get an almost unnatural joy from refactoring code, even tedious refactorings like "change X files from style Y to style Z" or "change X methods from having 2 parameters to 3 parameters", because: a) I make it a game to see how quickly I can do it, by leveraging my various tools/skills/etc., and b) I savor and enjoy the end result.
 
-Just like Knuth's grandma's gratification around "ah, this is a nice table", my reaction is "ah, this is a nice codebase." (Or at least nicer than it was before.)
+Just like Knuth's grandma's gratification of "ah, this is a nice table", my reaction is "ah, this is a nice codebase." (Or at least nicer than it was before.)
 
 If you have good tools, and you've practiced using them to the level that you genuinely enjoy using them, previously tedious tasks, for me, actually become fun.
 
@@ -77,14 +83,14 @@ E.g., to me, the "best" programmers can quickly cycle through an OODA loop of:
 
 I use the term "best" in quotes, because there are obviously other factors in overall programmer effectiveness, e.g. what strategic-/design-level decisions you make.
 
-But my personal observation when comparing high-output vs. low-output programmers, at least in terms of visible attributes, is the difference in speed of their OODA loop:
+But my personal observation when comparing high-output vs. low-output programmers, at least in terms of visible attributes, is the difference in the speed of their OODA loop:
 
 * Most "high-output" programmers make changes quickly, they move around in the editor quickly, they decide what change to make quickly; it's like they're playing a game that they're intimately familiar with and are spinning the cycle quickly. In contrast,
 * Most "low-output" programmers, for lack of a better term, "move slower"; they take longer to decide what change to make next, they take longer to make those changes, they take longer to determine the root cause of a test failure, etc.
 
-So, wandering very much into my own musing, I believe faster execution comes executing many small, back-to-back, uninterrupted OODA loops of ~30-60 seconds each, instead of one long 10-minute OODA loop.
+So, continuing into more armchair musing, I believe faster execution comes from executing many small, back-to-back, uninterrupted OODA loops of ~30-60 seconds each, instead of one long 10-minute OODA loop.
 
-E.g. even for the same task, e.g. "work on this ticket", break it down into many small "loop!, loop!, loop!" cycles ("write this ~10-line test", "clean up this method", "what is the simplest state to pass in to this method"), instead of just one longer "llllooooopppp."
+E.g. even for the same task, e.g. "work on this ticket", breaking it down into many small "loop!, loop!, loop!" cycles ("write this ~10-line test", "clean up this method", "what is the simplest state to pass in to this method"), instead of just one long "llllooooopppp."
 
 Tying this back to tools, and practice with those tools, I think "high-output" programmers have more "operations" ingrained into their mind/muscle memory that do not kick them out of (or significantly delay) their current OODA loop, so that, besides just the 30-second vs. 5-minute win for the current loop, the second-order win is being able to immediately choose and start executing their next OODA loop.
 
@@ -137,7 +143,7 @@ So, on that initial day, they spent a few extra minutes on it.
 
 Then, due to the same semi-random combination of interest/culture/coincidence, they did it again on the next day, then the next, and the next.
 
-By the time they are 6-7 years old, the low-level math operations, addition/subtraction/etc., come quickly to them, so math is even more enjoyable, and now they are spending 20 minutes on it a day, instead of 5 minutes.
+By the time they are 6-7 years old, the low-level math operations, addition/subtraction/etc., come quickly to them, so now math is even more enjoyable, and now they are spending 10 or 20 minutes on it a day, instead of 5 minutes.
 
 Or, maybe they spend the same amount of time on it, but because the low-level operations are ingrained in their quick OODA loop, they spend a much higher proportion of their time learning new material. And this forms a feedback loop, where they start ingraining even more, higher-level operations.
 
@@ -162,7 +168,7 @@ When you debug a production issue, do you do the minimal amount to get it fixed,
 
 It is ironic, but the "best" programmers, from my observation, have the stubbornness to work through these initial learning curves (of tools or business requirements or system architecture), and take the cliched approach of "go slower to go faster". They spend the effort to get better at their editor, at their language, at their tools.
 
-So where the "low-output" programmer, when they feel frustrated (with new tools, requirements, etc.), optimizes for "getting back on task *right now*", in contrast the "high-output" programmer, when similarly frustrated, doubles down on the frustration and digs deeper into the problem, basically allowing themselves to get "distracted" from the initial task at hand.
+So where the "low-output" programmer, when they feel frustrated (with new tools, or new requirements, etc.), optimizes for "getting back on task *right now*", in contrast the "high-output" programmer, when similarly frustrated, doubles down on the frustration and digs deeper into the problem, basically allowing themselves to get "distracted" from the initial task at hand.
 
 Which in the short-term seems less productive, but over the long-term these continual small investments add up like compound interest, and, to me, eventually surface as the proverbial "10x" productivity difference.
 
@@ -173,7 +179,7 @@ Okay, so that's educational theory, what's the actual takeaway?
 
 The takeaway is that I would implore young or struggling programmers to *invest in yourself*.
 
-Take the time to really understand your tools. Take the extra few hours to really learn your language. Or your test suite. Or your editor.
+Take the time to really understand your tools. Take the extra few hours to really learn your language. Or your project's framework. Or your editor.
 
 **And don't feel guilty about "taking company time to learn".**
 
