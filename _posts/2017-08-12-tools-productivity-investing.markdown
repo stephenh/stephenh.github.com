@@ -10,8 +10,10 @@ I was recently putting together a [list](/pages/tools.html) of tools that I like
 
 Basically, I think tools are an important aspect of productivity, but also that the continuous selection, adoption, and practice of tools is part of a larger trait of self-teaching and self-improvement.
 
-First- vs. Second-Order Effects
--------------------------------
+(And, as an up-front disclaimer, I don't think any of this is particularly new/ground-breaking, e.g. a lot of the educational theory is pretty mainstream these days, this is just my musings/articulation.)
+
+First- vs. Second-Order Productivity Effects
+--------------------------------------------
 
 Obviously with tools, there is the first-order effect/rationale of "immediate time saved" that enables a programmer to move more quickly when they leverage a tool.
 
@@ -19,21 +21,52 @@ E.g. the raw "time saved by typing X keystrokes instead of Y keystrokes" by usin
 
 These initial time-saved values seem, compared to the span of an 8-hour work day or a 3-month project, to be incredibly small. E.g. 5 seconds here vs. 60 seconds there. Big deal.
 
-But I assert there are several second-order productivity gains, beyond the initial "only a few seconds saved", which is:
+But I assert there are several second-order productivity gains, beyond the initial "only a few seconds saved", which are:
 
 1. being empowered by feeling you can make non-trivial changes quickly, and
-2. staying in your state of flow while doing so.
+2. good tools can relieve drudgery
+3. staying in your state of flow while doing so.
 
-In terms of feeling empowered, I assert that having the confidence in your tools and your own productivity means you'll often "go the extra mile" to produce higher-quality output, because you're not scared of it being a time sink that you'll get stuck in.
+Feeling Empowered to Do More
+----------------------------
 
-Without this feeling of confidence, you'll often not even attempt these "extra-effort" improvements, and instead settle for something that works but could have been better.
+I assert one of the second-order productivity effects from being skilled with tools is the increased confidence you have in yourself and your own productivity means you'll often "go the extra mile" to produce higher-quality output.
+
+Without this feeling of confidence, you'll often not even attempt these "extra-effort" improvements, because you're scared of it being a time sink that you'll get stuck in, so instead settle for something that works but could have been better.
 
 Note that this hesitation is likely rooted in reality, e.g. you're right to be scared, because if making changes is awkward for you, it's more likely to interrupt your flow, and seriously reduce your short-term output.
 
-Flow/OODA Loop
---------------
+Good Tools (and Skills) Can Relieve Drudgery
+--------------------------------------------
 
-Flow is a widely-discussed concept. For me, an interesting definition of flow is how long you can stay (or how many uninterrupted cycles you can complete) in the also-oft-quoted [OODA loop](https://en.wikipedia.org/wiki/OODA_loop) (orient, observe, decide, act).
+Somewhat related to feeling empowered due to your own productivity, is good tools just making the more tedious aspects of your job more fun.
+
+The first example I remember of this, I swear comes from Donald Knuth, but Google is failing to confirm my recollection.
+
+The story I remember was about Knuth's grandma, who was a stereotypical old German housewife. He relates that every day, his Grandma would clean the kitchen, and the dining room table, and wipe off the crumbs and polish it to a shine. Every day, the same tedious task, wipe off the crumbs, polish the table, wipe off the crumbs, clean the table.
+
+But what made the story unique, to Knuth, was that his grandma's dining room table was one of the old-world, hand-made, solid-wood works of art. So, when she cleaned it, she was not thinking "blah, cleaning this table sucks", but "I enjoy this table looking nice, so I look forward to cleaning it".
+
+(I'm really reaching for the exact phrasing he used to tell the story, and someone in the comments please correct me if I've miss-attributed this story.)
+
+But, basically, if you have nice things, and you keep those things nice, it can turn tasks that are otherwise boring and tedious into a craft that you take pride in.
+
+As another non-programming example, I have historically hated lawn work. But, owning a house, even with judicious outsourcing, that is just my lot in life now. However, I've found that if I look for good tools, e.g. a garden hose I like, or quick-connect couplings (fancy!), or what not, I can basically trick myself into researching "fine, what's the best way to do this", and then when the task comes up, replace my previous loathing for the overall task with appreciation for the tools I've selected and (hopefully) how well they are working.
+
+Finally, relating this back to programming, for me this is how editing code works. I get an almost unnatural joy from refactoring code, even tedious refactorings like "change X files from style Y to style Z" or "change X methods from having 2 parameters to 3 parameters", because: a) I make it a game to see how quickly I can do it, by leveraging my various tools/skills/etc., and b) I savor and enjoy the end result.
+
+Just like Knuth's grandma's gratification around "ah, this is a nice table", my reaction is "ah, this is a nice codebase." (Or at least nicer than it was before.)
+
+If you have good tools, and you've practiced using them to the level that you genuinely enjoy using them, previously tedious tasks, for me, actually become fun.
+
+Staying in Flow/OODA Loop
+-------------------------
+
+The third/last second-order productivity effect is staying in flow.
+
+Flow is a widely-discussed concept, both academically and in practice, so I'll assume everyone is generally knowledgable about it.
+
+That said, for me, an interesting definition of flow that I recently heard is: how long you can stay (or how many uninterrupted cycles you can complete) in the also-oft-quoted [OODA loop](https://en.wikipedia.org/wiki/OODA_loop) (orient, observe, decide, act).
 
 E.g., to me, the "best" programmers can quickly cycle through an OODA loop of:
 
@@ -49,9 +82,15 @@ But my personal observation when comparing high-output vs. low-output programmer
 * Most "high-output" programmers make changes quickly, they move around in the editor quickly, they decide what change to make quickly; it's like they're playing a game that they're intimately familiar with and are spinning the cycle quickly. In contrast,
 * Most "low-output" programmers, for lack of a better term, "move slower"; they take longer to decide what change to make next, they take longer to make those changes, they take longer to determine the root cause of a test failure, etc.
 
-However, searching for a more useful articulation than "move slower", and more on topic for tools/productivity, I think high-output programmers have more "operations" ingrained in their mind/muscle memory that do not kick them out of the OODA loop. E.g.:
+So, wandering very much into my own musing, I believe faster execution comes executing many small, back-to-back, uninterrupted OODA loops of ~30-60 seconds each, instead of one long 10-minute OODA loop.
 
-* Does renaming a class across a codekick kick you out of flow/OODA?
+E.g. even for the same task, e.g. "work on this ticket", break it down into many small "loop!, loop!, loop!" cycles ("write this ~10-line test", "clean up this method", "what is the simplest state to pass in to this method"), instead of just one longer "llllooooopppp."
+
+Tying this back to tools, and practice with those tools, I think "high-output" programmers have more "operations" ingrained into their mind/muscle memory that do not kick them out of (or significantly delay) their current OODA loop, so that, besides just the 30-second vs. 5-minute win for the current loop, the second-order win is being able to immediately choose and start executing their next OODA loop.
+
+For example, here are some concrete tasks that, in theory, can become "ingrained" operations:
+
+* Does renaming a class across the codebase kick you out of flow/OODA?
 * Does moving 20 lines of a method to another file kick you out of flow/OODA?
 * Does doing a git merge kick you out of flow/OODA?
 * Does using your shell to scan log output kick you out of flow/OODA?
@@ -64,12 +103,12 @@ Note that the above reasons are tool-focused, how quickly can you leverage your 
 
 Obviously I'm being pedantic, but the theory is that the more "ingrained operations" (via good tool selection, constant practice with those tools, and then just pushing yourself to be faster) you can add to your OODA loop's toolbox, the faster, "higher-output" you'll be, as you'll be able to stay in flow longer.
 
-(Large disclaimer, high-output is not the sole metric for overall programmer effectiveness; I have seen several times where high-volume but low-quality output has been a net negative; but I'm ignoring that for now.)
+(Large disclaimer, high-output is of course not the sole metric for overall programmer effectiveness; I have definitely seen examples of high-volume but low-quality output, and that is not the goal.)
 
 Is OODA Speed Innate?
 ---------------------
 
-Given this observation that "more/faster OODA loops is better", or worded more simply as "move fast", a natural question to ask is "why do some programmers move faster/slower than others?"
+Given this observation that "more/smaller/faster OODA loops is better", or worded more simply as "move fast", a natural question to ask is "why do some programmers move faster/slower than others?"
 
 And, to me, I think it can be easy to become judgmental and attribute this speed to some innate level of intelligence.
 
@@ -92,22 +131,26 @@ So, when you observe individuals that have *currently-visible* excellence (say a
 
 As an example (I'm ~80% sure this came from Suzuki's [Ability Development from Age Zero](https://www.amazon.com/dp/B004HHOH1A) book, but it could have come from any of Mindset/Grit/etc.), take a teenager who is 15 and great at math. Are they just innately great at math? Maybe.
 
-But maybe at age 5, they found math to be interesting, so they spent 10 minutes doing their math problems instead of 5 minutes like the rest of the kids. Or maybe their parents enjoyed math, so they spent 5 extra minutes on it together. Or maybe a particular teacher/teaching style happened to resonate with them individually, and they spent that extra few minutes.
+But maybe at age 5, they found math to be interesting, so they spent 10 minutes doing their math problems instead of 5 minutes like the rest of the kids. Or maybe their parents enjoyed math, so they spent 5 extra minutes on it together. Or maybe a particular teacher/teaching style happened to resonate with them individually, and they spent that extra few minutes. (Or maybe, like my son, they found a gamified version of math, e.g. [Prodigy](https://prodigygame.com/), that they played constantly.)
 
 So, on that initial day, they spent a few extra minutes on it.
 
 Then, due to the same semi-random combination of interest/culture/coincidence, they did it again on the next day, then the next, and the next.
 
-By the time they are 6-7 years old, the low-level math operations, addition/subtraction/etc., come quickly to them, so math is even more enjoyable, and now they are spending 20 minutes on it a day, instead of 5 minutes. Or, maybe they spend the same amount of time on it, but due to the low-level operations being ingrained in their quick OODA loop, a much higher proportion of their time is spent learning new material.
+By the time they are 6-7 years old, the low-level math operations, addition/subtraction/etc., come quickly to them, so math is even more enjoyable, and now they are spending 20 minutes on it a day, instead of 5 minutes.
+
+Or, maybe they spend the same amount of time on it, but because the low-level operations are ingrained in their quick OODA loop, they spend a much higher proportion of their time learning new material. And this forms a feedback loop, where they start ingraining even more, higher-level operations.
 
 Repeat these small investments over 5-10 years, and yes, the *currently-visible* math skills will look like innate talent vs. the math skills of someone who, for lack of interest or environment or different priorities, has spent dramatically less time learning math over years.
 
 (As a disclaimer, I'm willing to believe that in any field, there really are savant-style geniuses, but for my purposes that is so extremely rare that I don't think it's worth spending much time on it.)
 
+Replace "math" with "programming", or really whatever your chosen field is, and, to me, that's my current best explanation for "high output" vs. "low output" programmers.
+
 Do you Invest in Yourself?
 --------------------------
 
-Coming back to programming, the origination of a "high OODA speed" in individuals, for me, is not innate ability, but that the "best" programmers are continually investing in themselves.
+So, coming back to programming, the origination of a "high OODA speed" in individuals, for me, is not innate ability, but that the "best" programmers are continually investing in themselves.
 
 This post was initially about tools, and the assertion "tools make you faster"; but tools don't magically/immediately make you better. They are often very difficult to use initially, especially powerful ones.
 
@@ -138,13 +181,17 @@ Make the judgement call that it's in the company's best interests for you to lea
 
 Yes, I have an unreasonable infatuation with programming, so I've spent many nights and weekends reading and learning over the years. But I've also spent *many more* hours of work time investing in myself (e.g. taking an extra 30 minutes to research this or that).
 
-Don't let "I'll learn on the weekend" be an excuse. Take the time to learn it now.
+Don't let "I'll learn on the weekend" be an excuse. Take the time to learn it now, on the job.
 
-Instead of fixing the bug in 30 minutes, spend 2 hours to really understand what happened. Instead of rushing a feature because your product manager says "now now now!", push back that you need to deliver a quality solution. (Obviously this can be taken to an abusive extreme, so use good judgement.)
+Instead of fixing the bug in 30 minutes, spend 2 hours to really understand what happened. Instead of rushing a feature because your product manager says "now now now!", push back that you need to deliver a quality solution.
+
+Obviously this can be taken to an abusive extreme, so use good judgement.
 
 Eventually, after you've gone slower with yourself to invest in learning, make it a game to push yourself to go faster.
 
 Push yourself to see how quickly you can do micro-operations. Purposefully redo a complex text operation two or three times, each time trying to use a better vim key stroke or macro. Work on getting your OODA loop as small and tight and quick as possible.
+
+In time, this will form a feedback loop, as you should be executing so quickly, that no one will notice when you keep "sneaking in" learning time.
 
 Invest In Knowledge As Well
 ---------------------------
