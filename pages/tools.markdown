@@ -33,11 +33,12 @@ Shell
 -----
 
 * [Fish shell](https://fishshell.com/)
-  * I switched to this in 2017 and like/prefer it over bash, great autocomplete out-of-the-box
+  * I switched to this in 2017 and prefer it over bash, great autocomplete out-of-the-box
 * Bash shell
   * See my [.bashrc](https://github.com/stephenh/config/blob/master/.bashrc) and [.inputrc](https://github.com/stephenh/config/blob/master/.inputrc) for various customizations I setup over the years, e.g. for vi bindings + control-j/k/incremental history search
-* A fuzzy finder, e.g. [fzf](https://github.com/fisherman/fzf)
-  * You can/should hook this into bash/fish/vim, which once hooked up, was described by one programmer I work with as "life changing"
+* A fuzzy finder, e.g. [fzf](https://github.com/junegunn/fzf)
+  * You can/should hook this into bash/[fish](https://github.com/fisherman/fzf)/vim, which once hooked up, was described by one programmer I work with as "life changing"
+  * Note: To get fish-fzf and fish-vi-mode ot play nicely, I have a few lines in my [config.fish](https://github.com/stephenh/config/blob/master/.config/fish/config.fish#L23)
 * [tmux](https://tmux.github.io/)+[mosh](https://mosh.org/) for remote sessions
   * See my [.tmux.conf](https://github.com/stephenh/config/blob/master/.tmux.conf) for various customizations
 * [ack](https://beyondgrep.com/) or [ripgrep](https://github.com/BurntSushi/ripgrep) for search in files
