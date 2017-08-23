@@ -47,23 +47,23 @@ Given these four layers, I assert there are two flavors of cross-layer integrati
 So, just to highlight, the differentiation between these two flavors is control:
 
 * Intra-system testing == only layers/sub-systems I control
-* Cross-system testing == all layerssub-systems, even those outside my control
+* Cross-system testing == all layers/sub-systems, even those outside my control
 
 What Do You Mean By Control?
 ----------------------------
 
-So, continuing with terminology, by "control", I mean two things:
+So, continuing with defining terminology, by "control", I mean two things:
 
 1. Are my interactions with the system completely isolated (**isolation**), and
 2. Can I nuke/mutate the system's data whenever I want (**control**)?
 
 Basically, I want to be able to setup exactly the test data I want for a given test (control) and then execute it with assurances nothing else will muck with my data (isolation).
 
-So, let's evaluate this against each of our sub-systems:
+So, let's evaluate this "do we have control?" criteria against each of our sub-systems:
 
 * For the frontend HTML/CSS/JS, is my test data isolated from other systems and other tests?
 
-  Yes: each selenium test has its own browser so its own cookies, local storage, etc., so it's effectively isolated from the others.
+  Yes: each selenium test has its own browser instance so its own cookies, local storage, etc., so it's effectively isolated from the others.
 
 * For the REST API, is my test data isolated from other systems and other tests?
 
@@ -75,9 +75,9 @@ So, let's evaluate this against each of our sub-systems:
 
   (Alternatively, if my app already supports sharding, maybe I don't have to nuke the entire database, and instead each test gets it's own shard, but the effect is the same.)
 
-  Basically, because I own this sub-system, I can do whatever gyrations (dedicated, frequently nuked db) I need to get isolated data.
+  Basically, because I own this sub-system, I can do whatever gyrations (dedicated, frequently-nuked database) I need to get isolated data.
 
-* For the vendor API, is my test data is from other systems and other tests?
+* For the vendor API, is my test data isolated from other systems and other tests?
 
   Typically not at all.
 
@@ -115,7 +115,7 @@ I have worked with systems that have automated tests that use shared data, and i
 
 When tests break, especially repeatedly for the same core reasons (lack of a solid foundation), developers quickly get frustrated, become disenfrancised, and the tests themselves and your culture around TDD will suffer.
 
-You must have 100% data control and isolation from day 1, or you are building on quicksand.
+You must have 100% data control and isolation from day one, or you are building on quicksand.
 
 #### Test Complexity
 
@@ -369,7 +369,7 @@ E.g. instead of writing infrastructure for faking Thrift for some vendor sub-sys
 
 Obviously Google has done this by using "protobuf everywhere" internally. At LinkedIn, we use "Rest.li everywhere" internally.
 
-If you're in a larger company, that is more than ~10 years old, it's very unlikely that you hvae this, and admittedly obtaining this is going to be a nightmare. I have no good ideas for you.
+If you're in a larger company, that is more than ~10 years old, it's very unlikely that you have this, and admittedly obtaining this is going to be a nightmare. Unfortunately, I have no good ideas for you.
 
 But if you're *starting* a larger company, then choose one and only one up front.
 
