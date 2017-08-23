@@ -1,6 +1,6 @@
 ---
 title: The Futility of Cross-System Integration Testing
-layout: draft
+layout: post
 ---
 
 {{page.title}}
@@ -8,7 +8,7 @@ layout: draft
 
 I've been forming an opinion for awhile that is potentially eyebrow raising, but that I'm now basically convinced of: that cross-system integration testing is not worth it, and in most projects is actually an anti-pattern.
 
-This is potentially surprising, because even in projects that use a good balance of "1000s of unit tests with ~10s of integration tests", it's assumed that, of course, we need cross-system integration tests to show that things "actually work".
+This is potentially surprising, because even in projects that use a good balance of "1000s of unit tests with ~10s/100s of integration tests", it's assumed that, of course, we need cross-system integration tests to show that things "actually work".
 
 However, my experience, based on the last ~4-5 systems I've either built or worked on, is pretty much the opposite, and that the projects with "showing things actually work" integration tests have not had that investment pay off, and so here I'll try to reason about that and articulate why.
 
