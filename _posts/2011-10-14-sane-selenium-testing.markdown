@@ -52,6 +52,8 @@ I don't have any JavaScript code to show how this works, as I do all my client-s
 
 For JQuery/etc., something in [Extending AJAX](http://api.jquery.com/extending-ajax/) would probably work. It's probably 10-20 lines of code.
 
+**Update 2017:** [Here](http://cabeca.github.io/blog/2013/06/16/waiting-for-completed-ajax-in-capybara-and-other-tricks/) is an approach that uses JS variables (instead of hidden DOM elements) and jQuery AJAX send/complete callbacks that looks like it would work well.
+
 Anyway, once you have this in place, you've basically got page loads back--any time an AJAX request is in-flight, Selenium can know about it by watching if `outstanding != 0`. E.g. with Selenium's new `ExpectedConditions` API, it might look like:
 
 ```java
@@ -131,7 +133,7 @@ Disclaimer
 
 The one large disclaimer to this approach is that I haven't had to deal with a lot of animation--all of my waiting really is on the server, and then things in the UI are generally displayed right away (within the same event loop that services the AJAX response).
 
-If you're doing anything with `setTimeout`, e.g. animation or progressive calculations, then you'll probably have to fall back to pre-assertion waiting. Although hopefully you could find a wait to encapsulate it into a page object, perhaps some sort of `beforeAssertionWaitFor` method (which doesn't exist yet).
+If you're doing anything with `setTimeout`, e.g. animation or progressive calculations, then you'll probably have to fall back to pre-assertion waiting (although, now that I think about it, you could likely have your animation library maintain similar "animation in progress" markers/hidden DOM elements for the Selenium tests to synchronize against). Although hopefully you could find a wait to encapsulate it into a page object, perhaps some sort of `beforeAssertionWaitFor` method (which doesn't exist yet).
 
 Anyway, that disclaimer aside, I've found this approach to be very successful. My last few projects have had much more most robust Selenium tests than previous ones (that doesn't mean perfect; but definitely much better). Part of that is likely due to the kick ass job the Selenium developers are doing, but I think the outstanding + post-action waiting approach has a large part to do with it as well.
 
