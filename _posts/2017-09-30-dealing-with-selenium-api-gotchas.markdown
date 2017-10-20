@@ -352,7 +352,7 @@ E.g. it might look like:
 
 I think this is my favorite abstraction, as it moves our tests away from knowing about `WebElement` all together.
 
-I wrote a library that does this awhile back, unfortunately with a very unimaginable name, [pageobjects](https://github.com/stephenh/pageobjects/tree/master/src/main/java/com/bizo/pageobjects) but have not been using it recently.
+I wrote a library that does this awhile back, unfortunately with a very unimaginative name, [pageobjects](https://github.com/stephenh/pageobjects/tree/master/src/main/java/com/bizo/pageobjects) but have not been using it recently.
 
 Note that the element object still has the composable problem, e.g. if we wanted to do:
 
