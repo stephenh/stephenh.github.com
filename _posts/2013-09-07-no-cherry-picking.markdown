@@ -63,7 +63,7 @@ At the time, I did not have a good answer for the deficiency of git's cherry-pic
 
 But now, 5 years later, I realized that git flow has a really elegant approach: you shouldn't use `git cherry-pick` in the first place. If you look at their diagram, commits can move through every major use case (development, release preparation, hot fixes) without being cherry picked.
 
-Their insight is that, with git (or any DAG-based SCM), if you can anticipate where a commit may/will be need to applied, you can put it on it's own branch, and merge it into those various places as needed.
+Their insight is that, with git (or any DAG-based SCM), if you can anticipate where a commit may/will be need to applied, you can put it on its own branch, and merge it into those various places as needed.
 
 This will get the change applied to all the necessary branches (you can merge it into release as well as master), but not result in the commit getting copy/pasted. Instead, new merge commits will be recorded, so no new commit ids, and the history (what branches have this commit?) is tracked nicely in the DAG.
 
@@ -135,7 +135,7 @@ This is admittedly not as simple as `-b hot_fix_branch master`, but it is still 
 Downsides?
 ----------
 
-The con to not cherry picking is that you'll need to know up front that you want your commit applied into multiple places, so that you can place it on it's own branch.
+The con to not cherry picking is that you'll need to know up front that you want your commit applied into multiple places, so that you can place it on its own branch.
 
 However, I think this is usually the case. E.g. you're working on a bug report in production, and know you'll need the fix to be on a hot fix branch.
 
