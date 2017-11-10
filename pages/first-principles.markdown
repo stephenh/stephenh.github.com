@@ -3,6 +3,11 @@ layout: post
 title: First Principles
 ---
 
+* 1P: majority of cycle is unit tests
+* 1P: majority of cycle is local
+* 1P: write docs like you write code
+* Tests with random input are dumb
+
 {{page.title}}
 ==============
 

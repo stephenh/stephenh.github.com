@@ -25,3 +25,9 @@ Note that these are not "how to learn language XYZ", as those language-specific 
 [Java Concurrency in Practice](http://a.co/9OlKduS) - For awhile this was my interview prep book...it covers JVM multi-threading very well, and is a great intro and refresher of the Java memory model. Which even if you don't code Java servers all day, is a great technical read in my opinion.
 
 
+---
+
+http://www.step-10.com/SoftwareDesign/ModellingInColour/dnc.html
+https://www.infoq.com/articles/webber-rest-workflow
+https://steve-yegge.blogspot.com/2006/03/execution-in-kingdom-of-nouns.html
+
