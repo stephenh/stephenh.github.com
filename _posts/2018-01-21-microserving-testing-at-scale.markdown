@@ -1,5 +1,5 @@
 ---
-layout: draft
+layout: post
 title: Micro Service Testing at Scale
 ---
 
