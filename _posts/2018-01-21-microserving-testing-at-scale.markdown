@@ -6,11 +6,11 @@ title: Micro Service Testing at Scale
 {{page.title}}
 --------------
 
-(Alternate titles/tldr: stubbing at the data layer, or data layers should come with stubs.)
+(Alternate titles/tldr: "Stubbing at the Data Layer", or "Data Layers should come with Stubs".)
 
 Micro-services have an interesting problem that, personally, I haven't seen solved really well: integration testing in the large.
 
-Where by "in the large", I mean testing with many micro-services, not testing with large data.
+Where by "in the large", I mean testing with many micro-services, not testing with large data (that maybe useful in certain contexts, but not what I'm focusing on).
 
 See my [other recent post](/2017/08/23/futility-of-cross-system-integration-testing.html) on the topic, but none of the systems I've personally worked on (which, granted, is a small `n`) have solved having cross-system tests that provide 100% isolation and control of each test's input data.
 
@@ -59,14 +59,14 @@ There are two primary downsides of this approach:
 
 2. The stub services don't/can't 100% mimic production.
 
-That said, to me this approach has historically still been a net-win, as the massive benefit of fast, consistent, stable "near-integration" tests is worth the trade-off of up-front and ongoing costs of maintaining the stubs.
+That said, for systems I've built, this approach has still been a net-win, as the huge benefit of fast, consistent, stable "near-integration" tests is worth the trade-off of up-front and ongoing costs of maintaining the stubs.
 
 I've personally used this for ~testing-in-the-medium (e.g. not quite testing-in-the-large), primarily when working across vendor system boundaries, and had it work out well. Again, see [my other post](/2013/04/13/services-should-come-with-stubs.html).
 
 2nd Alternative: Move Stubbing up the Stack
 -------------------------------------------
 
-This 2nd/new alternative, moving stubbing into the data layer, is meant to address both cons of "services ship with stubs", which both stem from having multiple service implementations (one production, one stub).
+This 2nd/new alternative, moving stubbing into the data layer, is meant to address the two cons of "services ship with stubs", which both fundamentally stem from having multiple service implementations (one production, one stub).
 
 So, if you take a step back, why are we writing stubs in the first place?
 
@@ -240,7 +240,9 @@ The problem is that, having evolved organically, retrofitting each of a company'
 Conclusion
 ----------
 
-So, wrapping up, this is my latest suggestion for what companies struggling with the morass of shared integration environments should attempt to do: use service-layer stubs as a starting point (which are typically easier to write), but eventually shoot for data-layer stubs (more up-front investment, but longer-term better ROI since you don't have duplicate implementations of each service).
+So, wrapping up, this is my latest suggestion for what companies struggling with the morass of shared integration environments should attempt to do.
+
+While I think "services ship with stubs" is still a great starting point, especially when you don't control all the services (e.g. you can write your own stubs for vendor APIs or internal APIs you don't control), if you want to scale stubs to be enterprise-/company-wide, then I think "stubbing at the data layer" will result in a longer-term ROI, as you won't have pay the stubbing cost for every single micro-service.
 
 As a disclaimer, I have personally written many service-layer stubs, with a good deal of success, but have not had a chance to try this approach of data-layer stubs (although technically I wrote [fakesdb](https://github.com/stephenh/fakesdb), which is a data-layer stub in ~2010, but that was not applied to cross-service/in-the-large testing like I'm proposing here).
 
@@ -248,7 +250,7 @@ I'm cautiously optimistic, albeit with disclaimers of large up-front cost.
 
 But, if you think on a long horizon, e.g. if you're a big company, with ~100s/1000s of developers, and you think to ~4-5 years out: do your really want your developers continuously struggling with, and wasting time on, trying to write automated test suites that are slow, flaky, time-consuming and of debatable, likely net-negative, value?
 
-I think, on that time horizon, and at that scale (100s/1000s of developers), embarking on this sort of effort starts to become conceivable and worthwhile in terms of ROI.
+I think, on that time horizon, and at that scale (100s/1,000s of developers), embarking on this sort of effort starts to become conceivable and worthwhile in terms of ROI.
 
 
 
