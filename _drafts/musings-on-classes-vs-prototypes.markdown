@@ -156,9 +156,9 @@ That said, I think it's interesting to examine the differences:
 Prototypes Can Do More
 ----------------------
 
-As I've read in a few other places, prototype/map-based dispatch is a superset of OO-based dispatch, but not the other way around.
+As I've read in a few other places, prototype/map-based dispatch is a superset of class-based dispatch, but not the other way around.
 
-As you can see, we can model classes with prototypes, by just pretending our maps (which are super dynamic/do whatever you want) are v-tables (which are static/cannot change).
+We can model classes with prototypes, by just pretending our maps (which are super dynamic/do whatever you want) are v-tables (which are static/cannot change).
 
 This is what ES6 classes do, and many different home-grown "add classes to JS" libraries have done over the years.
 
