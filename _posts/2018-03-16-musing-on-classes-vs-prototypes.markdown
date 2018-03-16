@@ -1,12 +1,12 @@
 ---
-layout: draft
+layout: post
 title: Musings on Classes vs. Prototypes
 ---
 
 {{page.title}}
 ==============
 
-There is a lot written about class vs. prototypical inheritance, much of it very good (although much of it is also very...impassioned), and so I'm not sure I have that much to add per se, other than wanting to mention my knawwing suspicion that I don't think they are as different as people think they are.
+There is a lot written about class vs. prototypical inheritance, much of it very good (although much of it is also very...impassioned), and so I'm not sure I have that much to add per se (I'm also ~5-10 years late to meaningfully contribute to the conversation), other than wanting to mention my knawwing suspicion that I don't think they are as different as people think they are.
 
 Granted, this is likely my old-school class/OO background rationalizing a new way of thinking, but hear me out.
 
@@ -175,9 +175,9 @@ So, in summary, I personally don't think class dispatch and prototype dispatch a
 
 In prototypes, the "boxes" are maps (objects), defined at runtime. This is both powerful as well as potentially complicated, as there are many different ways to string boxes together (see the various good/bad/personal style differences of pre-ES6 JavaScript).
 
-In classes (for static languages, e.g. not Ruby/Python/etc.), the "boxes" are tables, defined at compile time. This is more tractable but also makes it harder to implement any novel abstractions that the compiler is not already aware of.
+In classes (for static languages, e.g. not Ruby/Python/etc.), the "boxes" are tables, defined at compile time. This is more tractable (for both programmers and the compiler) but also makes it harder to implement any novel abstractions that the compiler is not already aware of.
 
-So, while this is a big difference, I don't think it would fundamentally change how I build systems: when I think of objects, objects are objects.
+All said, while this is a big difference, I don't think it would fundamentally change how I build systems: when I think of objects, objects are objects.
 
 E.g. the nouns, names, entities, types, units of single responsibilities, etc., I would use in "objects via prototypes" designs vs. "objects via classes" designs would be fairly similar, I think.
 
@@ -185,7 +185,5 @@ Sure, in class-based systems, "fragile base classes" can be a problem (and the o
 
 Given this, I don't think there is a ground-breaking difference between the two (certainly not as much as, say, OO vs. FP), or at least not as much as I think people typically think.
 
-My suspicion/bias is that the JavaScript community has been slowly figuring this out, likely implicitly/without realizing (or, who knows, perhaps very explicitly), and this is why things like ES6 classes, TypeScript, etc., are all, as far as I can tell, becoming more popular.
-
-
+My suspicion/bias is that the JavaScript community has been slowly figuring this out, likely implicitly/without realizing it (or, who knows, perhaps very explicitly), and this is why things like ES6 classes, TypeScript, etc., are all, as far as I can tell, becoming more popular.
 
