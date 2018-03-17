@@ -6,7 +6,9 @@ title: Musings on Classes vs. Prototypes
 {{page.title}}
 ==============
 
-There is a lot written about class vs. prototypical inheritance, much of it very good (although much of it is also very...impassioned), and so I'm not sure I have that much to add per se (I'm also ~5-10 years late to meaningfully contribute to the conversation), other than wanting to mention my knawwing suspicion that I don't think they are as different as people think they are.
+There is a lot written about class vs. prototypical inheritance, much of it very good, and so I'm not sure I have that much to add (I'm also ~5-10 years late to meaningfully contribute to the conversation).
+
+But I do want to mention my knawwing suspicion that I don't think they are as different as people think they are.
 
 Granted, this is likely my old-school class/OO background rationalizing a new way of thinking, but hear me out.
 
@@ -158,7 +160,7 @@ Prototypes Can Do More
 
 As I've read in a few other places, prototype/map-based dispatch is a superset of class-based dispatch, but not the other way around.
 
-We can model classes with prototypes, by just pretending our maps (which are super dynamic/do whatever you want) are v-tables (which are static/cannot change).
+Which makes sense: we can model classes with prototypes, by just pretending our prototype maps (which are super dynamic/do whatever you want) are v-tables (which are static/cannot change).
 
 This is what ES6 classes do, and many different home-grown "add classes to JS" libraries have done over the years.
 
@@ -167,6 +169,37 @@ But you can't go the other way around, as we can't "undo" the fixed nature of v-
 So prototypical inheritance is objectively more powerful.
 
 As an unapologetic fan of static languages, this power (as I'm sure you can tell) actually makes me nervous, but nonetheless I like to understand and appreciate it, even if just observing from the safe confines of my Java/Scala/TypeScript bunker.
+
+TypeScript Adds Some Nuances
+----------------------------
+
+Somewhat tangentially, TypeScript's type system is impressive and is blurring the lines a bit, as with things like union types, it can now model "mix types A and types B together" , e.g.:
+
+```javascript
+function makeDogFly(d: Dog): Dog & Flyable {
+  ...
+}
+
+makeDogFly(d1).flyToSpace();
+```
+
+And the `flyToSpace` method call is now type-safe.
+
+It can even do:
+
+```javascript
+function addRandomThings[T](d: Dog, t: T): Dog & T {
+  ....
+}
+
+addRandomThings(d1, { newField: 1 }).newField;
+```
+
+And the `newField` field access is now valid and type-safe. Which is just amazing. (I've been meaning to write a dedicated blog post on it, but to me TypeScript went from "what you choose so you don't have to write JavaScript" to "what you choose because it's a legitimately impressive/advanced language in its own right".)
+
+This capability mitigates some of the hyperbolic "classes force me to use inheritance as my only abstraction, so prototypes are the one true way!" by teaching the compiler about type combination/composition as a first-class notion.
+
+Which, "the compiler caught up" echos back to a section of my 2010 post, [Why I'm a Static Typing Bigot](/2010/11/24/why-im-a-static-typing-bigot.html), that posits that static languages, which are often cast in the "stodgy old solution" role, just take longer to evolve/catch up to dynamic languages (in terms of sexy syntax, new abstractions, etc.) because it's demonstrably harder to stop and teach the type system about these new things.
 
 But Will This Change Your Designs?
 ----------------------------------
