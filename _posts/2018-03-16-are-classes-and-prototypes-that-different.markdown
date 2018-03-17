@@ -192,7 +192,7 @@ function addRandomThings[T](d: Dog, t: T): Dog & T {
   ....
 }
 
-addRandomThings(d1, { newField: 1 }).newField;
+addRandomThings(d1, { newField: 1 }).newField = 2;
 ```
 
 And the `newField` field access is now valid and type-safe. Which is just amazing. (I've been meaning to write a dedicated blog post on it, but to me TypeScript went from "what you choose so you don't have to write JavaScript" to "what you choose because it's a legitimately impressive/advanced language in its own right".)
