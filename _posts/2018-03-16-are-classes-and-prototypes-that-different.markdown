@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Musings on Classes vs. Prototypes
+title: Are Classes and Prototypes that Different?
 ---
 
 {{page.title}}
@@ -201,10 +201,14 @@ This capability mitigates some of the hyperbolic "classes force me to use inheri
 
 Which, "the compiler caught up" echos back to a section of my 2010 post, [Why I'm a Static Typing Bigot](/2010/11/24/why-im-a-static-typing-bigot.html), that posits that static languages, which are often cast in the "stodgy old solution" role, just take longer to evolve/catch up to dynamic languages (in terms of sexy syntax, new abstractions, etc.) because it's demonstrably harder to stop and teach the type system about these new things.
 
+Another interesting musing is that the flexibility of a prototype-based runtime likely directly contributed to TypeScript's ability to have its novel type system features in the first place (or at least implement it as cleanly/quickly). E.g. on the JVM, which has the "classes are fixed v-tables" assumption baked into the runtime, it's hard for other languages to map their novel abstractions onto/around this limitation (for either substantially-different languages like Clojure or even incrementally-different languages like Scala).
+
+The JVM has some next-gen features, e.g. Graal (that admittedly I really don't know much about), that are supposed to fix this disparity, but by an 80%/20% combination of "being built into browsers" and "already having a flexible/lowest-common-denominator runtime", JavaScript thwarted Java/the JVM as the "run anywhere" runtime de jour.
+
 But Will This Change Your Designs?
 ----------------------------------
 
-So, in summary, I personally don't think class dispatch and prototype dispatch are that different: they both "walk a tree of boxes".
+Anyway, coming back to the main topic, I personally don't think class dispatch and prototype dispatch are that different: they both "walk a tree of boxes".
 
 In prototypes, the "boxes" are maps (objects), defined at runtime. This is both powerful as well as potentially complicated, as there are many different ways to string boxes together (see the various good/bad/personal style differences of pre-ES6 JavaScript).
 
