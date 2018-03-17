@@ -218,7 +218,7 @@ All said, while this is a big difference, I don't think it would fundamentally c
 
 E.g. the nouns, names, entities, types, units of single responsibilities, etc., I would use in "objects via prototypes" designs vs. "objects via classes" designs would be fairly similar, I think.
 
-Sure, in class-based systems, "fragile base classes" can be a problem (and the other litany of anti-patterns/code smells), but wouldn't that translate to "fragile base prototypes" in a prototype-based system? Or, if it wouldn't and you're just modeling the problem with composition, wouldn't you use the same composition in a class-based system? Objects are objects.
+Sure, in class-based systems, "fragile base classes" can be a problem (and the other litany of anti-patterns/code smells), but wouldn't that translate to "fragile base prototypes" in a prototype-based system? Or, if it wouldn't and you're just modeling the problem with composition (or some other pattern/design), wouldn't you use the same composition in a class-based system? Objects are objects.
 
 Given this, I don't think there is a ground-breaking difference between the two (certainly not as much as, say, OO vs. FP), or at least not as much as I think people typically think.
 
