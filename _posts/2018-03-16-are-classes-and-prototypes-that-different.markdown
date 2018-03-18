@@ -173,7 +173,7 @@ As an unapologetic fan of static languages, this power (as I'm sure you can tell
 TypeScript Adds Some Nuances
 ----------------------------
 
-Somewhat tangentially, TypeScript's type system is impressive and is blurring the lines a bit, as with things like union types, it can now model "mix types A and types B together" , e.g.:
+Somewhat tangentially, TypeScript's type system is impressive and is blurring the lines a bit, as with things like intersection types, it can now model "mix types A and types B together" , e.g.:
 
 ```javascript
 function makeDogFly(d: Dog): Dog & Flyable {
