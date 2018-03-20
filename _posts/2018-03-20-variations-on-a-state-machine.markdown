@@ -1,5 +1,5 @@
 ---
-layout: draft
+layout: post
 title: Variations on a State Machine
 ---
 
