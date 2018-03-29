@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Stubs in TypeScript
+title: Stubs in TypeScript using Mapped Types
 ---
 
 {{page.title}}
