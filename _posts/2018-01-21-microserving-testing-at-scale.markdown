@@ -7,17 +7,17 @@ section: Favorites
 {{page.title}}
 --------------
 
-(Alternate titles/tldr: "Stubbing at the Data Layer", or "Data Layers should come with Stubs".)
+(Alternate titles/tldr: "Stubbing at the Data Layer", or "Data Layers should come with Stubs", which is related to my earlier post, [Services should come with stubs](/2013/04/13/services-should-come-with-stubs.html), but this proposes moving stubs up the stack.)
 
 Micro-services have an interesting problem that, personally, I haven't seen solved really well: integration testing in the large.
 
-Where by "in the large", I mean testing with many micro-services, not testing with large data (that maybe useful in certain contexts, but not what I'm focusing on).
+Where by "in the large", I mean testing with many micro-services (100s to 1000s), not testing with large data (that maybe useful in certain contexts, but not what I'm focusing on).
 
-See my [other recent post](/2017/08/23/futility-of-cross-system-integration-testing.html) on the topic, but none of the systems I've personally worked on (which, granted, is a small `n`) have solved having cross-system tests that provide 100% isolation and control of each test's input data.
+See my other post, [The Futility of Cross-System Integration Testing](/2017/08/23/futility-of-cross-system-integration-testing.html), for more on the topic, but none of the systems I've personally worked on (which, granted, is a small `n`) have solved having cross-system tests that provide 100% isolation and control of each test's input data.
 
 Not being able to provide this isolation and control, for me, is non-negotiable, as otherwise your test suites are invariably flaky and usually slow, and actually become a burden to development velocity instead of an acceleration.
 
-Tangentially, I suppose that is an interesting articulation of my personal testing philosophy: while the normal/obvious goal for testing is verification of system requirements, my primary goal is subtly different: it's developer productivity. Tests should make developers faster. If your tests aren't making your development velocity faster, that is a code smell/test smell that should be invested in.
+Tangentially, I suppose that is an interesting articulation of my personal testing philosophy: while the normal/obvious goal for testing is *verification of system requirements*, my primary goal is subtly different: it's **developer productivity**. Tests should make developers faster. If your tests aren't making your development velocity faster, that is a code smell/test smell that should be invested in.
 
 Testing in-the-small vs. in-the-large
 -------------------------------------
