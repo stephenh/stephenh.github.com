@@ -68,7 +68,7 @@ public void testFoo() {
 
 To me, this fulfills my gold-standard/1st principle for tests (whether unit tests or acceptance tests or what not): they should be readable by your product manager.
 
-Depending on the project, this can be either theoretical or very practical, e.g. one of my career highlights was sitting next to a product manager, and collaboratively writing test cases for some non-trivial business cases, with him reading and understanding the tests as I wrote them, as we worked through what the system should do.
+Depending on the project, this can be either theoretical or very practical, e.g. one of my career highlights was sitting next to a product manager and collaboratively writing test cases for some non-trivial business cases, with him reading and understanding the tests as I wrote them, as we worked through what the system should do.
 
 Nonetheless, even if your product manager is not going to actively read your tests, having that goal in mind is great to strive for, because it also means your fellow engineers will have incredibly readable tests to help them review and maintain the system.
 
@@ -87,11 +87,11 @@ Both of these are great rules, but, yes, I am advocating purposefully violating 
 
 This can be a slippery slope, as my colleague pointed out that ~10-20 years ago, tests were often a 2nd-class citizen in codebases, and so very crufty. They were not refactored or maintained. And so there was a legitimate push in the industry in the ~early-2000s for applying all of the same care and craftsmanship that we (hopefully) exercise over production code to our test code.
 
-Which I definitely agree with; test code should be beautiful code.
+Which I definitely agree with: test code should be beautiful code.
 
-That said, how I rationalize Given/When/Then comments, even though they duplicate the *what*, is that I purposefully want my tests to be as stupidly simple as possible.
+That said, I rationalize Given/When/Then comments, even though they duplicate the *what* because I purposefully want my tests to be as stupidly simple as possible.
 
-So, in terms trade-offs, I will willingly sacrifice otherwise best-practice rules of thumb to gain simplicity.
+So, in terms trade-offs, I will purposefully sacrifice otherwise best-practice rules of thumb to gain simplicity. Within reason.
 
 (Other examples of this first principle, for me, are avoiding `for` loops and random numbers in tests; see [Obsessively Simple Test Values](/2017/01/07/obsessively-simple-test-values.html) for more.)
 
