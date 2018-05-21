@@ -7,9 +7,11 @@ section: Favorites
 Dammit, MySQL
 =============
 
+**Update May 2018:** This is more rant-ish than I would write now, but it's my only post to hit the front page of HackerNews (it got to the number 2 spot back in 2010; I saved screenshots), so has a soft-place in my heart.
+
 After being a happy PostgreSQL user for years, I've finally had to use MySQL for the last 6+ months.
 
-I have to admit, I was starting to think it wasn't all that bad--that the "MySQL is a toy" line was outdated.
+I have to admit, I was starting to think it wasn't all that bad: that maybe the "MySQL is a toy" rhetoric was outdated.
 
 It's not.
 
