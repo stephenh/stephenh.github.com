@@ -7,7 +7,7 @@ section: Favorites
 {{page.title}}
 ==============
 
-I gave a short talk about code reviews the other day.
+I gave a short internal talk about code reviews the other day.
 
 Not entirely sure if the slides are useful without the in-person commentary, but I thought I'd publish them anyway.
 
@@ -25,13 +25,11 @@ As a summary, obviously I really enjoy code reviews. To me they are fun, and I w
 
 All things considered, I think the industry has really embraced code reviews over the last ~20 years.
 
-When I started, or at least the places I started at, it was very odd/unexpected to read other people's diffs. I had picked it up from following various open source projects, but in-house/enterprise/day-job projects just didn't do it (granted, I'm sure there were exceptions, but it was definitely not the rule).
+When I started, or at least the places I started at (enterprise shops circa mid 2000s), it was very odd/unexpected to read other people's diffs. I had picked it up from following open source projects, mostly Apache's Jakarta projects, but in-house/day-job projects just didn't do it (granted, I'm sure there were exceptions, but it was not the rule).
 
-But I started to apply it to in-house projects anyway, because I'd seen how effective they were.
+But I started to apply it to in-house projects anyway, because I'd seen how effective they were. And, admittedly, my OCD liked seeing all of the changes to a codebase go by. It just felt very naked to not know what other developers had been changing in the project.
 
-(Not to claim I had any affect at all on industry-wide code review adoption, I just copied an up-and-coming best practice. To me, it was the open source movement, with its "all communication is electronic" constraint, that pioneered code reviews as a primary means of project collaboration, and drove adoption of code reviews as an industry-wide practice.)
-
-The tooling at the time was also immature and basically "a Perl post-commit hook that emails text diffs" (one of my first open source projects, [commitmessage](http://commitmessage.stage.tigris.org/)...can't believe that's still online, was a Python framework for writing cross-SCM commit hooks; it supported both main SCMs at the time: not git, but CVS, and the new hotness, svn).
+The tooling at the time was also very primitive and basically "a Perl post-commit hook that emails text diffs". One of my first open source projects, [commitmessage](http://commitmessage.stage.tigris.org/) (I can't believe that's still online), was a Python framework for writing cross-SCM commit hooks. It supported both mainstream SCMs at the time: CVS and, the new hotness, Subversion.
 
 But now basically all tech companies do code reviews, such that you will get raised eyebrows if you come interview and your current place does not.
 
@@ -41,5 +39,5 @@ Or maybe that's why you're interviewing, in which case, good call. :-)
 
 Anyway, that tangent side, most places do code reviews and I also think most places do them pretty well, e.g. as part of an overall healthy culture of quality.
 
-I hope you work in a culture where code reviews are similarly enjoyed, and if not that you can guide your team and culture towards that.
+I hope you work in a culture where code reviews are similarly enjoyed, and, if not, that you can guide your team and culture towards that.
 
