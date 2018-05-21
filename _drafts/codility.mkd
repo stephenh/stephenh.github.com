@@ -1,0 +1,162 @@
+
+
+[Arrays - Cyclic Rotation](https://app.codility.com/programmers/lessons/2-arrays/cyclic_rotation/)
+
+Rated as Painless: I agree, just iteration with modulo, a good warm-up question.
+
+[Arrays - Odd Occurrences in Array](https://app.codility.com/programmers/lessons/2-arrays/odd_occurrences_in_array/)
+
+Rated as Painless: I'm not sure.
+
+My solution used a hash map to detect "have I seen this before?". For each
+number, if it's in the map, it's a pair, remove it. So if it's not in the map,
+add it. At the end, you'll have only one thing in the map. This solution seems
+painless.
+
+The correct solution is xor'ing all the numbers, which has the property that
+regardless of the order applied, all pairs cancel themselves out, and you're
+left with the only number that was odd/left. To me, realizing you can xor all
+the numbers like this is overly cute, and not painless.
+
+[Time Complexity - Tape Equilibrium](https://app.codility.com/programmers/lessons/3-time_complexity/tape_equilibrium/)
+
+Rated as Painless: agreed. The trick is to kept two sums, left sum and right
+sum, while iterating, which is not overly tricky.
+
+[Time Complexity - Frog Jump](https://app.codility.com/programmers/lessons/3-time_complexity/frog_jmp/)
+
+Rated as Painless: agreed. Good warm up question.
+
+[Counting Elements - Missing Integer](https://app.codility.com/programmers/lessons/4-counting_elements/missing_integer/)
+
+Rated as Painless: disagreed, not painless (as in smoke question), but still an okay-ish question.
+
+The trick is using a fixed array of N to only mark values `<=` N, ignore any value above that,
+and then infer whether the missing integer was 1-N+1.
+
+If given as an in-person interview, the hint of "what values do you really need to remember" would be appropriate.
+Without that hint, it's easy to get distracted wondering "what data structure should I use".
+
+[Counting Elements - Max Counters](https://app.codility.com/programmers/lessons/4-counting_elements/max_counters/)
+
+Rated as Respectable: agreed.
+
+I didn't get this question 100% correct for performance without looking for answers, as I was just re-initializing the entire array on the max value, instead of realizing you could lazily adjust values to the high water mark. A hint of "how many values do you really need to remember?" would be appropriate, and apt for in-person interviews.
+
+So, not entirely obviously, but still a good question.
+
+[Prefix Sums - Count Div](https://app.codility.com/programmers/lessons/5-prefix_sums/count_div/)
+
+Rated as Painless: agreed, just basic modulo and division. Good smoke test/1st question. Doesn't
+have anything to do with prefix sums though, so not sure why it's in this section.
+
+[Prefix Sums - Passing cars](https://app.codility.com/programmers/lessons/5-prefix_sums/passing_cars/)
+
+Rated as Painless: basically agreed, although I might rate it as "normal" instead of "painless". Good question.
+
+[Prefix Sums - Genomic Range Query](https://app.codility.com/programmers/lessons/5-prefix_sums/genomic_range_query/)
+
+Rated as Respectable: basically agreed. If you've read about the trick of creating count-/sum-based
+data structures as a first step (prefix sums), then this is a good question, enough variation on the basic approach,
+without being overly tricky.
+
+But I anticipate someone who has not prepped specifically on the prefix-sum technique will struggle, so I don't think it's a great question.
+
+[Prefix Sums - Min Avg Two Slice](https://app.codility.com/programmers/lessons/5-prefix_sums/min_avg_two_slice/)
+
+Rated as Respectable: agreed, although I have mixed feelings about this question.
+
+If you've read the material on prefix/suffix sums (which thankfully I did before doing the question),
+it's actually a good question. Takes a bit of code, is a slight variation on the out-of-the-box prefix/suffix sum, etc.
+
+However, if you've not read about prefix sums, which personally I think is a pretty esoteric topic,
+this question looks like a "well, guess I have to check all the combinations/break out dynamic programming".
+
+So, in that regard, I don't think it's a good question.
+
+[Sorting - Triangle](https://app.codility.com/programmers/lessons/6-sorting/triangle/)
+
+Rated as Painless: disagreed.
+
+If you know the trick, the code is super simple, so maybe that is what they
+mean by "painless", but, for me looking at the answers on SO/etc., there are several leaps that to me
+rely too much on mathematical intuition.
+
+[Sorting - Distinct](https://app.codility.com/programmers/lessons/6-sorting/distinct/)
+
+Rated as Painless: agreed, I think this is a good question.
+
+[Sorting - Max Product Of Three](https://app.codility.com/programmers/lessons/6-sorting/max_product_of_three/)
+
+Rated as Painless: agreed, I think this is a good question.
+
+[Sorting - Number of Disc Intersections](https://app.codility.com/programmers/lessons/6-sorting/number_of_disc_intersections/)
+
+Rated as Respectable: agreed.
+
+This is somewhat math-ish, with circles/radii, etc., but it's basically interval overlapping, which due to dates/etc., is actually a somewhat normal thing for programmers to have to do (which is unfortunately extremely rare for these types of questions), so I think this is a good question.
+
+[Stacks and Queues - Stone Wall](https://app.codility.com/programmers/lessons/7-stacks_and_queues/stone_wall/)
+
+Rated as Painless: basically agreed, not really "smoke test" easy, but not "respectable" hard either, so "normal"/a good warm up question.
+
+[Stacks and Queues - Brackets](https://app.codility.com/programmers/lessons/7-stacks_and_queues/brackets/)
+
+Rated as Painless: agreed, matching brackets is very standard fair and uses a widely known data structure.
+
+[Stacks and Queues - Fish](https://app.codility.com/programmers/lessons/7-stacks_and_queues/fish/)
+
+Rated as Painless: basically agreed, although I'd rate as "easy" instead of "painless" as there
+is just enough word-problem deciphering to make it slower than an obvious/smoke test question.
+
+[Stacks And Queues] - Nesting](https://app.codility.com/programmers/lessons/7-stacks_and_queues/nesting/)
+
+Rated as Painless: agreed, same as matching brackets.
+
+[Leader - Dominator](https://app.codility.com/programmers/lessons/8-leader/dominator/)
+
+Rated as Painless: heavily disagreed. I can't see how they can rate this as painless.
+
+If you've not heard of the leader trick, which has multiple nuances (removing disjoint pairs preserves the leader
+in the remaining list, and using a stack counter), I would not expect most people to derive this on their own.
+
+The leader algorithm is cute, but a huge trick, and shouldn't be used for any interview problems.
+
+[Leader - Equileader](https://app.codility.com/programmers/lessons/8-leader/equi_leader/)
+
+Rated as Painless: heavily disagreed.
+
+This is a cute variation if you already know the leader trick, but otherwise is a bad/worthless question.
+
+[Maximum Slice - Max Double Slice Sum](https://app.codility.com/programmers/lessons/9-maximum_slice_problem/max_double_slice_sum/)
+
+Rated as Painless: disagreed. This is less egregious than the leader questions, but still something where
+you have to know the max-slice trick ahead of time.
+
+That said, if you do know the max-slice trick, *and* notice the hint that the space complexity is `O(n)`,
+then this is an okay problem. E.g. I was stuck for ~10 minutes, thinking "well, max slice is constant
+space, how can I do this in constant space?" before getting the hint of "oh, it's `O(n)`, I should allocate a look up
+structure". After which, right, two use look ups, max left slice and max left slice, makes sense.
+
+I'd rate this as respectable, but still with the caveat that max-slice trick, IMO, negates it from being
+a useful interview question, as it's not a standard-knowledge "oh sure, stacks are `O(whatever)`" data
+structure.
+
+[Maximum Slice - Max Profit](https://app.codility.com/programmers/lessons/9-maximum_slice_problem/max_profit/)
+
+Rated as Painless: agreed, this is a nice warm-up problem.
+
+Usually I don't like the "make up some word-problem text to fancy up the actual question", e.g. one of their
+real questions is about lasers in a tomb when it's really just a slope/grid question, but the stock price/money
+aspect was realistic and, for me, actually helped reasoning about the solution rather than obscuring it.
+
+
+
+
+
+
+
+
+
+
+
