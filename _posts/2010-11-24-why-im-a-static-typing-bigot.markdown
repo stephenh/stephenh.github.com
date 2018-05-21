@@ -105,7 +105,7 @@ However, even in my bigotry, I will definitely concede static languages have the
 
 1. Type-aware IDEs (Eclipse, IntelliJ, etc.) are hard to build and so become barriers to entry.
 
-   Compilers themselves, for either static or dynamic languages. are a very well-known, basically solved problem--lots of books, parser libraries, etc. The compilation environment is a very static: take input text X and transform it into output code Y.
+   Compilers themselves, for either static or dynamic languages, are a very well-known, basically solved problem--lots of books, parser libraries, etc. The compilation environment is also very static: take input text X and transform it into output code Y.
 
    IDEs, however, are really hard. The compilation environment is no longer static--the IDE still transforms X to Y, but while transforming X to Y, it also has to put errors on the right line, squiggles under the right words, pop ups at the right place, cache the entire program's type data to provide instant navigation, and all while the user is flying around the source file changing things and trying to make the IDE developer's life a nightmare.
 
@@ -119,7 +119,7 @@ However, even in my bigotry, I will definitely concede static languages have the
 
    Type theory is a very academic field. You don't see hobbyists sitting down and writing a new type system for their language over the weekend. But you see plenty of hobbyists sitting down and writing a new syntax for their language over the weekend.
 
-   (This is mini-point that really leads to:)
+   This is mini-point that really leads to:
 
 3. Consequently, static languages always lag behind dynamic languages. Especially with regards to syntax.
 
