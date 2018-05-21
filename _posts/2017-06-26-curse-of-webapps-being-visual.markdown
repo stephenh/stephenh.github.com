@@ -1,6 +1,7 @@
 ---
 title: The Curse of Webapps Being Visual for TDD
 layout: post
+section: Testing
 ---
 
 {{page.title}}

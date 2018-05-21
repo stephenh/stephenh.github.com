@@ -1,6 +1,7 @@
 ---
 layout: post
 title: Why No One Uses Scala's Structural Typing
+section: Scala
 ---
 
 {{page.title}}

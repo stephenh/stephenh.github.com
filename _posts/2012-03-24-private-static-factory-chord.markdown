@@ -1,6 +1,7 @@
 ---
 layout: post
 title: Private Static Factory Method Chord
+section: Productivity
 ---
 
 {{page.title}}

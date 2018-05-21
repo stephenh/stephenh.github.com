@@ -1,6 +1,7 @@
 ---
 layout: post
 title: Reinvent 2012 Keynote Notes
+section: None
 ---
 
 {{page.title}}

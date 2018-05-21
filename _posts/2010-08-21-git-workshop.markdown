@@ -1,6 +1,7 @@
 ---
 layout: post
 title: git workshop
+section: Productivity
 ---
 
 git workshop

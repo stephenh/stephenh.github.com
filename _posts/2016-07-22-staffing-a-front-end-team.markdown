@@ -1,6 +1,7 @@
 ---
 title: Staffing a Front-End Team
 layout: post
+section: Architecture
 ---
 
 {{page.title}}

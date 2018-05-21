@@ -1,6 +1,7 @@
 ---
 layout: post
 title: War-less Development with Jetty
+section: Java
 ---
 
 <h2>{{ page.title }}</h2>

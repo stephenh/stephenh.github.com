@@ -1,6 +1,7 @@
 ---
 layout: post
 title: One Click VNC
+section: Productivity
 ---
 
 {{page.title}}

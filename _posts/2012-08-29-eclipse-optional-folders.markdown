@@ -1,6 +1,7 @@
 ---
 title: Optional Folders in Eclipse
 layout: post
+section: Java
 ---
 
 {{page.title}}

@@ -1,6 +1,7 @@
 ---
 layout: post
 title: Strangeloop 2012--VoltDB
+section: None
 ---
 
 {{page.title}}

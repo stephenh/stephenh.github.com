@@ -1,6 +1,7 @@
 ---
 layout: post
 title: Moving to GitHub Pages
+section: None
 ---
 
 <h2>{{ page.title }}</h2>

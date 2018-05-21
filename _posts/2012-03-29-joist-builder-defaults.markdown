@@ -1,6 +1,7 @@
 ---
 layout: post
 title: Joist Builder Defaults
+section: Joist
 ---
 
 {{page.title}}

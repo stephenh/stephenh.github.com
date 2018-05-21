@@ -1,6 +1,7 @@
 ---
 layout: post
 title: More Evil Than Spring
+section: None
 ---
 
 <h2>{{ page.title }}</h2>

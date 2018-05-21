@@ -1,6 +1,7 @@
 ---
 layout: post
 title: Why I'm a Static Typing Bigot
+section: Favorites
 ---
 
 {{page.title}}

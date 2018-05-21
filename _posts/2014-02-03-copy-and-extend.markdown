@@ -1,6 +1,7 @@
 ---
 layout: post
 title: Copy & Extend, A Great Way To Learn
+section: Productivity
 ---
 
 {{page.title}}

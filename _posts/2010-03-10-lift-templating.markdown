@@ -1,6 +1,7 @@
 ---
 layout: post
 title: Lift Templating s/is/was a Joke
+section: Scala
 ---
 
 Lift Templating s/is/was a Joke

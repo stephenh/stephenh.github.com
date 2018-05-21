@@ -1,6 +1,7 @@
 ---
 layout: post
 title: Joist Execute Class
+section: Joist
 ---
 
 {{page.title}}

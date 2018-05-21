@@ -1,6 +1,7 @@
 ---
 layout: post
 title: What's Wrong with a Schema?
+section: Architecture
 ---
 
 {{page.title}}

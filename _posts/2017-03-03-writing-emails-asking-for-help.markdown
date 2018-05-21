@@ -1,6 +1,7 @@
 ---
 layout: post
 title: Writing Emails Asking for Help
+section: Productivity
 ---
 
 {{page.title}}

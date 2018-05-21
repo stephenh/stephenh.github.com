@@ -1,9 +1,12 @@
 ---
 layout: post
 title: Old School Bell Trick
+section: Productivity
 ---
 
 <h2>{{ page.title }}</h2>
+
+**Update 2018** I'm now achieving this in Fish by adding `echo -n -e "\a"` to the end of my `fish_prompt` function in my `fish_prompt.fish`. This means Fish pings the bell on every prompt, which seems excessive, but if I'm focused in the terminal, then i3wm ignores it anyway (alacritty [converts the bell](https://github.com/jwilm/alacritty/pull/812) to the X11 urgent flag).
 
 I'm running test cases from the console a lot lately. Besides missing Eclipse, my productivity has dropped as I'll task switch to something else while the tests run, and I typically only notice the tests have completed after my other supposedly-parallel task hits an interrupt.
 

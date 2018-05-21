@@ -1,6 +1,7 @@
 ---
 layout: post
 title: Changing My Style
+section: Architecture
 ---
 
 Changing My Style

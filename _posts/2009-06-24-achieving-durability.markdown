@@ -1,6 +1,7 @@
 ---
 layout: post
 title: Achieving Durability
+section: Architecture
 ---
 
 Achieving Durability

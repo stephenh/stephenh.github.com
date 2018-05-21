@@ -1,6 +1,7 @@
 ---
 layout: post
 title: Framework-less Dependency Injection
+section: Architecture
 ---
 
 {{page.title}}

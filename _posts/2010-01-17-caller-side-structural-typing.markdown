@@ -1,6 +1,7 @@
 ---
 layout: post
 title: Caller-Side Structural Typing
+section: Languages
 ---
 
 <h2>{{ page.title }}</h2>

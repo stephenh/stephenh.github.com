@@ -1,6 +1,7 @@
 ---
 layout: post
 title: Services Should Come with Stubs
+section: Favorites
 ---
 
 {{page.title}}

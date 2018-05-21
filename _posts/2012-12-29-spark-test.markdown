@@ -1,6 +1,7 @@
 ---
 layout: post
 title: Spark Test
+section: Scala
 ---
 
 {{page.title}}

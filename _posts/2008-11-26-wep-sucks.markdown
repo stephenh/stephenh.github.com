@@ -1,6 +1,7 @@
 ---
 layout: post
 title: WEP sucks
+section: None
 ---
 
 <h2>{{ page.title }}</h2>

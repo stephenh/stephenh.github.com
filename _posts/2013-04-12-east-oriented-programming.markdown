@@ -1,6 +1,7 @@
 ---
 layout: post
 title: East-Oriented Programming
+section: Testing
 ---
 
 {{page.title}}

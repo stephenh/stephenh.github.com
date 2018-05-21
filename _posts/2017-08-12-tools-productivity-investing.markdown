@@ -1,6 +1,7 @@
 ---
 layout: post
 title: Tools, Productivity, and Investing in Yourself
+section: Favorites
 ---
 
 {{page.title}}

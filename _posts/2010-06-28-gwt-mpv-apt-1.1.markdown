@@ -1,6 +1,7 @@
 ---
 layout: post
 title: gwt-mpv-apt 1.1
+section: GWT
 ---
 
 <h2>{{ page.title }}</h2>

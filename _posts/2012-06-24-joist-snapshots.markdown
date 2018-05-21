@@ -1,6 +1,7 @@
 ---
 layout: post
 title: Joist Snapshots, A 2nd-Level Cache Alternative
+section: Joist
 ---
 
 {{page.title}}

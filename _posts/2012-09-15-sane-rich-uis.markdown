@@ -1,10 +1,13 @@
 ---
 layout: post
 title: Building Sane Rich User Interfaces
+section: Favorites
 ---
 
 {{page.title}}
 ==============
+
+**Update May 2018:** This post basically describes reactive programming, from the context of circa 2012 GWT apps (which were typically extremely imperative, as were many JavaScript/jquery webapps at the time) and highlights Tessell, which was a data-binding framework I wrote while at Bizo. Today this would be called reactive/one-way programming, very similar to [Mobx](https://mobx.js.org/), albiet I'm sure Mobx is much more optimized.
 
 I've been meaning to write a "lessons learned" or "best practice" sort of post on how I think rich UI applications can be made simpler and less buggy by changing your mindset from an imperative one to a declarative one.
 
@@ -84,7 +87,7 @@ The Declarative Approach
 
 So, now let's try and refactor this code to being more declarative.
 
-In taking on a declarative mindset, we want to think, without reacting to user input, how can we declare that some behavior of our UI should just happen?
+In taking on a declarative mindset, we want to think, without reacting to user input (e.g. event callbacks), how can we declare that some behavior of our UI should just happen?
 
 For example, let's think of the behaviors of our tabs:
 

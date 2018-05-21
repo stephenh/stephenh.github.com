@@ -1,6 +1,7 @@
 ---
 layout: post
 title: Validation with Objects Instead Of Annotations
+section: Joist
 ---
 
 Validation With Objects Instead Of Annotations

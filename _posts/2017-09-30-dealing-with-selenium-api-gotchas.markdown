@@ -1,6 +1,7 @@
 ---
 layout: draft
 title: Dealing with Selenium API Gotchas
+section: Testing
 ---
 
 {{page.title}}

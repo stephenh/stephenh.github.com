@@ -1,6 +1,7 @@
 ---
 title: The Pain of Small Methods
 layout: post
+section: Testing
 ---
 
 {{page.title}}

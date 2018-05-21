@@ -1,6 +1,7 @@
 ---
 layout: post
 title: Dammit, MySQL
+section: Favorites
 ---
 
 Dammit, MySQL

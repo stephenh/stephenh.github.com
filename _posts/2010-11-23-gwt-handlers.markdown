@@ -1,6 +1,7 @@
 ---
 layout: post
 title: GWT Handler Registrations
+section: GWT
 ---
 
 {{page.title}}

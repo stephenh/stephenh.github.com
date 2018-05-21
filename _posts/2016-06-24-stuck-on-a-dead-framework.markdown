@@ -1,6 +1,7 @@
 ---
 title: Stuck on a Dead Framework
 layout: post
+section: Architecture
 ---
 
 {{page.title}}

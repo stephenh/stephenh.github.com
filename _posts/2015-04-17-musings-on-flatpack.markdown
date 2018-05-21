@@ -1,6 +1,7 @@
 ---
 layout: post
 title: Musings on Flatpack
+section: None
 ---
 
 {{page.title}}

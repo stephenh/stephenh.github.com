@@ -1,6 +1,7 @@
 ---
 layout: post
 title: Variations on a State Machine
+section: TypeScript
 ---
 
 {{page.title}}

@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CSS Quirk, Collapsing Margins
+section: GWT
 ---
 
 {{page.title}}

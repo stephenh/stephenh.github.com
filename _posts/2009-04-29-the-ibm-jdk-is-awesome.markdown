@@ -1,6 +1,7 @@
 ---
 layout: post
 title: The IBM JDK is Awesome
+section: Java
 ---
 
 The IBM JDK is Awesome

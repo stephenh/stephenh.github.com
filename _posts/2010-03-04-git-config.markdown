@@ -1,6 +1,7 @@
 ---
 layout: post
 title: git config
+section: Productivity
 ---
 
 <h2>{{ page.title }}</h2>

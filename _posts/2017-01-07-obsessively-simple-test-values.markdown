@@ -1,6 +1,7 @@
 ---
 layout: post
 title: Obsessively Simple Test Values
+section: Testing
 ---
 
 {{page.title}}

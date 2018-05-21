@@ -1,6 +1,7 @@
 ---
 layout: post
 title: Compassionate Code Reviews
+section: Favorites
 ---
 
 {{page.title}}

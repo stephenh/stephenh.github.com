@@ -1,6 +1,7 @@
 ---
 layout: post
 title: Using Given/When/Then For Tests
+section: Testing
 ---
 
 {{page.title}}

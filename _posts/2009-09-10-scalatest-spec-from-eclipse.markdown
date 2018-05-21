@@ -1,6 +1,7 @@
 ---
 layout: post
 title: Running ScalaTest Spec Tests from Eclipse
+section: Scala
 ---
 
 Running ScalaTest Spec Tests from Eclipse

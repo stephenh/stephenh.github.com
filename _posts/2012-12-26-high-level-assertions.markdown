@@ -1,6 +1,7 @@
 ---
 layout: post
 title: High Level Assertions
+section: Testing
 ---
 
 {{page.title}}

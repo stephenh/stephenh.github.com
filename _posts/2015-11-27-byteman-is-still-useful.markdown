@@ -1,6 +1,7 @@
 ---
 title: Using Byteman To Debug Logging
 layout: post
+section: Java
 ---
 
 {{page.title}}

@@ -1,6 +1,7 @@
 ---
 title: If you cherry pick, your branch model is wrong
 layout: post
+section: Productivity
 ---
 
 {{page.title}}

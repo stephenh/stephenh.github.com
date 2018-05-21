@@ -1,6 +1,7 @@
 ---
 layout: post
 title: Collecting User Actions with GWT
+section: GWT
 ---
 
 Collecting User Actions with GWT

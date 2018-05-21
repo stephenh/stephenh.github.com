@@ -1,6 +1,7 @@
 ---
 layout: post
 title: What Makes Spark Exciting
+section: Scala
 ---
 
 {{page.title}}

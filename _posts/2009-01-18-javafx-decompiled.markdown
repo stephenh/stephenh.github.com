@@ -1,6 +1,7 @@
 ---
 layout: post
 title: JavaFX Decompiled
+section: Java
 ---
 
 <h2>{{ page.title }}</h2>

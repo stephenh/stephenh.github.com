@@ -1,6 +1,7 @@
 ---
 layout: post
 title: Boojay is Promising
+section: Languages
 ---
 
 <h2>{{ page.title }}</h2>

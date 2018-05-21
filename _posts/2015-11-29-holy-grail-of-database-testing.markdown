@@ -1,6 +1,7 @@
 ---
 title: The Holy Grail of Database Testing
 layout: post
+section: Testing
 ---
 
 {{page.title}}

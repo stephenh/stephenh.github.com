@@ -1,6 +1,7 @@
 ---
 layout: post
 title: Are Classes and Prototypes that Different?
+section: TypeScript
 ---
 
 {{page.title}}

@@ -6,18 +6,15 @@ title: Draconian Overlord
 <style>
   .posts {
     border-collapse: collapse;
+    margin: 15px;
   }
   .posts td {
     padding: 8px;
-    border-bottom: 1px solid gray;
   }
   .posts td.date {
     padding-top: 11px;
     font-size: 75%;
     text-align: center;
-  }
-  .url {
-    font-size: 110%;
   }
   .url a, .url a:active, .url a:hover, .url a:visited {
     color: black;
@@ -25,23 +22,179 @@ title: Draconian Overlord
   }
 </style>
 
-<div id="home">
-  <h2></h2>
-  <h2>Posts</h2>
+<h2>Now Organized!</h2>
 
+I've written a lot of posts over the years, so have organized them by category. You can also see the <a href="/all.html">full list</a>.
+
+<div id="favorites">
+  <h2>Favorites</h2>
+  <div>
+    These are my favorite posts.
+  </div>
   <table border="0" class="posts">
-    {% for post in site.posts %}
+    {% for post in site.posts %}{% if post.section == 'Favorites' %}
     <tr>
       <td class="date">{{ post.date | date_to_string }} </td>
       <td class="url"><a href="{{ post.url }}">{{ post.title }}</a></td>
     </tr>
-    {% endfor %}
+    {% endif %}{% endfor %}
   </table>
 </div>
 
-<h2>Disclaimer</h2>
+<div id="testing">
+  <h2>Testing</h2>
+  <div>
+    I'm a big fan of testing, and spend a lot of time thinking about and optimzing the
+    readability and maintability of test suites.
+  </div>
+  <table border="0" class="posts">
+    {% for post in site.posts %}{% if post.section == 'Testing' %}
+    <tr>
+      <td class="date">{{ post.date | date_to_string }} </td>
+      <td class="url"><a href="{{ post.url }}">{{ post.title }}</a></td>
+    </tr>
+    {% endif %}{% endfor %}
+  </table>
+</div>
 
-<p>I ranted a lot when I first started this blog--lately I'm working on biting
-my tongue and actually providing valuable content in my posts. We'll see how it
-goes.</p>
+<div id="Architecture">
+  <h2>Architecture</h2>
+  <table border="0" class="posts">
+    {% for post in site.posts %}{% if post.section == 'Architecture' %}
+    <tr>
+      <td class="date">{{ post.date | date_to_string }} </td>
+      <td class="url"><a href="{{ post.url }}">{{ post.title }}</a></td>
+    </tr>
+    {% endif %}{% endfor %}
+  </table>
+</div>
+
+<div id="langauges">
+  <h2>Language Musings</h2>
+  <div>
+    As most programmers, I have obsessed about programming languages over the years,
+    particularly pining for the syntax and productivity of dynamic languages,
+    but with the safety blanket of a static compiler.
+  </div>
+  <table border="0" class="posts">
+    {% for post in site.posts %}{% if post.section == 'Languages' %}
+    <tr>
+      <td class="date">{{ post.date | date_to_string }} </td>
+      <td class="url"><a href="{{ post.url }}">{{ post.title }}</a></td>
+    </tr>
+    {% endif %}{% endfor %}
+  </table>
+</div>
+
+<div id="gwt">
+  <h2>GWT/Tessell</h2>
+  <div>
+    At Bizo, I wrote front-end code, and pre-TypeScript (~2010) so we used GWT. GWT
+    could be a frustrating experience, so I also wrote a framework,
+    <a href="http://www.tessell.org">Tessell</a>, to make our lives easier.
+  </div>
+  <table border="0" class="posts">
+    {% for post in site.posts %}{% if post.section == 'GWT' %}
+    <tr>
+      <td class="date">{{ post.date | date_to_string }} </td>
+      <td class="url"><a href="{{ post.url }}">{{ post.title }}</a></td>
+    </tr>
+    {% endif %}{% endfor %}
+  </table>
+</div>
+
+<div id="joist">
+  <h2>Joist</h2>
+  <div>
+    <a href="http://www.joist.ws/">Joist</a> is a Java ORM I wrote in ~2007 that uses code generation
+    to get Rails-ish productivity (no getter, setter, annotation, etc. boilerplate) and avoid Hibernate
+    (on 500+ table enterprise projects, the Hibernate startup time was too slow for TDD).
+  </div>
+  <table border="0" class="posts">
+    {% for post in site.posts %}{% if post.section == 'Joist' %}
+    <tr>
+      <td class="date">{{ post.date | date_to_string }} </td>
+      <td class="url"><a href="{{ post.url }}">{{ post.title }}</a></td>
+    </tr>
+    {% endif %}{% endfor %}
+  </table>
+</div>
+
+<div id="typescript">
+  <h2>TypeScript</h2>
+  <div>
+    Lately I've been hacking on TypeScript and enjoy it; I could see it becoming my favorite language.
+  </div>
+  <table border="0" class="posts">
+    {% for post in site.posts %}{% if post.section == 'TypeScript' %}
+    <tr>
+      <td class="date">{{ post.date | date_to_string }} </td>
+      <td class="url"><a href="{{ post.url }}">{{ post.title }}</a></td>
+    </tr>
+    {% endif %}{% endfor %}
+  </table>
+</div>
+
+<div id="scala">
+  <h2>Scala</h2>
+  <div>
+    We wrote a lot of Scala at Bizo. The syntax is great, the compile times are not.
+  </div>
+  <table border="0" class="posts">
+    {% for post in site.posts %}{% if post.section == 'Scala' %}
+    <tr>
+      <td class="date">{{ post.date | date_to_string }} </td>
+      <td class="url"><a href="{{ post.url }}">{{ post.title }}</a></td>
+    </tr>
+    {% endif %}{% endfor %}
+  </table>
+</div>
+
+<div id="java">
+  <h2>Java</h2>
+  <div>
+    I've done a ton of Java, for better or worse. I like the fast/rock solid tooling, which pays off
+    for "in-the-large" programming, but not the boilerpate, which sucks for "in-the-small"
+    programming. I also hate how slow it innovates compared to C# and TypeScript.
+  </div>
+  <table border="0" class="posts">
+    {% for post in site.posts %}{% if post.section == 'Java' %}
+    <tr>
+      <td class="date">{{ post.date | date_to_string }} </td>
+      <td class="url"><a href="{{ post.url }}">{{ post.title }}</a></td>
+    </tr>
+    {% endif %}{% endfor %}
+  </table>
+</div>
+
+<div id="productivity">
+  <h2>Productivity</h2>
+  <div>
+    I like moving fast, so am always collecting shell, vi, etc. tips.
+  </div>
+  <table border="0" class="posts">
+    {% for post in site.posts %}{% if post.section == 'Productivity' %}
+    <tr>
+      <td class="date">{{ post.date | date_to_string }} </td>
+      <td class="url"><a href="{{ post.url }}">{{ post.title }}</a></td>
+    </tr>
+    {% endif %}{% endfor %}
+  </table>
+</div>
+
+<div id="todo">
+  <h2>Todo</h2>
+  <div>
+    I need to find a better spot for these.
+  </div>
+  <table border="0" class="posts">
+    {% for post in site.posts %}{% if post.section == 'Todo' %}
+    <tr>
+      <td class="date">{{ post.date | date_to_string }} </td>
+      <td class="url"><a href="{{ post.url }}">{{ post.title }}</a></td>
+    </tr>
+    {% endif %}{% endfor %}
+  </table>
+</div>
+
 

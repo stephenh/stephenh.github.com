@@ -1,6 +1,7 @@
 ---
 layout: post
 title: Spark Report Patterns
+section: Scala
 ---
 
 {{page.title}}

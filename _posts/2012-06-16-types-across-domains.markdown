@@ -1,6 +1,7 @@
 ---
 layout: post
 title: Abstracting Types Across Domains
+section: Architecture
 ---
 
 {{page.title}}

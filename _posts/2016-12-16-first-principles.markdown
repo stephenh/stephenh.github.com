@@ -1,6 +1,7 @@
 ---
 layout: post
 title: First Principles
+section: Architecture
 ---
 
 {{page.title}}

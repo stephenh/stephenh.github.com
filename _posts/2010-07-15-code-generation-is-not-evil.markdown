@@ -1,6 +1,7 @@
 ---
 layout: post
 title: Code Generation Is Not Evil
+section: Architecture
 ---
 
 Code Generation Is Not Evil

@@ -1,6 +1,7 @@
 ---
 layout: post
 title: Good Test, Bad Test
+section: Testing
 ---
 
 {{page.title}}

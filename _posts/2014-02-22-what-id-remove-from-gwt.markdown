@@ -1,10 +1,13 @@
 ---
 layout: post
 title: What I Would Remove from GWT--Basically Everything
+section: GWT
 ---
 
 {{page.title}}
 ==============
+
+**Update May 2018**: This has happened. I can't claim any responsibility, but Google has rewritten GWT as `j2cl`, which is just a front-end for Google Closure, and abandoned a ton of the legacy features that made GWT 2.x both amazing, as well as slow and painful to innovate and maintain.
 
 At the 2013 GWT.Create conference, one the audience questions to the steering committee members was "What would you remove from GWT?"
 

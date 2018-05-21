@@ -1,6 +1,7 @@
 ---
 title: Tessell Gets Member Changed Events
 layout: post
+section: GWT
 ---
 
 {{page.title}}

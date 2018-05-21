@@ -1,6 +1,7 @@
 ---
 layout: post
 title: Scala Per-Instance Singletons
+section: Scala
 ---
 
 Scala Per-Instance Singletons

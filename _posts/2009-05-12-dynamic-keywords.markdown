@@ -1,6 +1,7 @@
 ---
 layout: post
 title: Dynamic Keywords
+section: Languages
 ---
 
 Dynamic Keywords

@@ -1,6 +1,7 @@
 ---
 layout: post
 title: Moving to Gradle
+section: Java
 ---
 
 {{page.title}}

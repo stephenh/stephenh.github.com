@@ -1,6 +1,7 @@
 ---
 layout: post
 title: Faking at the Right Level
+section: Testing
 ---
 
 {{page.title}}

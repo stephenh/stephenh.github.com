@@ -1,6 +1,7 @@
 ---
 layout: post
 title: GWT View Generation
+section: GWT
 ---
 
 <h2>{{ page.title }}</h2>

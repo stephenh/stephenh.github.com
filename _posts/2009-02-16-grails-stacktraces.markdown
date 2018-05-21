@@ -1,6 +1,7 @@
 ---
 layout: post
 title: Grails Stacktraces
+section: Java
 ---
 
 <h2>{{ page.title }}</h2>

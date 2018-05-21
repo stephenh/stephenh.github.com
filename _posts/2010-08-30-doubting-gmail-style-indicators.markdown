@@ -1,6 +1,7 @@
 ---
 layout: post
 title: Doubting GMail-style Loading Indicators
+section: GWT
 ---
 
 Doubting GMail-style Loading Indicators

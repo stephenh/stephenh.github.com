@@ -1,6 +1,7 @@
 ---
 layout: post
 title: Spark Size Tracking
+section: Scala
 ---
 
 {{page.title}}

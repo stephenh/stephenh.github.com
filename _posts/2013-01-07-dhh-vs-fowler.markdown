@@ -1,6 +1,7 @@
 ---
 layout: post
 title: DHH vs. Fowler
+section: Architecture
 ---
 
 {{page.title}}

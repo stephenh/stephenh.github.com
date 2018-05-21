@@ -1,6 +1,7 @@
 ---
 title: The Futility of Cross-System Integration Testing
 layout: post
+section: Testing
 ---
 
 {{page.title}}

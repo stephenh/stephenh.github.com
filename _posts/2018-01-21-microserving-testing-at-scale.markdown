@@ -1,6 +1,7 @@
 ---
 layout: post
 title: Micro Service Testing at Scale
+section: Favorites
 ---
 
 {{page.title}}

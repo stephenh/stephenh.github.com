@@ -1,6 +1,7 @@
 ---
 layout: post
 title: Joist vs. Hibernate SQL
+section: Joist
 ---
 
 Joist vs. Hibernate SQL

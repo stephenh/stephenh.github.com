@@ -1,6 +1,7 @@
 ---
 layout: post
 title: NamedQuery Considered Stupid
+section: None
 ---
 
 <h2>{{ page.title }}</h2>

@@ -1,6 +1,7 @@
 ---
 layout: post
 title: Trait Rules of Thumb
+section: Scala
 ---
 
 {{page.title}}

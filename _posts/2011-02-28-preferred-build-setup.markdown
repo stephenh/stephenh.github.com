@@ -1,10 +1,13 @@
 ---
 layout: post
 title: Preferred Build Setup
+section: Java
 ---
 
 {{page.title}}
 ==============
+
+**Update May 2018** [Gradle](https://gradle.org) has won the current era of Java build tooling.
 
 I'm settling in to a build setup (for Java projects) that I'm reasonably comfortable with.
 

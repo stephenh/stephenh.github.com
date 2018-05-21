@@ -1,6 +1,7 @@
 ---
 layout: post
 title: How to Sanely Use Ivy's Artifact Tags
+section: Java
 ---
 
 {{page.title}}

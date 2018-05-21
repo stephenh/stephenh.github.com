@@ -1,6 +1,7 @@
 ---
 layout: post
 title: Brief Dependency Injection Skeptic
+section: Architecture
 ---
 
 {{page.title}}

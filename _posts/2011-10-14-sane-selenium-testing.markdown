@@ -1,6 +1,7 @@
 ---
 layout: post
 title: Sane AJAX Testing in Selenium
+section: GWT
 ---
 
 {{page.title}}

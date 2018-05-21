@@ -1,6 +1,7 @@
 ---
 layout: post
 title: Bindgen 2.0 Released
+section: Java
 ---
 
 Bindgen 2.0 Released

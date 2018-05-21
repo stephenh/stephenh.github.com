@@ -1,6 +1,7 @@
 ---
 layout: post
 title: Stay in the Language
+section: Languages
 ---
 
 {{page.title}}

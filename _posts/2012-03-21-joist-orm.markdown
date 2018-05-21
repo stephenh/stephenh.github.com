@@ -1,6 +1,7 @@
 ---
 layout: post
 title: Joist, the Java ORM for Me
+section: Joist
 ---
 
 {{page.title}}

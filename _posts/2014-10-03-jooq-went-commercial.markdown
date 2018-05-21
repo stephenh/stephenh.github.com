@@ -1,6 +1,7 @@
 ---
 layout: post
 title: jOOQ Went Commercial
+section: Java
 ---
 
 {{page.title}}

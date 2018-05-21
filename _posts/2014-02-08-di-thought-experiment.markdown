@@ -1,6 +1,7 @@
 ---
 layout: post
 title: Dependency Injection Thought Experiment
+section: Architecture
 ---
 
 {{page.title}}

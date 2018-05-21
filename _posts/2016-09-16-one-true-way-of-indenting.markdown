@@ -1,6 +1,7 @@
 ---
 title: The One True Way Of Indentation
 layout: post
+section: Productivity
 ---
 
 {{page.title}}

@@ -1,6 +1,7 @@
 ---
 title: JDK 1.8/1.7 Compatibility Gotcha
 layout: post
+section: Java
 ---
 
 {{page.title}}

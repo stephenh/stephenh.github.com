@@ -1,6 +1,7 @@
 ---
 layout: post
 title: Command Query Responsibility Segregation with S3 and JSON
+section: Architecture
 ---
 
 {{page.title}}

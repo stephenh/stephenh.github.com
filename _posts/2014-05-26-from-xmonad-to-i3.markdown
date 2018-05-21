@@ -1,6 +1,7 @@
 ---
 title: From xmonad to i3 on Ubuntu 14.04
 layout: post
+section: Productivity
 ---
 
 {{page.title}}

@@ -1,6 +1,7 @@
 ---
 title: Can Java Be Good Enough?
 layout: post
+section: Languages
 ---
 
 {{page.title}}

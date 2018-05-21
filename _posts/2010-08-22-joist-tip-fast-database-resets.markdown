@@ -1,6 +1,7 @@
 ---
 layout: post
 title: Joist Tip, Fast Database Resets
+section: Joist
 ---
 
 {{ page.title }}

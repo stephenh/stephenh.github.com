@@ -1,6 +1,7 @@
 ---
 layout: post
 title: A GWT Developer's Reaction to Dart
+section: GWT
 ---
 
 {{page.title}}

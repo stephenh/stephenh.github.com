@@ -1,6 +1,7 @@
 ---
 layout: post
 title: Politely Refactoring Code
+section: Todo
 ---
 
 {{ page.title }}

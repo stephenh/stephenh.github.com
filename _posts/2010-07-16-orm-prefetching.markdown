@@ -1,6 +1,7 @@
 ---
 layout: post
 title: Joist/ORM Prefetching
+section: Joist
 ---
 
 {{page.title}}

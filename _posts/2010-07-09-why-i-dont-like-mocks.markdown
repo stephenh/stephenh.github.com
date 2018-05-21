@@ -1,6 +1,7 @@
 ---
 layout: post
 title: Why I Don't Like Mocks
+section: Favorites
 ---
 
 <h2>{{ page.title }}</h2>

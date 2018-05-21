@@ -1,6 +1,7 @@
 ---
 layout: post
 title: Scala Implicit Conversion with Tuples
+section: Scala
 ---
 
 {{page.title}}

@@ -1,6 +1,7 @@
 ---
 layout: post
 title: Moving an existing git repo into svn
+section: Productivity
 ---
 
 <h2>{{ page.title }}</h2>

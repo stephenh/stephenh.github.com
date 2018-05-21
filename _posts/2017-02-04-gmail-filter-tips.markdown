@@ -1,6 +1,7 @@
 ---
 title: Gmail Filter Tips
 layout: post
+section: Productivity
 ---
 
 {{page.title}}

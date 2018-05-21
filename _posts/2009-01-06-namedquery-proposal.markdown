@@ -1,6 +1,7 @@
 ---
 layout: post
 title: NamedQuery Proposal
+section: None
 ---
 
 <h2>{{ page.title }}</h2>

@@ -1,6 +1,7 @@
 ---
 layout: post
 title: Publishing to Maven Repos with Ivy
+section: Java
 ---
 
 Publishing to Maven Repos with Ivy
