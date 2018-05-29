@@ -7,7 +7,7 @@ section: Favorites
 {{page.title}}
 ==============
 
-**Update May 2018:** This post basically describes reactive programming, from the context of circa 2012 GWT apps (which were typically extremely imperative, as were many JavaScript/jquery webapps at the time) and highlights Tessell, which was a data-binding framework I wrote while at Bizo. Today this would be called reactive/one-way programming, very similar to [Mobx](https://mobx.js.org/), albiet I'm sure Mobx is much more optimized.
+**Update May 2018:** This post basically describes reactive programming, from the context of circa 2012 GWT apps (which were typically extremely imperative, as were many JavaScript/jquery webapps at the time) and highlights Tessell, which was a data-binding framework I wrote while at Bizo. Today this would be called reactive programming, very similar to [Mobx](https://mobx.js.org/), albiet I'm sure Mobx is much more optimized.
 
 I've been meaning to write a "lessons learned" or "best practice" sort of post on how I think rich UI applications can be made simpler and less buggy by changing your mindset from an imperative one to a declarative one.
 
