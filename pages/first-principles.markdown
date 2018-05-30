@@ -331,8 +331,56 @@ However, the codebase, team, and business will be best served by focusing your i
 
 Granted, you will ocassionally have to, out of necessity, choose a complex approach, but if most your other choices were for the simple approach, then ideally a little complexity here and there will be tractable.
 
+Common Pattern: Durable Async Changes
+-------------------------------------
 
+Mark Dietz: Another blog post I've never gotten around to writing is patterns your code base should have a standard way of supporting, one of which is “durably do something asynchronously after an online change”.
 
+The essential thrust of the post is that you need an answer when someone asks a question like “how do I stop a campaign from serving when the campaign is paused?” and the answer for the basic case (low QPS, reasonable latency) should be as easy and well understood as adding a new REST endpoint:
+
+* here's where you put your code
+* here's how long it take before your code runs
+* here's the default retry semantics and how to change it
+* exceptions after retries are done are automatically logged and alerted on
+
+Common Pattern: Sync Changes
+----------------------------
+
+Similar to the last point, but synchronous, in-transaction.
+
+Common Pattern: Add a New Entity
+--------------------------------
+
+* How many files do you have to touch?
+* How easy is the datastore modification?
+* How many endpoints do you have to touch?
+* How many new DTOs/services/interfaces/protos/schemas do you need?
+
+Common Pattern: Write Patterns vs. Read Patterns
+------------------------------------------------
+
+Similar to reacting to async changes, on any source-of-truth write:
+
+* Transform the data into `N` easy to read/denormalized forms
+* How is that data pushed out to readers?
+* How is cache invalidation handled?
+* How is rebootstrapping handled?
+* How is schema evolution handled?
+
+Typed Logic / Generic Plumbing
+------------------------------
+
+Code that programmers *must* write (business rules, UI layers, analytics jobs, etc.) I want to be 100% typed.
+
+Code that programmers don't *have* to write, I to be super-generic, e.g. so generic they don't have to write it.
+
+E.g. a code smell is "I made an new employee entity, now I have to touch the `EmployeeEndpoint`, `EmployeeService`, `EmployeeFactory`, etc." all to handle dumb/boilerplate "data in/out" problems.
+
+Typed architectures are prone to this anti-pattern, although ironically given they have types/schemas, they should be very amenable to judicious generic programming.
+
+E.g. contrast the "update all the pipes for `Employee`" to something like your SQL connection: when I add a new SQL table, do I have to change my JDBC driver? Or reboot my database? No, SQL is a generic pipe.
+
+I think you want as many generic pipes as possible, so that you can scale from 5 entities to 50 to 500 entities.
 
 
 
