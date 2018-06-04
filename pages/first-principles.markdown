@@ -363,6 +363,7 @@ Similar to reacting to async changes, on any source-of-truth write:
 
 * Transform the data into `N` easy to read/denormalized forms
 * How is that data pushed out to readers?
+  * Does the cached/derived data live per-region, per-VPC, on-host (in-process), on-host (sidecar)
 * How is cache invalidation handled?
 * How is rebootstrapping handled?
 * How is schema evolution handled?
