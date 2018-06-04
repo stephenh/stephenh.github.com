@@ -26,7 +26,11 @@ There are pros and cons, but first an example.
 Example
 -------
 
-To frame the example, let's setup three class that respond to a user request. Something like:
+To frame the example, let's setup three class that respond to a user request.
+
+(**Update June 2018:** I use the terribly uncool name `Servlet` here, but don't let that color your judgment :-), as this is a very generic problem, "how to stitch your application together", that happens in any codebase, regardless of the framework/language, and even across both backend and frontend codebases).
+
+Something like:
 
 ```java
 public class Servlet {
@@ -42,6 +46,7 @@ public class Handlers {
   public void handle(HttpRequest request) {
     // dispatches request to the right handler for the request type
     if ("bar".equals(request.getParameter("type"))) {
+      // note that we call `new BarHandler`
       new BarHandler(request).handle();
     }
   }
@@ -56,6 +61,7 @@ public class BarHandler {
   }
 
   public void handle() {
+    // here we want to touch external dependencies
     databaseRepo.lookupId(...);
     emailRepo.sendAnEmail();
   }
@@ -71,18 +77,34 @@ Potential Approaches
 
 Throwing out possibilities, we could:
 
-* Instantiate `databaseRepo` and `emailRepo` in `Servlet` and pass them to `Handlers`'s constructor, which `Handlers` can then pass to `BarHandler`. However, with more than a few application-scoped variables, this would become quite tedious, especially for intermediary classes like `Handlers` which wouldn't use the dependencies but just pass them on.
+* Instantiate `databaseRepo` and `emailRepo` in `Servlet` and pass them to `Handlers`'s constructor, which `Handlers` can then pass to `BarHandler`.
 
-* Create a `DatabaseRepo.getInstance()` static singleton method, but we add coupling and lose easy testability.
+  This works, however, with more than a few application-scoped variables (e.g. pretend we have ~10-20 or more services, and fairly frequently add new ones), this would become quite tedious, especially for intermediary classes like `Handlers` which wouldn't use the dependencies but just pass them on.
 
-* Use a DI framework to inject `DatabaseRepo` and `EmailRepo` into `BarHandler`. This would mean no longer being able to call `new BarHandler`, so our `Handlers` class would have to be passed a `Provider<BarHandler>` in it's constructor. Which means `Handlers` also needs to be instantiated by the DI framework, etc.
+* Create a `DatabaseRepo.getInstance()` static singleton method, and change `BarHandler.handle` to just call the static method.
 
-I'm sure there are other potential approaches I'm missing, but I think these are the most common. Per the comments with each approach above, I wasn't satisfied with any of these and so was looking for something else.
+  This is cheap and easy, but we add coupling and lose easy testability, so has been validly out of favor for awhile.
+
+* Use a DI framework to inject `DatabaseRepo` and `EmailRepo` into `BarHandler`.
+
+  (E.g. we would use `@Inject` annotations in the `BarHandler` constructor, and ask a DI framework to automatically figure out which are the "right" instances of `DatabaseRepo` and `EmailRepo` are, each type we create a new `BarHandler`.)
+ 
+  Because we've asked the DI framework to wire the `BarHandler`'s dependencies, this means we can no longer directly call `new BarHandler`.
+
+  So, instead our `Handlers` class would have to be passed a `Provider<BarHandler>` in it's constructor, which is how it asks "DI framework, please create an appropriately-wired `BarHandler` for me".
+
+  Which means `Handlers` also needs to be instantiated by the DI framework, etc.
+
+  So, the DI framework generally becomes an all-or-nothing affair. To be effective, it has to wire together all of your application.
+
+I'm sure there are other potential approaches I'm missing, but I think these are the most common.
+
+Per the comments with each approach above, I wasn't satisfied with any of these and so was looking for something else.
 
 AppRegistry Approach
 --------------------
 
-The approach I've settled on lately is based around an `AppRegistry` interface. All of the shared, application-scoped objects (`DatabaseRepo`, `EmailRepo`) go into this interface:
+The approach I've settled on lately is based around an `AppRegistry` interface, where all of the shared, application-scoped objects (`DatabaseRepo`, `EmailRepo`) go into a single interface:
 
 ```java
 public interface AppRegistry {
@@ -92,7 +114,9 @@ public interface AppRegistry {
 }
 ```
 
-I use the term `Registry` in deference to Fowler's pattern, but you could just as well call it `AppContext`, which is more Spring-like. Which, speaking of Spring, you can basically think of `AppRegistry` as making a plain, strongly-typed interface with a `getXxx` method for each bean in your Spring config file.
+I use the term `Registry` in deference to Fowler's pattern, but you could just as well call it `AppContext`, which is more Spring-like.
+
+(Which, speaking of Spring, you can basically think of `AppRegistry` as making a plain, strongly-typed interface with a `getXxx` method for each bean in your Spring config file.)
 
 And now we just create a new instance of it and pass it around:
 
@@ -142,7 +166,9 @@ public class BarHandler {
 }
 ```
 
-And that's it. Pros/cons are discussed next, but the short of it is that we can still test the `BarHandler` class--a fake (stub or mock, but, no, really, [use a stub](/2010/07/09/why-i-dont-like-mocks.html)) `AppRegistry` can be passed into `BarHandler` with whatever fake versions of the dependencies you want to use for the test.
+And that's it.
+
+Pros/cons are discussed next, but the short of it is that we can still test the `BarHandler` class--a fake (stub or mock, but, no, really, [use a stub](/2010/07/09/why-i-dont-like-mocks.html)) `AppRegistry` can be passed into `BarHandler` with whatever fake versions of the dependencies you want to use for the test.
 
 Briefly, the `AppRegistryInstance` class just instantiates the dependencies and holds on to them:
 
@@ -221,5 +247,7 @@ For me, this pattern has worked out very well to test-enable my code. I can swit
 So I can apply "YAGNI" to a DI framework and stay with the simplicity of regular Java.
 
 [cioc]: http://sonymathew.blogspot.com/2009/11/context-ioc-revisited-i-wrote-about.html
+
+**Update June 2018:** I recently read a Go blog post, [Go for Industrial Programming](https://peter.bourgon.org/go-for-industrial-programming/#the-component-graph), that makes this same appeal to simplicity (although technically without the `AppRegistry` parameter object). In general, auto-wired DI seems to be in favor less than these days than when I originally wrote this, perhaps because microservices are generally smaller codebases, so the pain-point of "I need a DI framework to handle the 100s of dependencies in my monolith" just doesn't happen as often.
 
 
