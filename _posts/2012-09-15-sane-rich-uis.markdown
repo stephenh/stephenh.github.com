@@ -7,7 +7,7 @@ section: Favorites
 {{page.title}}
 ==============
 
-**Update May 2018:** This post basically describes reactive programming, from the context of circa 2012 GWT apps (which were typically extremely imperative, as were many JavaScript/jquery webapps at the time) and highlights Tessell, which was a data-binding framework I wrote while at Bizo. Today this would be called reactive programming, very similar to [Mobx](https://mobx.js.org/), albiet I'm sure Mobx is much more optimized.
+**Update May 2018:** This post basically describes reactive programming, from the context of circa 2012 GWT apps (which were typically extremely imperative, as were many JavaScript/jquery webapps at the time) and highlights [Tessell](http://www.tessell.org/), which was a data-binding framework I wrote while at Bizo. Today this would be called reactive programming, very similar to [Mobx](https://mobx.js.org/), albiet I'm sure Mobx is more robust and optimized.
 
 I've been meaning to write a "lessons learned" or "best practice" sort of post on how I think rich UI applications can be made simpler and less buggy by changing your mindset from an imperative one to a declarative one.
 
@@ -28,6 +28,9 @@ The Imperative Approach
 =======================
 
 Jumping straight to the code, this is a slightly simplified version of an imperative approach to building the tabs:
+
+(**Update May 2018:** This is old-school GWT code, but for those reading it today, just squint and pretend it's using JavaScript to wire together DOM-ish widgets. Languages/frameworks aside, the overall problem is still the same.)
+
 
 ```java
 public class Tabs extends CompositeIsWidget {
@@ -76,7 +79,7 @@ However, it is very imperative, in that it's reactive to user behavior instead o
  
 * Whether a panel is hidden or shown is done reactively in 4 places (show+hide on initial add, show+hide on each click).
 * The `active` CSS class is added in two places, and removed in one place.
-* We have an anonymous inner class that does multiple things in response to a click
+* We have an event callback that does multiple things in response to a click
 
 The result is actually not that bad in this case, but I think the approach, when used in larger components and applications, eventually leads to spaghetti code.
 
@@ -210,6 +213,15 @@ public class Tabs extends CompositeIsWidget {
   }
 }
 ```
+
+Note that:
+
+* Every dynamic behavior is specified declaratively, in a single place.
+* We have zero callbacks (that are explicitly coded, obviously the DSL is setting some up behidn the scenes)
+
+To me, these are both signs of a well-designed UI library, whether in old-school GWT or (updated in 2018) new-kid React.
+
+Granted, callbacks and imperative code will always be necessary for edge cases, but they should be the exception to the rule.
 
 When This Works
 ===============
