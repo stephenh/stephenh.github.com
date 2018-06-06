@@ -127,35 +127,36 @@ So, for this "services come with stubs" proposal, I could see it being annoying 
 
 There are a few ways I've seen this handled:
 
-* Just accept being a non-/semi-polygot shop and write the stubs on your primary architecture.
+1. Just accept being a non-/semi-polygot shop and write the stubs on your primary architecture.
 
-  E.g. Bizo is a JVM shop, so we write JVM-specific `DataServiceStub` implementations in the upstream project, because we know the consumers will be Java/Scala projects as well.
+   E.g. Bizo is a JVM shop, so we write JVM-specific `DataServiceStub` implementations in the upstream project, because we know the consumers will be Java/Scala projects as well.
 
-  This works very well for us and is the sort of scale you get from non-polygot architectures, albiet with trade-offs.
+   This works very well for us and is the sort of scale you get from non-polygot architectures, albiet with trade-offs.
 
-  However it only works well for internal consumers that are in your same language/platform.
+   However it only works well for internal consumers that are in your same language/platform.
 
-* Crowd-source stubs from each of the language communities.
+2. Crowd-source stubs from each of the language communities.
 
-  I don't see this done often (?), but for widely-used services, I think it makes sense to the upstream project to link to/steward projects that provide stubs for each target platform.
+   I don't see this done often (?), but for widely-used services, I think it makes sense to the upstream project to link to/steward projects that provide stubs for each target platform.
 
-  E.g. the Amazon [aws-java-sdk](http://aws.amazon.com/sdkforjava/) is extremely widely used and at Bizo we started a meager effort to stub what we needed. We open sourced it as [aws-java-sdk-stubs](https://github.com/bizo/aws-java-sdk-stubs), and it'd be great if it was more widely-known and contributed-to (it's not), by being "blessed" by the upstream aws-java-sdk project. (I'm not currently aware of another similar project, but would love to find one.)
+   E.g. the Amazon [aws-java-sdk](http://aws.amazon.com/sdkforjava/) is extremely widely used and at Bizo we started a meager effort to stub what we needed. We open sourced it as [aws-java-sdk-stubs](https://github.com/bizo/aws-java-sdk-stubs), and it'd be great if it was more widely-known and contributed-to (it's not), by being "blessed" by the upstream aws-java-sdk project. (I'm not currently aware of another similar project, but would love to find one.)
 
-  I think it would be doable, as popular as the AWS APIs are, for each community of Java, Go, Ruby, etc., to collaboratively maintain their own stub implementations, and still have the amoritized pay-off be worth it.
+   I think it would be doable, as popular as the AWS APIs are, for each community of Java, Go, Ruby, etc., to collaboratively maintain their own stub implementations, and still have the amoritized pay-off be worth it.
 
-* Write a network-mounted stub.
+3. Write a network-mounted stub.
 
-  Granted, if the upstream project is sufficiently complex that writing a stub is non-trivial, the 2nd approach doesn't scale as well, even with crowd-sourced help.
+   Granted, if the upstream project is sufficiently complex that writing a stub is non-trivial, the 2nd approach doesn't scale as well, even with crowd-sourced help.
 
-  An example of this is DynamoDB, which has a large, non-trivial API surface, so AWS provides a network-mounted stub, [DynamoDBLocal](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/DynamoDBLocal.html). (They also have the [SAM CLI](https://github.com/awslabs/aws-sam-cli), which runs a local SAM environment, so this may becoming a pattern for them, but I'm not as familiar with SAM.)
+   An example of this is DynamoDB, which has a large, non-trivial API surface, so AWS provides a network-mounted stub, [DynamoDBLocal](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/DynamoDBLocal.html). (They also have the [SAM CLI](https://github.com/awslabs/aws-sam-cli), which runs a local SAM environment, so this may becoming a pattern for them, but I'm not as familiar with SAM.)
 
-  This gets the cross-langauge stub-reuse benefit without the cross-language stub-rewrite cost. So a great ROI.
+   This gets the cross-language stub-reuse benefit without the cross-language stub-rewrite cost. Which seems like a great ROI and like a panacea but there are two gotchas:
 
-  Granted, a downside is that you're making wire calls, so tests will be slightly slower (still local calls), and setting up the test harness (picking a port, booting up a subprocess) is more annoying that a simple `new DataServiceStub` constructor call.
+   * You're making wire calls now, so tests will be slower (granted, still local calls, but it adds up if you hit the ~1000s of tests level). Somewhat similarly, setting up the test harness (picking a port, booting up a subprocess) is more annoying that a simple `new DataServiceStub` constructor call.
+   * This does scale past a handful of local, network-mounted services. For example, you can probably `docker-compose` ~10 services, but if you have ~100-1000 microservices across your org/company, it becomes untenable to boot them up locally (or else intelligently figure out the subset you need). This is what LinkedIn ran into with it's old "network" approach. I talk more about this level of scale in [Micro Service Testing at Scale](/2018/01/21/microserving-testing-at-scale.html).
 
-  (Especially for a database like DynamoDB, this is exactly the same trade-off of "fake my db connection and get super-fast but lossy tests" or "use a local db connection and run slower" that relational database applications have been mulling for ages, and that I discuss in [The Holy Grail of Database Testing](/2015/11/29/holy-grail-of-database-testing.html).)
+   Especially for a database like DynamoDB, this is exactly the same trade-off of "fake my db connection and get super-fast but lossy tests" or "use a local db connection and run slower" that relational database applications have been mulling for ages, and that I discuss in [The Holy Grail of Database Testing](/2015/11/29/holy-grail-of-database-testing.html).
 
-  All things considered, I prefer the speed and simplicity of in-process stubs, but would definitely use a network-mounted stub if an in-process stub was not available.
+   All things considered, I prefer the speed and simplicity of in-process stubs, but would definitely use a network-mounted stub if an in-process stub was not available.
 
 Builders and Fixtures Are Next
 ------------------------------
