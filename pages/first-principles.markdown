@@ -383,5 +383,39 @@ E.g. contrast the "update all the pipes for `Employee`" to something like your S
 
 I think you want as many generic pipes as possible, so that you can scale from 5 entities to 50 to 500 entities.
 
+Kill Your (Undifferentiated) Babies
+-----------------------------------
+
+It is the siren call of developers to write your own tooling and infrastructure.
+
+I personally have succumbed to this, multiple times, see Joist and Tessell.
+
+Note that sometimes this capability can be very powerful, and is warranted (as I, *of course*, assert they were at the time I wrote those two projects) as the productivity gains from good, bespoke tooling/infra can be substantial.
+
+However, never get too tied to your tools, and always remember the end goal is business productivity.
+
+Often times you'll build a tool/infra when no other solution exists, but invariably you're not solving a unique problem (infra problems are by definition not unique), and so other solutions will eventually appear within the industry as well.
+
+Once the community has picked a winner, it almost always makes sense to kill your baby, and make the transition to the community standard.
+
+This hurts, but is the best ROI in the long run, unless you have a very viable shot at becoming a "top 5" solution within your category, e.g. to have an active/vibrant community to share the on-going cost of maintenance/development/etc. with you. (To me "active" means more than 50 companies using it, and the project is talked about on HackerNews.)
+
+I've seen this played out a few times, but my favorite example was Bizo's "hadoop on demand" framework. This was prior to my joining, so I don't know the exact details, but in ~2008/2009, a Bizo engineer wrote a framework to dynamically spin up Hadoop clusters on top of EC2 and S3. To us, transient, throw-away Hadoop clusters seemed both cheaper and much less of a maintenance headache than a single, long-running cluster (especially since all the data was in S3 anyway).
+
+However, after just a few months of use, Amazon released Elastic Map Reduce (EMR), which was literally the same thing. The Bizo team had invested a lot of sunk cost into the "Hadoop on demand" project, but the economics of maintaining an *undifferentiated* piece of infrastructure just don't make sense, so we did the hard thing, killed our baby, and migrated to EMR.
+
+Note that often internal teams will hide behind a "large migration cost" (e.g. switching from their baby to a similar external solution), which is true in the short-run. However, it's unlikely the internal project will sit at a "1.0" release forever, and at some point the maintainers will likely do a large-ish "2.0" migration. At that point, it's somewhat disingenuous to pay a "1.0 internal to 2.0 internal" migration cost, e.g. running parallel systems and doing rolling upgrades, but to have dismissed any "internal to external" migration as too expensive. They are likely a wash.
+
+The costs of continuing to maintain your internal solution are several:
+
+* Obviously the cost of the supporting engineering team, but there is also
+* The lost "opportunity cost" of having external contributors develop features and documentation **for free**, and
+* The ramp-up time for new hires that may have used the external community-standard before, but have no idea what your internal solution does, and
+* The demotivation for application developers to learn/become experts at essentially a non-transferable skill (e.g. the Google problem)
+
+So, even if there are unique attributes to your internal project (e.g. more speed or less RAM usage or what not), you should strongly consider moving your effort into up-leveling the community-blessed contender (or hopefully there are several, and you can pick the one that most aligns with you), and porting your system's strengths to that system.
+
+
+
 
 
