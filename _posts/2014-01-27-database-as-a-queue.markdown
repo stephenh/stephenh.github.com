@@ -1,29 +1,50 @@
 ---
-layout: draft
-title: Go Ahead, Use Your Database as a Queue
+layout: post
+title: Using Your Database as a Queue
+section: Architecture
 ---
 
 {{page.title}}
 ==============
 
-Recently I've picked up on a few assertions that using your database as a queue is an anti-pattern.
+**Note:** I wrote this in 2014, and it languished in my drafts folder; I still agree with the premise though, so finally published it, with some copy edits/clean ups.
 
-However, I feel that "anti-pattern" is a mislabeling of the approach, because the term insinuates that it is always a bad idea and should be avoided or else you risk disaster when things inevitably go wrong.
+Recently I've picked up on a few assertions that using your database as a queue (DaaQ) is an anti-pattern.
 
-This doesn't match my experience. I've used a database as a queue on several projects now, and, so far, have not been burned by the approach.  Quite the opposite, I think it provides several nice properties that can make it a good choice (for the right situation, of course).
+However, I feel that "anti-pattern" is a mislabeling of the approach, because the "anti-pattern" term insinuates that it is always a bad idea and should be avoided or else you risk disaster when things inevitably go wrong.
+
+This doesn't match my experience. I've used a DaaQ on several projects now, and, so far, have not been burned by the approach.  Quite the opposite, I think it provides several nice properties that can make it a good choice (for the right situation, of course).
 
 To evaluate whether it's a good choice for your project or not, I think there a few things to think about: scale, response time, atomicity, idempotence, availability, and implementation.
+
+Definition
+----------
+
+First, as a clarification, what I mean by DaaQ is using stateful flags in your database to drive offline-ish business processes, typically via polling (yes, it's that low-tech).
+
+E.g.:
+
+* The web UI creates a new `Employee` entity, and sets the `employee.needsProcessed` column to `true`
+* The background/batch/cron process queries `SELECT id FROM employee WHERE needsProcessed = true`
+* The background process then syncs/processes/whatever the business logic is
+* When finished, `Employee.needsProcessed` is set back to `false`
+
+Note that this is exceedingly low-tech, e.g. it's not using `wal2json` or Postgres's built-in queues, or Kinesis or Kafka, etc.
+
+But that's kind of the point: it's so low-tech that, if it fits your situation, it can work really well.
 
 Scale
 -----
 
-First, the biggest factor is scale. If you're dealing with high-load, 100s/1000s of queue operations/second, you shouldn't use this approach. A database-as-a-queue (DaaQ) will typically not handle that much contention.
+First, the biggest factor in "is DaaQ best-practice or anti-pattern?" is scale.
+
+If you're dealing with high-load, 100s/1000s of queue operations/second, you shouldn't use this approach. A DaaQ will typically not handle that much contention (individual row writes would be fine, but in theory the `needsProcessed` would be a global secondary index that could get expensive at scale).
 
 Besides operations/second, I think number of queue workers is a good thing to think about.
 
-Depending on your scenario, ideally you can KISS and use just one worker. I think this is a sweet spot for DaaQ and obviously will make things a lot simpler.
+Depending on your scenario, ideally you can KISS and use just one worker (e.g. one machine running `SELECT ... FROM table WHERE needsProcessed = true`). I think this is a sweet spot for DaaQ and obviously will make things a lot simpler.
 
-That being said, I'm confident DaaQ can scale to multiple workers, but it will take some more effort. The key is to have as little state in the workers as possible, and just keep leveraging the database as the authoritative state, e.g. to find/lock queue items.
+That being said, I'm confident DaaQ can scale to multiple workers (e.g. by marking and committing items as claimed before processing), but it will take some more effort. The key is to have as little state in the workers as possible, and just keep leveraging the database as the authoritative state, e.g. to find/lock/timeout queue items.
 
 I'm admittedly making this up, but I think if you can estimate having less than 10-20 workers polling your DaaQ, that you should be fine. It seems unlikely that a database should get upset about 10 connections contending over some rows. Honestly, I've never had to use more than 1 worker--if anyone has experience with more, I'd be interested in hearing how it went.
 
@@ -32,34 +53,65 @@ I'm admittedly making this up, but I think if you can estimate having less than 
 Response Time
 -------------
 
-In my experience, DaaQ usually involves polling on the part of workers. The polling lag may be anywhere from seconds to minutes to hours, whatever you configure as appropriate for your scenario.
+In my experience, DaaQ usually involves polling on the part of workers.
 
-If you're like Amazon and want to have the order confirmation email in my Inbox I swear before I've even clicked "Confirm Order", then using a traditional queue is a good choice.
+The polling lag may be anywhere from seconds to minutes to hours, e.g. it's whatever you configure as appropriate for your scenario. But it will generally never be milliseconds.
+
+If you're like Amazon and want to have the order confirmation email in my inbox I swear before I've even clicked "Confirm Order", then using a traditional, push-based queue is a good choice.
 
 (However, the already-mentioned-as-spiffy [queue classic][2] uses a PostgresSQL-specific channel feature to do wake ups of sleeping workers and supposedly achieve pretty quick pick up times. Cool stuff!)
 
-Atomicity
----------
+Atomicity on Enqueue
+--------------------
 
-Okay, the last few points have been about why *not* to choose DaaQ--this one is the biggest reason why you *should* choose DaaQ if you at all possibly can: atomicity within your primary database for free.
+Okay, the last few points have been about why *not* to choose DaaQ--this one is the biggest reason why you *should* choose DaaQ, atomicity on enqueue (this section) and dequeue (next section).
 
-DaaQ typically means your queue lives inside your main database. Which means you can update both your business objects and any ensuing queueing of work within 1 transaction.
+On enqueue, you have two things happening:
 
-So if either one or the other fails (invalid data or what not), both the data + enqueue operation rollback atomically and you have one less boundary condition to think about.
+* Save these business entities, and
+* Enqueue these business entities for processing
 
-Idempotence
------------
+With DaaQ, by definition these two operations live in the same primary database, which means you can perform both within a single transaction.
 
-Of course, while you get "atomicity for free" within your primary database, whenever you talk about a queue (DaaQ or traditional), idempotence is always going to be a part of the discussion.
+Without this, you can run into two failure modes on enqueue:
 
-In a failure scenario, your work items may potentially be executed multiple times. That is just the nature of queueing (unless you subject yourself to two-phase commit throughout your entire architecture, but I think ensuring idempotence is the lesser evil).
+* Write to database fails, but the enqueue already succeeded, so you enqueued as inherently-invalid event.
 
-So, again, this really isn't DaaQ-specific, but risk of re-doing work is just a natural consequence of queues enabling work recovery. In general, I find the benefit of work recovery (retrying an email send when the server is done) to outweigh the con of work duplication (sending the email twice because the queue update failed after the message had been put on the wire).
+  Your queue processor will have to handle this case, e.g. a valid-looking "process employee #123" event, but that employee row is not actually there. 
 
-Availability
-------------
+* Write to database succeeded, but the enqueue fails, and so you drop the business logic.
 
-When I want to enqueue work, I want the strongest guarantee that the queue will be available. For me, that is usually the point of a queue--the work might fail (typically due to network-based/3rd-party services, e.g. email sends or SOAP calls), so I'd rather perform the work outside the request thread, in a manner that can be recovered when services are inevitably unavailable.
+Both of these are bad, but with DaaQ you get enqueue atomicity for free.
+
+This is a huge simplifying factor vs. dealing with separate "my data lives in database X" and "my queue lives in server/system Y".
+
+(Note that in the late~90s/mid-2000s, it was popular to "solve" this by having two-phase commit between your database and message queue, courtesy of your friendly J2EE vendor, but these were invariably fiascos, in my opinion, because transaction managers can fail too, and at that point you're hand-reconciling databases anyway.)
+
+Idempotence on Dequeue
+----------------------
+
+Similar to enqueue, whenever you talk about any queue, DaaQ or otherwise, idempotence on dequeue is always going to be a part of the discussion.
+
+This is because there are two similar operations to handle on dequeue:
+
+* Save the updated, post-processed business entities
+* Dequeue them as successfully processed
+
+We can run into the same two failure scenarios:
+
+* Save to the database succeeds, but the dequeue fails, so we double-process the event.
+* Save to the database fails, but the dequeue succeeds, and we've dropped the event.
+
+These failure modes both vanish with DaaQ: if both side-effects live within your primary database, you'll again have one transaction that atomically commits both.
+
+Note that I am assuming our processing logic writes back to the primary database. This is admittedly probably a boundary case, and it's more likely that our background process will talk to a 3rd-party system. Which is fine, but means we'll have to handle idempotence via the usual mechanisms.
+
+Availability via Decoupling
+---------------------------
+
+When I want to enqueue work (e.g. the user is saving "employee #123" in the UI, make sure to "process it" later, whatever "process it" means for the given application), I want the strongest guarantee that the queue will be available.
+
+For me, that is usually the point of a queue--the "process it" work might fail (e.g. say we have to sync this employee row to a 3rd-party vendor), so I'd rather not perform the work *right now* on the web UI's request thread, and instead do it in a manner that can be recovered/retried when services are inevitably unavailable.
 
 So, I want enqueues to just work, which means the queue should *always* be available. If it's not, I'm back at square one, somehow having to ensure enqueues aren't dropped when the queue is unavailable. This means somehow persistently writing to local disk, having enqueues recovered on machine failure, etc., and a lot of extra work.
 
@@ -71,7 +123,7 @@ And, granted, sometimes it won't be, but at that point your entire application i
 
 Furthermore, I think this approach generalizes to other resources besides the queue. Whenever possible, I prefer for my web applications to talk to as few external resources as possible--that includes email servers, queue servers, 3rd party SOAP services, etc.
 
-For example, sending emails on the request thread--will work 99% of the time, but when it doesn't, the user sees an error. And if instead you send email from a background thread, you risk it being lost if the machine goes down. Or you could just shove the email into the database and let a polling worker send it.
+For example, sending emails on the request thread: this will work 99% of the time, but when it doesn't, the user sees an error. And if instead you send email from a background thread, you risk it being lost if the machine goes down. Or you could just shove the email into the database and let a polling worker send it.
 
 Besides the simplification (much easier to test the web UI if it just talks to the db; less services to fake out), you're essentially building in durability to your system.
 
