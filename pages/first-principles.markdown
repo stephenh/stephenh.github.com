@@ -331,6 +331,46 @@ However, the codebase, team, and business will be best served by focusing your i
 
 Granted, you will ocassionally have to, out of necessity, choose a complex approach, but if most your other choices were for the simple approach, then ideally a little complexity here and there will be tractable.
 
+Distinguish Between Real-World Relationships And Materializations
+-----------------------------------------------------------------
+
+Often the type of relationship between two entities may be fuzzy, e.g. in this relationship:
+
+* An employee can be in a department, and the department is in a company
+* Should the employee directly be part of the company (`employee -> company`) or just transitively (`employee -> department -> company`)?
+
+There are three options:
+
+1. Treat the `employee -> company` relationship as implied, and don't even store it.
+
+   This option has the most clarity, and it traditionally "the most denormalized", and you'll know the `employee -> department` is de facto the source of truth.
+
+   However, it's not always that simple, e.g....
+
+2. Treat `employee -> department` as source of truth, but materialize the `employee -> company` relationship.
+
+   You often do this for read performance, either in the primary database itself (which can get confusing) or in downstream caches (less confusing as they are derived).
+
+   This approach is fine, but you need to be very explicit in your domain model and codebase that the `employee -> company` is not a true relationship, and any changes should be made via the `employee -> department` relationship (and you'll need to add note only `employee` CRUD keeping the materialization up to date, but the `department` CRUD affecting the materialized `employee -> company` as well).
+
+   And, besides read performance, you might actually need to:
+
+3. Treat `employee -> department` and `employee -> company` as both dually-valid sources of truth.
+
+   This sounds odd, but it can happen in situations where you ask "can the employee still work at the company without working in a department?"
+
+   If the answer is "sometimes, yes", then you'll need to validly model both relationships.
+
+   Note you'll still have the CRUD bookkeeping from the previous point to deal with, e.g. if a new `employee -> department` association comes in, without a `employee -> company`, do you implicitly create the `employee -> company` row, or do you reject the `employee -> department` row as invalid?
+
+Common Pattern: Add a New Entity
+--------------------------------
+
+* How many files do you have to touch?
+* How easy is the datastore modification?
+* How many endpoints do you have to touch?
+* How many new DTOs/services/interfaces/protos/schemas do you need?
+
 Common Pattern: Durable Async Changes
 -------------------------------------
 
@@ -348,13 +388,32 @@ Common Pattern: Sync Changes
 
 Similar to the last point, but synchronous, in-transaction.
 
-Common Pattern: Add a New Entity
---------------------------------
+Common Pattern: Derived Entity Logic
+------------------------------------
 
-* How many files do you have to touch?
-* How easy is the datastore modification?
-* How many endpoints do you have to touch?
-* How many new DTOs/services/interfaces/protos/schemas do you need?
+E.g. "user can login" is a factor of `attribute A && attribute B && !attribute C`:
+
+* Are all attributes within the same service/datastore?
+  * Calc on-demand, e.g. a getter on a domain class
+    * Pro: Always up to date
+    * Con: How do you avoid N+1
+  * Calc up-front, e.g. update a `user.can_login` column
+    * Pro: Fast reads
+    * Con: Are 
+* If attributes are across services/datastores
+  * Does the update need to be synchronous?
+    * Pro: Avoids read-after-write issues (modulo separate caches)
+  * If update is done asyncronous
+    * Con: User will see read-after-write inconsistency
+
+Common Pattern: Add Anything Needed For Logic to the Model
+----------------------------------------------------------
+
+For example, if you have conditionally behavior like:
+
+If the user creates relation X, do Y. If the system creates relation X, do Z.
+
+Instead of passing "who did this" around transiently within the system, promote `relation.created_by` to a first-class attribute of the model.
 
 Common Pattern: Write Patterns vs. Read Patterns
 ------------------------------------------------
