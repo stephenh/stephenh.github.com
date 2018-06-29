@@ -7,6 +7,8 @@ section: Productivity
 {{page.title}}
 ==============
 
+**Update:** Joan Gamell pointed out in the comments that I'm blind and the PR UI has view-by-commit built in (and not just the Commits tab, which I'd seen before, but a dropdown integrated into the File Changes view itself). It even has hot keys of `c`, `n`, `p`. I'm very exited about this. I'm going to leave the post as-is, as my diatrbe still applies to making nice commits, and reviewing code by commit, but it looks like GitHub can/does support this workflow well.
+
 I've recently started doing code reviews on GitHub (not because I'm new to code reviews, but I've been using other tools for awhile), and, man, I forgot how much it sucks.
 
 My dislike stems from branch-based reviews being inferior to commit-based reviews.
