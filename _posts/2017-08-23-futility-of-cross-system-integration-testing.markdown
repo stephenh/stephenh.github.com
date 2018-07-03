@@ -436,4 +436,5 @@ And having this sort of "debug-on-demand" cross-system/cross-vendor infrastructu
 
 But my main point, which hopefully I've articulated well and convinced you of, is that cross-system, cross-vendor infrastructure should not bleed over into automated tests, as without the fundamental first princples of data control and data isolation, I assert you're building on a shaky foundation, and your effort is better spent elsewhere.
 
+(**Update July 2018**: The Google Testing blog has a post, [Just Say No to More End-to-End Tests](https://testing.googleblog.com/2015/04/just-say-no-to-more-end-to-end-tests.html), which covers some of the common failure scenarios for end-to-end tests, as well as points out how slow their feedback loop is (such that they become cascading failures of "rarely is everything green"), albeit they end up recommending the same "testing period" approach, vs. my more draconian stance.)
 
