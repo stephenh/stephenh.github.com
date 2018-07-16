@@ -132,7 +132,7 @@ Just for clarity, I think it's worth articulating: open source software, or any 
 
 Why? Because mono repos necessitate touching all downstream projects to immediately fix breaking changes.
 
-This is impossible without open source project, because:
+This is impossible with an open source project, because:
 
 1. The number of downstream consumers is huge, so projects like React et al, would have a massive burden if they had to fix all consumers of their software.
 2. Even if open source/public projects tried to do this, they have no visibility/access into all of their client's private source code.
