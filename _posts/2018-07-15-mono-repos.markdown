@@ -32,7 +32,7 @@ Easy enough. The problem is:
 * 80% of the time, you will want forced upgrades (great! everyone is on latest).
 * 20% of the time, you will want pinned versions (shoot! too hard to get everyone on latest).
 
-And, the rub is that **the last 20% is deal-breaker annoying when you don't/can't have it**.
+Unfortunately, unlike most 80/20 rules, **the last 20% is deal-breaker annoying when you don't/can't have it**.
 
 The differences can also be broken down on breaking vs. non-breaking changes:
 
@@ -58,7 +58,7 @@ So, that's great, have fun.
 
 It's primarily for software-in-the-large that these trade-offs are more distinct (because you'll have many more pins to bump, and many more breaking changes to fix).
 
-And, for me, the rub is that both actually suck for software-in-the-large.
+And, for me, the reality is that both actually suck for software-in-the-large.
 
 Software-in-the-large is just fundamentally hard, because no one has elegantly solved dependency management in-the-large.
 
@@ -66,7 +66,7 @@ Software-in-the-large is just fundamentally hard, because no one has elegantly s
 
 DLL hell. Classpath hell. npm hell. Every non-trivially sized language/community has it.
 
-And, of course, every new community that comes along thinking they have cracked the code: Maven, Gradle, npm, Cargo, yarn, etc. "We won't have DLL hell, look at how great our new dependency tool is."
+And, of course, every new community that comes along thinking *they* have cracked the code: Maven, Gradle, npm, Cargo, yarn, etc. "We won't have DLL hell, look at how great our new dependency tool is."
 
 And, sure, when the community is new and small, and all the codebases are new and sub-20k LOC, their solutions are great, and everyone thinks "we really are different".
 
@@ -94,7 +94,7 @@ I'm sure Lerna is a great tool, but if you have a `package.json`, consume `packa
 
 (Note that, of the projects Lerna mentions "use mono repos", React, Angular, etc., are all very vanilla multi-project builds...however, I will give Babel credit for pushing multi-project builds to near-mono repo status, with [~100-some projects](https://github.com/babel/babel/tree/master/packages). Which is impressive, but still not a mono repo.)
 
-(Also, to finish the "get off my lawn" section, [meta](https://github.com/mateodelnorte/meta) is cute (from the ["have both!"](https://medium.com/@patrickleet/mono-repo-or-multi-repo-why-choose-one-when-you-can-have-both-e9c77bd0c668) blog post that went around), but IMO has **nothing to do with mono repositories**, as it **doesn't touch versioning at all**. Being able to run `git branch` across `N` repos is basically a hacky [CVS](http://www.nongnu.org/cvs/)-style approach to wanna-be mono repos, but still not the point, and if anything is a questionable workflow (cross-service branches) that you shouldn't be doing anyway.)
+(Also, to finish the "get off my lawn" section, [meta](https://github.com/mateodelnorte/meta) is cute (from the ["have both!"](https://medium.com/@patrickleet/mono-repo-or-multi-repo-why-choose-one-when-you-can-have-both-e9c77bd0c668) blog post that went around), but IMO has **nothing to do with mono repositories**, as it **doesn't touch versioning at all**. Being able to run `git branch` across `N` repos is basically a hacky [CVS](http://www.nongnu.org/cvs/)-style approach to wanna-be mono repos, but still not the point, and if anything this marque example is a questionable workflow (cross-service branches) that you shouldn't be doing anyway.)
 
 ### My Take: Mono Repos if You Can Do It (But You Probably Can't)
 
