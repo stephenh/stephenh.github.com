@@ -9,6 +9,8 @@ section: Architecture
 
 **Note:** I wrote this in 2014, and it languished in my drafts folder; I still agree with the premise though, so finally published it, with some copy edits/clean ups.
 
+**Update August 2018:** Jimmy Bogart has a good post/series on this: [life beyond distributed transactions](https://jimmybogard.com/life-beyond-distributed-transactions-an-apostates-implementation-aggregate-coordination/). I like his high-level articulation that "communication data and application data must live in the *same transactional store*" to achieve safe cross-store processes; that is essentially what I'm saying here, albeit via the concrete approach of boolean database processing flags. Jimmy's articule uses an inbox/outbox notion, which I really like, but personally took as a conceptual mental model and not a strict implementation approach per se (although it could be).
+
 Recently I've picked up on a few assertions that using your database as a queue (DaaQ) is an anti-pattern.
 
 However, I feel that "anti-pattern" is a mislabeling of the approach, because the "anti-pattern" term insinuates that it is always a bad idea and should be avoided or else you risk disaster when things inevitably go wrong.
