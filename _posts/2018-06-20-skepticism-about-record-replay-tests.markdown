@@ -216,6 +216,8 @@ Other various things I don't like about record/replay:
 
   Granted, "just re-record", but to me this is lots of noise in testing/code reviews/etc. that is not necessary.
 
+  (A colleague reminded me that LinkedIn's internal RTF tool has a fuzzy-match capability, where if your recorded request is "close enough" to what the new execution's request looks like, it will continue using the recorded response. I admittedly do not know the details, but we agree this seems scary, as the fuzziness might be important. Granted, perhaps you can whitelist it only specific/innoculous headers/something.)
+
 * Code reviews suck.
 
   When I see a record/replay PR go by, I have no indication of what the "world looks like X" test data is.
