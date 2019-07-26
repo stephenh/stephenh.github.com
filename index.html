@@ -189,6 +189,21 @@ You can also see the <a href="/all.html">full list</a>.
   </table>
 </div>
 
+<div id="books">
+  <h2>Books</h2>
+  <div>
+    I like to read.
+  </div>
+  <table border="0" class="posts">
+    {% for post in site.posts %}{% if post.section == 'Books' %}
+    <tr>
+      <td class="date">{{ post.date | date_to_string }} </td>
+      <td class="url"><a href="{{ post.url }}">{{ post.title }}</a></td>
+    </tr>
+    {% endif %}{% endfor %}
+  </table>
+</div>
+
 <div id="todo">
   <h2>Todo</h2>
   <div>
