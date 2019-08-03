@@ -9,31 +9,35 @@ section: Books
 
 I recently re-read [Toyota Katas](https://www.amazon.com/Toyota-Kata-Managing-Improvement-Adaptiveness/dp/0071635238), which I'd picked up awhile ago based on a recommendation in a book (I forget which).
 
-The very brief overview is the book asserts in the 1980s/90s, manufacturing in the US copied *specific practices* of the Toyota production system ("oh, you do six sigma", "oh, you do kanban", "oh, you use cell manufacturing" (other specific practices I don't really know), "we can do that too". When really those were just point-in-time innovations, and Toyota's actual competitive advantage was a culture and approach (an "improvement kata", a "coaching kata", etc.) that kept finding _new_ best practices. So the book tries to describe that continuous improvement culture.
+The very brief overview is the book asserts in the 1980s/90s, manufacturing in the US copied *specific practices* of the Toyota production system ("oh, you do six sigma", "oh, you do kanban", "oh, you use cell manufacturing" (other specific practices I don't really know), "no problem, we can do that too!".
 
-So, that's the gist. A few of my high-level takeaways/ahas:
+When really those were just point-in-time innovations, and Toyota's actual competitive advantage was a culture and approach (an "improvement kata", a "coaching kata", etc.) that kept finding _new_ best practices (i.e. the author has several stories of returning to factories that were no longer doing a specific practice, and Toyota's staff would explain "well, that approach doesn't make sense anymore").
+
+So the book tries to describe Toyota's continuous improvement culture.
+
+A few of my high-level takeaways/ahas:
 
 Kanban is Not the Goal
 ----------------------
 
-For all the fan fair around Kanban in the software community, with the aurora of "it comes from _The Toyota Production System_", I was surprised to here that they regard kanban as a to-be-tolerated compromise and not the ideal goal.
+For all the fan fair around Kanban in the software community, with the aurora of "it comes from _The Toyota Production System_", I was surprised to hear that they regard kanban as a to-be-tolerated compromise and not the ideal goal.
 
 Their ideal goal is 1-by-1 flow, which is a production line of ~20-whatever machines, all handing off their part immediately to the next machine, exactly when that machine needs it, with no batching/inventory in between.
 
-In contrast, kanban is a "supermarket" for parts, where parts are placed in bins, and the bins are only refilled by upstream machines when they're "bought" from by downstream machines. This makes it a pull-based system, and the bins are inherently inventory/batching.
+In contrast, kanban is a "supermarket" for parts, where parts are placed in bins, and the bins are only refilled by upstream machines when they're "bought" from by downstream machines. This makes it a pull-based system, but the bins are inherently inventory/batching.
 
-That said, despite introducing inventory, kanban is still a net improvement over "scheduled-based" planning, where upstream machines would produce X parts/day, because the central planning schedule said so, and be blithely unaware about downstream demand.
+That said, despite introducing inventory, kanban is still a net improvement over "scheduled-based" planning, where upstream machines would produce X parts/day, "because the central planning schedule that management forecasted a few months ago says so", and be blithely unaware about downstream demand.
 
 So, kanban is a pragmatic compromise, but just not the end/ideal goal.
 
 'No Inventory' is More About Quality, Not Just Cost
 ----------------------------------------------
 
-From American popular press, I'd generally picked up "Toyota's Just-In-Time manufacturing was amazing because no inventory, and inventory is expensive".
+From American popular press, I'd generally picked up "Toyota's Just-In-Time manufacturing was amazing because it has no/less inventory, and inventory is expensive".
 
 This is true, but the book asserts that no inventory is, as far as I understand, even more so about quality.
 
-When a machine produces a bad part, and it immediately goes to the next machine, and that part doesn't work, there is an immediate "hey wait, what happened?" feedback loop. The line stops, and a team lead (manager-ish) can walk back to the offending machine and diagnose (in a blameless retro) what happened/why the system failed.
+When a machine produces a bad part, and it immediately goes to the next machine, if that part doesn't work, there is an immediate "hey wait, what happened?" feedback loop. The line stops (the cord pulls), and a team lead (manager-ish) can walk back to the offending machine and diagnose (in a blameless retro) what happened/why the system failed.
 
 But, if a machine produces a bad part, and it goes in a box with 1,000 other parts, and a few days later when it's taken out, we learn that part is bad, tying that back to what happened is pretty hard. So, meh, grab another part and keep going. Hence inventory hampers output quality.
 
