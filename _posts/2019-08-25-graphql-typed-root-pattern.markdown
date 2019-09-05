@@ -7,7 +7,7 @@ section: Favorites
 {{page.title}}
 ==============
 
-While working in a GraphQL codebase over the last year or so (specifically using Apollo Server in TypeScript), I semi-discovered a pattern for building more maintainable resolvers that I have not seen widely discussed/written about it (although the really great [graphqlgen](https://github.com/prisma/graphqlgen) project also uses it).
+While working in a GraphQL codebase over the last year or so (specifically using Apollo Server in TypeScript), I semi-discovered a pattern for building more maintainable resolvers that I have not seen widely discussed/written about it (although both the [graphqlgen](https://github.com/prisma/graphqlgen) and [graphql code generator](https://graphql-code-generator.com) projects use them, so the pattern is more common that I'd initially realized).
 
 I'll generally assume knowledge how of the object/field resolvers work in Apollo ([see their docs](https://www.apollographql.com/docs/graphql-tools/resolvers/)), but as a starting point, let's assume we have a schema like:
 
