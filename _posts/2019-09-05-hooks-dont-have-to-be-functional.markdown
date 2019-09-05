@@ -1,5 +1,5 @@
 ---
-layout: draft
+layout: post
 title: Hooks Don't Have To Be Functional
 section: TypeScript
 ---
