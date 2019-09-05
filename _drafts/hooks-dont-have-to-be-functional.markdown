@@ -428,4 +428,25 @@ Hacking Invitation
 
 If you'd like to play with, spike, fork, add tests, pull request any of the "hooks-for-classes" code, it's currently [here](https://github.com/stephenh/hooks-sandbox).
 
+Post-Draft Thoughts
+-------------------
+
+After writing this up, I did a few days of thinking and prototyping.
+
+I'm hooking up React Apollo in our app, so gave Higher-Order-Components a try. After reading [this great post](https://medium.com/@jrwebdev/react-higher-order-component-patterns-in-typescript-42278f7590fb), I don't think HOC's are _that_ bad in theory. Instead, I blame the React Apollo HOC implementation specifically for trying to have too jank of "sometimes we flatten, sometimes we alias" semantics in which props it injects, which turns out yes is hard to type. I'm tempted to think that just making the semantics simpler (not only to type but then also use), the backlash against HOC would not have been so bad. (That and also more widespread use the `Subtract` type mentioned in that post to make the HOC types actually work.)
+
+I very briefly looked at porting the React Apollo `useQuery` / `useMutation` FP hooks to my very-naive/WIP class-based versions, but that sucks, I don't want to be continually porting over every FP-based hook I want to use to my (again naive) class-based hook primitives, just to prove it's possible. Even if it's (ideally) very trivial due to how similar the mine-vs-theirs APIs are, they are not exact.
+
+And, as I think about compromising and "fine, I'll write FP-based components", it strikes me as annoying how _similar_ they will be to OO components: they'll have a bunch of local state (hooks) defined at the start (like OO fields) with a bunch of small functions (like methods) broken up to handle the rendering. They will essentially be isomorphic, or as a friend of mine put it: "classes vs functions is a misnomer - classes are just bundles of (organized) functions that close over mutable state".
+
+Which is exactly what FP components + hooks are reinventing.
+
+That said, I think I'm caving; fine, I'll use FP components. I'm still resentful, given I like to use both OO and FP, where each is appropriate, but, even just while playing with React Apollo, it's apparent that React really is effectively forcing everyone to use FP components by locking up all of the "non-shitty ways of using libraries" behind the "sorry, FP only" hooks paradigm.
+
+If this was purposeful, it was well-played. I seem to be the only one complaining "wtf hooks, no classes?"; the wider ecosystem seems to be thrilled with hooks, which having fought React Apollo's HOC for just a day, I get.
+
+Perhaps I really am missing something about why hooks could not have been implemented into class-based component and FP-based components; I wasn't paying enough attention at the time they were proposed/talked about/released to have watched for any design docs with "could we support classes too?" rationale.
+
+
+
 
