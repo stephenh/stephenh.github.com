@@ -7,6 +7,14 @@ section: TypeScript
 {{page.title}}
 ==============
 
+**Update**: After having angst about this for a good week or so (i.e. writing the post), I came across Dan Abramov's well-articulated [post on function components](https://overreacted.io/how-are-function-components-different-from-classes/). Specifically I liked that he: a) directly talked about how obviously-similar FP and OO components are, and b) gave a very specific articulation of the goal FP's are trying to solve, which is capturing a snapshot of the entire props+state during each render.
+
+I'm still skeptical that "hacking cross-render state back in to FP components" vs. "just use OO components with nice non-HOC/non-render prop 'hooks'-style APIs" is necessarily the best choice, but I can at least now appreciate what they're trying to do.
+
+And, personally, it is somewhat annoying that I found Dan's one post much more helpful than the several pages of the official React hooks/FP/etc. docs I'd read, especially with their "trigger words" that "classes suck", without a more thorough/detailed explanation (as Dan provided). 
+
+---
+
 Hooks have made a big splash in the React ecosystem, and I'd been procrastinating taking a look at them. But I finally got a chance and have what I think is a unique-ish way of thinking/modeling them, if only to help understand how they work/what their benefits are.
 
 As an up-front disclaimer/bias, I've had a nagging suspicion that hooks are over-hyped, as some of their marketing material leads to a "raised eyebrow of suspicion", i.e. sections like [Classes confuse both people and machines](https://reactjs.org/docs/hooks-intro.html#classes-confuse-both-people-and-machines). So in this post, I may just be chasing a self-confirming bias.
