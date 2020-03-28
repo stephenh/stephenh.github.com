@@ -44,7 +44,6 @@ h1#blog-title a {
     width: 43em;
     margin: 1.5em auto 1.5em auto;
     padding: 0.5em 2em 0.5em 2em;
-    text-align: justify;
     border-radius: 10px;
     background-color: white;
 }
@@ -91,3 +90,8 @@ blockquote {
     font-size: 0.8em;
 }
 
+.image {
+    display: block;
+    margin: auto;
+    width: 35em;
+}
