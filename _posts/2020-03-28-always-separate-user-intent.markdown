@@ -11,9 +11,9 @@ I've had a rule of thumb for data modeling that unfortunately I forget on a regu
 
 The rule of thumb is "always separate user intent from derived behavior/business logic".
 
-This rule particularly applicable to things like `state` or `status` fields, which have a way of becoming "half-user controlled" and "half-system controlled".
+This rule is particularly applicable to things like `state` or `status` fields, which have a way of becoming "half-user controlled" and "half-system controlled".
 
-As the most recent concrete example where I've run across this, consider a system of tasks for a stereotypical "tasks have predecessors/successor in a project plan":
+As the most recent example where I've run across this, consider a system of tasks for a stereotypical "tasks have predecessors/successor in a project plan":
 
 <img src="/images/always-separate-user-intent - tasks.jpg" class="image" />
 
@@ -48,13 +48,13 @@ Generally a cleaner way of modeling things is to strictly delineate user intent 
 
 * The user intent of "this is complete yes/no" is it's own "thing" (database field)
 * The calculated "potential status based on predecessors" logic is it's own thing (derived field)
-* The calculated combination of "status based on user intent || potential status based on predecessors" is it's own thing (another derived field)
+* The calculated combination of "status based on user intent or potential status based on predecessors" is it's own thing (another derived field)
 
-I.e. our data model would move from having a single `status` attribute to:
+I.e. our data model would move from having a single `status` field to:
 
 * `Task.is_complete` is a boolean that is directly/always controlled by the user intent to mark "yes, this is/is not done"
 * `Task.status_based_on_predecessors` (probably not stored/persisted, so not a real column-in-the-db) does the calc of "this task should be `InProgress` if all predecessors are `Complete`, otherwise `NotStarted`"
-* `Task.status` still exists, but is now derived (although likely still persisted for simplicity of reads) by the calculation "if `is_complete` then `Complete` else `status_based_on_predecessors` i.e. `InProgress` or `NotStarted`
+* `Task.status` still exists, but is now derived (although likely still persisted for simplicity of reads) by the calculation "if `is_complete` then `Complete` else `status_based_on_predecessors`" i.e. `InProgress` or `NotStarted`
 
 This moves the model to be more like a DAG of inputs with nodes of calculated values:
 
