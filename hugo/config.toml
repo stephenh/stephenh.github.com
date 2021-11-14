@@ -1,0 +1,65 @@
+baseURL = "http://draconianoverlord.com/"
+title = "Draconian Overlord"
+theme = "hugo-coder"
+languageCode = "en-us"
+defaultContentLanguage = "en"
+paginate = 20
+pygmentsStyle = "bw"
+pygmentsCodeFences = true
+pygmentsCodeFencesGuessSyntax = true
+enableEmoji = true
+# Enable Disqus comments
+disqusShortname = "shaberman"
+
+[params]
+author = "Stephen Haberman"
+description = "Oppressing Software Entropy"
+keywords = "blog,developer,personal"
+info = []
+#avatarURL = "images/avatar.jpg"
+gravatar = "stephen.haberman@gmail.com"
+dateFormat = "January 2, 2006"
+since = 2019
+# Git Commit in Footer, uncomment the line below to enable it
+commit = "https://github.com/luizdepra/hugo-coder/tree/"
+# Right To Left, shift content direction for languagues such as Arabic
+rtl = false
+# Specify light/dark colorscheme
+# Supported values:
+# "auto" (use preference set by browser)
+# "dark" (dark background, light foreground)
+# "light" (light background, dark foreground) (default)
+colorScheme = "auto"
+# Hide the toggle button, along with the associated vertical divider
+hideColorSchemeToggle = false
+# Series see also post count
+maxSeeAlsoItems = 5
+# Custom CSS
+customCSS = []
+# Custom SCSS, file path is relative to Hugo's asset folder (default: {your project root}/assets)
+customSCSS = []
+# Custom JS
+customJS = []
+
+[taxonomies]
+category = "categories"
+series = "series"
+tag = "tags"
+author = "authors"
+
+[[params.social]]
+name = "Github"
+icon = "fa fa-2x fa-github"
+weight = 1
+url = "https://github.com/stephenh/"
+
+[[params.social]]
+name = "RSS"
+icon = "fa fa-2x fa-rss"
+weight = 6
+url = "https://draconianoverlord.com/index.xml"
+rel = "alternate"
+type = "application/rss+xml"
+
+[permalinks]
+  posts = '/:year/:month/:day/:title.html'

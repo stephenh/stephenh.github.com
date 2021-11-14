@@ -1,0 +1,83 @@
+
+RULE trace MultipartUploadOutputStream.write line 215
+CLASS com.amazon.ws.emr.hadoop.fs.s3n.MultipartUploadOutputStream
+METHOD write(byte[], int, int)
+AT LINE 215
+IF true
+DO traceln("*** write L215 " + $this.key + " capacityLeft=" + $capacityLeft + ", len=" + $len)
+ENDRULE
+
+RULE closeAndSchedulePart entry
+CLASS com.amazon.ws.emr.hadoop.fs.s3n.MultipartUploadOutputStream
+METHOD closeAndSchedulePart()
+IF true
+DO traceln("*** closeAndSchedulePart entry " + $this.key + " partCount=" + $this.partCount + " closing=" + $this.closing + ", totalLength=" + $this.totalLength + ", maxPartSize=" + $this.maxPartSize + ", currentPartSize=" + $this.currentPartSize + ""); traceStack()
+ENDRULE
+
+RULE closeAndSchedulePart L523
+CLASS com.amazon.ws.emr.hadoop.fs.s3n.MultipartUploadOutputStream
+METHOD closeAndSchedulePart()
+AT LINE 523
+IF true
+DO traceln("*** closeAndSchedulePart L523")
+ENDRULE
+
+RULE closeAndSchedulePart L524
+CLASS com.amazon.ws.emr.hadoop.fs.s3n.MultipartUploadOutputStream
+METHOD closeAndSchedulePart()
+AT LINE 524
+IF true
+DO traceln("*** closeAndSchedulePart L524")
+ENDRULE
+
+RULE closeAndSchedulePart L527
+CLASS com.amazon.ws.emr.hadoop.fs.s3n.MultipartUploadOutputStream
+METHOD closeAndSchedulePart()
+AT LINE 527
+IF true
+DO traceln("*** closeAndSchedulePart L527")
+ENDRULE
+
+RULE closeAndSchedulePart L529
+CLASS com.amazon.ws.emr.hadoop.fs.s3n.MultipartUploadOutputStream
+METHOD closeAndSchedulePart()
+AT LINE 529
+IF true
+DO traceln("*** closeAndSchedulePart L529")
+ENDRULE
+
+RULE closeAndSchedulePart exit
+CLASS com.amazon.ws.emr.hadoop.fs.s3n.MultipartUploadOutputStream
+METHOD closeAndSchedulePart()
+AT EXIT
+IF true
+DO traceln("*** closeAndSchedulePart exit " + $this.key + " partCount=" + $this.partCount + " closing=" + $this.closing + ", totalLength=" + $this.totalLength + ", maxPartSize=" + $this.maxPartSize + ", currentPartSize=" + $this.currentPartSize + ""); traceStack()
+ENDRULE
+
+RULE openNewPart
+CLASS com.amazon.ws.emr.hadoop.fs.s3n.MultipartUploadOutputStream
+METHOD openNewPart()
+IF true
+DO traceln("*** openNewPart " + $this.key + " partCount=" + $this.partCount + " closing=" + $this.closing + "")
+ENDRULE
+
+RULE close
+CLASS com.amazon.ws.emr.hadoop.fs.s3n.MultipartUploadOutputStream
+METHOD close()
+IF true
+DO traceln("*** close " + $this.key + " partCount=" + $this.partCount + " currentPartSize=" + $this.currentPartSize + " totalLength=" + $this.totalLength + ""); traceStack()
+ENDRULE
+
+RULE uploadSinglePart
+CLASS com.amazon.ws.emr.hadoop.fs.s3n.MultipartUploadOutputStream
+METHOD uploadSinglePart()
+IF true
+DO traceln("*** uploadSinglePart " + $this.key + " partCount=" + $this.partCount + " currentPartSize=" + $this.currentPartSize + "")
+ENDRULE
+
+RULE uploadMultiParts
+CLASS com.amazon.ws.emr.hadoop.fs.s3n.MultipartUploadOutputStream
+METHOD uploadMultiParts()
+IF true
+DO traceln("*** uploadMultiParts " + $this.key + " partCount=" + $this.partCount + " currentPartSize=" + $this.currentPartSize + "")
+ENDRULE

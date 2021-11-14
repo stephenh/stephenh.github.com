@@ -1,0 +1,37 @@
+---
+date: "2009-08-23T00:00:00Z"
+section: Productivity
+title: Port 80 to Port 8080
+---
+
+Serving Port 80 from 8080
+=========================
+
+Several times lately I've wanted to run a Jetty instance on port 8080 but have it available via port 80.
+
+On Unix boxes, this usually involves running as root, or at least starting as root and dropping down to a lower-privileged user.
+
+Given I wanted to quickly start/stop Jetty test instances from within Eclipse, I really wanted to keep running Jetty on 8080 but have it show up on 80.
+
+What ended up being easiest for my Ubuntu 9.04 box was two firewall rules:
+
+`/etc/network/if-up.d/port80to8080`:
+
+    #!/bin/sh
+    [ "$IFACE" != "lo" ] || exit 0;
+    iptables -t nat -A PREROUTING --src 0/0 --dest 127.0.0.1 -p tcp --dport http -j REDIRECT --to-ports 8080
+    iptables -t nat -A OUTPUT     --src 0/0 --dest 127.0.0.1 -p tcp --dport http -j REDIRECT --to-ports 8080
+
+`/etc/network/if-down.d/port80to8080`:
+
+    #!/bin/sh
+    [ "$IFACE" ! "lo" ] || exit 0;
+    iptables -t nat -D PREROUTING --src 0/0 --dest 127.0.0.1 -p tcp --dport http -j REDIRECT --to-ports 8080
+    iptables -t nat -D OUTPUT     --src 0/0 --dest 127.0.0.1 -p tcp --dport http -j REDIRECT --to-ports 8080
+
+Make sure to `chmod 744` and `chown root:root` both files.
+
+These `iptables` rules catch all incoming (`PREROUTING`, others hitting your box) and outgoing (`OUTPUT`, you hitting your box) requests going to 127.0.0.1:80 and shunt it over to 8080.
+
+I'm not enough of a sysadmin to know the pros/cons of using this approach in production, but for my dev box it works great.
+
