@@ -4,8 +4,6 @@ section: Java
 title: JavaFX Decompiled
 ---
 
-<h2>{{ page.title }}</h2>
-
 While lamenting the lack of BGGA closures in Java, I came across a [poll][1] that had some interesting JavaFX comments from a guy named Bryan: 
 
 <blockquote>

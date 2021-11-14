@@ -4,8 +4,6 @@ section: Testing
 title: The Holy Grail of Database Testing
 ---
 
-{{page.title}}
-==============
 
 [Quill](http://getquill.io/) looks like the latest "embedded SQL DSL" for Scala, and so far I think it looks fairly compelling:
 

@@ -4,9 +4,6 @@ section: Favorites
 title: Micro Service Testing at Scale
 ---
 
-{{page.title}}
---------------
-
 (Alternate titles/tldr: "Stubbing at the Data Layer", or "Data Layers should come with Stubs", which is related to my earlier post, [Services should come with stubs](/2013/04/13/services-should-come-with-stubs.html), but this proposes moving stubs up the stack.)
 
 Micro-services have an interesting problem that, personally, I haven't seen solved really well: integration testing in the large.

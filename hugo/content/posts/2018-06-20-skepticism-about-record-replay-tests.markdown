@@ -4,8 +4,6 @@ section: Testing
 title: Skepticism About Record/Replay Tests
 ---
 
-{{page.title}}
-==============
 
 I don't like record/replay test frameworks, e.g. [VCR](https://github.com/vcr/vcr) in Ruby, this new [Polly.js](https://netflix.github.io/pollyjs/#/) from Netflix, and a similar server-side framework that LinkedIn used internally for [Rest.li](https://github.com/linkedin/rest.li) called RTF.
 

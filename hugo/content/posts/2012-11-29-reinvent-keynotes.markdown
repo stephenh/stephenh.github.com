@@ -4,8 +4,6 @@ section: None
 title: Reinvent 2012 Keynote Notes
 ---
 
-{{page.title}}
-==============
 
 The [Bizo](http://www.bizo.com) engineering team is attending [AWS re:Invent](https://reinvent.awsevents.com/) this year, which has generally been awesome.
 

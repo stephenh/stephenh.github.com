@@ -4,8 +4,6 @@ section: Books
 title: Toyota Katas Notes
 ---
 
-{{page.title}}
-==============
 
 I recently re-read [Toyota Katas](https://www.amazon.com/Toyota-Kata-Managing-Improvement-Adaptiveness/dp/0071635238), which I'd picked up awhile ago based on a recommendation in a book (I forget which).
 

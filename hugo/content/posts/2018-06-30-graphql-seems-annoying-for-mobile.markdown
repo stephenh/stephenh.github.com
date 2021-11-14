@@ -4,8 +4,6 @@ section: Architecture
 title: GraphQL Seems Annoying For Mobile
 ---
 
-{{page.title}}
-==============
 
 I am generally a fan of GraphQL.
 

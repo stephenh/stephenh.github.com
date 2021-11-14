@@ -4,8 +4,6 @@ section: None
 title: Reinvent 2012 Bezos Notes
 ---
 
-{{page.title}}
-==============
 
 As a continuation of my [AWS re:Invent](https://reinvent.awsevents.com/) keynote notes, here are some from Werner Vogel chatting with Jeff Bezos.
 

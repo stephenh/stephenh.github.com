@@ -4,8 +4,6 @@ section: Languages
 title: Is Haskell's Complexity Artificial?
 ---
 
-{{page.title}}
-==============
 
 I recently read a book on Haskell and it was fun.
 

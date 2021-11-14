@@ -4,8 +4,6 @@ section: Productivity
 title: From xmonad to i3 on Ubuntu 14.04
 ---
 
-{{page.title}}
-==============
 
 For several years now, I've been a faithful user of [xmonad](http://xmonad.org/), the Linux tiling window manager that is written in Haskell but I just recently switched over to [i3](http://www.i3wm.org/).
 

@@ -4,8 +4,6 @@ section: Productivity
 title: Writing Emails Asking for Help
 ---
 
-{{page.title}}
-==============
 
 I send a lot of email. I also send a lot of email asking for help. Especially for help from people on other teams (for people on my team, I can chat in person/slack).
 

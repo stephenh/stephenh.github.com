@@ -4,8 +4,6 @@ section: Architecture
 title: The Half-Truth of GRPC &amp; GraphQL Consistency
 ---
 
-{{page.title}}
-==============
 
 I've been reading a lot of docs and blog posts on GRPC and GraphQL lately; both of which seem like cool, well-built technologies.
 

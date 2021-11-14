@@ -4,8 +4,6 @@ section: Languages
 title: Shape is a Better Term Than Object
 ---
 
-{{page.title}}
-==============
 
 This won't be a super-long post, but lately I find myself talking more about "shapes" than "objects".
 

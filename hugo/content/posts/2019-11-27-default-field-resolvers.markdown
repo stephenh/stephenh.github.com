@@ -4,8 +4,6 @@ section: TypeScript
 title: Teaching TypeScript about GraphQL Default Resolvers
 ---
 
-{{page.title}}
-==============
 
 When implementing GraphQL resolvers in Apollo, it is common to lean on the Apollo/graphqljs behavior of default field resolvers.
 

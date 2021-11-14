@@ -4,9 +4,6 @@ section: Testing
 title: Avoid Using External Files in Tests
 ---
 
-{{page.title}}
---------------
-
 I've seen more projects using external files in unit tests lately.
 
 By external files, I mean a unit test that uses checked-in files like `test/.../MyTest-input.json` or `test/.../MyTest-output.json` for doing either input data setup or output data verification.

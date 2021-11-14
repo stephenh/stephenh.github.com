@@ -4,8 +4,6 @@ section: Architecture
 title: Evergreen Code Generation
 ---
 
-## {{page.title}}
-
 I am a big fan of code generation when "done well" (...which I've already written about [~10 years ago](/2010/07/15/code-generation-is-not-evil.html), eesh).
 
 One attribute I touched on in that post was "active code generation", which lately I've taken to calling "evergreen code generation".

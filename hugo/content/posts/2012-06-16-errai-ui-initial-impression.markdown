@@ -4,8 +4,6 @@ section: GWT
 title: ErraiUI Initial Impression
 ---
 
-{{page.title}}
-==============
 
 JBoss's [Errai](http://www.jboss.org/errai) project has always been on my list of GWT technologies to play with.
 

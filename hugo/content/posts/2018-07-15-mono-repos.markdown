@@ -4,8 +4,6 @@ section: Productivity
 title: Mono vs. Project Repos? Hurray, software sucks
 ---
 
-{{page.title}}
-==============
 
 Mono repos are trending upwards in popularity, so of course I must comment.
 

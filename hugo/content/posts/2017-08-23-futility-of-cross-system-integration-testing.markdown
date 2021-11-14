@@ -4,8 +4,6 @@ section: Testing
 title: The Futility of Cross-System Integration Testing
 ---
 
-{{page.title}}
-==============
 
 I've been forming an opinion for awhile that is potentially eyebrow raising, but that I'm now basically convinced of: that cross-system integration testing is not worth it, and in most projects is actually an anti-pattern.
 

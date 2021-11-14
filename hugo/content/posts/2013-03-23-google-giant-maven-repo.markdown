@@ -4,8 +4,6 @@ section: None
 title: Google's Build System is a Giant Maven Repo
 ---
 
-{{page.title}}
-==============
 
 At [Bizo](http://www.bizo.com), we occasionally mull over our build system and how it could be improved.
 

@@ -4,10 +4,6 @@ section: GWT
 title: GWT MVP Tables
 ---
 
-<h2>{{ page.title }}</h2>
-
----
-
 **Update 2011/12/29:** This post was originally about the gwt-mpv framework, which has since been rechristened Tessell, see [tessell.org](http://www.tessell.org).
 
 **Update 2010/11/30**: I've added docs for these two approaches to GWT MVP tables: [row tables](http://www.tessell.org/rowtable.html) and [cell tables](http://www.tessell.org/celltable.html) in Tessell. ([Tessell](http://www.tessell.org) is a framework to reduce the MVP boilerplate I talked about in this post.)

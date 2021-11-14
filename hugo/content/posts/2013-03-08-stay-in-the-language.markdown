@@ -4,8 +4,6 @@ section: Languages
 title: Stay in the Language
 ---
 
-{{page.title}}
-==============
 
 I made a "gumpy old man" comment, on a G+ post from [Mike Brock](https://plus.google.com/u/0/109101057654691472275/posts/97b5HKdkMkS) this morning.
 

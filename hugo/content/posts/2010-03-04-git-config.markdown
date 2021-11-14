@@ -4,8 +4,6 @@ section: Productivity
 title: git config
 ---
 
-<h2>{{ page.title }}</h2>
-
 **Update Aug 2017:** I'm using the fish shell now, so am no longer using `git-sh`, but I'm still using my various grep aliases by doing `git aa ...`. See my latest [.gitconfig](https://github.com/stephenh/config/blob/master/.gitconfig).
 
 I've got an enjoyable git environment set up, with various `.gitconfig`/etc. hacks. This is just a post to document those for my future self and others.

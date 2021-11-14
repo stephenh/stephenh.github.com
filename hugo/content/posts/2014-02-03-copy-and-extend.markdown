@@ -4,8 +4,6 @@ section: Productivity
 title: Copy & Extend, A Great Way To Learn
 ---
 
-{{page.title}}
-==============
 
 After years of internal and external lamentation about the ugliness of my blog, I yet again hit the tipping point and started playing around with the layout.
 

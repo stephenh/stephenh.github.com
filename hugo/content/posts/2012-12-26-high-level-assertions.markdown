@@ -4,8 +4,6 @@ section: Testing
 title: High Level Assertions
 ---
 
-{{page.title}}
-==============
 
 It is often said that we should treat test code like production code, and have it be DRY, readable, well refactored, etc.
 

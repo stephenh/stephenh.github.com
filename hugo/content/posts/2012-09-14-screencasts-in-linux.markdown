@@ -4,8 +4,6 @@ section: Productivity
 title: Screencasts in Linux
 ---
 
-{{page.title}}
-==============
 
 A few times a year, I try and record a screencast for one of my open source projects, and I always waste the first 15-30 minutes re-learning how to do screencasts in Linux.
 

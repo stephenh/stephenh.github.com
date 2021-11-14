@@ -4,8 +4,6 @@ section: Languages
 title: Continually Improving Browser Technology
 ---
 
-{{page.title}}
-==============
 
 **Update May 2018** This change of pace for browser/JavaScript technology is still on-going, 6 years later, and is why, of all things, I'm actually bullish about TypeScript/Node development, which would have been heretical to me in 2012. Being on the positive side of momentum is a lot of fun.
 

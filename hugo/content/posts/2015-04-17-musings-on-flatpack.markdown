@@ -4,8 +4,6 @@ section: None
 title: Musings on Flatpack
 ---
 
-{{page.title}}
-==============
 
 Lately I've been musing about the [Flatpack](https://github.com/perka/flatpack-java/wiki/WireFormat) entity/JSON serialization framework.
 

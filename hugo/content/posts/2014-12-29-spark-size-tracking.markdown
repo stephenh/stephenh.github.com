@@ -4,8 +4,6 @@ section: Scala
 title: Spark Size Tracking
 ---
 
-{{page.title}}
-==============
 
 I've always been curious how Spark knows when it's in-memory collections are getting too big and spills to disk. So I thought I'd write down what I noticed while scanning the source code.
 

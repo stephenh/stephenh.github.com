@@ -4,8 +4,6 @@ section: None
 title: Strangeloop 2012--VoltDB
 ---
 
-{{page.title}}
-==============
 
 I really enjoyed going to Strangeloop this year. The signal-to-noise ratio of the presentations and conversations with other attendees was great.
 

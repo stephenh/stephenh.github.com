@@ -4,8 +4,6 @@ section: Testing
 title: Using Given/When/Then For Tests
 ---
 
-{{page.title}}
-==============
 
 One of my favorite patterns for writing tests is the Given/When/Then style of Behavior Driven Development.
 

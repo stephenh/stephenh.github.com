@@ -4,8 +4,6 @@ section: None
 title: WEP sucks
 ---
 
-<h2>{{ page.title }}</h2>
-
 All due to my own stupidity, but WEP led to several hours of frustration today connecting various devices to a Qwest M1000/W1000 modem/gateway:
 
 1. 64-bit hex keys make it all too easy to transpose digits--I would have noticed a transposed passwrod a lot sooner.

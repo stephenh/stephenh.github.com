@@ -4,9 +4,6 @@ section: Todo
 title: Politely Refactoring Code
 ---
 
-{{ page.title }}
-================
-
 I just read Bob Martin's [Clean Coder](http://www.amazon.com/Clean-Code-Handbook-Software-Craftsmanship/dp/0132350882) and really enjoyed it. (Thanks, [Blaine](http://blog.blainebuxton.com/), for the book recommendation!) There are quite a few "back in the day" stories, but I overall liked and enjoyed Bob's points about professionalism in software development.
 
 He also makes a very convincing case for [TDD](http://en.wikipedia.org/wiki/Test-driven_development), which I had generally considered myself a practitioner of. But after reading Bob's book, sheesh, I'm an amateur, as I frequently violate the "3 rules" of TDD. So, I have a renewed conviction to adhere to TDD.

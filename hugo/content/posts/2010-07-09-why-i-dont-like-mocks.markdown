@@ -4,10 +4,6 @@ section: Favorites
 title: Why I Don't Like Mocks
 ---
 
-<h2>{{ page.title }}</h2>
-
----
-
 I am not particularly fond of mock objects. This gets me a few raised eye brows, given how wide spread their usage is these days.
 
 The best I can do is link to Fowler's [Mocks Aren't Stubs](http://martinfowler.com/articles/mocksArentStubs.html) which does a great job of explaining state verification (stubs) vs. behavior verification (mocks) and the pros/cons of each. Typical Fowler, he does a great job of articulating what seems obvious in retrospect.

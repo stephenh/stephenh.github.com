@@ -4,8 +4,6 @@ section: Books
 title: PoSD Notes
 ---
 
-{{page.title}}
-==============
 
 I recently read John Ousterhout's [Philosophy of Software Design](https://www.amazon.com/dp/1732102201) and really enjoyed it.
 

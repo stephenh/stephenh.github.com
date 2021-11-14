@@ -4,8 +4,6 @@ section: Java
 title: JDK 1.8/1.7 Compatibility Gotcha
 ---
 
-{{page.title}}
-==============
 
 To help future weary souls out, here are the Google-friendly queries for what we'll be talking about in this post:
 

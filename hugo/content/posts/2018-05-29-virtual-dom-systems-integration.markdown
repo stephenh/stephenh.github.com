@@ -5,8 +5,6 @@ section: Architecture
 title: Applying Virtual DOM to Systems Integrations
 ---
 
-{{page.title}}
-==============
 
 React's Virtual DOM approach has "won" the current generation of web framework architectures.
 

@@ -4,8 +4,6 @@ section: Languages
 title: Thoughts on Go (from a JVM Programmer)
 ---
 
-{{page.title}}
-==============
 
 These are my notes/thoughts while reading [The Go Programming Language](http://www.gopl.io/), from the lens of a long-time JVM programmer.
 

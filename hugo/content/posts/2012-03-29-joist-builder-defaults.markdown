@@ -4,8 +4,6 @@ section: Joist
 title: Joist Builder Defaults
 ---
 
-{{page.title}}
-==============
 
 Joist 1.3.0 added some improvements to it's builders: defaults and fluent methods for codes.
 

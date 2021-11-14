@@ -4,8 +4,6 @@ section: Architecture
 title: Abstracting Types Across Domains
 ---
 
-{{page.title}}
-==============
 
 As a [static typing bigot](/2010/11/24/why-im-a-static-typing-bigot.html), I like static types. But I'm also pragmatic, and realize there are times when types get in the way, annoy programmers, and drive them to use Ruby.
 

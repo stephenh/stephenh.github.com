@@ -4,8 +4,6 @@ section: Productivity
 title: If you cherry pick, your branch model is wrong
 ---
 
-{{page.title}}
-==============
 
 At [work](http://www.bizo.com), we finally moved off of Subversion (which I'd been tolerating via `git-svn` for the last 4 years) and moved to git.
 

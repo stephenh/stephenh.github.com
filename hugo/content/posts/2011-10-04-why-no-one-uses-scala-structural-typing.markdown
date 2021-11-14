@@ -4,8 +4,6 @@ section: Scala
 title: Why No One Uses Scala's Structural Typing
 ---
 
-{{page.title}}
-==============
 
 Recently I heard some Scala enthusiasts note that, anecdotally, not very many projects actually use Scala's structural typing support.
 

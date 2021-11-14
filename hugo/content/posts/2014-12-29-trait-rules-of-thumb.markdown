@@ -4,8 +4,6 @@ section: Scala
 title: Trait Rules of Thumb
 ---
 
-{{page.title}}
-==============
 
 We've been using Scala for quite awhile at work, and I think one of the tricky things to figure out is when to use/not use a trait.
 

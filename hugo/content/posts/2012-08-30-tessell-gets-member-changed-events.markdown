@@ -4,8 +4,6 @@ section: GWT
 title: Tessell Gets Member Changed Events
 ---
 
-{{page.title}}
-==============
 
 Tessell got a feature I'd been meaning to add for awhile: member changed events.
 

@@ -4,8 +4,6 @@ section: Testing
 title: Integration Test is a Useless Term
 ---
 
-{{page.title}}
-==============
 
 I feel "integration test" as a term has become less useful (which is admittedly somewhat harsh and clickbait-y, I could also say fuzzy) because it means different things to different people.
 

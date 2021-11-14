@@ -4,8 +4,6 @@ section: Productivity
 title: The One True Way Of Indentation
 ---
 
-{{page.title}}
-==============
 
 My preferred way of indentation is wrap-all, indent-by-one, which looks like:
 

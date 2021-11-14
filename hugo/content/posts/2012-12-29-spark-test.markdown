@@ -4,8 +4,6 @@ section: Scala
 title: Spark Test
 ---
 
-{{page.title}}
-==============
 
 At [Bizo](http://www.bizo.com) we're currently evaluating [Spark](http://www.spark-project.org) as a replacement for Hive for reporting.
 

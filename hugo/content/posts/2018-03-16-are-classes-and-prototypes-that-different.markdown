@@ -4,8 +4,6 @@ section: TypeScript
 title: Are Classes and Prototypes that Different?
 ---
 
-{{page.title}}
-==============
 
 There is a lot written about class vs. prototypical inheritance, much of it very good, and so I'm not sure I have that much to add (I'm also ~5-10 years late to meaningfully contribute to the conversation).
 

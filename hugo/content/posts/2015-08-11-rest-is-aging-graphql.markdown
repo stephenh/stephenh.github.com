@@ -4,8 +4,6 @@ section: Architecture
 title: REST is Aging, GraphQL is the New Thing
 ---
 
-{{page.title}}
-==============
 
 I am currently not a LISP/Clojure programmer, but a few weeks ago I watched the [Om Next](https://www.youtube.com/watch?v=ByNs9TG30E8) video, just to see what all the cool kids are up to. (Not meant sarcastically, some of the React/Om stuff is spiffy.)
 

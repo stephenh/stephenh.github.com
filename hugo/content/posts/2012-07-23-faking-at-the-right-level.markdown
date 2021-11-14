@@ -4,8 +4,6 @@ section: Testing
 title: Faking at the Right Level
 ---
 
-{{page.title}}
-==============
 
 It's common to use fakes (either mocks or stubs) to test specific layers of your code without incurring the complexity and expense of also exercising all of the upstream layers (e.g. testing your UI layer without having to test/touch your database layer).
 

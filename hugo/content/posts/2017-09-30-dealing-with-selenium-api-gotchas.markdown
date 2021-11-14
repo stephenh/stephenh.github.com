@@ -4,8 +4,6 @@ section: Testing
 title: Dealing with Selenium API Gotchas
 ---
 
-{{page.title}}
-==============
 
 I've used the Selenium API, in pleasure and rage, for years, and it's still difficult to find a 100%-perfect approach. So I thought I would write up the current options that I weighed.
 

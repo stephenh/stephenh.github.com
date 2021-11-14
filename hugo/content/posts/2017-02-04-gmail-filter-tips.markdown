@@ -4,8 +4,6 @@ section: Productivity
 title: Gmail Filter Tips
 ---
 
-{{page.title}}
-==============
 
 It took me awhile to give up my local/desktop e-mail client ([Claws](http://www.claws-mail.org/) was my last refuge), but I now use gmail like everyone else.
 

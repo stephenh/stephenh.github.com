@@ -4,8 +4,6 @@ section: None
 title: NamedQuery Considered Stupid
 ---
 
-<h2>{{ page.title }}</h2>
-
 I was recently exposed to JPA's NamedQuery annotation. I cannot imagine a more useless way to store your queries.
 
 (Well...okay, it's not XML, but still...) 

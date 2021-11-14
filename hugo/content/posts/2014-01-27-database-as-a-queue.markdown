@@ -4,8 +4,6 @@ section: Architecture
 title: Using Your Database as a Queue
 ---
 
-{{page.title}}
-==============
 
 **Note:** I wrote this in 2014, and it languished in my drafts folder; I still agree with the premise though, so finally published it, with some copy edits/clean ups.
 

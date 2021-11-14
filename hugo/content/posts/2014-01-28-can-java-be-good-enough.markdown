@@ -4,8 +4,6 @@ section: Languages
 title: Can Java Be Good Enough?
 ---
 
-{{page.title}}
-==============
 
 At [Bizo](http://www.bizo.com), we use basically exclusively Scala on the server-side. We're big fans.
 

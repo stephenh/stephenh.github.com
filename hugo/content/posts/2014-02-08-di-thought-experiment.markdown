@@ -4,8 +4,6 @@ section: Architecture
 title: Dependency Injection Thought Experiment
 ---
 
-{{page.title}}
-==============
 
 Recently, I thought of a simple thought experiment.
 

@@ -4,8 +4,6 @@ section: Joist
 title: Joist, the Java ORM for Me
 ---
 
-{{page.title}}
-==============
 
 This post is half-ranting about features of ORMs I don't like and half-evangelizing my own ORM, [Joist](http://joist.ws).
 

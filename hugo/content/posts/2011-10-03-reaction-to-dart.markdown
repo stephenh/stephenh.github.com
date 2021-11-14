@@ -4,8 +4,6 @@ section: GWT
 title: A GWT Developer's Reaction to Dart
 ---
 
-{{page.title}}
-==============
 
 The scheduled [Dart keynote](http://gotocon.com/aarhus-2011/presentation/Opening%20Keynote:%20Dart,%20a%20new%20programming%20language%20for%20structured%20web%20programming) announcement made the rounds a week ago or so. If you didn't catch it, Google wants to replace JavaScript, with a dual static/dynamic language named Dart.
 

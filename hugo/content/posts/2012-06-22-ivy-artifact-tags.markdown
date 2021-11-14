@@ -4,8 +4,6 @@ section: Java
 title: How to Sanely Use Ivy's Artifact Tags
 ---
 
-{{page.title}}
-==============
 
 [Ivy](http://ant.apache.org/ivy/), everyone's favorite "it's not Maven" dependency manager, has a unique, idiosyncratic feature I was fighting with today: artifact tags to override which jars/artifacts you use from upstream projects.
 

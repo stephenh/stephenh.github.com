@@ -4,8 +4,6 @@ section: Java
 title: Preferred Build Setup
 ---
 
-{{page.title}}
-==============
 
 **Update May 2018** [Gradle](https://gradle.org) has won the current era of Java build tooling.
 

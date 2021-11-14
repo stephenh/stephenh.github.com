@@ -4,8 +4,6 @@ section: Architecture
 title: Staffing a Front-End Team
 ---
 
-{{page.title}}
-==============
 
 
 It's pretty common/standard these days to categorize programmers as "front-end programmer" vs. "back-end programmer", and then split up teams around those roles.

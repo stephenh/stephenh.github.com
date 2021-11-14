@@ -4,8 +4,6 @@ section: TypeScript
 title: Hooks Don't Have To Be Functional
 ---
 
-{{page.title}}
-==============
 
 **Update**: After having angst about this for a good week or so (i.e. writing the post), I came across Dan Abramov's well-articulated [post on function components](https://overreacted.io/how-are-function-components-different-from-classes/). Specifically I liked that he: a) directly talked about how obviously-similar FP and OO components are, and b) gave a very specific articulation of the goal FP's are trying to solve, which is capturing a snapshot of the entire props+state during each render.
 

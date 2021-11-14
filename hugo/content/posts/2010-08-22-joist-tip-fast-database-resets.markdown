@@ -4,9 +4,6 @@ section: Joist
 title: Joist Tip, Fast Database Resets
 ---
 
-{{ page.title }}
-================
-
 I reread parts of [Growing Object-Oriented Software, Guided by Tests][goos] (GOOS) today. The verbose name aside, it's a great book.
 
 I also like it because they share my opinion that persistence tests must commit to the database to be worthwhile. Yes!

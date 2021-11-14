@@ -4,8 +4,6 @@ section: Testing
 title: The Pain of Small Methods
 ---
 
-{{page.title}}
-==============
 
 I'm currently reading [Practical Object-Oriented Design in Ruby](http://www.poodr.com/), not because I'm planning on writing any Ruby code, but because I thought the general OO advice would be applicable across OO languages (and it is so far).
 

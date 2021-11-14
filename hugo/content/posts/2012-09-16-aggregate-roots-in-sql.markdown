@@ -3,8 +3,6 @@ date: "2012-09-16T00:00:00Z"
 title: Aggregate Roots in SQL
 ---
 
-{{page.title}}
-==============
 
 I'm reading through a paper on Google's [Spanner](http://static.googleusercontent.com/external_content/untrusted_dlcp/research.google.com/en/us/archive/spanner-osdi2012.pdf), a distributed database that maintains transactions.
 

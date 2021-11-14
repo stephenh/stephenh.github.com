@@ -4,8 +4,6 @@ section: Joist
 title: Joist Execute Class
 ---
 
-{{page.title}}
-==============
 
 I was porting a Ruby script to Scala today, and was reintroduced to how shockingly low-level the Java process APIs are.
 

@@ -4,8 +4,6 @@ section: Testing
 title: Obsessively Simple Test Values
 ---
 
-{{page.title}}
-==============
 
 One of the things I look for when writing and code reviewing tests is how simple the test values are.
 

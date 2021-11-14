@@ -4,8 +4,6 @@ section: Testing
 title: Good Test, Bad Test
 ---
 
-{{page.title}}
-==============
 
 I caught myself writing a bad test yesterday, but while setting up the code review thought, er, if I was reviewing this code, I would be less than thrilled.
 

@@ -4,8 +4,6 @@ section: Architecture
 title: First Principles
 ---
 
-{{page.title}}
-==============
 
 For awhile I've been musing about writing up a collection of first principles for software development, based on what I've read/learned.
 

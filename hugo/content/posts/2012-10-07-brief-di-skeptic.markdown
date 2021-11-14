@@ -4,8 +4,6 @@ section: Architecture
 title: Brief Dependency Injection Skeptic
 ---
 
-{{page.title}}
-==============
 
 I saw this go by on Twitter the other day:
 

@@ -4,8 +4,6 @@ section: Architecture
 title: Always Separate User Intent
 ---
 
-{{page.title}}
-==============
 
 I've had a rule of thumb for data modeling that unfortunately I forget on a regular basis, so I thought I'd write it down to maybe help myself actually use it more.
 

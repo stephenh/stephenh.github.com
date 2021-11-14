@@ -4,8 +4,6 @@ section: GWT
 title: CSS Quirk, Collapsing Margins
 ---
 
-{{page.title}}
-==============
 
 I occasionally have to hunt down obscure (to me) browser/CSS behavior, and usually just end up leaving the lessons learned/temp files on my system somewhere, only to come back across them months later and not really remember what they were for anyway.
 

@@ -4,8 +4,6 @@ section: Scala
 title: Scala Implicit Conversion with Tuples
 ---
 
-{{page.title}}
-==============
 
 I had not seen this before, but while reading a blog post about this [Magnet Pattern](http://spray.io/blog/2012-12-13-the-magnet-pattern/), they showed how Scala's implicit conversions will convert a parameter list into a tuple while searching for implicit conversions. E.g.:
 

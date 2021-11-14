@@ -4,8 +4,6 @@ section: Productivity
 title: I Forgot How Much I Don't Like Pull Requests
 ---
 
-{{page.title}}
-==============
 
 **Update:** Joan Gamell pointed out in the comments that I'm blind and the PR UI has view-by-commit built in (and not just the Commits tab, which I'd seen before, but a dropdown integrated into the File Changes view itself). It even has hot keys of `c`, `n`, `p`. I'm very exited about this. I'm going to leave the post as-is, as my diatrbe still applies to making nice commits, and reviewing code by commit, but it looks like GitHub can/does support this workflow well.
 

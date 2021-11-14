@@ -4,8 +4,6 @@ section: Scala
 title: Spark Report Patterns
 ---
 
-{{page.title}}
-==============
 
 At [Bizo](http://www.bizo.com), we've been writing a lot of [Spark](https://spark.incubator.apache.org/) jobs lately.
 

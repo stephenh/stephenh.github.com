@@ -4,8 +4,6 @@ section: Architecture
 title: DHH vs. Fowler
 ---
 
-{{page.title}}
-==============
 
 Just a quick note on a topic going around recently; David Heinemeier Hansson first asserted [Dependency injection is not a virtue](http://david.heinemeierhansson.com/2012/dependency-injection-is-not-a-virtue.html), calling into question a practice that is in some circles sacrosanct.
 

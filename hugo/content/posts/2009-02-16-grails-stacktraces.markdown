@@ -4,8 +4,6 @@ section: Java
 title: Grails Stacktraces
 ---
 
-<h2>{{ page.title }}</h2>
-
 One of the many joys of working in Grails is the stack traces.
 
 The first is 590 lines. The second is 597 lines. However, the second cheats and includes 59 lines of "caused by" stack traces. From a purity standpoint, the first is all just one stack, so is the current winner.

@@ -4,8 +4,6 @@ section: Favorites
 title: Tools, Productivity, and Investing in Yourself
 ---
 
-{{page.title}}
-==============
 
 I was recently putting together a [list](/pages/tools.html) of tools that I like and use, and what started as an introduction on that page about the importance of tools kept growing and turned into this longer post. So, here we go.
 

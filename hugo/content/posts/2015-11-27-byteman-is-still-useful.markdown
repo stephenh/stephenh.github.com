@@ -4,8 +4,6 @@ section: Java
 title: Using Byteman To Debug Logging
 ---
 
-{{page.title}}
-==============
 
 Just as a quick post, I was recently seeing some bizarre behavior in our application's logging output.
 

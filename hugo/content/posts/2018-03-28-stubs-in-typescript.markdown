@@ -4,8 +4,6 @@ section: TypeScript
 title: Stubs in TypeScript using Mapped Types
 ---
 
-{{page.title}}
-==============
 
 Given my obsession with testing, I've been exploring different ways that best-practice "Good Dependency Injection" in Java would look like in TypeScript.
 

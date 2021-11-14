@@ -4,8 +4,6 @@ section: Scala
 title: What Makes Spark Exciting
 ---
 
-{{page.title}}
-==============
 
 ([Cross-posted](http://dev.bizo.com/2013/01/what-makes-spark-exciting.html) on the Bizo [dev blog](http://dev.bizo.com/).)
 

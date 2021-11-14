@@ -4,8 +4,6 @@ section: Testing
 title: East-Oriented Programming
 ---
 
-{{page.title}}
-==============
 
 In chatting with a coworker today about mocks vs. stubs (prompted by Fowler's [Mocks Aren't Stubs](http://martinfowler.com/articles/mocksArentStubs.html)), I was reminded about the concept of ["east"-oriented programming](http://jamesladdcode.com/2011/06/12/more-east-2/).
 

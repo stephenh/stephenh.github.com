@@ -4,8 +4,6 @@ section: Java
 title: Optional Folders in Eclipse
 ---
 
-{{page.title}}
-==============
 
 Often times in Eclipse, you'll add folders for generated code to the build path, e.g. `target/gen-java-src` or something like this.
 

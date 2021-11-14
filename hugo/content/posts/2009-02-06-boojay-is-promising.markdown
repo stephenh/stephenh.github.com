@@ -4,8 +4,6 @@ section: Languages
 title: Boojay is Promising
 ---
 
-<h2>{{ page.title }}</h2>
-
 Rodrigo B. de Oliveira has a new [post][1] up about his progress getting [boo][2] running in Eclipse and compiling to the JVM. This is very cool stuff.
 
 Boo has both a wrist-friendly syntax and macro meta-programming abilities, but in a type-safe language without all the "gee, what does this code do at runtime again?" ambiguities of dynamic languages like Groovy and Ruby.

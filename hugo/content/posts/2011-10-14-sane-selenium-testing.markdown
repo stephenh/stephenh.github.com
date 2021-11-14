@@ -4,8 +4,6 @@ section: GWT
 title: Sane AJAX Testing in Selenium
 ---
 
-{{page.title}}
-==============
 
 Let's cut to the chase: testing AJAX applications can suck.
 

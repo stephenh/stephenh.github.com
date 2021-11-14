@@ -4,10 +4,6 @@ section: GWT
 title: GWT Seamless Deployments
 ---
 
-<h2>{{ page.title }}</h2>
-
----
-
 I'm deploying a GWT app on Amazon's EC2 architecture behind an ELB and wanted to ensure the best experience for users while pushing out new code updates.
 
 This is a short review of my most-likely-accurate findings. It is not well organized and basically a public mind dump vs. a private mind dump to my other team members.

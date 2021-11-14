@@ -4,8 +4,6 @@ section: Architecture
 title: Framework-less Dependency Injection
 ---
 
-{{page.title}}
-==============
 
 Overview
 --------

@@ -4,8 +4,5 @@ draft: true
 title: Damn it, Oracle, Where are Java Hot Reloads?
 ---
 
-{{page.title}}
-==============
-
 I'm a big fan of fast developer cycles (fast TDD, fast startup, etc.) and the "king" of 
 

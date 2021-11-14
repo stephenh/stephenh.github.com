@@ -4,8 +4,6 @@ section: Java
 title: War-less Development with Jetty
 ---
 
-<h2>{{ page.title }}</h2>
-
 **Update:** see the [jtty](http://github.com/stephenh/jtty) project for a single jar based on this approach that contains both the Jetty dependencies and a generic bootstrap class.
 
 Reviewing my posts, most of them are negative rants, so I figured I should contribute something positive every now and then.

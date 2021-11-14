@@ -4,8 +4,6 @@ section: Joist
 title: Joist Snapshots, A 2nd-Level Cache Alternative
 ---
 
-{{page.title}}
-==============
 
 [Joist](http://joist.ws) 1.4.x got a new feature, Unit of Work snapshots, which I think are a neat way to handle a particular use-case that sometimes the chattiness of ORMs doesn't handle well.
 

@@ -4,8 +4,6 @@ section: Favorites
 title: GraphQL Typed Root Pattern
 ---
 
-{{page.title}}
-==============
 
 While working in a GraphQL codebase over the last year or so (specifically using Apollo Server in TypeScript), I semi-discovered a pattern for building more maintainable resolvers that I have not seen widely discussed/written about it (although both the [graphqlgen](https://github.com/prisma/graphqlgen) and [graphql code generator](https://graphql-code-generator.com) projects use them, so the pattern is more common that I'd initially realized).
 

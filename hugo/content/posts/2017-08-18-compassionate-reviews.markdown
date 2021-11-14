@@ -4,8 +4,6 @@ section: Favorites
 title: Compassionate Code Reviews
 ---
 
-{{page.title}}
-==============
 
 I gave a short internal talk about code reviews the other day.
 

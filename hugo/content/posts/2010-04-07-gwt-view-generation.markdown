@@ -4,10 +4,6 @@ section: GWT
 title: GWT View Generation
 ---
 
-<h2>{{ page.title }}</h2>
-
----
-
 This will be brief, but lately I've been on a crusade to reduce the boilerplate in GWT MVP projects.
 
 My current target has been the trio of `FooView.ui.xml`, `FooPresenter.Display`, and `FooView`, all of which are intrinsically linked. You end up making changes in one (usually `FooView.ui.xml`) and then dutifully percolating those changes to the other two.

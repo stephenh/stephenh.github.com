@@ -4,8 +4,6 @@ section: Java
 title: jOOQ Went Commercial
 ---
 
-{{page.title}}
-==============
 
 I have no idea how I missed it, but over a year ago the [jOOQ](http://www.jooq.org) [went commercial](http://blog.jooq.org/2013/10/09/jooq-3-2-offering-commercial-licensing-and-support/).
 

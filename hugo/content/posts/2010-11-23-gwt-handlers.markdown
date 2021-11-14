@@ -4,8 +4,6 @@ section: GWT
 title: GWT Handler Registrations
 ---
 
-{{page.title}}
-==============
 
 Being a fat-client technology, GWT involves a lot of event listeners. The idiom for using them is pretty simple:
 

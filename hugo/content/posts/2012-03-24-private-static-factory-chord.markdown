@@ -4,8 +4,6 @@ section: Productivity
 title: Private Static Factory Method Chord
 ---
 
-{{page.title}}
-==============
 
 I have this notion of a "refactoring chord", which is more than a single refactoring (like [rename method](http://martinfowler.com/refactoring/catalog/renameMethod.html)), but less than a full-fledged [refactoring to a pattern](http://industriallogic.com/xp/refactoring/) that I've been meaning to post about for awhile now.
 

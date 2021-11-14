@@ -4,8 +4,6 @@ section: Favorites
 title: Building Sane Rich User Interfaces
 ---
 
-{{page.title}}
-==============
 
 **Update May 2018:** This post basically describes reactive programming, from the context of circa 2012 GWT apps (which were typically extremely imperative, as were many JavaScript/jquery webapps at the time) and highlights [Tessell](http://www.tessell.org/), which was a data-binding framework I wrote while at Bizo. Today this would be called reactive programming, very similar to [Mobx](https://mobx.js.org/), albiet I'm sure Mobx is more robust and optimized.
 

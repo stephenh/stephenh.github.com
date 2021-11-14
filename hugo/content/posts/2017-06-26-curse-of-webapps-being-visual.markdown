@@ -4,8 +4,6 @@ section: Testing
 title: The Curse of Webapps Being Visual for TDD
 ---
 
-{{page.title}}
-==============
 
 Web applications have an interesting aspect that make them somewhat unique among software systems: they are visual.
 

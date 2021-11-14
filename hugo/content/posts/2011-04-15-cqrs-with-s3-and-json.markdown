@@ -4,9 +4,6 @@ section: Architecture
 title: Command Query Responsibility Segregation with S3 and JSON
 ---
 
-{{page.title}}
---------------
-
 We recently tackled a problem at [Bizo](http://www.bizo.com) where we wanted to decouple our high-volume servers from our MySQL database.
 
 While considering different options (NoSQL vs. MySQL, etc.), in retrospect we ended up implementing a SOA-version of the [Command Query Separation](http://en.wikipedia.org/wiki/Command-query_separation) pattern (or [Command Query Responsibility Segregation](http://codebetter.com/gregyoung/2009/08/13/command-query-separation/), which is services/messaging-specific).

@@ -4,8 +4,6 @@ section: Languages
 title: Caller-Side Structural Typing
 ---
 
-<h2>{{ page.title }}</h2>
-
 Intro
 -----
 

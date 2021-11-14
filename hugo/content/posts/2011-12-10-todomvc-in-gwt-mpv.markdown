@@ -4,8 +4,6 @@ section: GWT
 title: todomvc in Tessell
 ---
 
-{{page.title}}
-==============
 
 **Update 2011/12/29:** This post was originally about the gwt-mpv framework, which has since been rechristened Tessell, see [tessell.org](http://www.tessell.org).
 

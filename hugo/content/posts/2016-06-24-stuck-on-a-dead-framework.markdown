@@ -4,8 +4,6 @@ section: Architecture
 title: Stuck on a Dead Framework
 ---
 
-{{page.title}}
-==============
 
 I've been thinking about/discussing frameworks recently with some coworkers.
 

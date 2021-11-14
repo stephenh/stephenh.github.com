@@ -4,8 +4,6 @@ section: Architecture
 title: What's Wrong with a Schema?
 ---
 
-{{page.title}}
-==============
 
 Lately I've been wondering why schema-less databases are so popular lately.
 

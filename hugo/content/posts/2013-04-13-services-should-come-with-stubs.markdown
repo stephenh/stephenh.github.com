@@ -4,8 +4,6 @@ section: Favorites
 title: Services Should Come with Stubs
 ---
 
-{{page.title}}
-==============
 
 At [Bizo](http://www.bizo.com), we do our fair share of service-oriented development, where instead of one big monolithic application, we have lots of small applications that talk to each other.
 

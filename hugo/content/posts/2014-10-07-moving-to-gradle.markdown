@@ -4,8 +4,6 @@ section: Java
 title: Moving to Gradle
 ---
 
-{{page.title}}
-==============
 
 For my open source projects, for awhile I've been using [Ant](http://ant.apache.org) + [Ivy](http://ant.apache.org/ivy/) + [IvyDE](http://ant.apache.org/ivy/ivyde/), and more recently [buildr](http://buildr.apache.org) + Ivy + IvyDE, as my preferred build environment.
 

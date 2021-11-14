@@ -4,8 +4,6 @@ section: Productivity
 title: MoreUnit Supports Custom Languages
 ---
 
-{{page.title}}
-==============
 
 For awhile now, I've been a fan of the [MoreUnit](http://moreunit.sourceforge.net/) Eclipse plugin.
 

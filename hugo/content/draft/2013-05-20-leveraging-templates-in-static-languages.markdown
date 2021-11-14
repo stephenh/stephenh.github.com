@@ -4,9 +4,6 @@ draft: true
 title: Leveraging Templates from Static Languages
 ---
 
-{{page.title}}
-==============
-
 Templates (as in "here, render this string for me", not the C++ variety) are ubiquitous; all languages seem to end up with a bevy of template syntaxes and engines, especially if they touch anything web/HTML related.
 
 While the specific syntax of templates changes, the basic idea is usually/always the same: a bunch of static text to be output, interspersed with directories to merge in dynamic content, e.g.:

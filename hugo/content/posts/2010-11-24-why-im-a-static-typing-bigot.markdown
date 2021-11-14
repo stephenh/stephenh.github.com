@@ -4,8 +4,6 @@ section: Favorites
 title: Why I'm a Static Typing Bigot
 ---
 
-{{page.title}}
-==============
 
 As most anyone who has had a conversation about programming languages with me knows, I'm a static typing bigot.
 

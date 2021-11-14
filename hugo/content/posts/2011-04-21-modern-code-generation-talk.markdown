@@ -4,8 +4,6 @@ section: Productivity
 title: Modern Code Generation Talk
 ---
 
-{{page.title}}
-==============
 
 I did a talk this week for the local [JUG](http://www.ojug.org) on Modern Code Generation.
 

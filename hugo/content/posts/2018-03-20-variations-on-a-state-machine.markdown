@@ -4,8 +4,6 @@ section: TypeScript
 title: Variations on a State Machine
 ---
 
-{{page.title}}
-==============
 
 A few days ago, raganwald posted his [2nd article on state charts](http://raganwald.com/2018/03/03/reflections.html).
 

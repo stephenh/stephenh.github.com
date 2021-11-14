@@ -4,10 +4,6 @@ section: Productivity
 title: Moving an existing git repo into svn
 ---
 
-<h2>{{ page.title }}</h2>
-
----
-
 I've found myself lately making local git repositories to prototype things that I later need to promote into [Bizo](http://www.bizo.com)'s internal Subversion repository.
 
 `git-svn` supports this really well, with just a slight variation on the usual `git svn clone`.
