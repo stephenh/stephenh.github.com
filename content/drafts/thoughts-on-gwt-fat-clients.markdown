@@ -3,9 +3,6 @@ layout: post
 title: Thoughts on GWT and DTOs
 ---
 
-{{ page.title }}
-================
-
 One of the major bottlenecks for developing GWT webapps is mangling data around between the client and the server. Basically, creating/mapping DTOs all the time.
 
 I've been thinking about how to best solve/optimize/avoid this problem. No breakthroughs yet, but here are my thoughts.

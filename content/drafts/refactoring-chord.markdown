@@ -3,9 +3,6 @@ layout: post
 title: Refactoring Chord
 ---
 
-{{page.title}}
-==============
-
 Lately I've been using a series of refactorings that has worked well to break up large classes into smaller concerns. The series consists of several steps:
 
 1. Extract Method,

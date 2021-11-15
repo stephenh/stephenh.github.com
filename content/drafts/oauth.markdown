@@ -4,9 +4,6 @@ title: Intuitive Understanding of OAuth
 section: Architecture
 ---
 
-{{page.title}}
-==============
-
 I was reading OAuth specs lately and, to help me actually remember/reason about it, wanted to jot down my in-theory intuitive explanation.
 
 Tangentially, to my recollection, OAuth2 is pretty nice/simple compared to OAuth1, since we can assume HTTPS.

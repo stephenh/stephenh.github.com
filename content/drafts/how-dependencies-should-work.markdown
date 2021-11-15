@@ -3,9 +3,6 @@ layout: draft
 title: How Dependencies Should Work
 ---
 
-{{page.title}}
-==============
-
 This is my assertion, my plea, to the developers of build tools, especially those in the Java ecosystem (e.g. [Buildr](http://buildr.apache.org), [Gradle](http://gradle.org/), [Maven](http://maven.apache.org), etc.).
 
 Very simply: *please keep a project's dependency information decoupled from the rest of build file.*

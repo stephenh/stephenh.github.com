@@ -3,9 +3,6 @@ title: Musing About the Cake Pattern
 layout: draft
 ---
 
-{{page.title}}
-==============
-
 The Cake pattern in Scala is a way of doing dependency injection; it's been around for a long time, and I'm not really sure what is the best/easiest introductory material to it these days, so I'll leave Googling for the best "Cake Intro" that as an exercise to the reader (although here is [the original Cake Pattern post](http://jonasboner.com/real-world-scala-dependency-injection-di/), which I looked at to refresh my memory).
 
 So, even though this post blog post is ~5 years too late, I thought I would articulate how I understand the Cake pattern.

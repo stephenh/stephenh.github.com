@@ -3,9 +3,6 @@ title: Spark Shuffles and Partition Sizing
 layout: draft
 ---
 
-{{page.title}}
-==============
-
 At [Bizo](http://www.bizo.com) we've been enjoying [Spark](http://spark.incubator.apache.org/) for writing map/reduce-style jobs in a nice, test-able Scala API.
 
 Over the course of writing a few jobs, we've found that it can be really helpful to understand some of Spark's intrinsic operations, like shuffle, and how they will affect your job's performance.

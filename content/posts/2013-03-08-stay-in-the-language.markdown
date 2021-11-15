@@ -1,6 +1,7 @@
 ---
 date: "2013-03-08T00:00:00Z"
-section: Languages
+categories:
+  - Languages
 title: Stay in the Language
 ---
 

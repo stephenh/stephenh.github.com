@@ -3,9 +3,6 @@ layout: default
 title: Gosu has First Class Data Binding
 ---
 
-{{page.title}}
-==============
-
 [Gosu](http://www.gosu-lang.org) 0.8 was recently released, with an incredibly
 exciting new feature: feature literals, or, to me, first class data binding.
 

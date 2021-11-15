@@ -3,9 +3,6 @@ layout: draft
 title: Mapping with Dtonator
 ---
 
-{{page.title}}
-==============
-
 Mapping between domain objects and DTOs can be one of the more tedious aspects of a system.
 
 It's fine if you're, say, integrating with a vendor and only mapping 4-5 of your domain objects system onto 4-5 DTOs for their remote API.

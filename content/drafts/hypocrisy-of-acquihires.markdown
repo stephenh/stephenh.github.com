@@ -3,9 +3,6 @@ title: The Hypocrisy of Acquihires
 layout: draft
 ---
 
-{{page.title}}
-==============
-
 There has been a lot of kibitzing about recent acquisitions of startups primarily for their teams ([here](http://news.ycombinator.com/item?id=4274505), [here](http://news.ycombinator.com/item?id=4271376), [here](http://news.ycombinator.com/item?id=4272423), etc.).
 
 I have two gripes with these sort of acquisitions, both admittedly from the standpoint of being a salaried/"just a dev" developer:

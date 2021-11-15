@@ -3,9 +3,6 @@ title: The Two Challenges of Code Generation
 layout: post
 ---
 
-{{page.title}}
-==============
-
 I like code generation. More specifically, I like up-front, writes-`.java`-files code generation. I think that, when done well, it can dramatically affect the quality and productivity of a project.
 
 That said, doing code generation well is hard--a few things are easy, like structuring the code generator nicely, etc., but I've found two things are consistently tricky:

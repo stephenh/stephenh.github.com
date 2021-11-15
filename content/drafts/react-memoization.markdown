@@ -3,9 +3,6 @@ layout: post
 title: React Memoization
 ---
 
-{{page.title}}
-==============
-
 This is not a tutorial about what memoization is, or how it works, but just some observations...
 
 For one, React is finally well enough along in it's adoption curve that it's cool to "hate/not like React" now.

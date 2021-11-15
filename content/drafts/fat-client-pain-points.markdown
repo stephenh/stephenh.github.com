@@ -3,9 +3,6 @@ layout: draft
 title: Fat Client Pain Points
 ---
 
-{{page.title}}
-==============
-
 I've had a lot of experience with fat-client (AJAX) applications lately. Here are a few thoughts.
 
 Note: A lot of my comments use static typing (e.g. `String getName()`), but the notions often (though not necessarily always) apply to dynamic languages as well, as the typing would be the same, just dynamic and implicit instead of static.
