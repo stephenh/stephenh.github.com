@@ -1,6 +1,7 @@
 ---
 date: "2012-04-17T00:00:00Z"
-section: Languages
+categories:
+  - Languages
 title: Continually Improving Browser Technology
 ---
 

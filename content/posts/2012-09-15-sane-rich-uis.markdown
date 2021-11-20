@@ -1,6 +1,7 @@
 ---
 date: "2012-09-15T00:00:00Z"
-section: Favorites
+categories:
+  - Favorites
 title: Building Sane Rich User Interfaces
 ---
 

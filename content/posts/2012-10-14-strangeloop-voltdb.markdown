@@ -1,6 +1,5 @@
 ---
 date: "2012-10-14T00:00:00Z"
-section: None
 title: Strangeloop 2012--VoltDB
 ---
 

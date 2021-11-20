@@ -1,6 +1,7 @@
 ---
 date: "2011-10-14T00:00:00Z"
-section: GWT
+categories:
+  - GWT
 title: Sane AJAX Testing in Selenium
 ---
 

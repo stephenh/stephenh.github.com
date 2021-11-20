@@ -1,6 +1,7 @@
 ---
 date: "2012-10-07T00:00:00Z"
-section: Architecture
+categories:
+  - Architecture
 title: Brief Dependency Injection Skeptic
 ---
 

@@ -1,6 +1,7 @@
 ---
 date: "2010-08-21T00:00:00Z"
-section: Productivity
+categories:
+  - Productivity
 title: git workshop
 ---
 

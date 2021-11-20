@@ -1,6 +1,7 @@
 ---
 date: "2010-07-16T00:00:00Z"
-section: Joist
+categories:
+  - Joist
 title: Joist/ORM Prefetching
 ---
 

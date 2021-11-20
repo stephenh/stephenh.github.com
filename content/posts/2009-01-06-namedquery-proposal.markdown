@@ -1,6 +1,5 @@
 ---
 date: "2009-01-06T00:00:00Z"
-section: None
 title: NamedQuery Proposal
 ---
 

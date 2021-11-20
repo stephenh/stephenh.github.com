@@ -1,6 +1,7 @@
 ---
 date: "2018-03-20T00:00:00Z"
-section: TypeScript
+categories:
+  - TypeScript
 title: Variations on a State Machine
 ---
 

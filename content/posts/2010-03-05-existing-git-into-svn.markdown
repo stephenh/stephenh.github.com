@@ -1,6 +1,7 @@
 ---
 date: "2010-03-05T00:00:00Z"
-section: Productivity
+categories:
+  - Productivity
 title: Moving an existing git repo into svn
 ---
 

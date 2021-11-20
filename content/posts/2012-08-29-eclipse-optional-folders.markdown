@@ -1,6 +1,7 @@
 ---
 date: "2012-08-29T00:00:00Z"
-section: Java
+categories:
+  - Java
 title: Optional Folders in Eclipse
 ---
 

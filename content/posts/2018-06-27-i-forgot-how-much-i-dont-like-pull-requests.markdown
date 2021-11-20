@@ -1,6 +1,7 @@
 ---
 date: "2018-06-27T00:00:00Z"
-section: Productivity
+categories:
+  - Productivity
 title: I Forgot How Much I Don't Like Pull Requests
 ---
 

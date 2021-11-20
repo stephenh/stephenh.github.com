@@ -1,6 +1,5 @@
 ---
 date: "2009-01-10T00:00:00Z"
-section: Java
 title: War-less Development with Jetty
 ---
 

@@ -1,6 +1,7 @@
 ---
 date: "2018-07-08T00:00:00Z"
-section: Testing
+categories:
+  - Testing
 title: Avoid Using External Files in Tests
 ---
 

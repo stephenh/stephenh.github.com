@@ -1,6 +1,7 @@
 ---
 date: "2010-01-17T00:00:00Z"
-section: Languages
+categories:
+  - Languages
 title: Caller-Side Structural Typing
 ---
 

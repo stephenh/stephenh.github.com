@@ -1,6 +1,7 @@
 ---
 date: "2019-08-25T00:00:00Z"
-section: Favorites
+categories:
+  - Favorites
 title: GraphQL Typed Root Pattern
 ---
 

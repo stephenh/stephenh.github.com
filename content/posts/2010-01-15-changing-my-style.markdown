@@ -1,6 +1,7 @@
 ---
 date: "2010-01-15T00:00:00Z"
-section: Architecture
+categories:
+  - Architecture
 title: Changing My Style
 ---
 

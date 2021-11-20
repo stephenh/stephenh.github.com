@@ -1,6 +1,7 @@
 ---
 date: "2017-08-12T00:00:00Z"
-section: Favorites
+categories:
+  - Favorites
 title: Tools, Productivity, and Investing in Yourself
 ---
 

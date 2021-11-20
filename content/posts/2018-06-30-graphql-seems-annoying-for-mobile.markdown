@@ -1,6 +1,7 @@
 ---
 date: "2018-06-30T00:00:00Z"
-section: Architecture
+categories:
+  - Architecture
 title: GraphQL Seems Annoying For Mobile
 ---
 

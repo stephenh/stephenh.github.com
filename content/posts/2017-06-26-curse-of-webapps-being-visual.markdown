@@ -1,6 +1,7 @@
 ---
 date: "2017-06-26T00:00:00Z"
-section: Testing
+categories:
+  - Testing
 title: The Curse of Webapps Being Visual for TDD
 ---
 

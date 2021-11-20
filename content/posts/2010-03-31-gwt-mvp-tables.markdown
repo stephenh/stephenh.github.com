@@ -1,6 +1,7 @@
 ---
 date: "2010-03-31T00:00:00Z"
-section: GWT
+categories:
+  - GWT
 title: GWT MVP Tables
 ---
 

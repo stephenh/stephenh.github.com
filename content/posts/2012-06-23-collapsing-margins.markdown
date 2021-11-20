@@ -1,6 +1,7 @@
 ---
 date: "2012-06-23T00:00:00Z"
-section: GWT
+categories:
+  - GWT
 title: CSS Quirk, Collapsing Margins
 ---
 

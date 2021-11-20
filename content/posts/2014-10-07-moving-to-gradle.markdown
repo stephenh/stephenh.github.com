@@ -1,6 +1,7 @@
 ---
 date: "2014-10-07T00:00:00Z"
-section: Java
+categories:
+  - Java
 title: Moving to Gradle
 ---
 

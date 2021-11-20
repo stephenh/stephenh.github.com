@@ -1,6 +1,7 @@
 ---
 date: "2009-07-13T00:00:00Z"
-section: Scala
+categories:
+  - Scala
 title: Scala Per-Instance Singletons
 ---
 

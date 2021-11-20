@@ -1,6 +1,7 @@
 ---
 date: "2012-09-14T00:00:00Z"
-section: Productivity
+categories:
+  - Productivity
 title: Screencasts in Linux
 ---
 

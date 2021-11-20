@@ -1,6 +1,7 @@
 ---
 date: "2009-12-13T00:00:00Z"
-section: Productivity
+categories:
+  - Productivity
 title: Sprunge And Dropbox
 ---
 

@@ -1,7 +1,8 @@
 ---
 date: "2018-05-29T00:00:00Z"
 diagrams: https://sketchboard.me/pAYfngbgsXuX#/
-section: Architecture
+categories:
+  - Architecture
 title: Applying Virtual DOM to Systems Integrations
 ---
 

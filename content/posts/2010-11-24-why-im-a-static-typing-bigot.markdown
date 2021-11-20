@@ -1,6 +1,7 @@
 ---
 date: "2010-11-24T00:00:00Z"
-section: Favorites
+categories:
+  - Favorites
 title: Why I'm a Static Typing Bigot
 ---
 

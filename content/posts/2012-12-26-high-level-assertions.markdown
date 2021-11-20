@@ -1,6 +1,7 @@
 ---
 date: "2012-12-26T00:00:00Z"
-section: Testing
+categories:
+  - Testing
 title: High Level Assertions
 ---
 

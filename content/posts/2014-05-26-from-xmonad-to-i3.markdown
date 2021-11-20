@@ -1,6 +1,7 @@
 ---
 date: "2014-05-26T00:00:00Z"
-section: Productivity
+categories:
+  - Productivity
 title: From xmonad to i3 on Ubuntu 14.04
 ---
 

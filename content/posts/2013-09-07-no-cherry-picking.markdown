@@ -1,6 +1,7 @@
 ---
 date: "2013-09-07T00:00:00Z"
-section: Productivity
+categories:
+  - Productivity
 title: If you cherry pick, your branch model is wrong
 ---
 

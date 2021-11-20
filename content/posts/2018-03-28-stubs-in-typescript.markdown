@@ -1,6 +1,7 @@
 ---
 date: "2018-03-28T00:00:00Z"
-section: TypeScript
+categories:
+  - TypeScript
 title: Stubs in TypeScript using Mapped Types
 ---
 

@@ -1,6 +1,5 @@
 ---
 date: "2009-01-18T00:00:00Z"
-section: Java
 title: JavaFX Decompiled
 ---
 

@@ -1,6 +1,7 @@
 ---
 date: "2018-06-30T00:00:00Z"
-section: Languages
+categories:
+  - Languages
 title: Shape is a Better Term Than Object
 ---
 

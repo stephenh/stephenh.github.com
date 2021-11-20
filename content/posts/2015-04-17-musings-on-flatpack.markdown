@@ -1,6 +1,5 @@
 ---
 date: "2015-04-17T00:00:00Z"
-section: None
 title: Musings on Flatpack
 ---
 

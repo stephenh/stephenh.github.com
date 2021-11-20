@@ -1,6 +1,8 @@
 ---
 date: "2017-11-28T00:00:00Z"
-section: Testing
+categories:
+  - Testing
+  - Favorites
 title: Using Given/When/Then For Tests
 ---
 

@@ -1,6 +1,7 @@
 ---
 date: "2019-09-05T00:00:00Z"
-section: TypeScript
+categories:
+  - TypeScript
 title: Hooks Don't Have To Be Functional
 ---
 

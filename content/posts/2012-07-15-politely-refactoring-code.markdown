@@ -1,6 +1,7 @@
 ---
 date: "2012-07-15T00:00:00Z"
-section: Todo
+categories:
+  - Todo
 title: Politely Refactoring Code
 ---
 

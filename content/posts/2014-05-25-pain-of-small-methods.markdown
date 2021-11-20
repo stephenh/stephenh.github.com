@@ -1,6 +1,7 @@
 ---
 date: "2014-05-25T00:00:00Z"
-section: Testing
+categories:
+  - Testing
 title: The Pain of Small Methods
 ---
 

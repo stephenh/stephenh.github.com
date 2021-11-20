@@ -1,6 +1,7 @@
 ---
 date: "2009-04-29T00:00:00Z"
-section: Java
+categories:
+  - Java
 title: The IBM JDK is Awesome
 ---
 

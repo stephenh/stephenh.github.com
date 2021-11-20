@@ -1,6 +1,5 @@
 ---
 date: "2013-03-23T00:00:00Z"
-section: None
 title: Google's Build System is a Giant Maven Repo
 ---
 

@@ -1,6 +1,7 @@
 ---
 date: "2010-07-09T00:00:00Z"
-section: Favorites
+categories:
+  - Favorites
 title: Why I Don't Like Mocks
 ---
 

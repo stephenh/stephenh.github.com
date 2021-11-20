@@ -1,6 +1,7 @@
 ---
 date: "2010-11-23T00:00:00Z"
-section: GWT
+categories:
+  - GWT
 title: GWT Handler Registrations
 ---
 

@@ -1,6 +1,5 @@
 ---
 date: "2008-12-20T00:00:00Z"
-section: None
 title: Moving to GitHub Pages
 ---
 

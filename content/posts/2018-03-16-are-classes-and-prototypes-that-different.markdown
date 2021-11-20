@@ -1,6 +1,8 @@
 ---
 date: "2018-03-16T00:00:00Z"
-section: TypeScript
+categories:
+  - TypeScript
+  - Languages
 title: Are Classes and Prototypes that Different?
 ---
 

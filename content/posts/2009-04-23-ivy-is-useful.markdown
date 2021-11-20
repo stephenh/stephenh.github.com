@@ -1,6 +1,7 @@
 ---
 date: "2009-04-23T00:00:00Z"
-section: Java
+categories:
+  - Java
 title: Ivy is Useful
 ---
 

@@ -1,6 +1,5 @@
 ---
 date: "2008-12-19T00:00:00Z"
-section: None
 title: NamedQuery Considered Stupid
 ---
 

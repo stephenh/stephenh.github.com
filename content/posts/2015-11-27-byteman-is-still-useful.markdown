@@ -1,6 +1,7 @@
 ---
 date: "2015-11-27T00:00:00Z"
-section: Java
+categories:
+  - Java
 title: Using Byteman To Debug Logging
 ---
 

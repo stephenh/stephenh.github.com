@@ -1,6 +1,7 @@
 ---
 date: "2010-03-04T00:00:00Z"
-section: Productivity
+categories:
+  - Productivity
 title: git config
 ---
 

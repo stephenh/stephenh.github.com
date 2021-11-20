@@ -1,6 +1,7 @@
 ---
 date: "2015-11-29T00:00:00Z"
-section: Testing
+categories:
+  - Testing
 title: The Holy Grail of Database Testing
 ---
 

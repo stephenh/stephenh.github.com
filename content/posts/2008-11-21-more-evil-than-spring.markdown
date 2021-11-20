@@ -1,6 +1,5 @@
 ---
 date: "2008-11-21T00:00:00Z"
-section: None
 title: More Evil Than Spring
 ---
 

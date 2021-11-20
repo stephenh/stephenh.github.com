@@ -1,6 +1,8 @@
 ---
 date: "2017-08-23T00:00:00Z"
-section: Testing
+categories:
+  - Testing
+  - Architecture
 title: The Futility of Cross-System Integration Testing
 ---
 

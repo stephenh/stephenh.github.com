@@ -1,6 +1,7 @@
 ---
 date: "2012-07-23T00:00:00Z"
-section: Testing
+categories:
+  - Testing
 title: Faking at the Right Level
 ---
 

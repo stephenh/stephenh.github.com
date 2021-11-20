@@ -1,6 +1,7 @@
 ---
 date: "2018-05-30T00:00:00Z"
-section: Languages
+categories:
+  - Languages
 title: Is Haskell's Complexity Artificial?
 ---
 

@@ -1,6 +1,7 @@
 ---
 date: "2019-07-25T00:00:00Z"
-section: Books
+categories:
+  - Books
 title: Toyota Katas Notes
 ---
 

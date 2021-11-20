@@ -1,6 +1,7 @@
 ---
 date: "2011-02-28T00:00:00Z"
-section: Java
+categories:
+  - Java
 title: Preferred Build Setup
 ---
 

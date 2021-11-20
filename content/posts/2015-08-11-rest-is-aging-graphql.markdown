@@ -1,6 +1,7 @@
 ---
 date: "2015-08-11T00:00:00Z"
-section: Architecture
+categories:
+  - Architecture
 title: REST is Aging, GraphQL is the New Thing
 ---
 

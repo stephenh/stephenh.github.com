@@ -1,6 +1,7 @@
 ---
 date: "2014-01-27T00:00:00Z"
-section: Architecture
+categories:
+  - Architecture
 title: Using Your Database as a Queue
 ---
 

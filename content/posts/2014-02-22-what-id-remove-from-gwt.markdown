@@ -1,6 +1,7 @@
 ---
 date: "2014-02-22T00:00:00Z"
-section: GWT
+categories:
+  - GWT
 title: What I Would Remove from GWT--Basically Everything
 ---
 

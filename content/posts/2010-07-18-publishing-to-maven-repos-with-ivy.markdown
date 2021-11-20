@@ -1,6 +1,7 @@
 ---
 date: "2010-07-18T00:00:00Z"
-section: Java
+categories:
+  - Java
 title: Publishing to Maven Repos with Ivy
 ---
 

@@ -1,6 +1,7 @@
 ---
 date: "2014-04-01T00:00:00Z"
-section: Java
+categories:
+  - Java
 title: JDK 1.8/1.7 Compatibility Gotcha
 ---
 

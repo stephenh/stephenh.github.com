@@ -1,6 +1,7 @@
 ---
 date: "2018-06-20T00:00:00Z"
-section: Testing
+categories:
+  - Testing
 title: Skepticism About Record/Replay Tests
 ---
 

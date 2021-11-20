@@ -1,6 +1,7 @@
 ---
 date: "2013-01-22T00:00:00Z"
-section: Scala
+categories:
+  - Scala
 title: What Makes Spark Exciting
 ---
 

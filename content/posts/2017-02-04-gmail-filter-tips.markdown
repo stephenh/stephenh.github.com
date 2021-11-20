@@ -1,6 +1,7 @@
 ---
 date: "2017-02-04T00:00:00Z"
-section: Productivity
+categories:
+  - Productivity
 title: Gmail Filter Tips
 ---
 

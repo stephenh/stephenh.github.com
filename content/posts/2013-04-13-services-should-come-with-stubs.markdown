@@ -1,6 +1,7 @@
 ---
 date: "2013-04-13T00:00:00Z"
-section: Favorites
+categories:
+  - Favorites
 title: Services Should Come with Stubs
 ---
 

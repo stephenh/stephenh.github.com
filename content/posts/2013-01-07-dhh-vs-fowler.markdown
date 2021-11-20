@@ -1,6 +1,7 @@
 ---
 date: "2013-01-07T00:00:00Z"
-section: Architecture
+categories:
+  - Architecture
 title: DHH vs. Fowler
 ---
 

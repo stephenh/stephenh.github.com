@@ -1,6 +1,7 @@
 ---
 date: "2011-03-17T00:00:00Z"
-section: Architecture
+categories:
+  - Architecture
 title: Framework-less Dependency Injection
 ---
 

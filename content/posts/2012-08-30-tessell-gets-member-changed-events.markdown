@@ -1,6 +1,7 @@
 ---
 date: "2012-08-30T00:00:00Z"
-section: GWT
+categories:
+  - GWT
 title: Tessell Gets Member Changed Events
 ---
 

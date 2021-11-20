@@ -1,6 +1,7 @@
 ---
 date: "2011-04-15T00:00:00Z"
-section: Architecture
+categories:
+  - Architecture
 title: Command Query Responsibility Segregation with S3 and JSON
 ---
 

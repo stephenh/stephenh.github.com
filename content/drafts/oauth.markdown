@@ -1,7 +1,8 @@
 ---
 layout: draft
 title: Intuitive Understanding of OAuth
-section: Architecture
+categories:
+  - Architecture
 ---
 
 I was reading OAuth specs lately and, to help me actually remember/reason about it, wanted to jot down my in-theory intuitive explanation.

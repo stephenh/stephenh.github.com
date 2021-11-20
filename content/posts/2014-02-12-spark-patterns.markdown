@@ -1,6 +1,7 @@
 ---
 date: "2014-02-12T00:00:00Z"
-section: Scala
+categories:
+  - Scala
 title: Spark Report Patterns
 ---
 

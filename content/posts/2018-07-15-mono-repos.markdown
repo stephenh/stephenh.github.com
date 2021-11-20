@@ -1,6 +1,7 @@
 ---
 date: "2018-07-15T00:00:00Z"
-section: Productivity
+categories:
+  - Productivity
 title: Mono vs. Project Repos? Hurray, software sucks
 ---
 

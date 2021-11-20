@@ -1,6 +1,7 @@
 ---
 date: "2016-07-22T00:00:00Z"
-section: Architecture
+categories:
+  - Architecture
 title: Staffing a Front-End Team
 ---
 

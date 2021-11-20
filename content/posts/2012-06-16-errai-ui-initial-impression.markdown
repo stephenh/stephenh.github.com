@@ -1,6 +1,7 @@
 ---
 date: "2012-06-16T00:00:00Z"
-section: GWT
+categories:
+  - GWT
 title: ErraiUI Initial Impression
 ---
 

@@ -1,6 +1,7 @@
 ---
 date: "2012-06-16T00:00:00Z"
-section: Architecture
+categories:
+  - Architecture
 title: Abstracting Types Across Domains
 ---
 

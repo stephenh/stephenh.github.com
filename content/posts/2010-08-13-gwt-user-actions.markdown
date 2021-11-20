@@ -1,6 +1,7 @@
 ---
 date: "2010-08-13T00:00:00Z"
-section: GWT
+categories:
+  - GWT
 title: Collecting User Actions with GWT
 ---
 

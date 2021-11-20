@@ -1,6 +1,7 @@
 ---
 date: "2009-02-06T00:00:00Z"
-section: Languages
+categories:
+  - Languages
 title: Boojay is Promising
 ---
 

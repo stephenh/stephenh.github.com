@@ -1,6 +1,7 @@
 ---
 date: "2013-04-12T00:00:00Z"
-section: Testing
+categories:
+  - Testing
 title: East-Oriented Programming
 ---
 

@@ -1,6 +1,7 @@
 ---
 date: "2014-01-28T00:00:00Z"
-section: Languages
+categories:
+  - Languages
 title: Can Java Be Good Enough?
 ---
 

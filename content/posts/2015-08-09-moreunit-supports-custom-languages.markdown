@@ -1,6 +1,7 @@
 ---
 date: "2015-08-09T00:00:00Z"
-section: Productivity
+categories:
+  - Productivity
 title: MoreUnit Supports Custom Languages
 ---
 

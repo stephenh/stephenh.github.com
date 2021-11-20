@@ -1,6 +1,7 @@
 ---
 date: "2011-10-03T00:00:00Z"
-section: GWT
+categories:
+  - GWT
 title: A GWT Developer's Reaction to Dart
 ---
 

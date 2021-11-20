@@ -1,6 +1,7 @@
 ---
 date: "2011-04-21T00:00:00Z"
-section: Productivity
+categories:
+  - Productivity
 title: Modern Code Generation Talk
 ---
 

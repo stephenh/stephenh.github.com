@@ -1,6 +1,7 @@
 ---
 date: "2009-02-19T00:00:00Z"
-section: Productivity
+categories:
+  - Productivity
 title: Old School Bell Trick
 ---
 

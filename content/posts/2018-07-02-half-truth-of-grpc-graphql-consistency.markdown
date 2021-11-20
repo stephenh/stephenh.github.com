@@ -1,6 +1,7 @@
 ---
 date: "2018-07-02T00:00:00Z"
-section: Architecture
+categories:
+  - Architecture
 title: The Half-Truth of GRPC &amp; GraphQL Consistency
 ---
 

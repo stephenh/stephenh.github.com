@@ -1,6 +1,7 @@
 ---
 date: "2019-11-27T00:00:00Z"
-section: TypeScript
+categories:
+  - TypeScript
 title: Teaching TypeScript about GraphQL Default Resolvers
 ---
 

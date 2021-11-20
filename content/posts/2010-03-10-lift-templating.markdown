@@ -1,6 +1,7 @@
 ---
 date: "2010-03-10T00:00:00Z"
-section: Scala
+categories:
+  - Scala
 title: Lift Templating s/is/was a Joke
 ---
 

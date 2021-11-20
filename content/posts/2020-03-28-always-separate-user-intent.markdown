@@ -1,6 +1,7 @@
 ---
 date: "2020-03-28T00:00:00Z"
-section: Architecture
+categories:
+  - Architecture
 title: Always Separate User Intent
 ---
 

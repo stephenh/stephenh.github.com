@@ -1,6 +1,7 @@
 ---
 date: "2012-03-24T00:00:00Z"
-section: Productivity
+categories:
+  - Productivity
 title: Private Static Factory Method Chord
 ---
 

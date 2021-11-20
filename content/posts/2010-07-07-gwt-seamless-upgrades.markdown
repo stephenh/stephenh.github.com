@@ -1,6 +1,7 @@
 ---
 date: "2010-07-07T00:00:00Z"
-section: GWT
+categories:
+  - GWT
 title: GWT Seamless Deployments
 ---
 

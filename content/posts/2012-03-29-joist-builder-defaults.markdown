@@ -1,6 +1,7 @@
 ---
 date: "2012-03-29T00:00:00Z"
-section: Joist
+categories:
+  - Joist
 title: Joist Builder Defaults
 ---
 

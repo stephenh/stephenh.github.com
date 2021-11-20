@@ -1,6 +1,8 @@
 ---
 date: "2018-01-21T00:00:00Z"
-section: Favorites
+categories:
+  - Architecture
+  - Favorites
 title: Micro Service Testing at Scale
 ---
 

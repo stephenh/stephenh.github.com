@@ -1,6 +1,7 @@
 ---
 date: "2018-08-07T00:00:00Z"
-section: Testing
+categories:
+  - Testing
 title: Integration Test is a Useless Term
 ---
 

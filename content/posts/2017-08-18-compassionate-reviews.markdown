@@ -1,6 +1,7 @@
 ---
 date: "2017-08-18T00:00:00Z"
-section: Favorites
+categories:
+  - Favorites
 title: Compassionate Code Reviews
 ---
 

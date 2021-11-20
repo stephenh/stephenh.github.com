@@ -1,6 +1,7 @@
 ---
 date: "2010-08-30T00:00:00Z"
-section: GWT
+categories:
+  - GWT
 title: Doubting GMail-style Loading Indicators
 ---
 

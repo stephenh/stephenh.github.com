@@ -1,6 +1,7 @@
 ---
 date: "2009-05-12T00:00:00Z"
-section: Languages
+categories:
+  - Languages
 title: Dynamic Keywords
 ---
 

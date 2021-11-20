@@ -1,6 +1,7 @@
 ---
 date: "2014-02-08T00:00:00Z"
-section: Architecture
+categories:
+  - Architecture
 title: Dependency Injection Thought Experiment
 ---
 

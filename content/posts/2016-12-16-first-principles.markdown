@@ -1,6 +1,7 @@
 ---
 date: "2016-12-16T00:00:00Z"
-section: Architecture
+categories:
+  - Architecture
 title: First Principles
 ---
 

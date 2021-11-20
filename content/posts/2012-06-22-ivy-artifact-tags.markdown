@@ -1,6 +1,7 @@
 ---
 date: "2012-06-22T00:00:00Z"
-section: Java
+categories:
+  - Java
 title: How to Sanely Use Ivy's Artifact Tags
 ---
 

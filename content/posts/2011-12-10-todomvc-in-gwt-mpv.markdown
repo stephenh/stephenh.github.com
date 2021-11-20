@@ -1,6 +1,7 @@
 ---
 date: "2011-12-10T00:00:00Z"
-section: GWT
+categories:
+  - GWT
 title: todomvc in Tessell
 ---
 

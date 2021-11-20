@@ -1,6 +1,7 @@
 ---
 date: "2017-09-30T00:00:00Z"
-section: Testing
+categories:
+  - Testing
 title: Dealing with Selenium API Gotchas
 ---
 

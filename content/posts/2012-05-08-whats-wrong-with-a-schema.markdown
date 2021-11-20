@@ -1,6 +1,7 @@
 ---
 date: "2012-05-08T00:00:00Z"
-section: Architecture
+categories:
+  - Architecture
 title: What's Wrong with a Schema?
 ---
 

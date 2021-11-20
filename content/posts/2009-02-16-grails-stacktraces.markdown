@@ -1,6 +1,7 @@
 ---
 date: "2009-02-16T00:00:00Z"
-section: Java
+caetgories:
+  - Java
 title: Grails Stacktraces
 ---
 

@@ -1,6 +1,5 @@
 ---
 date: "2012-11-29T00:00:00Z"
-section: None
 title: Reinvent 2012 Keynote Notes
 ---
 

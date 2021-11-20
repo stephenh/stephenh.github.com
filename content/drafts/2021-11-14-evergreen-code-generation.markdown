@@ -1,6 +1,7 @@
 ---
 date: "2021-11-14T00:00:00Z"
-section: Architecture
+categories:
+  - Architecture
 title: Evergreen Code Generation
 ---
 

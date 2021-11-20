@@ -1,6 +1,7 @@
 ---
 date: "2009-09-10T00:00:00Z"
-section: Scala
+categories:
+  - Scala
 title: Running ScalaTest Spec Tests from Eclipse
 ---
 

@@ -1,6 +1,7 @@
 ---
 date: "2012-12-14T00:00:00Z"
-section: Scala
+categories:
+  - Scala
 title: Scala Implicit Conversion with Tuples
 ---
 

@@ -1,6 +1,7 @@
 ---
 date: "2009-07-14T00:00:00Z"
-section: Joist
+categories:
+  - Joist
 title: Validation with Objects Instead Of Annotations
 ---
 

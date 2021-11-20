@@ -1,6 +1,7 @@
 ---
 date: "2012-06-24T00:00:00Z"
-section: Joist
+categories:
+  - Joist
 title: Joist Snapshots, A 2nd-Level Cache Alternative
 ---
 

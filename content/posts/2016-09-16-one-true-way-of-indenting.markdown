@@ -1,6 +1,7 @@
 ---
 date: "2016-09-16T00:00:00Z"
-section: Productivity
+categories:
+  - Productivity
 title: The One True Way Of Indentation
 ---
 

@@ -1,6 +1,7 @@
 ---
 date: "2014-10-03T00:00:00Z"
-section: Java
+categories:
+  - Java
 title: jOOQ Went Commercial
 ---
 

@@ -1,6 +1,7 @@
 ---
 date: "2010-06-28T00:00:00Z"
-section: GWT
+categories:
+  - GWT
 title: gwt-mpv-apt 1.1
 ---
 

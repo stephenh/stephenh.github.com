@@ -1,6 +1,7 @@
 ---
 date: "2012-11-02T00:00:00Z"
-section: Joist
+categories:
+  - Joist
 title: Joist Execute Class
 ---
 

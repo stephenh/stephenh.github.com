@@ -1,6 +1,7 @@
 ---
 date: "2017-03-03T00:00:00Z"
-section: Productivity
+categories:
+  - Productivity
 title: Writing Emails Asking for Help
 ---
 

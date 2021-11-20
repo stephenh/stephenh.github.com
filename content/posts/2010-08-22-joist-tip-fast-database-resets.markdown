@@ -1,6 +1,7 @@
 ---
 date: "2010-08-22T00:00:00Z"
-section: Joist
+categories:
+  - Joist
 title: Joist Tip, Fast Database Resets
 ---
 

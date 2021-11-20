@@ -1,6 +1,7 @@
 ---
 date: "2014-02-03T00:00:00Z"
-section: Productivity
+categories:
+  - Productivity
 title: Copy & Extend, A Great Way To Learn
 ---
 

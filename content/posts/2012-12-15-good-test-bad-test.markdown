@@ -1,6 +1,7 @@
 ---
 date: "2012-12-15T00:00:00Z"
-section: Testing
+categories:
+  - Testing
 title: Good Test, Bad Test
 ---
 

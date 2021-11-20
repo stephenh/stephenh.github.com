@@ -1,6 +1,7 @@
 ---
 date: "2014-12-29T00:00:00Z"
-section: Scala
+categories:
+  - Scala
 title: Spark Size Tracking
 ---
 

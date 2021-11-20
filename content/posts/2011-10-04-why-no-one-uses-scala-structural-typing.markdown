@@ -1,6 +1,7 @@
 ---
 date: "2011-10-04T00:00:00Z"
-section: Scala
+categories:
+  - Scala
 title: Why No One Uses Scala's Structural Typing
 ---
 

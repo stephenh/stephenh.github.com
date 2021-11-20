@@ -1,6 +1,8 @@
 ---
 date: "2017-01-07T00:00:00Z"
-section: Testing
+categories:
+  - Testing
+  - Favorites
 title: Obsessively Simple Test Values
 ---
 

@@ -1,6 +1,7 @@
 ---
 date: "2018-06-13T00:00:00Z"
-section: Languages
+categories:
+  - Languages
 title: Thoughts on Go (from a JVM Programmer)
 ---
 
