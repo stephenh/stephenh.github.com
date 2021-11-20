@@ -1,0 +1,173 @@
+---
+date: "2010-06-28T00:00:00Z"
+categories:
+  - GWT
+title: gwt-mpv-apt 1.1
+---
+
+**Update 2011/12/29:** This post was originally about the `gwt-mpv-apt` project, which has since been merged into/rechristened Tessell, see [tessell.org](http://www.tessell.org).
+
+`gwt-mpv-apt` is a annotation processor (natively supported by Eclipse and `javac`) that generates `gwt-dispatch` and `GwtEvents` for GWT projects.
+
+The benefit is **a 10x decrease in boilerplate code**, which is something every GWT project needs.
+
+The [github page](http://github.com/stephenh/gwt-mpv-apt) is pretty self-explanatory, but the basic idea is that `gwt-mpv-apt` can generate both your Action and Result command-pattern DTOs and then also your GWT event DTOs from "spec" classes that contain only the minimal amount of information needed to derive the resulting DTOs.
+
+Manually Creating Action/Result DTOs
+------------------------------------
+
+Let's start out without `gwt-mpv-apt` and see how things typically work.
+
+For example, if you were writing a `gwt-dispatch` Action/Result by hand for creating a new `User`, you'd have to:
+
+1. Make a `NewUserAction` class
+1. Have it implement the `Action<NewUserResult>` interface
+1. Add a field/getter/setter for `String username`
+1. Add a protected `NewUserAction` constructor for serialization
+1. Add a public constructor for `NewUserAction(String username)` for real usage
+1. Add a default `serialVersionUID` to avoid the Eclipse warning (assuming the warning is enabled)
+1. Make a `NewUserResult` class
+1. Have it implement the `Result` interface
+1. Add a field/getter/setter for `boolean success`, and `Integer newUserId`
+1. Add a protected `NewUserResult` constructor for serialization
+1. Add a public constructor for `NewUserResult(boolean success, Integer newUserId)` for real usage
+1. Add a default `serialVersionUID` to avoid the Eclipse warning (assuming the warning is enabled)
+1. If you want caching add `hashCode/equals` to `NewUserAction`
+1. If you want nice debugging add `toString` to `NewUserAction`
+1. If you want nice debugging add `toString` to `NewUserResult`
+
+In the end, you'll end up with something like:
+
+```java
+public class NewUserAction implements Action<NewUserResult> {
+  private static final long serialVersionUID = 1L;
+  private String username;
+
+  public NewUserAction(String username) {
+    this.username = username;
+  }
+
+  protected NewUserAction() {
+  }
+
+  public String getUsername() {
+    return this.username;
+  }
+
+  @Override
+  public int hashCode() {
+      int hashCode = 23;
+      hashCode = (hashCode * 37) + getClass().hashCode();
+      hashCode = (hashCode * 37) + (username == null ? 1 : username.hashCode());
+      return hashCode;
+  }
+
+  @Override
+  public boolean equals(Object other) {
+      if (other != null && other.getClass().equals(this.getClass())) {
+          NewUserAction o = (NewUserAction) other;
+          return (o.username == null && this.username == null)
+                 || (o.username != null && o.username.equals(this.username));
+      }
+      return false;
+  }
+
+  @Override
+  public String toString() {
+      return "NewUserAction[" + username + "]";
+  }
+}
+
+public class NewUserResult implements Result {
+  private static final long serialVersionUID = 1L;
+  private boolean success;
+  private Integer newUserId;
+
+  public NewUserResult(boolean success, Integer newUserId) {
+    this.success = success;
+    this.newUserId = newUserId;
+  }
+
+  protected NewUserResult() {
+  }
+
+  public boolean getSuccess() {
+    return this.success;
+  }
+
+  public Integer getNewUserId() {
+    return this.newUserId;
+  }
+
+  @Override
+  public String toString() {
+      return "NewUserResult[" + success + "," + newUserId + "]";
+  }
+}
+```
+
+So, roughly 15 steps leading to 60 LOC.
+
+Which isn't necessarily a big deal, until you have to repeat it for every Action/Result pair in your project.
+
+Generating Action/Result DTOs
+-----------------------------
+
+So, let's try this again. If we think about it, what are we really trying to do?
+
+We have 1 operation: creating a new user. We know it should take 1 input parameter (`username`) and return two output parameters (`success` and `newUserId`).
+
+With `gwt-mpv-apt`, we can specify this directly by:
+
+1. Make a new `NewUserSpec` class
+1. Add a `String in1username` field (`in1` == first input parameter)
+1. Add a `boolean out1success` field (`out1` == first output parameter)
+1. Add a `Integer out2newUserId` field (`out2` == second output parameter)
+1. Add a `GenDispatch` annotation
+
+So, it while look like:
+
+```java
+@GenDispatch
+public class NewUserSpec {
+  String in1username;
+  boolean out1success;
+  Integer out2newUserId;
+}
+```
+
+And that's it.
+
+`gwt-mpv-apt` will step in (if you're in Eclipse **as soon as you hit Save**), and generate the `NewUserAction` and `NewUserResult` classes that look exactly like the ~60 lines of boilerplate above from this 6 lines of spec.
+
+That's an **order of magnitude** decrease in LOC (60 -> 6) and a **3x decrease in manual steps** (15 -> 5).
+
+Adding Up The Savings
+---------------------
+
+Saving ~50 LOC for one example is good. But, even better, this savings is applied to every command `Action/Result` in your project.
+
+I'm currently writing what I consider a small project, and it has 20 command patterns. So, 50 LOC `x` 20 commands = 1,000 LOC I didn't have to write.
+
+So, pretty quickly, we're talking about real LOC that `gwt-mpv-apt` should save you.
+
+Events Too
+----------
+
+I'll do another post sometime with the details of `gwt-mpv-apt`'s GWT event support, but for now I'll leave you with a short of example:
+
+```java
+@GenEvent
+public class FooChangedEventSpec {
+  Foo p1foo;
+}
+```
+
+That will generate a `FooChangedEvent`, `FooChangedHandler`, and all sorts of other boilerplate that, if you've written GWT events before, you'll know is a PITA to type out each time.
+
+Getting `gwt-mpv-apt`
+---------------------
+
+The [github page](http://github.com/stephenh/gwt-mpv-apt) is the best place to go.
+
+
