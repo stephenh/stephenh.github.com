@@ -4,7 +4,7 @@ theme = "hugo-coder"
 languageCode = "en-us"
 defaultContentLanguage = "en"
 paginate = 20
-disqusShortname = "shaberman"
+disqusShortname = "draconianoverlord"
 
 [params]
 author = "Stephen Haberman"
