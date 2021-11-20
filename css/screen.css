@@ -1,0 +1,97 @@
+
+body {
+  margin: 0;
+  padding: 0;
+  overflow-y: scroll;
+  font-family: lato, 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  color: #333;
+  font-size: 21px;
+  background-color: #333;
+}
+
+#title-outer {
+}
+
+#title-inner {
+    width: 43em;
+    margin: 0 auto;
+    padding: 1em 2em 0em 2em;
+}
+
+h1#blog-title {
+    margin: 0.1em;
+}
+
+h1#blog-title a {
+    display: block;
+    text-decoration: none;
+    color: #FFFFFE;
+    text-shadow: 1px 1px 0 #333;
+}
+
+#blog-description {
+    color: #BDBDBC;
+    text-shadow: 1px 1px 0 #333;
+    font-size: 1.1em;
+    margin-left: 5px;
+}
+
+#site-outer {
+    overflow: auto; /* prevent margin collapse */
+}
+
+#site-inner {
+    width: 43em;
+    margin: 1.5em auto 1.5em auto;
+    padding: 0.5em 2em 0.5em 2em;
+    border-radius: 10px;
+    background-color: white;
+}
+
+#footer-outer {
+}
+
+#footer-inner {
+    width: 43em;
+    margin: 0em auto 0em auto;
+    padding: 0em 2em 0.5em 2em;
+}
+
+#footer-inner a {
+    color: #BDBDBC;
+    text-decoration: none;
+    margin-right: 0.5em;
+}
+
+h1, h2, h3 {
+    margin-bottom: 0.5em;
+    text-shadow: 1px 1px 0 #99C;
+}
+
+#site-inner p {
+    line-height: 1.25em;
+    margin-bottom: 1.45em;
+}
+
+#site-inner li {
+    margin-bottom: 1em;
+}
+
+pre {
+    overflow: auto;
+    margin: 2em 1em 2em 1em;
+    padding: 0.5em;
+    background-color: #222;
+    color: white;
+}
+
+blockquote {
+    margin: 2em 1em 2em 1em;
+    font-size: 0.8em;
+}
+
+.image {
+    display: block;
+    margin: auto;
+    width: 35em;
+}

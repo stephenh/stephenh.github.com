@@ -1,0 +1,294 @@
+<!doctype html><html lang=en>
+<head>
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width,initial-scale=1">
+<meta http-equiv=content-language content="en">
+<meta name=color-scheme content="light dark">
+<meta name=author content="Stephen Haberman">
+<meta name=description content="Ivy, everyone&rsquo;s favorite &ldquo;it&rsquo;s not Maven&rdquo; dependency manager, has a unique, idiosyncratic feature I was fighting with today: artifact tags to override which jars/artifacts you use from upstream projects.
+While Maven has only project-to-project dependencies (i.e. you get all the jars in each upstream project whether you want them or not), Ivy adds the concept of configurations to select subsets of artifacts within your dependencies. E.g., in an ivy.xml file:">
+<meta name=keywords content="blog,developer,personal">
+<meta name=twitter:card content="summary">
+<meta name=twitter:title content="How to Sanely Use Ivy's Artifact Tags">
+<meta name=twitter:description content="Ivy, everyone&rsquo;s favorite &ldquo;it&rsquo;s not Maven&rdquo; dependency manager, has a unique, idiosyncratic feature I was fighting with today: artifact tags to override which jars/artifacts you use from upstream projects.
+While Maven has only project-to-project dependencies (i.e. you get all the jars in each upstream project whether you want them or not), Ivy adds the concept of configurations to select subsets of artifacts within your dependencies. E.g., in an ivy.xml file:">
+<meta property="og:title" content="How to Sanely Use Ivy's Artifact Tags">
+<meta property="og:description" content="Ivy, everyone&rsquo;s favorite &ldquo;it&rsquo;s not Maven&rdquo; dependency manager, has a unique, idiosyncratic feature I was fighting with today: artifact tags to override which jars/artifacts you use from upstream projects.
+While Maven has only project-to-project dependencies (i.e. you get all the jars in each upstream project whether you want them or not), Ivy adds the concept of configurations to select subsets of artifacts within your dependencies. E.g., in an ivy.xml file:">
+<meta property="og:type" content="article">
+<meta property="og:url" content="http://draconianoverlord.com/2012/06/22/how-to-sanely-use-ivys-artifact-tags.html/"><meta property="article:section" content="posts">
+<meta property="article:published_time" content="2012-06-22T00:00:00+00:00">
+<meta property="article:modified_time" content="2012-06-22T00:00:00+00:00">
+<title>
+How to Sanely Use Ivy's Artifact Tags · Draconian Overlord
+</title>
+<link rel=canonical href=http://draconianoverlord.com/2012/06/22/how-to-sanely-use-ivys-artifact-tags.html/>
+<link rel=preload href="/fonts/forkawesome-webfont.woff2?v=1.2.0" as=font type=font/woff2 crossorigin>
+<link rel=stylesheet href=/css/coder.min.d9fddbffe6f27e69985dc5fe0471cdb0e57fbf4775714bc3d847accb08f4a1f6.css integrity="sha256-2f3b/+byfmmYXcX+BHHNsOV/v0d1cUvD2Eesywj0ofY=" crossorigin=anonymous media=screen>
+<link rel=stylesheet href=/css/coder-dark.min.aa883b9ce35a8ff4a2a5008619005175e842bb18a8a9f9cc2bbcf44dab2d91fa.css integrity="sha256-qog7nONaj/SipQCGGQBRdehCuxioqfnMK7z0Tastkfo=" crossorigin=anonymous media=screen>
+<link rel=icon type=image/png href=/images/favicon-32x32.png sizes=32x32>
+<link rel=icon type=image/png href=/images/favicon-16x16.png sizes=16x16>
+<link rel=apple-touch-icon href=/images/apple-touch-icon.png>
+<link rel=apple-touch-icon sizes=180x180 href=/images/apple-touch-icon.png>
+<meta name=generator content="Hugo 0.89.4">
+</head>
+<body class="preload-transitions colorscheme-auto">
+<div class=float-container>
+<a id=dark-mode-toggle class=colorscheme-toggle>
+<i class="fa fa-adjust fa-fw" aria-hidden=true></i>
+</a>
+</div>
+<main class=wrapper>
+<nav class=navigation>
+<section class=container>
+<a class=navigation-title href=/>Draconian Overlord</a>
+Oppressing software entropy
+</section>
+</nav>
+<div class=content>
+<section class="container post">
+<article>
+<header>
+<div class=post-title>
+<h1 class=title>
+<a class=title-link href=http://draconianoverlord.com/2012/06/22/how-to-sanely-use-ivys-artifact-tags.html/>
+How to Sanely Use Ivy's Artifact Tags
+</a>
+</h1>
+</div>
+<div class=post-meta>
+<div class=date>
+<span class=posted-on>
+<i class="fa fa-calendar" aria-hidden=true></i>
+<time datetime=2012-06-22T00:00:00Z>
+June 22, 2012
+</time>
+</span>
+<span class=reading-time>
+<i class="fa fa-clock-o" aria-hidden=true></i>
+6-minute read
+</span>
+</div>
+<div class=categories>
+<i class="fa fa-folder" aria-hidden=true></i>
+<a href=/categories/java/>Java</a></div>
+</div>
+</header>
+<div>
+<p><a href=http://ant.apache.org/ivy/>Ivy</a>, everyone&rsquo;s favorite &ldquo;it&rsquo;s not Maven&rdquo; dependency manager, has a unique, idiosyncratic feature I was fighting with today: artifact tags to override which jars/artifacts you use from upstream projects.</p>
+<p>While Maven has only project-to-project dependencies (i.e. you get all the jars in each upstream project whether you want them or not), Ivy adds the concept of configurations to select subsets of artifacts within your dependencies. E.g., in an <code>ivy.xml</code> file:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-xml data-lang=xml><span style=color:#f92672>&lt;dependency</span> <span style=color:#a6e22e>org=</span><span style=color:#e6db74>&#34;upstream&#34;</span> <span style=color:#a6e22e>name=</span><span style=color:#e6db74>&#34;project&#34;</span> <span style=color:#a6e22e>rev=</span><span style=color:#e6db74>&#34;1.0&#34;</span>
+    <span style=color:#a6e22e>conf=</span><span style=color:#e6db74>&#34;default-&gt;someSubsetConf&#34;</span> <span style=color:#f92672>/&gt;</span>
+</code></pre></div><p>By using <code>someSubsetConf</code>, you can select a specific set of artifacts (only those that its own <code>ivy.xml</code> file declares as part of it&rsquo;s <code>someSubsetConf</code>) from the upstream project.</p>
+<p>Ivy goes further, and that if the upstream project doesn&rsquo;t have a configuration in its <code>ivy.xml</code> file that suits your needs, you can request specific artifacts directly, e.g.:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-xml data-lang=xml><span style=color:#f92672>&lt;dependency</span> <span style=color:#a6e22e>org=</span><span style=color:#e6db74>&#34;upstream&#34;</span> <span style=color:#a6e22e>name=</span><span style=color:#e6db74>&#34;project&#34;</span> <span style=color:#a6e22e>rev=</span><span style=color:#e6db74>&#34;1.0&#34;</span><span style=color:#f92672>&gt;</span>
+  <span style=color:#f92672>&lt;artifact</span> <span style=color:#a6e22e>name=</span><span style=color:#e6db74>&#34;onlyTheOneYouWant&#34;</span><span style=color:#f92672>/&gt;</span>
+<span style=color:#f92672>&lt;/dependency&gt;</span>
+</code></pre></div><p>While this flexibility, which is very characteristic of Ivy, is often times nice, I do sometimes wonder whether Maven&rsquo;s non-flexibility and hence simplicity in not having confs and artifact overrides is the better choice in the long run.</p>
+<p>Nonetheless, I use Ivy, and have used <code>artifact</code> tags on several occasions, but they never worked the way I thought they would, so I finally sat down and tried to systematically understand their semantics.</p>
+<h2 id=the-short-version>
+The Short Version
+<a class=heading-link href=#the-short-version>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h2>
+<ol>
+<li>
+<p>Prefer to not use <code>artifact</code> tags&ndash;if possible, change the upstream project&rsquo;s configurations to match your needs and just rely on configuration-to-configuration mapping. It&rsquo;s more intuitive, less boilerplate.</p>
+<p>If you must use <code>artifact</code> tags, then:</p>
+</li>
+<li>
+<p><em>Always</em> add a <code>conf</code> attribute to your <code>artifact</code> tag, and</p>
+</li>
+<li>
+<p><em>Always</em> add a <code>conf</code> attribute to the parent <code>dependency</code> tag that is the union of all of the confs used by <code>artifact</code> tags within that dependency.</p>
+</li>
+</ol>
+<p>For example:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-xml data-lang=xml><span style=color:#f92672>&lt;dependency</span> <span style=color:#a6e22e>org=</span><span style=color:#e6db74>&#34;upstream&#34;</span> <span style=color:#a6e22e>name=</span><span style=color:#e6db74>&#34;project&#34;</span>
+    <span style=color:#a6e22e>rev=</span><span style=color:#e6db74>&#34;1.0&#34;</span> <span style=color:#a6e22e>conf=</span><span style=color:#e6db74>&#34;conf1,conf2&#34;</span><span style=color:#f92672>&gt;</span>
+  <span style=color:#f92672>&lt;artifact</span> <span style=color:#a6e22e>name=</span><span style=color:#e6db74>&#34;artifact1&#34;</span> <span style=color:#a6e22e>conf=</span><span style=color:#e6db74>&#34;conf1&#34;</span><span style=color:#f92672>/&gt;</span>
+  <span style=color:#f92672>&lt;artifact</span> <span style=color:#a6e22e>name=</span><span style=color:#e6db74>&#34;artifact2&#34;</span> <span style=color:#a6e22e>conf=</span><span style=color:#e6db74>&#34;conf2&#34;</span><span style=color:#f92672>/&gt;</span>
+<span style=color:#f92672>&lt;/dependency&gt;</span>
+</code></pre></div><p>Will put <code>artifact1</code> in your <code>conf1</code> and <code>artifact2</code> in your <code>conf2</code>, just as you would expect. Simple.</p>
+<p><strong>Be warned:</strong> if you don&rsquo;t include these <code>conf</code> attributes exactly as I&rsquo;ve described, things will very likely not work they way you expect.</p>
+<p>If you don&rsquo;t care why, that&rsquo;s fine, this template should serve you well. If you do want to understand the incantation, that&rsquo;s what the next section is about.</p>
+<h2 id=the-long-version>
+The Long Version
+<a class=heading-link href=#the-long-version>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h2>
+<p>This section describes each of the variations of <code>dependency</code> and <code>artifact</code> tags I used to derive Ivy&rsquo;s semantics and decipher the docs.</p>
+<p>Note that I used Ivy 2.3.0-rc1, which as of this writing is current, and the <code>springframework</code> dependency comes from <a href=http://www.bizo.com>Bizo</a>&rsquo;s internal Ivy repository, so it doesn&rsquo;t match the Maven central namespace or anything like that. Substitute your own dependency with a non-trivial amount of artifacts if you want to follow along.</p>
+<p>The base <code>ivy.xml</code> file I was using looked like:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-xml data-lang=xml>...
+
+<span style=color:#f92672>&lt;configurations&gt;</span>
+  <span style=color:#f92672>&lt;conf</span> <span style=color:#a6e22e>name=</span><span style=color:#e6db74>&#34;default&#34;</span><span style=color:#f92672>/&gt;</span>
+  <span style=color:#f92672>&lt;conf</span> <span style=color:#a6e22e>name=</span><span style=color:#e6db74>&#34;buildtime&#34;</span> <span style=color:#a6e22e>visibility=</span><span style=color:#e6db74>&#34;private&#34;</span><span style=color:#f92672>/&gt;</span>
+  <span style=color:#f92672>&lt;conf</span> <span style=color:#a6e22e>name=</span><span style=color:#e6db74>&#34;test&#34;</span> <span style=color:#a6e22e>visibility=</span><span style=color:#e6db74>&#34;private&#34;</span><span style=color:#f92672>/&gt;</span>
+  <span style=color:#f92672>&lt;conf</span> <span style=color:#a6e22e>name=</span><span style=color:#e6db74>&#34;sources&#34;</span><span style=color:#f92672>/&gt;</span>
+<span style=color:#f92672>&lt;/configurations&gt;</span>
+
+<span style=color:#f92672>&lt;dependencies</span>
+    <span style=color:#a6e22e>defaultconfmapping=</span><span style=color:#e6db74>&#34;sources-&gt;sources();%-&gt;default&#34;</span>
+    <span style=color:#a6e22e>defaultconf=</span><span style=color:#e6db74>&#34;default;sources&#34;</span><span style=color:#f92672>&gt;</span>
+  ...
+<span style=color:#f92672>&lt;/dependencies&gt;</span>
+</code></pre></div><p>And now, each of the variations:</p>
+<ol>
+<li>
+<p>Just a regular <code>dependency</code> tag:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-xml data-lang=xml><span style=color:#f92672>&lt;dependency</span> <span style=color:#a6e22e>org=</span><span style=color:#e6db74>&#34;springframework&#34;</span> <span style=color:#a6e22e>name=</span><span style=color:#e6db74>&#34;spring&#34;</span>
+        <span style=color:#a6e22e>rev=</span><span style=color:#e6db74>&#34;3.0.6.RELEASE&#34;</span><span style=color:#f92672>/&gt;</span>
+</code></pre></div><p>Pulls in:</p>
+<ul>
+<li>default: all <code>default</code> spring artifacts (web, servlets, test, etc.)</li>
+<li>buildtime, test: no spring artifacts</li>
+<li>sources: all <code>sources</code> spring artifacts (web, servlets, test, etc.)</li>
+</ul>
+<p>As expected, given our <code>ivy.xml</code> file&rsquo;s <code>defaultconf="default;sources"</code> setting.</p>
+<p>This is actually fine, and shows the intuitiveness of configuration-to-configuration mapping.</p>
+<p>But the idea is that the Spring <code>default</code> conf (in our internal repository) anyway pulls in a lot of various Spring jars we don&rsquo;t need, so we&rsquo;re going to try and use <code>artifact</code> to cut that down some.</p>
+</li>
+<li>
+<p>Add just an <code>artifact</code> tag:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-xml data-lang=xml><span style=color:#f92672>&lt;dependency</span> <span style=color:#a6e22e>org=</span><span style=color:#e6db74>&#34;springframework&#34;</span> <span style=color:#a6e22e>name=</span><span style=color:#e6db74>&#34;spring&#34;</span>
+    <span style=color:#a6e22e>rev=</span><span style=color:#e6db74>&#34;3.0.6.RELEASE&#34;</span><span style=color:#f92672>&gt;</span>
+  <span style=color:#f92672>&lt;artifact</span> <span style=color:#a6e22e>name=</span><span style=color:#e6db74>&#34;org.springframework.web&#34;</span> <span style=color:#f92672>/&gt;</span>
+<span style=color:#f92672>&lt;/dependency&gt;</span>
+</code></pre></div><p>Pulls in:</p>
+<ul>
+<li>default: web jar</li>
+<li>buildtime, test: no spring artifacts</li>
+<li>sources: web <em>jar</em> (not sources)</li>
+</ul>
+<p>Wtf? Ivy docs on <a href=http://ant.apache.org/ivy/history/latest-milestone/ivyfile/dependency-artifact.html>artifact</a>:</p>
+<p>&ldquo;By default, if no (artifact) configuration is specified, artifacts specification applies to all master configurations.&rdquo;</p>
+<p>What is a &ldquo;master configuration? Ivy docs on <a href=http://ant.apache.org/ivy/history/latest-milestone/ivyfile/dependency.html>dependency</a>:</p>
+<p>&ldquo;This mapping (<code>conf</code> attribute of <code>dependency</code> tag) indicates which configurations of the dependency are required in which configurations of the current module, also called master configurations.&rdquo;</p>
+<p>So, due to <code>defaultconf="default;sources"</code>, those are our &ldquo;master configurations&rdquo; for this artifact, and the web <em>jar</em> artifact is put in both the default and sources confs.</p>
+<p><strong>Take away:</strong> Leaving off <code>artifact</code>&rsquo;s <code>conf</code> attribute puts the artifact in any master configuration, which is probably not what you want. Add a <code>conf</code>.</p>
+</li>
+<li>
+<p>Add an <code>artifact</code> tag with <code>conf</code> attribute:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-xml data-lang=xml><span style=color:#f92672>&lt;dependency</span> <span style=color:#a6e22e>org=</span><span style=color:#e6db74>&#34;springframework&#34;</span> <span style=color:#a6e22e>name=</span><span style=color:#e6db74>&#34;spring&#34;</span>
+    <span style=color:#a6e22e>rev=</span><span style=color:#e6db74>&#34;3.0.6.RELEASE&#34;</span><span style=color:#f92672>&gt;</span>
+  <span style=color:#f92672>&lt;artifact</span> <span style=color:#a6e22e>name=</span><span style=color:#e6db74>&#34;org.springframework.web&#34;</span> <span style=color:#a6e22e>conf=</span><span style=color:#e6db74>&#34;default&#34;</span><span style=color:#f92672>/&gt;</span>
+<span style=color:#f92672>&lt;/dependency&gt;</span>
+</code></pre></div><p>Pulls in:</p>
+<ul>
+<li>default: web jar</li>
+<li>buildtime, test: no spring artifacts</li>
+<li>sources: <em>all spring sources</em></li>
+</ul>
+<p>Wtf? Ivy docs on <a href=http://ant.apache.org/ivy/history/latest-milestone/ivyfile/dependency-artifact.html>artifact</a>:</p>
+<p>&ldquo;do not forget that if you do not specify any specification for a particular configuration (none of the artifact&rsquo;s confs include the master configuration) then no specification will apply for this configuration and it will be resolved not taking into account any specification.&rdquo;</p>
+<p>Since we used <code>conf=default</code> but had no <code>conf=sources</code> anywhere, sources fell back to using the default mapping, and pulled in all sources artifacts.</p>
+<p><strong>Take away</strong>: If you add an <code>artifact</code> <code>conf</code>, set the parent <code>dependency</code> <code>conf</code> to include only those confs that you&rsquo;ve mapped.</p>
+</li>
+<li>
+<p>Add an <code>artifact</code> tag with <code>conf</code> attribute and <code>dependency</code> <code>conf</code>:</p>
+<pre tabindex=0><code>&lt;dependency org=&quot;springframework&quot; name=&quot;spring&quot;
+    rev=&quot;3.0.6.RELEASE&quot; conf=&quot;default&quot;&gt;
+  &lt;artifact name=&quot;org.springframework.web&quot; conf=&quot;default&quot;/&gt;
+&lt;/dependency&gt;
+</code></pre><p>Pulls in:</p>
+<ul>
+<li>default: web jar</li>
+<li>buildtime, test: no spring artifacts</li>
+<li>sources: no spring artifacts</li>
+</ul>
+<p>As expected.</p>
+</li>
+<li>
+<p>Add two <code>artifact</code> tags with <code>conf</code> attributes:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-xml data-lang=xml><span style=color:#f92672>&lt;dependency</span> <span style=color:#a6e22e>org=</span><span style=color:#e6db74>&#34;springframework&#34;</span> <span style=color:#a6e22e>name=</span><span style=color:#e6db74>&#34;spring&#34;</span>
+    <span style=color:#a6e22e>rev=</span><span style=color:#e6db74>&#34;3.0.6.RELEASE&#34;</span><span style=color:#f92672>&gt;</span>
+  <span style=color:#f92672>&lt;artifact</span> <span style=color:#a6e22e>name=</span><span style=color:#e6db74>&#34;org.springframework.web&#34;</span> <span style=color:#a6e22e>conf=</span><span style=color:#e6db74>&#34;default&#34;</span><span style=color:#f92672>/&gt;</span>
+  <span style=color:#f92672>&lt;artifact</span> <span style=color:#a6e22e>name=</span><span style=color:#e6db74>&#34;org.springframework.web-sources&#34;</span> <span style=color:#a6e22e>type=</span><span style=color:#e6db74>&#34;sources&#34;</span> <span style=color:#a6e22e>ext=</span><span style=color:#e6db74>&#34;jar&#34;</span> <span style=color:#a6e22e>conf=</span><span style=color:#e6db74>&#34;sources&#34;</span><span style=color:#f92672>/&gt;</span>
+<span style=color:#f92672>&lt;/dependency&gt;</span>
+</code></pre></div><p>Pulls in:</p>
+<ul>
+<li>default: web jar</li>
+<li>buildtime, test: no spring artifacts</li>
+<li>sources: web sources</li>
+</ul>
+<p>As expected. All master configurations had <code>artifact</code> tag overrides, so none of them (<code>master</code> or <code>sources</code>) fell back to their default mapping.</p>
+</li>
+<li>
+<p>Add two <code>artifact</code> tags with one non-&ldquo;master&rdquo; <code>conf</code> attribute:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-xml data-lang=xml><span style=color:#f92672>&lt;dependency</span> <span style=color:#a6e22e>org=</span><span style=color:#e6db74>&#34;springframework&#34;</span> <span style=color:#a6e22e>name=</span><span style=color:#e6db74>&#34;spring&#34;</span>
+    <span style=color:#a6e22e>rev=</span><span style=color:#e6db74>&#34;3.0.6.RELEASE&#34;</span><span style=color:#f92672>&gt;</span>
+  <span style=color:#f92672>&lt;artifact</span> <span style=color:#a6e22e>name=</span><span style=color:#e6db74>&#34;org.springframework.web&#34;</span> <span style=color:#a6e22e>conf=</span><span style=color:#e6db74>&#34;default&#34;</span><span style=color:#f92672>/&gt;</span>
+  <span style=color:#f92672>&lt;artifact</span> <span style=color:#a6e22e>name=</span><span style=color:#e6db74>&#34;org.springframework.test&#34;</span> <span style=color:#a6e22e>conf=</span><span style=color:#e6db74>&#34;test&#34;</span><span style=color:#f92672>/&gt;</span>
+<span style=color:#f92672>&lt;/dependency&gt;</span>
+</code></pre></div><p>Pulls in:</p>
+<ul>
+<li>default: web jar</li>
+<li>buildtime: no spring artifacts</li>
+<li>test: <em>no</em> spring artifacts</li>
+<li>sources: all spring sources</li>
+</ul>
+<p>Wtf? Ivy docs on <a href=http://ant.apache.org/ivy/history/latest-milestone/ivyfile/dependency-artifact.html>artifact</a>:</p>
+<p><code>conf</code> attribute is &ldquo;comma separated list of the <em>master configurations</em> in which this artifact should be included.&rdquo;</p>
+<p><code>test</code> is not a master configuration, so it is essentially ignored.</p>
+<p><strong>Take away:</strong> if you add an <code>artifact</code> <code>conf</code>, ensure it is a master configuration, or just add it to the <code>dependency</code> <code>conf</code> to make sure</p>
+</li>
+<li>
+<p>Two <code>artifact</code> tags, both with &ldquo;master&rdquo; <code>conf</code> attributes:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-xml data-lang=xml><span style=color:#f92672>&lt;dependency</span> <span style=color:#a6e22e>org=</span><span style=color:#e6db74>&#34;springframework&#34;</span> <span style=color:#a6e22e>name=</span><span style=color:#e6db74>&#34;spring&#34;</span>
+    <span style=color:#a6e22e>rev=</span><span style=color:#e6db74>&#34;3.0.6.RELEASE&#34;</span> <span style=color:#a6e22e>conf=</span><span style=color:#e6db74>&#34;default,test&#34;</span><span style=color:#f92672>&gt;</span>
+  <span style=color:#f92672>&lt;artifact</span> <span style=color:#a6e22e>name=</span><span style=color:#e6db74>&#34;org.springframework.web&#34;</span> <span style=color:#a6e22e>conf=</span><span style=color:#e6db74>&#34;default&#34;</span><span style=color:#f92672>/&gt;</span>
+  <span style=color:#f92672>&lt;artifact</span> <span style=color:#a6e22e>name=</span><span style=color:#e6db74>&#34;org.springframework.test&#34;</span> <span style=color:#a6e22e>conf=</span><span style=color:#e6db74>&#34;test&#34;</span><span style=color:#f92672>/&gt;</span>
+<span style=color:#f92672>&lt;/dependency&gt;</span>
+</code></pre></div><p>Pulls in:</p>
+<ul>
+<li>default: web jar</li>
+<li>buildtime: no spring artifacts</li>
+<li>test: test jar</li>
+<li>sources: no spring sources</li>
+</ul>
+<p>As expected, given the behavior discovered so far.</p>
+</li>
+</ol>
+<h2 id=note-on-transitive-dependencies>
+Note on Transitive Dependencies
+<a class=heading-link href=#note-on-transitive-dependencies>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h2>
+<p>Just a quick note, but while <code>artifact</code> let&rsquo;s you pick apart an upstream project&rsquo;s artifacts for only those you want, this doesn&rsquo;t have any affect on the transitive dependencies you inherit from the project&ndash;those are still based strictly on configurations.</p>
+<p>Usually this just means you&rsquo;ll end up pulling in more transitive dependencies than you need, but I think it re-enforces the notion the <code>artfact</code> override is a hack and that finding a way to do configuration-to-configuration mappings is a better way to do things with Ivy.</p>
+<h2 id=conclusion>
+Conclusion
+<a class=heading-link href=#conclusion>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h2>
+<p>Don&rsquo;t use <code>artifact</code> tags. If you do, always specify <em>both</em> the <code>dependency</code> <code>conf</code> and the <code>artifact</code> <code>conf</code>.</p>
+</div>
+<footer>
+<div id=disqus_thread></div>
+<script type=application/javascript>var disqus_config=function(){};(function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById('disqus_thread').innerHTML='Disqus comments not available by default when the website is previewed locally.';return}var b=document,a=b.createElement('script');a.async=!0,a.src='//shaberman.disqus.com/embed.js',a.setAttribute('data-timestamp',+new Date),(b.head||b.body).appendChild(a)})()</script>
+<noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript>
+<a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a>
+</footer>
+</article>
+</section>
+</div>
+<footer class=footer>
+<section class=container>
+©
+2008 -
+2021
+Stephen Haberman
+·
+Powered by <a href=https://gohugo.io/>Hugo</a> & <a href=https://github.com/luizdepra/hugo-coder/>Coder</a>.
+</section>
+</footer>
+</main>
+<script src=/js/coder.min.03b17769f4f91ae35667e1f2a1ca8c16f50562576cf90ff32b3179926914daa5.js integrity="sha256-A7F3afT5GuNWZ+HyocqMFvUFYlds+Q/zKzF5kmkU2qU="></script>
+</body>
+</html>

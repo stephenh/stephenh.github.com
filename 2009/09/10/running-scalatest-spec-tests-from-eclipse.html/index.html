@@ -1,0 +1,220 @@
+<!doctype html><html lang=en>
+<head>
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width,initial-scale=1">
+<meta http-equiv=content-language content="en">
+<meta name=color-scheme content="light dark">
+<meta name=author content="Stephen Haberman">
+<meta name=description content="Running ScalaTest Spec Tests from Eclipse    ScalaTest is pretty cool. I&rsquo;ve been playing with the &ldquo;spec&rdquo; way of writing tests&ndash;for the most part, I have nothing against traditional JUnit 3 testXxx methods, other than having string-based test names is pretty darn cool from a readability perspective.
+The big con, however, is that ScalaTest doesn&rsquo;t have its own Eclipse plugin, so if you move away from the JUnit 3 testXxx methods, you don&rsquo;t get the nice Alt-Shift-X + T test-running capabilities directly within Eclipse.">
+<meta name=keywords content="blog,developer,personal">
+<meta name=twitter:card content="summary">
+<meta name=twitter:title content="Running ScalaTest Spec Tests from Eclipse">
+<meta name=twitter:description content="Running ScalaTest Spec Tests from Eclipse    ScalaTest is pretty cool. I&rsquo;ve been playing with the &ldquo;spec&rdquo; way of writing tests&ndash;for the most part, I have nothing against traditional JUnit 3 testXxx methods, other than having string-based test names is pretty darn cool from a readability perspective.
+The big con, however, is that ScalaTest doesn&rsquo;t have its own Eclipse plugin, so if you move away from the JUnit 3 testXxx methods, you don&rsquo;t get the nice Alt-Shift-X + T test-running capabilities directly within Eclipse.">
+<meta property="og:title" content="Running ScalaTest Spec Tests from Eclipse">
+<meta property="og:description" content="Running ScalaTest Spec Tests from Eclipse    ScalaTest is pretty cool. I&rsquo;ve been playing with the &ldquo;spec&rdquo; way of writing tests&ndash;for the most part, I have nothing against traditional JUnit 3 testXxx methods, other than having string-based test names is pretty darn cool from a readability perspective.
+The big con, however, is that ScalaTest doesn&rsquo;t have its own Eclipse plugin, so if you move away from the JUnit 3 testXxx methods, you don&rsquo;t get the nice Alt-Shift-X + T test-running capabilities directly within Eclipse.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="http://draconianoverlord.com/2009/09/10/running-scalatest-spec-tests-from-eclipse.html/"><meta property="article:section" content="posts">
+<meta property="article:published_time" content="2009-09-10T00:00:00+00:00">
+<meta property="article:modified_time" content="2009-09-10T00:00:00+00:00">
+<title>
+Running ScalaTest Spec Tests from Eclipse · Draconian Overlord
+</title>
+<link rel=canonical href=http://draconianoverlord.com/2009/09/10/running-scalatest-spec-tests-from-eclipse.html/>
+<link rel=preload href="/fonts/forkawesome-webfont.woff2?v=1.2.0" as=font type=font/woff2 crossorigin>
+<link rel=stylesheet href=/css/coder.min.d9fddbffe6f27e69985dc5fe0471cdb0e57fbf4775714bc3d847accb08f4a1f6.css integrity="sha256-2f3b/+byfmmYXcX+BHHNsOV/v0d1cUvD2Eesywj0ofY=" crossorigin=anonymous media=screen>
+<link rel=stylesheet href=/css/coder-dark.min.aa883b9ce35a8ff4a2a5008619005175e842bb18a8a9f9cc2bbcf44dab2d91fa.css integrity="sha256-qog7nONaj/SipQCGGQBRdehCuxioqfnMK7z0Tastkfo=" crossorigin=anonymous media=screen>
+<link rel=icon type=image/png href=/images/favicon-32x32.png sizes=32x32>
+<link rel=icon type=image/png href=/images/favicon-16x16.png sizes=16x16>
+<link rel=apple-touch-icon href=/images/apple-touch-icon.png>
+<link rel=apple-touch-icon sizes=180x180 href=/images/apple-touch-icon.png>
+<meta name=generator content="Hugo 0.89.4">
+</head>
+<body class="preload-transitions colorscheme-auto">
+<div class=float-container>
+<a id=dark-mode-toggle class=colorscheme-toggle>
+<i class="fa fa-adjust fa-fw" aria-hidden=true></i>
+</a>
+</div>
+<main class=wrapper>
+<nav class=navigation>
+<section class=container>
+<a class=navigation-title href=/>Draconian Overlord</a>
+Oppressing software entropy
+</section>
+</nav>
+<div class=content>
+<section class="container post">
+<article>
+<header>
+<div class=post-title>
+<h1 class=title>
+<a class=title-link href=http://draconianoverlord.com/2009/09/10/running-scalatest-spec-tests-from-eclipse.html/>
+Running ScalaTest Spec Tests from Eclipse
+</a>
+</h1>
+</div>
+<div class=post-meta>
+<div class=date>
+<span class=posted-on>
+<i class="fa fa-calendar" aria-hidden=true></i>
+<time datetime=2009-09-10T00:00:00Z>
+September 10, 2009
+</time>
+</span>
+<span class=reading-time>
+<i class="fa fa-clock-o" aria-hidden=true></i>
+4-minute read
+</span>
+</div>
+<div class=categories>
+<i class="fa fa-folder" aria-hidden=true></i>
+<a href=/categories/scala/>Scala</a></div>
+</div>
+</header>
+<div>
+<h1 id=running-scalatest-spec-tests-from-eclipse>
+Running ScalaTest Spec Tests from Eclipse
+<a class=heading-link href=#running-scalatest-spec-tests-from-eclipse>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h1>
+<p><a href=http://www.artima.com/scalatest/>ScalaTest</a> is pretty cool. I&rsquo;ve been playing with the &ldquo;spec&rdquo; way of writing tests&ndash;for the most part, I have nothing against traditional JUnit 3 <code>testXxx</code> methods, other than having string-based test names is pretty darn cool from a readability perspective.</p>
+<p>The big con, however, is that ScalaTest doesn&rsquo;t have its own Eclipse plugin, so if you move away from the JUnit 3 <code>testXxx</code> methods, you don&rsquo;t get the nice <code>Alt-Shift-X + T</code> test-running capabilities directly within Eclipse.</p>
+<p>I started fiddling with ways of tricking Eclipse into running spec-type ScalaTests and came up with a workable approach.</p>
+<h2 id=a-sample-test>
+A Sample Test
+<a class=heading-link href=#a-sample-test>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h2>
+<p>So, here&rsquo;s a sample spec-based test that we&rsquo;d like to run with Eclipse:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-scala data-lang=scala><span style=color:#66d9ef>import</span> org.junit.runner.RunWith
+<span style=color:#66d9ef>import</span> org.scalatest.Spec
+<span style=color:#66d9ef>import</span> org.scalatest.matchers.MustMatchers
+
+<span style=color:#a6e22e>@RunWith</span><span style=color:#f92672>(</span>classOf<span style=color:#f92672>[</span><span style=color:#66d9ef>JUnit4Runner</span><span style=color:#f92672>])</span>
+<span style=color:#66d9ef>class</span> <span style=color:#a6e22e>ZazTest</span> <span style=color:#66d9ef>extends</span> <span style=color:#a6e22e>Spec</span> <span style=color:#66d9ef>with</span> <span style=color:#a6e22e>MustMatchers</span> <span style=color:#f92672>{</span>
+  describe<span style=color:#f92672>(</span><span style=color:#e6db74>&#34;something&#34;</span><span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
+    it<span style=color:#f92672>(</span><span style=color:#e6db74>&#34;should do something fancy&#34;</span><span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
+      println<span style=color:#f92672>(</span><span style=color:#e6db74>&#34;fancy&#34;</span><span style=color:#f92672>)</span>
+    <span style=color:#f92672>}</span>
+    it <span style=color:#f92672>(</span><span style=color:#e6db74>&#34;should do something plain&#34;</span><span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
+      println<span style=color:#f92672>(</span><span style=color:#e6db74>&#34;plain&#34;</span><span style=color:#f92672>)</span>
+    <span style=color:#f92672>}</span>
+    it <span style=color:#f92672>(</span><span style=color:#e6db74>&#34;should also fail&#34;</span><span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
+      println<span style=color:#f92672>(</span><span style=color:#e6db74>&#34;fail&#34;</span><span style=color:#f92672>)</span>
+      <span style=color:#ae81ff>1</span> must equal <span style=color:#f92672>(</span><span style=color:#ae81ff>2</span><span style=color:#f92672>)</span>
+    <span style=color:#f92672>}</span>
+  <span style=color:#f92672>}</span>
+<span style=color:#f92672>}</span>
+</code></pre></div><p>Note the <code>"should do something fancy"</code> test names that JUnit really isn&rsquo;t going to understand (because they are not methods, they&rsquo;re anonymous inner classes ScalaTest keeps track of in an internal data structure).</p>
+<h2 id=how-to-get-eclipse-to-run-this-test>
+How To Get Eclipse To Run This Test
+<a class=heading-link href=#how-to-get-eclipse-to-run-this-test>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h2>
+<p>The key thing I&rsquo;ve added above is a <code>RunWith</code> annotation that uses a <code>JUnit4Runner</code> I wrote. When you hit <code>Alt-Shift-X + T</code> in Eclipse, even though <code>ZazTest</code> doesn&rsquo;t extend <code>TestCase</code> or have any <code>@Test</code> annotations, the Eclipse JUnit 4 runner seems the <code>RunWith</code> annotation and hands over control to it.</p>
+<p>The <code>JUnit4Runner</code> then just has to translate a JUnit run into something the Spec suite can handle.</p>
+<p>This turned out to be not that bad:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-scala data-lang=scala><span style=color:#66d9ef>import</span> org.junit.runner.<span style=color:#f92672>{</span><span style=color:#a6e22e>Description</span> <span style=color:#66d9ef>=&gt;</span> <span style=color:#a6e22e>JuDescription</span><span style=color:#f92672>}</span>
+<span style=color:#66d9ef>import</span> org.junit.runner.<span style=color:#f92672>{</span><span style=color:#a6e22e>Runner</span> <span style=color:#66d9ef>=&gt;</span> <span style=color:#a6e22e>JuRunner</span><span style=color:#f92672>}</span>
+<span style=color:#66d9ef>import</span> org.junit.runner.notification.<span style=color:#f92672>{</span><span style=color:#a6e22e>Failure</span> <span style=color:#66d9ef>=&gt;</span> <span style=color:#a6e22e>JuFailure</span><span style=color:#f92672>}</span>
+<span style=color:#66d9ef>import</span> org.junit.runner.notification.<span style=color:#f92672>{</span><span style=color:#a6e22e>RunNotifier</span> <span style=color:#66d9ef>=&gt;</span> <span style=color:#a6e22e>JuRunNotifer</span><span style=color:#f92672>}</span>
+<span style=color:#66d9ef>import</span> org.junit.runners.<span style=color:#f92672>{</span><span style=color:#a6e22e>Suite</span> <span style=color:#66d9ef>=&gt;</span> <span style=color:#a6e22e>JuSuite</span><span style=color:#f92672>}</span>
+<span style=color:#66d9ef>import</span> org.scalatest.<span style=color:#f92672>{</span><span style=color:#a6e22e>Filter</span> <span style=color:#66d9ef>=&gt;</span> <span style=color:#a6e22e>StFilter</span><span style=color:#f92672>}</span>
+<span style=color:#66d9ef>import</span> org.scalatest.<span style=color:#f92672>{</span><span style=color:#a6e22e>Reporter</span> <span style=color:#66d9ef>=&gt;</span> <span style=color:#a6e22e>StReporter</span><span style=color:#f92672>}</span>
+<span style=color:#66d9ef>import</span> org.scalatest.<span style=color:#f92672>{</span><span style=color:#a6e22e>Stopper</span> <span style=color:#66d9ef>=&gt;</span> <span style=color:#a6e22e>StStopper</span><span style=color:#f92672>}</span>
+<span style=color:#66d9ef>import</span> org.scalatest.<span style=color:#f92672>{</span><span style=color:#a6e22e>Suite</span> <span style=color:#66d9ef>=&gt;</span> <span style=color:#a6e22e>StSuite</span><span style=color:#f92672>}</span>
+<span style=color:#66d9ef>import</span> org.scalatest.<span style=color:#f92672>{</span><span style=color:#a6e22e>Tracker</span> <span style=color:#66d9ef>=&gt;</span> <span style=color:#a6e22e>StTracker</span><span style=color:#f92672>}</span>
+<span style=color:#66d9ef>import</span> org.scalatest.events._
+
+<span style=color:#66d9ef>class</span> <span style=color:#a6e22e>JUnit4Runner</span><span style=color:#f92672>(</span><span style=color:#66d9ef>val</span> testClass<span style=color:#66d9ef>:</span> <span style=color:#66d9ef>Class</span><span style=color:#f92672>[</span><span style=color:#66d9ef>_</span><span style=color:#f92672>])</span> <span style=color:#66d9ef>extends</span> <span style=color:#a6e22e>JuSuite</span><span style=color:#f92672>(</span>testClass<span style=color:#f92672>,</span> <span style=color:#66d9ef>new</span> java<span style=color:#f92672>.</span>util<span style=color:#f92672>.</span><span style=color:#a6e22e>ArrayList</span><span style=color:#f92672>[</span><span style=color:#66d9ef>JuRunner</span><span style=color:#f92672>]())</span> <span style=color:#f92672>{</span>
+  <span style=color:#66d9ef>val</span> suite <span style=color:#66d9ef>=</span> testClass<span style=color:#f92672>.</span>newInstance<span style=color:#f92672>.</span>asInstanceOf<span style=color:#f92672>[</span><span style=color:#66d9ef>StSuite</span><span style=color:#f92672>]</span>
+  suite<span style=color:#f92672>.</span>testNames<span style=color:#f92672>.</span>foreach<span style=color:#f92672>((</span>testName<span style=color:#f92672>)</span> <span style=color:#66d9ef>=&gt;</span> getChildren<span style=color:#f92672>.</span>add<span style=color:#f92672>(</span><span style=color:#66d9ef>new</span> <span style=color:#a6e22e>TestAdapter</span><span style=color:#f92672>(</span><span style=color:#66d9ef>this</span><span style=color:#f92672>,</span> testName<span style=color:#f92672>)))</span>
+<span style=color:#f92672>}</span>
+
+<span style=color:#66d9ef>class</span> <span style=color:#a6e22e>TestAdapter</span><span style=color:#f92672>(</span>runner<span style=color:#66d9ef>:</span> <span style=color:#66d9ef>JUnit4Runner</span><span style=color:#f92672>,</span> testName<span style=color:#66d9ef>:</span> <span style=color:#66d9ef>String</span><span style=color:#f92672>)</span> <span style=color:#66d9ef>extends</span> <span style=color:#a6e22e>JuRunner</span> <span style=color:#f92672>{</span>
+  <span style=color:#66d9ef>override</span> <span style=color:#66d9ef>def</span> run<span style=color:#f92672>(</span>notifier<span style=color:#66d9ef>:</span> <span style=color:#66d9ef>JuRunNotifer</span><span style=color:#f92672>)</span><span style=color:#66d9ef>:</span> <span style=color:#66d9ef>Unit</span> <span style=color:#f92672>=</span> <span style=color:#f92672>{</span>
+    <span style=color:#66d9ef>val</span> reporter <span style=color:#66d9ef>=</span> <span style=color:#66d9ef>new</span> <span style=color:#a6e22e>ReporterAdapter</span><span style=color:#f92672>(</span><span style=color:#66d9ef>this</span><span style=color:#f92672>,</span> notifier<span style=color:#f92672>)</span>
+    <span style=color:#66d9ef>val</span> stopper <span style=color:#66d9ef>=</span> <span style=color:#66d9ef>new</span> <span style=color:#a6e22e>StopperAdapter</span>
+    <span style=color:#66d9ef>val</span> filter <span style=color:#66d9ef>=</span> <span style=color:#66d9ef>new</span> <span style=color:#a6e22e>StFilter</span><span style=color:#f92672>(</span><span style=color:#a6e22e>None</span><span style=color:#f92672>,</span> <span style=color:#a6e22e>Set</span><span style=color:#f92672>())</span>
+    <span style=color:#66d9ef>val</span> tracker <span style=color:#66d9ef>=</span> <span style=color:#66d9ef>new</span> <span style=color:#a6e22e>StTracker</span><span style=color:#f92672>()</span>
+    runner<span style=color:#f92672>.</span>suite<span style=color:#f92672>.</span>run<span style=color:#f92672>(</span><span style=color:#a6e22e>Some</span><span style=color:#f92672>(</span>testName<span style=color:#f92672>),</span> reporter<span style=color:#f92672>,</span> stopper<span style=color:#f92672>,</span> filter<span style=color:#f92672>,</span> <span style=color:#a6e22e>Map</span><span style=color:#f92672>(),</span> <span style=color:#a6e22e>None</span><span style=color:#f92672>,</span> tracker<span style=color:#f92672>)</span>
+  <span style=color:#f92672>}</span>
+  <span style=color:#66d9ef>override</span> <span style=color:#66d9ef>def</span> getDescription<span style=color:#f92672>()</span> <span style=color:#66d9ef>=</span> <span style=color:#a6e22e>JuDescription</span><span style=color:#f92672>.</span>createTestDescription<span style=color:#f92672>(</span>runner<span style=color:#f92672>.</span>testClass<span style=color:#f92672>,</span> testName<span style=color:#f92672>)</span>
+<span style=color:#f92672>}</span>
+
+<span style=color:#66d9ef>class</span> <span style=color:#a6e22e>ReporterAdapter</span><span style=color:#f92672>(</span>test<span style=color:#66d9ef>:</span> <span style=color:#66d9ef>TestAdapter</span><span style=color:#f92672>,</span> notifier<span style=color:#66d9ef>:</span> <span style=color:#66d9ef>JuRunNotifer</span><span style=color:#f92672>)</span> <span style=color:#66d9ef>extends</span> <span style=color:#a6e22e>StReporter</span> <span style=color:#f92672>{</span>
+  <span style=color:#66d9ef>override</span> <span style=color:#66d9ef>def</span> apply<span style=color:#f92672>(</span>event<span style=color:#66d9ef>:</span> <span style=color:#66d9ef>Event</span><span style=color:#f92672>)</span><span style=color:#66d9ef>:</span> <span style=color:#66d9ef>Unit</span> <span style=color:#f92672>=</span> <span style=color:#f92672>{</span>
+    event <span style=color:#66d9ef>match</span> <span style=color:#f92672>{</span>
+      <span style=color:#66d9ef>case</span> e<span style=color:#66d9ef>:</span> <span style=color:#66d9ef>TestStarting</span> <span style=color:#f92672>=&gt;</span> notifier<span style=color:#f92672>.</span>fireTestStarted<span style=color:#f92672>(</span>test<span style=color:#f92672>.</span>getDescription<span style=color:#f92672>)</span>
+      <span style=color:#66d9ef>case</span> e<span style=color:#66d9ef>:</span> <span style=color:#66d9ef>TestSucceeded</span> <span style=color:#f92672>=&gt;</span> notifier<span style=color:#f92672>.</span>fireTestFinished<span style=color:#f92672>(</span>test<span style=color:#f92672>.</span>getDescription<span style=color:#f92672>)</span>
+      <span style=color:#66d9ef>case</span> e<span style=color:#66d9ef>:</span> <span style=color:#66d9ef>TestFailed</span> <span style=color:#f92672>=&gt;</span> notifier<span style=color:#f92672>.</span>fireTestFailure<span style=color:#f92672>(</span><span style=color:#66d9ef>new</span> <span style=color:#a6e22e>JuFailure</span><span style=color:#f92672>(</span>test<span style=color:#f92672>.</span>getDescription<span style=color:#f92672>,</span> e<span style=color:#f92672>.</span>throwable<span style=color:#f92672>.</span>get<span style=color:#f92672>))</span>
+      <span style=color:#66d9ef>case</span> e<span style=color:#66d9ef>:</span> <span style=color:#66d9ef>InfoProvided</span> <span style=color:#f92672>=&gt;</span> <span style=color:#75715e>// ignore
+</span><span style=color:#75715e></span>      <span style=color:#66d9ef>case</span> e <span style=color:#66d9ef>=&gt;</span> println<span style=color:#f92672>(</span>e<span style=color:#f92672>)</span>
+    <span style=color:#f92672>}</span>
+  <span style=color:#f92672>}</span>
+<span style=color:#f92672>}</span>
+
+<span style=color:#66d9ef>class</span> <span style=color:#a6e22e>StopperAdapter</span> <span style=color:#66d9ef>extends</span> <span style=color:#a6e22e>StStopper</span> <span style=color:#f92672>{</span>
+  <span style=color:#66d9ef>override</span> <span style=color:#66d9ef>def</span> apply <span style=color:#66d9ef>=</span> <span style=color:#66d9ef>false</span>
+<span style=color:#f92672>}</span>
+</code></pre></div><p>It basically just translates ScalaTest <code>Events</code> into JUnit <code>RunNotifier</code> events.</p>
+<h2 id=the-results>
+The Results
+<a class=heading-link href=#the-results>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h2>
+<p>Here&rsquo;s a screenshot:</p>
+<p>What&rsquo;s really cool is that, in typical JUnit fashion, no existing Run Configuration needs to be setup. E.g. I don&rsquo;t have to manually create a run configuration for each spec-based ScalaTest&ndash;just hitting <code>Alt-Shift-X + T</code> will make a new JUnit run configuration and fire off the tests.</p>
+<h2 id=the-downside>
+The Downside
+<a class=heading-link href=#the-downside>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h2>
+<p>The Eclipse JUnit UI still assumes &ldquo;something should do something fancy&rdquo; is a method name, so if you double click on it, it will fail to find it and just take you to the <code>ZazTest</code> class. So it&rsquo;s not as easy to jump right to failures.</p>
+<h2 id=bonus>
+Bonus
+<a class=heading-link href=#bonus>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h2>
+<p>Turns out you can right click and run individual <code>it</code> tests too. I have no idea how that is working&ndash;and it doesn&rsquo;t seem to be just a UI trick, because the console output from the other tests doesn&rsquo;t show up either. Weird&mldr;but cool.</p>
+<p>Anyway, I haven&rsquo;t decided if I&rsquo;ll completely jump ship on traditional <code>TestCase</code>-extending tests for Scala projects. There is a warm familiarity that I like about it. But if I do start writing more spec-based ScalaTests, this <code>RunWith</code> hack will be very handy.</p>
+<h2 id=update>
+<strong>Update</strong>
+<a class=heading-link href=#update>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h2>
+<p>Turns out this feature <a href="http://www.artima.com/forums/flat.jsp?forum=284&thread=254074">already exists</a> in ScalaTest <a href="https://scalatest.dev.java.net/source/browse/scalatest/trunk/app/src/main/scala/org/scalatest/junit/JUnitRunner.scala?rev=1789&view=markup">trunk</a> and should be in the next release as <code>org.scalatest.junit.JUnitRunner</code>.</p>
+</div>
+<footer>
+<div id=disqus_thread></div>
+<script type=application/javascript>var disqus_config=function(){};(function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById('disqus_thread').innerHTML='Disqus comments not available by default when the website is previewed locally.';return}var b=document,a=b.createElement('script');a.async=!0,a.src='//shaberman.disqus.com/embed.js',a.setAttribute('data-timestamp',+new Date),(b.head||b.body).appendChild(a)})()</script>
+<noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript>
+<a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a>
+</footer>
+</article>
+</section>
+</div>
+<footer class=footer>
+<section class=container>
+©
+2008 -
+2021
+Stephen Haberman
+·
+Powered by <a href=https://gohugo.io/>Hugo</a> & <a href=https://github.com/luizdepra/hugo-coder/>Coder</a>.
+</section>
+</footer>
+</main>
+<script src=/js/coder.min.03b17769f4f91ae35667e1f2a1ca8c16f50562576cf90ff32b3179926914daa5.js integrity="sha256-A7F3afT5GuNWZ+HyocqMFvUFYlds+Q/zKzF5kmkU2qU="></script>
+</body>
+</html>

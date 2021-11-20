@@ -1,0 +1,197 @@
+<!doctype html><html lang=en>
+<head>
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width,initial-scale=1">
+<meta http-equiv=content-language content="en">
+<meta name=color-scheme content="light dark">
+<meta name=author content="Stephen Haberman">
+<meta name=description content="While lamenting the lack of BGGA closures in Java, I came across a poll that had some interesting JavaFX comments from a guy named Bryan:
+The primary language on the JVM in the future will be JavaFX Script. New language features will go there. Java will not accept new features.  Okay, my interest was piqued. Besides JavaFX being a UI toolkit, turns out JavaFX Script is a new programming language as well.">
+<meta name=keywords content="blog,developer,personal">
+<meta name=twitter:card content="summary">
+<meta name=twitter:title content="JavaFX Decompiled">
+<meta name=twitter:description content="While lamenting the lack of BGGA closures in Java, I came across a poll that had some interesting JavaFX comments from a guy named Bryan:
+The primary language on the JVM in the future will be JavaFX Script. New language features will go there. Java will not accept new features.  Okay, my interest was piqued. Besides JavaFX being a UI toolkit, turns out JavaFX Script is a new programming language as well.">
+<meta property="og:title" content="JavaFX Decompiled">
+<meta property="og:description" content="While lamenting the lack of BGGA closures in Java, I came across a poll that had some interesting JavaFX comments from a guy named Bryan:
+The primary language on the JVM in the future will be JavaFX Script. New language features will go there. Java will not accept new features.  Okay, my interest was piqued. Besides JavaFX being a UI toolkit, turns out JavaFX Script is a new programming language as well.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="http://draconianoverlord.com/2009/01/18/javafx-decompiled.html/"><meta property="article:section" content="posts">
+<meta property="article:published_time" content="2009-01-18T00:00:00+00:00">
+<meta property="article:modified_time" content="2009-01-18T00:00:00+00:00">
+<title>
+JavaFX Decompiled · Draconian Overlord
+</title>
+<link rel=canonical href=http://draconianoverlord.com/2009/01/18/javafx-decompiled.html/>
+<link rel=preload href="/fonts/forkawesome-webfont.woff2?v=1.2.0" as=font type=font/woff2 crossorigin>
+<link rel=stylesheet href=/css/coder.min.d9fddbffe6f27e69985dc5fe0471cdb0e57fbf4775714bc3d847accb08f4a1f6.css integrity="sha256-2f3b/+byfmmYXcX+BHHNsOV/v0d1cUvD2Eesywj0ofY=" crossorigin=anonymous media=screen>
+<link rel=stylesheet href=/css/coder-dark.min.aa883b9ce35a8ff4a2a5008619005175e842bb18a8a9f9cc2bbcf44dab2d91fa.css integrity="sha256-qog7nONaj/SipQCGGQBRdehCuxioqfnMK7z0Tastkfo=" crossorigin=anonymous media=screen>
+<link rel=icon type=image/png href=/images/favicon-32x32.png sizes=32x32>
+<link rel=icon type=image/png href=/images/favicon-16x16.png sizes=16x16>
+<link rel=apple-touch-icon href=/images/apple-touch-icon.png>
+<link rel=apple-touch-icon sizes=180x180 href=/images/apple-touch-icon.png>
+<meta name=generator content="Hugo 0.89.4">
+</head>
+<body class="preload-transitions colorscheme-auto">
+<div class=float-container>
+<a id=dark-mode-toggle class=colorscheme-toggle>
+<i class="fa fa-adjust fa-fw" aria-hidden=true></i>
+</a>
+</div>
+<main class=wrapper>
+<nav class=navigation>
+<section class=container>
+<a class=navigation-title href=/>Draconian Overlord</a>
+Oppressing software entropy
+</section>
+</nav>
+<div class=content>
+<section class="container post">
+<article>
+<header>
+<div class=post-title>
+<h1 class=title>
+<a class=title-link href=http://draconianoverlord.com/2009/01/18/javafx-decompiled.html/>
+JavaFX Decompiled
+</a>
+</h1>
+</div>
+<div class=post-meta>
+<div class=date>
+<span class=posted-on>
+<i class="fa fa-calendar" aria-hidden=true></i>
+<time datetime=2009-01-18T00:00:00Z>
+January 18, 2009
+</time>
+</span>
+<span class=reading-time>
+<i class="fa fa-clock-o" aria-hidden=true></i>
+4-minute read
+</span>
+</div>
+</div>
+</header>
+<div>
+<p>While lamenting the lack of BGGA closures in Java, I came across a <a href=http://java.net/pub/pq/242>poll</a> that had some interesting JavaFX comments from a guy named Bryan:</p>
+<pre><code>The primary language on the JVM in the future will be JavaFX Script. New language features will go there. Java will not accept new features.
+</code></pre>
+<p>Okay, my interest was piqued. Besides JavaFX being a UI toolkit, turns out JavaFX Script is a new programming language as well. Would Sun really choose an entirely different language to evolve Java? They&rsquo;ve done sillier things, I suppose, so, maybe?</p>
+<p>Looking through some tutorials, JavaFX seems like it might actually work&ndash;it even has a crazy <code>bind</code> keyword for data binding. Given my <a href=http://github.com/stephenh/bindgen>bindgen</a> hobby project, I was very interested to see how they implemented first-class data binding.</p>
+<p>Tutorials only go so far though, so I downloaded the JavaFX SDK, made sure I still had the very handy <a href=http://www.kpdus.com/jad.html>Jad</a> decompiler around, and thought I&rsquo;d see what was really going on.</p>
+<p>After a few tests, I ended up with <code>foo.fx</code>:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-plain data-lang=plain>var num = 1;
+var x = bind f(num);
+
+println(&#34;num={num}, x={x}&#34;);
+
+num = 3;
+println(&#34;num={num}, x={x}&#34;);
+
+function f(arg:Integer) {
+    return arg + 1;
+}
+</code></pre></div><p>Running <code>javafxc foo.fx</code> to compile it and then <code>javafx foo</code> to run it produces this output:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-plain data-lang=plain>num=1, x=2
+num=3, x=4
+</code></pre></div><p>Okay, cool, the <code>f(num)</code> function is being lazily bound to <code>x</code>, such that <code>x</code> changes with <code>num</code>.</p>
+<p>How&rsquo;d they do that?</p>
+<p>Run <code>jad foo.class</code> and we get:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=color:#f92672>import</span> com.sun.javafx.runtime.*<span style=color:#f92672>;</span>
+<span style=color:#f92672>import</span> com.sun.javafx.runtime.location.*<span style=color:#f92672>;</span>
+<span style=color:#f92672>import</span> com.sun.javafx.runtime.sequence.Sequence<span style=color:#f92672>;</span>
+<span style=color:#f92672>import</span> javafx.lang.Builtins<span style=color:#f92672>;</span>
+
+<span style=color:#66d9ef>public</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>foo</span> <span style=color:#66d9ef>implements</span> Intf<span style=color:#f92672>,</span> FXObject <span style=color:#f92672>{</span>
+    <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>static</span> <span style=color:#66d9ef>final</span> IntVariable $num <span style=color:#f92672>=</span> IntVariable<span style=color:#f92672>.</span><span style=color:#a6e22e>make</span><span style=color:#f92672>();</span>
+    <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>static</span> <span style=color:#66d9ef>final</span> IntVariable $x <span style=color:#f92672>=</span> IntVariable<span style=color:#f92672>.</span><span style=color:#a6e22e>make</span><span style=color:#f92672>();</span>
+
+    <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>static</span> Object <span style=color:#a6e22e>javafx$run$</span><span style=color:#f92672>(</span>Sequence sequence<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
+        $num<span style=color:#f92672>.</span><span style=color:#a6e22e>setAsInt</span><span style=color:#f92672>(</span>1<span style=color:#f92672>);</span>
+        $x<span style=color:#f92672>.</span><span style=color:#a6e22e>bind</span><span style=color:#f92672>(</span>IntVariable<span style=color:#f92672>.</span><span style=color:#a6e22e>make</span><span style=color:#f92672>(</span><span style=color:#66d9ef>false</span><span style=color:#f92672>,</span> <span style=color:#66d9ef>new</span> IntBindingExpression<span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
+            <span style=color:#66d9ef>private</span> IntLocation arg$0<span style=color:#f92672>;</span>
+            <span style=color:#f92672>{</span> arg$0 <span style=color:#f92672>=</span> foo<span style=color:#f92672>.</span><span style=color:#a6e22e>$num</span><span style=color:#f92672>;</span> <span style=color:#f92672>}</span>
+            <span style=color:#66d9ef>protected</span> Location<span style=color:#f92672>[]</span> <span style=color:#a6e22e>getStaticDependents</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
+                <span style=color:#66d9ef>return</span> <span style=color:#f92672>(</span><span style=color:#66d9ef>new</span> Location<span style=color:#f92672>[]</span> <span style=color:#f92672>{</span> arg$0 <span style=color:#f92672>});</span>
+            <span style=color:#f92672>}</span>
+            <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>int</span> <span style=color:#a6e22e>computeValue</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
+                <span style=color:#66d9ef>return</span> foo<span style=color:#f92672>.</span><span style=color:#a6e22e>f</span><span style=color:#f92672>(</span>arg$0<span style=color:#f92672>.</span><span style=color:#a6e22e>getAsInt</span><span style=color:#f92672>());</span>
+            <span style=color:#f92672>}</span>
+        <span style=color:#f92672>},</span> <span style=color:#66d9ef>new</span> Location<span style=color:#f92672>[</span>0<span style=color:#f92672>]));</span>
+        Builtins<span style=color:#f92672>.</span><span style=color:#a6e22e>println</span><span style=color:#f92672>(</span>String<span style=color:#f92672>.</span><span style=color:#a6e22e>format</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;num=%s, x=%s&#34;</span><span style=color:#f92672>,</span> <span style=color:#66d9ef>new</span> Object<span style=color:#f92672>[]</span> <span style=color:#f92672>{</span>
+            Integer<span style=color:#f92672>.</span><span style=color:#a6e22e>valueOf</span><span style=color:#f92672>(</span>$num<span style=color:#f92672>.</span><span style=color:#a6e22e>getAsInt</span><span style=color:#f92672>()),</span> Integer<span style=color:#f92672>.</span><span style=color:#a6e22e>valueOf</span><span style=color:#f92672>(</span>$x<span style=color:#f92672>.</span><span style=color:#a6e22e>getAsInt</span><span style=color:#f92672>())</span>
+        <span style=color:#f92672>}));</span>
+        $num<span style=color:#f92672>.</span><span style=color:#a6e22e>setAsInt</span><span style=color:#f92672>(</span>3<span style=color:#f92672>);</span>
+        Builtins<span style=color:#f92672>.</span><span style=color:#a6e22e>println</span><span style=color:#f92672>(</span>String<span style=color:#f92672>.</span><span style=color:#a6e22e>format</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;num=%s, x=%s&#34;</span><span style=color:#f92672>,</span> <span style=color:#66d9ef>new</span> Object<span style=color:#f92672>[]</span> <span style=color:#f92672>{</span>
+            Integer<span style=color:#f92672>.</span><span style=color:#a6e22e>valueOf</span><span style=color:#f92672>(</span>$num<span style=color:#f92672>.</span><span style=color:#a6e22e>getAsInt</span><span style=color:#f92672>()),</span> Integer<span style=color:#f92672>.</span><span style=color:#a6e22e>valueOf</span><span style=color:#f92672>(</span>$x<span style=color:#f92672>.</span><span style=color:#a6e22e>getAsInt</span><span style=color:#f92672>())</span>
+        <span style=color:#f92672>}));</span>
+        <span style=color:#66d9ef>return</span> <span style=color:#66d9ef>null</span><span style=color:#f92672>;</span>
+    <span style=color:#f92672>}</span>
+
+    <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>static</span> <span style=color:#66d9ef>int</span> <span style=color:#a6e22e>f</span><span style=color:#f92672>(</span><span style=color:#66d9ef>int</span> i<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
+        <span style=color:#66d9ef>return</span> i <span style=color:#f92672>+</span> 1<span style=color:#f92672>;</span>
+    <span style=color:#f92672>}</span>
+
+    <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>initialize$</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
+        addTriggers$<span style=color:#f92672>(</span><span style=color:#66d9ef>this</span><span style=color:#f92672>);</span>
+        userInit$<span style=color:#f92672>(</span><span style=color:#66d9ef>this</span><span style=color:#f92672>);</span>
+        postInit$<span style=color:#f92672>(</span><span style=color:#66d9ef>this</span><span style=color:#f92672>);</span>
+        InitHelper<span style=color:#f92672>.</span><span style=color:#a6e22e>finish</span><span style=color:#f92672>(</span><span style=color:#66d9ef>new</span> AbstractVariable<span style=color:#f92672>[</span>0<span style=color:#f92672>]);</span>
+    <span style=color:#f92672>}</span>
+
+    <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>static</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>addTriggers$</span><span style=color:#f92672>(</span>Intf intf<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
+    <span style=color:#f92672>}</span>
+
+    <span style=color:#66d9ef>public</span> <span style=color:#a6e22e>foo</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
+        <span style=color:#66d9ef>this</span><span style=color:#f92672>(</span><span style=color:#66d9ef>false</span><span style=color:#f92672>);</span>
+        initialize$<span style=color:#f92672>();</span>
+    <span style=color:#f92672>}</span>
+
+    <span style=color:#66d9ef>public</span> <span style=color:#a6e22e>foo</span><span style=color:#f92672>(</span><span style=color:#66d9ef>boolean</span> flag<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
+    <span style=color:#f92672>}</span>
+
+    <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>static</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>userInit$</span><span style=color:#f92672>(</span>Intf intf<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
+    <span style=color:#f92672>}</span>
+
+    <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>static</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>postInit$</span><span style=color:#f92672>(</span>Intf intf<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
+    <span style=color:#f92672>}</span>
+
+    <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>static</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>main</span><span style=color:#f92672>(</span>String args<span style=color:#f92672>[])</span> <span style=color:#66d9ef>throws</span> Throwable <span style=color:#f92672>{</span>
+        Entry<span style=color:#f92672>.</span><span style=color:#a6e22e>start</span><span style=color:#f92672>(</span>foo<span style=color:#f92672>,</span> args<span style=color:#f92672>);</span>
+    <span style=color:#f92672>}</span>
+<span style=color:#f92672>}</span>
+</code></pre></div><p>A <em>lot</em> of syntactic sugar is going on here.</p>
+<p>The biggest surprise is that variables in JavaFX are not variables in Java, but instead are wrapper objects, e.g. <code>IntVariable</code>.</p>
+<p>This allows the binding to work, where <code>x</code> is not set to a value, but instead set to an anonymous inner class that holds the reference to <code>num</code> for late-binding <code>x</code>.</p>
+<p>Coincidentally, this is similar to <a href=http://github.com/stephenh/bindgen>bindgen</a>&rsquo;s approach&ndash;it also uses anonymous inner classes that are initialized with references to late-bind the evaluation.</p>
+<p>What is also surprising is all of the <code>addTriggers</code>, <code>postInit</code>, <code>userInit</code>, etc. in the output.</p>
+<p>I&rsquo;m not sure what to make of this. This is where I start doubting JavaFX Script as the next general purpose language.</p>
+<p>This is a bit hypocritical of me&ndash;I pine for the &ldquo;good&rdquo; magic of extension methods, local variable type inference, and BGGA closures, but I start to cringe and label it &ldquo;bad&rdquo; magic when <code>int</code> is now an <code>IntVariable</code> and my class has a bunch of cruft it in. It seems like meta-level semantics that I was not expecting.</p>
+<p>I trust these meta-level semantics are perfect for leveraging JavaFX Script in the JavaFX UI framework, but to me it disqualifies JavaFX as a &ldquo;Java++&rdquo; contender.</p>
+<p>It seems like all of the &ldquo;Java++&rdquo; contenders (JavaFX, Groovy, and Scala) add their own meta-level semantics on top of Java. They need the meta-level to do the dynamic, trait, etc., cool features, but, to me, it just adds complexity and a leaky abstraction that I&rsquo;d rather not deal with.</p>
+<p>Enterprise software is hard enough and bad enough as it is&ndash;I can&rsquo;t imagine the average programmer also having to deal with, say, Scala&rsquo;s case classes, or traits, or whatever other nifty tricks the current &ldquo;Java++&rdquo; contenders layer on top of Java.</p>
+<p>The simplicity of Java is a real virtue. I assert that any language that adds its own &ldquo;meta-level semantics&rdquo; on top of Java is not going to replace it.</p>
+<p>My current rule of thumb: if you can decompile a &ldquo;Java++&rdquo; contender&rsquo;s code into the regular Java syntax, and have it look pretty darn close to what you&rsquo;d type out by hand, then you&rsquo;ve found your true &ldquo;Java++&rdquo; language.</p>
+</div>
+<footer>
+<div id=disqus_thread></div>
+<script type=application/javascript>var disqus_config=function(){};(function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById('disqus_thread').innerHTML='Disqus comments not available by default when the website is previewed locally.';return}var b=document,a=b.createElement('script');a.async=!0,a.src='//shaberman.disqus.com/embed.js',a.setAttribute('data-timestamp',+new Date),(b.head||b.body).appendChild(a)})()</script>
+<noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript>
+<a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a>
+</footer>
+</article>
+</section>
+</div>
+<footer class=footer>
+<section class=container>
+©
+2008 -
+2021
+Stephen Haberman
+·
+Powered by <a href=https://gohugo.io/>Hugo</a> & <a href=https://github.com/luizdepra/hugo-coder/>Coder</a>.
+</section>
+</footer>
+</main>
+<script src=/js/coder.min.03b17769f4f91ae35667e1f2a1ca8c16f50562576cf90ff32b3179926914daa5.js integrity="sha256-A7F3afT5GuNWZ+HyocqMFvUFYlds+Q/zKzF5kmkU2qU="></script>
+</body>
+</html>

@@ -1,0 +1,210 @@
+<!doctype html><html lang=en>
+<head>
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width,initial-scale=1">
+<meta http-equiv=content-language content="en">
+<meta name=color-scheme content="light dark">
+<meta name=author content="Stephen Haberman">
+<meta name=description content="Let&rsquo;s cut to the chase: testing AJAX applications can suck.
+Selenium is great for Web 1.0 applications, which involve a page load after each significant user action. Selenium knows to block until the page is done loading, and so the page load provides an implicit &ldquo;wait until crap is done&rdquo; barrier to keep your test from getting ahead of the browser.
+But that goes away in AJAX applications&ndash;no page load. There are a variety of ways to compensate, most of which are what I call pre-assertion waiting&ndash;before asserting &ldquo;did X happen&rdquo; poll for a little bit to ensure &ldquo;X&rdquo; is there.">
+<meta name=keywords content="blog,developer,personal">
+<meta name=twitter:card content="summary">
+<meta name=twitter:title content="Sane AJAX Testing in Selenium">
+<meta name=twitter:description content="Let&rsquo;s cut to the chase: testing AJAX applications can suck.
+Selenium is great for Web 1.0 applications, which involve a page load after each significant user action. Selenium knows to block until the page is done loading, and so the page load provides an implicit &ldquo;wait until crap is done&rdquo; barrier to keep your test from getting ahead of the browser.
+But that goes away in AJAX applications&ndash;no page load. There are a variety of ways to compensate, most of which are what I call pre-assertion waiting&ndash;before asserting &ldquo;did X happen&rdquo; poll for a little bit to ensure &ldquo;X&rdquo; is there.">
+<meta property="og:title" content="Sane AJAX Testing in Selenium">
+<meta property="og:description" content="Let&rsquo;s cut to the chase: testing AJAX applications can suck.
+Selenium is great for Web 1.0 applications, which involve a page load after each significant user action. Selenium knows to block until the page is done loading, and so the page load provides an implicit &ldquo;wait until crap is done&rdquo; barrier to keep your test from getting ahead of the browser.
+But that goes away in AJAX applications&ndash;no page load. There are a variety of ways to compensate, most of which are what I call pre-assertion waiting&ndash;before asserting &ldquo;did X happen&rdquo; poll for a little bit to ensure &ldquo;X&rdquo; is there.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="http://draconianoverlord.com/2011/10/14/sane-ajax-testing-in-selenium.html/"><meta property="article:section" content="posts">
+<meta property="article:published_time" content="2011-10-14T00:00:00+00:00">
+<meta property="article:modified_time" content="2011-10-14T00:00:00+00:00">
+<title>
+Sane AJAX Testing in Selenium · Draconian Overlord
+</title>
+<link rel=canonical href=http://draconianoverlord.com/2011/10/14/sane-ajax-testing-in-selenium.html/>
+<link rel=preload href="/fonts/forkawesome-webfont.woff2?v=1.2.0" as=font type=font/woff2 crossorigin>
+<link rel=stylesheet href=/css/coder.min.d9fddbffe6f27e69985dc5fe0471cdb0e57fbf4775714bc3d847accb08f4a1f6.css integrity="sha256-2f3b/+byfmmYXcX+BHHNsOV/v0d1cUvD2Eesywj0ofY=" crossorigin=anonymous media=screen>
+<link rel=stylesheet href=/css/coder-dark.min.aa883b9ce35a8ff4a2a5008619005175e842bb18a8a9f9cc2bbcf44dab2d91fa.css integrity="sha256-qog7nONaj/SipQCGGQBRdehCuxioqfnMK7z0Tastkfo=" crossorigin=anonymous media=screen>
+<link rel=icon type=image/png href=/images/favicon-32x32.png sizes=32x32>
+<link rel=icon type=image/png href=/images/favicon-16x16.png sizes=16x16>
+<link rel=apple-touch-icon href=/images/apple-touch-icon.png>
+<link rel=apple-touch-icon sizes=180x180 href=/images/apple-touch-icon.png>
+<meta name=generator content="Hugo 0.89.4">
+</head>
+<body class="preload-transitions colorscheme-auto">
+<div class=float-container>
+<a id=dark-mode-toggle class=colorscheme-toggle>
+<i class="fa fa-adjust fa-fw" aria-hidden=true></i>
+</a>
+</div>
+<main class=wrapper>
+<nav class=navigation>
+<section class=container>
+<a class=navigation-title href=/>Draconian Overlord</a>
+Oppressing software entropy
+</section>
+</nav>
+<div class=content>
+<section class="container post">
+<article>
+<header>
+<div class=post-title>
+<h1 class=title>
+<a class=title-link href=http://draconianoverlord.com/2011/10/14/sane-ajax-testing-in-selenium.html/>
+Sane AJAX Testing in Selenium
+</a>
+</h1>
+</div>
+<div class=post-meta>
+<div class=date>
+<span class=posted-on>
+<i class="fa fa-calendar" aria-hidden=true></i>
+<time datetime=2011-10-14T00:00:00Z>
+October 14, 2011
+</time>
+</span>
+<span class=reading-time>
+<i class="fa fa-clock-o" aria-hidden=true></i>
+6-minute read
+</span>
+</div>
+<div class=categories>
+<i class="fa fa-folder" aria-hidden=true></i>
+<a href=/categories/gwt/>GWT</a></div>
+</div>
+</header>
+<div>
+<p>Let&rsquo;s cut to the chase: testing AJAX applications can suck.</p>
+<p>Selenium is great for Web 1.0 applications, which involve a page load after each significant user action. Selenium knows to block until the page is done loading, and so the page load provides an implicit &ldquo;wait until crap is done&rdquo; barrier to keep your test from getting ahead of the browser.</p>
+<p>But that goes away in AJAX applications&ndash;no page load. There are a variety of ways to compensate, most of which are what I call pre-assertion waiting&ndash;before asserting &ldquo;did X happen&rdquo; poll for a little bit to ensure &ldquo;X&rdquo; is there. E.g.:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java>ajaxSubmit<span style=color:#f92672>.</span><span style=color:#a6e22e>click</span><span style=color:#f92672>();</span>
+waitForErrorToShowUp<span style=color:#f92672>();</span>
+assertErrorIs<span style=color:#f92672>(...);</span>
+</code></pre></div><p>In my experience, pre-assertion waiting in tests is not ideal. They&rsquo;re verbose, often fickle, and at a higher risk of rotting when the application is refactored (&ldquo;Is this wait really needed? Better leave it in, just in case.").</p>
+<p>Instead, I think a good goal for functional UI tests is to <strong>never have explicit wait lines</strong> in your test methods. If you can pull this off, I think the resulting tests will be more readable, more reliable, and more resilient to change.</p>
+<p>To accomplish this, I&rsquo;ve been using two tricks that, in tandem, work really well:</p>
+<ol>
+<li>Reintroduce the concept of &ldquo;page loading&rdquo;</li>
+<li>Use post-action waiting instead of pre-assertion waiting</li>
+</ol>
+<p>And also a heavy dose of <a href=http://code.google.com/p/selenium/wiki/PageObjects>Page Objects</a> abstraction.</p>
+<p>So, let&rsquo;s see what this looks like.</p>
+<h2 id=reintroduce-page-loading>
+Reintroduce &ldquo;page loading&rdquo;
+<a class=heading-link href=#reintroduce-page-loading>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h2>
+<p>First: reintroduce page loading. Not real page loading, obviously. But what was Web 1.0 page loading useful for? Knowing when the browser is waiting on the server. AJAX calls are the same thing&ndash;talking to the server. We just need to make it explicit and visible to Selenium.</p>
+<p>There are a variety of ways of doing this, but you basically need a choke point in your application where all AJAX requests go through. Then:</p>
+<ol>
+<li>Before any AJAX request goes out, increment an <code>outstanding</code> variable</li>
+<li>Put the value of <code>outstanding</code> into a hidden <code>div</code> tag</li>
+<li>When the AJAX response comes back, decrement <code>outstanding</code> variable</li>
+<li>Again put the value of <code>outstanding</code> into the hidden <code>div</code></li>
+</ol>
+<p>Now Selenium has the ability to see the application&rsquo;s &ldquo;loading&rdquo; state:</p>
+<ul>
+<li>If <code>outstanding.innerText == "0"</code>, all things are good, continue the test</li>
+<li>If <code>outstanding.innerText != "0"</code>, the application is waiting, block the test</li>
+</ul>
+<p>I don&rsquo;t have any JavaScript code to show how this works, as I do all my client-side programming in GWT, so use a <a href=http://code.google.com/p/gwt-dispatch/>gwt-dispatch</a>-style approach that broadcasts AJAX events on an <code>EventBus</code>, which then <a href=https://github.com/stephenh/tessell/blob/master/user/src/main/java/org/tessell/util/OutstandingWatcher.java>OutstandingWatcher</a> listens for and maintains the <code>outstanding</code> div appropriately.</p>
+<p>For JQuery/etc., something in <a href=http://api.jquery.com/extending-ajax/>Extending AJAX</a> would probably work. It&rsquo;s probably 10-20 lines of code.</p>
+<p><strong>Update 2017:</strong> <a href=http://cabeca.github.io/blog/2013/06/16/waiting-for-completed-ajax-in-capybara-and-other-tricks/>Here</a> is an approach that uses JS variables (instead of hidden DOM elements) and jQuery AJAX send/complete callbacks that looks like it would work well.</p>
+<p>Anyway, once you have this in place, you&rsquo;ve basically got page loads back&ndash;any time an AJAX request is in-flight, Selenium can know about it by watching if <code>outstanding != 0</code>. E.g. with Selenium&rsquo;s new <code>ExpectedConditions</code> API, it might look like:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=color:#75715e>/** Waits until all async calls are complete. */</span>
+<span style=color:#66d9ef>public</span> <span style=color:#66d9ef>static</span> ExpectedCondition<span style=color:#f92672>&lt;</span>Boolean<span style=color:#f92672>&gt;</span> <span style=color:#a6e22e>outstanding</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
+  <span style=color:#66d9ef>return</span> <span style=color:#66d9ef>new</span> ExpectedCondition<span style=color:#f92672>&lt;</span>Boolean<span style=color:#f92672>&gt;()</span> <span style=color:#f92672>{</span>
+    <span style=color:#66d9ef>public</span> Boolean <span style=color:#a6e22e>apply</span><span style=color:#f92672>(</span><span style=color:#66d9ef>final</span> WebDriver from<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
+      <span style=color:#66d9ef>final</span> String outstanding <span style=color:#f92672>=</span> from
+        <span style=color:#f92672>.</span><span style=color:#a6e22e>findElement</span><span style=color:#f92672>(</span>By<span style=color:#f92672>.</span><span style=color:#a6e22e>id</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;outstanding&#34;</span><span style=color:#f92672>))</span>
+        <span style=color:#f92672>.</span><span style=color:#a6e22e>getText</span><span style=color:#f92672>();</span>
+      <span style=color:#66d9ef>return</span> <span style=color:#e6db74>&#34;0&#34;</span><span style=color:#f92672>.</span><span style=color:#a6e22e>equals</span><span style=color:#f92672>(</span>outstanding<span style=color:#f92672>);</span>
+    <span style=color:#f92672>}</span>
+  <span style=color:#f92672>};</span>
+<span style=color:#f92672>}</span>
+</code></pre></div><p>So, then you could use this in a test like:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java>ajaxSubmit<span style=color:#f92672>.</span><span style=color:#a6e22e>click</span><span style=color:#f92672>();</span>
+WebDriverUtil<span style=color:#f92672>.</span><span style=color:#a6e22e>waitFor</span><span style=color:#f92672>(</span>outstanding<span style=color:#f92672>());</span>
+assertErrorIs<span style=color:#f92672>(...);</span>
+</code></pre></div><h2 id=post-action-waiting>
+Post-Action Waiting
+<a class=heading-link href=#post-action-waiting>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h2>
+<p>Which brings us right to the second trick: the test is now doing <strong>post-action</strong> waiting. And not only is it post-action, but it&rsquo;s <strong>generic waiting</strong>. This has several nice benefits:</p>
+<ul>
+<li>
+<p>It doesn&rsquo;t matter whatever the application was doing while the request was in-flight&ndash;spinning a wheel for the user, doing nothing at all, whatever&ndash;Selenium can always look for <code>outstanding != 0</code> and just work.</p>
+</li>
+<li>
+<p>It doesn&rsquo;t matter what the test is going to assert after this, so we don&rsquo;t need to worry about all of our tests' wait logic breaking if we change the application&rsquo;s behavior.</p>
+</li>
+</ul>
+<p>Basically, we&rsquo;re back to the convenience of Web 1.0 applications&ndash;we have an automatic, reliable way of keeping the browser and test in sync with each other.</p>
+<h2 id=page-objects>
+Page Objects
+<a class=heading-link href=#page-objects>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h2>
+<p>So, that&rsquo;s the core of the approach. I think this just by itself will work quite well and, in my opinion, better than pre-assertion/per-assertion waiting approaches.</p>
+<p>However, I&rsquo;ve also been going one step further and, with my <a href=https://github.com/stephenh/pageobjects>pageobjects</a> implementation, centralizing the waiting declarations within the page objects themselves. So, I might have:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=color:#75715e>// each page/fragment in the app has an XxxPage class
+</span><span style=color:#75715e></span><span style=color:#66d9ef>class</span> <span style=color:#a6e22e>EmployeePage</span> <span style=color:#66d9ef>extends</span> AbstractPageObject <span style=color:#f92672>{</span>
+  <span style=color:#75715e>// each element on the page has a field of XxxObject
+</span><span style=color:#75715e></span>  <span style=color:#66d9ef>public</span> TextBoxObect name <span style=color:#f92672>=</span> <span style=color:#66d9ef>new</span> TextBoxObect<span style=color:#f92672>(</span><span style=color:#e6db74>&#34;employeeName&#34;</span><span style=color:#f92672>);</span>
+
+  <span style=color:#75715e>// fluently add `outstanding` to submit
+</span><span style=color:#75715e></span>  <span style=color:#66d9ef>public</span> ButtonObject submit <span style=color:#f92672>=</span> <span style=color:#66d9ef>new</span> ButtonObject<span style=color:#f92672>(</span><span style=color:#e6db74>&#34;submit&#34;</span><span style=color:#f92672>)</span>
+    <span style=color:#f92672>.</span><span style=color:#a6e22e>afterClickWaitFor</span><span style=color:#f92672>(</span>outstanding<span style=color:#f92672>());</span>
+
+  <span style=color:#75715e>// cstr, other fields...
+</span><span style=color:#75715e></span><span style=color:#f92672>}</span>
+</code></pre></div><p>The <code>afterClickWaitFor</code> means there is just <em>one place</em> in all of the functional tests that says &ldquo;after this button is clicked, we will probably have to wait for the server&rdquo;.</p>
+<p>So the test can now look even simpler, with no mention of waiting:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java>employeePage<span style=color:#f92672>.</span><span style=color:#a6e22e>submit</span><span style=color:#f92672>.</span><span style=color:#a6e22e>click</span><span style=color:#f92672>();</span>
+assertErrorIs<span style=color:#f92672>(...);</span>
+</code></pre></div><p>And if you&rsquo;re extra spiffy, you might even encapsulate the error gathering logic into the <code>EmployeePage</code> as well, so then you&rsquo;re test is:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java>employeePage<span style=color:#f92672>.</span><span style=color:#a6e22e>submit</span><span style=color:#f92672>.</span><span style=color:#a6e22e>click</span><span style=color:#f92672>();</span>
+assertThat<span style=color:#f92672>(</span>employeePage<span style=color:#f92672>.</span><span style=color:#a6e22e>getErrors</span><span style=color:#f92672>(),</span> contains<span style=color:#f92672>(</span><span style=color:#e6db74>&#34;...&#34;</span><span style=color:#f92672>));</span>
+</code></pre></div><p>To me, this is a pretty nice test to read. No explicit waiting, pretty high level (the ids/lookup logic are encapsulated in the page objects). It&rsquo;s probably not as flowing as a <a href=http://www.growing-object-oriented-software.com/>GooS</a>-style functional tests, which are awesome, but personally I find this level of abstraction to be a sweet spot in the trade off between effort and benefit.</p>
+<h2 id=disclaimer>
+Disclaimer
+<a class=heading-link href=#disclaimer>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h2>
+<p>The one large disclaimer to this approach is that I haven&rsquo;t had to deal with a lot of animation&ndash;all of my waiting really is on the server, and then things in the UI are generally displayed right away (within the same event loop that services the AJAX response).</p>
+<p>If you&rsquo;re doing anything with <code>setTimeout</code>, e.g. animation or progressive calculations, then you&rsquo;ll probably have to fall back to pre-assertion waiting (although, now that I think about it, you could likely have your animation library maintain similar &ldquo;animation in progress&rdquo; markers/hidden DOM elements for the Selenium tests to synchronize against). Although hopefully you could find a wait to encapsulate it into a page object, perhaps some sort of <code>beforeAssertionWaitFor</code> method (which doesn&rsquo;t exist yet).</p>
+<p>Anyway, that disclaimer aside, I&rsquo;ve found this approach to be very successful. My last few projects have had much more most robust Selenium tests than previous ones (that doesn&rsquo;t mean perfect; but definitely much better). Part of that is likely due to the kick ass job the Selenium developers are doing, but I think the outstanding + post-action waiting approach has a large part to do with it as well.</p>
+<p>If you try it out, I hope you find it useful. Feel free to download <a href=https://github.com/stephenh/pageobjects>pageobjects</a>, play around, and drop me an email/Github message if you run in to anything.</p>
+</div>
+<footer>
+<div id=disqus_thread></div>
+<script type=application/javascript>var disqus_config=function(){};(function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById('disqus_thread').innerHTML='Disqus comments not available by default when the website is previewed locally.';return}var b=document,a=b.createElement('script');a.async=!0,a.src='//shaberman.disqus.com/embed.js',a.setAttribute('data-timestamp',+new Date),(b.head||b.body).appendChild(a)})()</script>
+<noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript>
+<a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a>
+</footer>
+</article>
+</section>
+</div>
+<footer class=footer>
+<section class=container>
+©
+2008 -
+2021
+Stephen Haberman
+·
+Powered by <a href=https://gohugo.io/>Hugo</a> & <a href=https://github.com/luizdepra/hugo-coder/>Coder</a>.
+</section>
+</footer>
+</main>
+<script src=/js/coder.min.03b17769f4f91ae35667e1f2a1ca8c16f50562576cf90ff32b3179926914daa5.js integrity="sha256-A7F3afT5GuNWZ+HyocqMFvUFYlds+Q/zKzF5kmkU2qU="></script>
+</body>
+</html>

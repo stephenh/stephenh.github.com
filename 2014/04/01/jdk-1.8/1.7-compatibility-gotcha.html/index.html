@@ -1,0 +1,308 @@
+<!doctype html><html lang=en>
+<head>
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width,initial-scale=1">
+<meta http-equiv=content-language content="en">
+<meta name=color-scheme content="light dark">
+<meta name=author content="Stephen Haberman">
+<meta name=description content="To help future weary souls out, here are the Google-friendly queries for what we&rsquo;ll be talking about in this post:
+ java.lang.NoClassDefFoundError: java/lang/reflect/Executable java.lang.ClassNotFoundException: java.lang.reflect.Executable  tldr: if you want to use -source 1.6/-target 1.6 (or 1.7), then compile with the JDK 1.6 or JDK 1.7, otherwise you risk newer/Java 1.8-only classes sneaking into the bytecode.
+Overview    The other day, I built a trunk version of GWT with my machine&rsquo;s default JDK, JDK 1.">
+<meta name=keywords content="blog,developer,personal">
+<meta name=twitter:card content="summary">
+<meta name=twitter:title content="JDK 1.8/1.7 Compatibility Gotcha">
+<meta name=twitter:description content="To help future weary souls out, here are the Google-friendly queries for what we&rsquo;ll be talking about in this post:
+ java.lang.NoClassDefFoundError: java/lang/reflect/Executable java.lang.ClassNotFoundException: java.lang.reflect.Executable  tldr: if you want to use -source 1.6/-target 1.6 (or 1.7), then compile with the JDK 1.6 or JDK 1.7, otherwise you risk newer/Java 1.8-only classes sneaking into the bytecode.
+Overview    The other day, I built a trunk version of GWT with my machine&rsquo;s default JDK, JDK 1.">
+<meta property="og:title" content="JDK 1.8/1.7 Compatibility Gotcha">
+<meta property="og:description" content="To help future weary souls out, here are the Google-friendly queries for what we&rsquo;ll be talking about in this post:
+ java.lang.NoClassDefFoundError: java/lang/reflect/Executable java.lang.ClassNotFoundException: java.lang.reflect.Executable  tldr: if you want to use -source 1.6/-target 1.6 (or 1.7), then compile with the JDK 1.6 or JDK 1.7, otherwise you risk newer/Java 1.8-only classes sneaking into the bytecode.
+Overview    The other day, I built a trunk version of GWT with my machine&rsquo;s default JDK, JDK 1.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="http://draconianoverlord.com/2014/04/01/jdk-1.8/1.7-compatibility-gotcha.html/"><meta property="article:section" content="posts">
+<meta property="article:published_time" content="2014-04-01T00:00:00+00:00">
+<meta property="article:modified_time" content="2014-04-01T00:00:00+00:00">
+<title>
+JDK 1.8/1.7 Compatibility Gotcha · Draconian Overlord
+</title>
+<link rel=canonical href=http://draconianoverlord.com/2014/04/01/jdk-1.8/1.7-compatibility-gotcha.html/>
+<link rel=preload href="/fonts/forkawesome-webfont.woff2?v=1.2.0" as=font type=font/woff2 crossorigin>
+<link rel=stylesheet href=/css/coder.min.d9fddbffe6f27e69985dc5fe0471cdb0e57fbf4775714bc3d847accb08f4a1f6.css integrity="sha256-2f3b/+byfmmYXcX+BHHNsOV/v0d1cUvD2Eesywj0ofY=" crossorigin=anonymous media=screen>
+<link rel=stylesheet href=/css/coder-dark.min.aa883b9ce35a8ff4a2a5008619005175e842bb18a8a9f9cc2bbcf44dab2d91fa.css integrity="sha256-qog7nONaj/SipQCGGQBRdehCuxioqfnMK7z0Tastkfo=" crossorigin=anonymous media=screen>
+<link rel=icon type=image/png href=/images/favicon-32x32.png sizes=32x32>
+<link rel=icon type=image/png href=/images/favicon-16x16.png sizes=16x16>
+<link rel=apple-touch-icon href=/images/apple-touch-icon.png>
+<link rel=apple-touch-icon sizes=180x180 href=/images/apple-touch-icon.png>
+<meta name=generator content="Hugo 0.89.4">
+</head>
+<body class="preload-transitions colorscheme-auto">
+<div class=float-container>
+<a id=dark-mode-toggle class=colorscheme-toggle>
+<i class="fa fa-adjust fa-fw" aria-hidden=true></i>
+</a>
+</div>
+<main class=wrapper>
+<nav class=navigation>
+<section class=container>
+<a class=navigation-title href=/>Draconian Overlord</a>
+Oppressing software entropy
+</section>
+</nav>
+<div class=content>
+<section class="container post">
+<article>
+<header>
+<div class=post-title>
+<h1 class=title>
+<a class=title-link href=http://draconianoverlord.com/2014/04/01/jdk-1.8/1.7-compatibility-gotcha.html/>
+JDK 1.8/1.7 Compatibility Gotcha
+</a>
+</h1>
+</div>
+<div class=post-meta>
+<div class=date>
+<span class=posted-on>
+<i class="fa fa-calendar" aria-hidden=true></i>
+<time datetime=2014-04-01T00:00:00Z>
+April 1, 2014
+</time>
+</span>
+<span class=reading-time>
+<i class="fa fa-clock-o" aria-hidden=true></i>
+7-minute read
+</span>
+</div>
+<div class=categories>
+<i class="fa fa-folder" aria-hidden=true></i>
+<a href=/categories/java/>Java</a></div>
+</div>
+</header>
+<div>
+<p>To help future weary souls out, here are the Google-friendly queries for what we&rsquo;ll be talking about in this post:</p>
+<ul>
+<li>java.lang.NoClassDefFoundError: java/lang/reflect/Executable</li>
+<li>java.lang.ClassNotFoundException: java.lang.reflect.Executable</li>
+</ul>
+<p>tldr: if you want to use <code>-source 1.6</code>/<code>-target 1.6</code> (or 1.7), then compile with the JDK 1.6 or JDK 1.7, otherwise you risk newer/Java 1.8-only classes sneaking into the bytecode.</p>
+<h2 id=overview>
+Overview
+<a class=heading-link href=#overview>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h2>
+<p>The other day, I built a trunk version of <a href=http://www.gwtproject.org>GWT</a> with my machine&rsquo;s default JDK, JDK 1.8.</p>
+<p>GWT uses Ant/<code>javac</code> to build, with the <code>-source 1.6</code> and <code>-target 1.6</code> flags set. Previously, I had thought this was a very safe/normal thing to do.</p>
+<p>However, when running this built-with-1.8 version GWT on a JDK 1.7 JVMs, an exception occurred:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>Caused by: java.lang.ClassNotFoundException: java.lang.reflect.Executable
+  at java.net.URLClassLoader$1.run<span style=color:#f92672>(</span>URLClassLoader.java:366<span style=color:#f92672>)</span>
+  at java.net.URLClassLoader$1.run<span style=color:#f92672>(</span>URLClassLoader.java:355<span style=color:#f92672>)</span>
+  at java.security.AccessController.doPrivileged<span style=color:#f92672>(</span>Native Method<span style=color:#f92672>)</span>
+  at java.net.URLClassLoader.findClass<span style=color:#f92672>(</span>URLClassLoader.java:354<span style=color:#f92672>)</span>
+  at java.lang.ClassLoader.loadClass<span style=color:#f92672>(</span>ClassLoader.java:425<span style=color:#f92672>)</span>
+  at sun.misc.Launcher$AppClassLoader.loadClass<span style=color:#f92672>(</span>Launcher.java:308<span style=color:#f92672>)</span>
+  at java.lang.ClassLoader.loadClass<span style=color:#f92672>(</span>ClassLoader.java:358<span style=color:#f92672>)</span>
+  at com.google.gwt.dev.shell.JavaDispatchImpl.getMethod<span style=color:#f92672>(</span>JavaDispatchImpl.java:122<span style=color:#f92672>)</span>
+</code></pre></div><p>Normally these sorts of errors are expected when a library uses new JDK 1.8 methods/classes. Then all downstream users also have to use JDK 1.8.</p>
+<p>However, in this case, the GWT source code doesn&rsquo;t reference <code>Executable</code> anywhere. The GWT code base is really supposed to be JDK 1.7 compatible.</p>
+<h2 id=what-is-javalangreflectexecutable-anyway>
+What Is <code>java.lang.reflect.Executable</code> anyway?
+<a class=heading-link href=#what-is-javalangreflectexecutable-anyway>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h2>
+<p>Turns out <a href=http://docs.oracle.com/javase/8/docs/api/java/lang/reflect/Executable.html><code>Executable</code></a> is the new base class for <a href=http://docs.oracle.com/javase/8/docs/api/java/lang/reflect/Method.html><code>java.lang.reflect.Method</code></a> and <a href=http://docs.oracle.com/javase/8/docs/api/java/lang/reflect/Constructor.html><code>java.lang.reflect.Constructor</code></a> in JDK 1.8.</p>
+<p>Before Java 8, the base class of <code>Method</code> and <code>Constructor</code> was <a href=http://docs.oracle.com/javase/7/docs/api/java/lang/reflect/AccessibleObject.html><code>AccessibleObject</code></a>.</p>
+<p>Granted, in Java 8, <code>AccessibleObject</code> is still <em>a</em> base class of <code>Method</code> and <code>Constructor</code>, it&rsquo;s just that <code>Executable</code> was inserted between <code>AccessibleObject</code> and <code>Method</code> and <code>Constructor</code>.</p>
+<p>Which, I don&rsquo;t know, changing base classes seems kinda risky, but they kept the old one, so I guess it seems innocent enough.</p>
+<h2 id=but-now-who-referenced-executable>
+But Now Who Referenced <code>Executable</code>?
+<a class=heading-link href=#but-now-who-referenced-executable>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h2>
+<p>So, I was still very confused; the GWT code base doesn&rsquo;t know anything about <code>Executable</code>. Sure, it uses <code>Method</code> and <code>Constructor</code> a lot, as part of normal reflection code. But no <code>Executable</code>.</p>
+<p>A cursory <code>javap -c -constants</code> of every GWT <code>.class</code> file showed no reference, no cast, to <code>Executable</code>.</p>
+<p>Looking back at the offending stack trace, the last method in the stack trace, <code>JavaDispatchImpl.getMethod</code> looks innocent:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=color:#a6e22e>@Override</span>
+<span style=color:#66d9ef>public</span> MethodAdaptor <span style=color:#a6e22e>getMethod</span><span style=color:#f92672>(</span><span style=color:#66d9ef>int</span> dispId<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
+  <span style=color:#66d9ef>if</span> <span style=color:#f92672>(</span>dispId <span style=color:#f92672>&lt;</span> 0<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
+    <span style=color:#66d9ef>throw</span> <span style=color:#66d9ef>new</span> RuntimeException<span style=color:#f92672>(</span><span style=color:#e6db74>&#34;Method does not exist.&#34;</span><span style=color:#f92672>);</span>
+  <span style=color:#f92672>}</span>
+
+  Member m <span style=color:#f92672>=</span> getMember<span style=color:#f92672>(</span>dispId<span style=color:#f92672>);</span>
+  <span style=color:#66d9ef>if</span> <span style=color:#f92672>(</span>m <span style=color:#66d9ef>instanceof</span> Method<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
+    <span style=color:#66d9ef>return</span> <span style=color:#66d9ef>new</span> MethodAdaptor<span style=color:#f92672>((</span>Method<span style=color:#f92672>)</span> m<span style=color:#f92672>);</span>
+  <span style=color:#f92672>}</span> <span style=color:#66d9ef>else</span> <span style=color:#66d9ef>if</span> <span style=color:#f92672>(</span>m <span style=color:#66d9ef>instanceof</span> Constructor<span style=color:#f92672>&lt;?&gt;)</span> <span style=color:#f92672>{</span>
+    <span style=color:#66d9ef>return</span> <span style=color:#66d9ef>new</span> MethodAdaptor<span style=color:#f92672>((</span>Constructor<span style=color:#f92672>&lt;?&gt;)</span> m<span style=color:#f92672>);</span>
+  <span style=color:#f92672>}</span> <span style=color:#66d9ef>else</span> <span style=color:#f92672>{</span>
+    <span style=color:#66d9ef>throw</span> <span style=color:#66d9ef>new</span> RuntimeException<span style=color:#f92672>();</span>
+  <span style=color:#f92672>}</span>
+<span style=color:#f92672>}</span>
+</code></pre></div><p>The <code>instanceof Method</code> check passes as true, but the stack trace doesn&rsquo;t get into <code>MethodAdaptor</code>, it first goes off and loads <code>Executable</code>, which fails and we end up stuck.</p>
+<h2 id=look-more-closely>
+Look More Closely
+<a class=heading-link href=#look-more-closely>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h2>
+<p>Given the JVM was about to call into <code>MethodAdaptor</code>, and that it typically loads the dependencies referenced by a class the first time that the class is loaded, I got more suspicious about <code>MethodAdaptor</code>s dependencies.</p>
+<p>It turns out <code>javap</code> has a verbose flag, so trying that:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>javap -s -constants -c -v ./com/google/gwt/dev/shell/MethodAdaptor.class 
+</code></pre></div><p>Resulted in a lot of interesting output, but most pertinently, we finally found the smoking gun:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>public java.lang.reflect.AccessibleObject getUnderlyingObject<span style=color:#f92672>()</span>;
+  descriptor: <span style=color:#f92672>()</span>Ljava/lang/reflect/AccessibleObject;
+  flags: ACC_PUBLIC
+  Code:
+    stack<span style=color:#f92672>=</span>1, locals<span style=color:#f92672>=</span>1, args_size<span style=color:#f92672>=</span><span style=color:#ae81ff>1</span>
+       0: aload_0       
+       1: getfield      <span style=color:#75715e>#3                  // Field method:Ljava/lang/reflect/Method;</span>
+       4: ifnull        <span style=color:#ae81ff>14</span>
+       7: aload_0       
+       8: getfield      <span style=color:#75715e>#3                  // Field method:Ljava/lang/reflect/Method;</span>
+      11: goto          <span style=color:#ae81ff>18</span>
+      14: aload_0       
+      15: getfield      <span style=color:#75715e>#2                  // Field constructor:Ljava/lang/reflect/Constructor;</span>
+      18: areturn       
+    LineNumberTable:
+      line 91: <span style=color:#ae81ff>0</span>
+    LocalVariableTable:
+      Start  Length  Slot  Name   Signature
+          <span style=color:#ae81ff>0</span>      <span style=color:#ae81ff>19</span>     <span style=color:#ae81ff>0</span>  this   Lcom/google/gwt/dev/shell/MethodAdaptor;
+    StackMapTable: number_of_entries <span style=color:#f92672>=</span> <span style=color:#ae81ff>2</span>
+         frame_type <span style=color:#f92672>=</span> <span style=color:#ae81ff>14</span> /* same */
+         frame_type <span style=color:#f92672>=</span> <span style=color:#ae81ff>67</span> /* same_locals_1_stack_item */
+        stack <span style=color:#f92672>=</span> <span style=color:#f92672>[</span> class java/lang/reflect/Executable <span style=color:#f92672>]</span>
+</code></pre></div><p>Notice the very last line: <code>stack = [ class java/lang/reflect/Executable ]</code>.</p>
+<p>What?!</p>
+<p>Here is the source of <code>getUnderlingObject</code>:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=color:#66d9ef>public</span> AccessibleObject <span style=color:#a6e22e>getUnderlyingObject</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
+  <span style=color:#66d9ef>return</span> <span style=color:#f92672>(</span>method <span style=color:#f92672>!=</span> <span style=color:#66d9ef>null</span><span style=color:#f92672>)</span> <span style=color:#f92672>?</span> method <span style=color:#f92672>:</span> constructor<span style=color:#f92672>;</span>
+<span style=color:#f92672>}</span>
+</code></pre></div><p>It&rsquo;s very tiny. And no reference to <code>Executable</code>.</p>
+<h2 id=whats-a-stack-map-table>
+What&rsquo;s a Stack Map Table?
+<a class=heading-link href=#whats-a-stack-map-table>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h2>
+<p>Explain what the Stack Map is&mldr;</p>
+<p>Here are some interesting links:</p>
+<ul>
+<li><a href=http://docs.oracle.com/javase/specs/jvms/se7/html/jvms-4.html#jvms-4.7.4>The StackMapTable Attribute</a></li>
+<li><a href=http://chrononsystems.com/blog/java-7-design-flaw-leads-to-huge-backward-step-for-the-jvm>Java 7 Bytecode Verifier</a></li>
+</ul>
+<h2 id=reproducing-it>
+Reproducing It
+<a class=heading-link href=#reproducing-it>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h2>
+<p>Okay, so, sure, this problem happens in the large GWT codebase, but can we reproduce it?</p>
+<p>It turns out, yes, it&rsquo;s very easy. Here is a simple, standalone Java file to reproduce this behavior, <code>Foo.java</code>:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=color:#f92672>import</span> java.lang.reflect.AccessibleObject<span style=color:#f92672>;</span>
+<span style=color:#f92672>import</span> java.lang.reflect.Method<span style=color:#f92672>;</span>
+<span style=color:#f92672>import</span> java.lang.reflect.Constructor<span style=color:#f92672>;</span>
+
+<span style=color:#66d9ef>public</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>Foo</span> <span style=color:#f92672>{</span>
+  <span style=color:#66d9ef>private</span> Method method<span style=color:#f92672>;</span>
+  <span style=color:#66d9ef>private</span> Constructor constructor<span style=color:#f92672>;</span>
+
+  <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>static</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>main</span><span style=color:#f92672>(</span>String<span style=color:#f92672>[]</span> args<span style=color:#f92672>)</span> <span style=color:#66d9ef>throws</span> Exception <span style=color:#f92672>{</span>
+    Foo f <span style=color:#f92672>=</span> <span style=color:#66d9ef>new</span> Foo<span style=color:#f92672>();</span>
+    System<span style=color:#f92672>.</span><span style=color:#a6e22e>out</span><span style=color:#f92672>.</span><span style=color:#a6e22e>println</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;done&#34;</span><span style=color:#f92672>);</span>
+  <span style=color:#f92672>}</span>
+
+  <span style=color:#66d9ef>public</span> <span style=color:#a6e22e>Foo</span><span style=color:#f92672>()</span> <span style=color:#66d9ef>throws</span> Exception <span style=color:#f92672>{</span>
+    Class<span style=color:#f92672>&lt;?&gt;</span> c <span style=color:#f92672>=</span> Class<span style=color:#f92672>.</span><span style=color:#a6e22e>forName</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;java.util.HashMap&#34;</span><span style=color:#f92672>);</span>
+    method <span style=color:#f92672>=</span> c<span style=color:#f92672>.</span><span style=color:#a6e22e>getMethods</span><span style=color:#f92672>()[</span>0<span style=color:#f92672>];</span>
+    constructor <span style=color:#f92672>=</span> c<span style=color:#f92672>.</span><span style=color:#a6e22e>getConstructors</span><span style=color:#f92672>()[</span>0<span style=color:#f92672>];</span>
+  <span style=color:#f92672>}</span>
+
+  <span style=color:#66d9ef>public</span> AccessibleObject <span style=color:#a6e22e>pickOne</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
+    <span style=color:#66d9ef>return</span> method <span style=color:#f92672>!=</span> <span style=color:#66d9ef>null</span> <span style=color:#f92672>?</span> method <span style=color:#f92672>:</span> constructor<span style=color:#f92672>;</span>
+  <span style=color:#f92672>}</span>
+<span style=color:#f92672>}</span>
+</code></pre></div><p>So, we&rsquo;ll start out compiling with JDK 1.8:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>$ javac -version
+javac 1.8.0
+$ javac Foo.java
+$ java Foo
+<span style=color:#66d9ef>done</span>
+</code></pre></div><p>It compiles. And, if we look at the bytecode, our stack verification data looks just fine:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>$ javap -v Foo | grep <span style=color:#e6db74>&#39;stack =&#39;</span>
+      stack <span style=color:#f92672>=</span> <span style=color:#f92672>[</span> class java/lang/reflect/AccessibleObject 
+</code></pre></div><p>It&rsquo;s using <code>AccessibleObject</code>, which will work in a JDK 1.7 JVM.</p>
+<p>However, when we run <code>Foo</code> when JDK 1.7, it actually fails, although due to the typical <code>major.minor</code> mismatch error:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>$ /usr/lib/jvm/java-7-oracle/bin/java Foo
+Exception in thread <span style=color:#e6db74>&#34;main&#34;</span> java.lang.UnsupportedClassVersionError: Foo :
+  Unsupported major.minor version 52.0
+</code></pre></div><p>Okay, fair enough, so let&rsquo;s compile with <code>-source 1.7</code> and <code>-target 1.7</code>:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>$ javac -version
+javac 1.8.0
+$ javac -source 1.7 -target 1.7
+warning: <span style=color:#f92672>[</span>options<span style=color:#f92672>]</span> bootstrap class path not set in conjunction with -source 1.7
+$ java Foo
+<span style=color:#66d9ef>done</span>
+$ /usr/lib/jvm/java-7-oracle/bin/java Foo
+Exception in thread <span style=color:#e6db74>&#34;main&#34;</span> java.lang.NoClassDefFoundError: java/lang/reflect/Executable
+</code></pre></div><p>Agh! It worked fine, until we ran with JDK 1.7, and we got the <code>Executable</code> error. And, sure enough, the offending <code>Executable</code> reference is back in the bytecode:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>$ javap -v Foo | grep <span style=color:#e6db74>&#39;stack =&#39;</span>
+      stack <span style=color:#f92672>=</span> <span style=color:#f92672>[</span> class java/lang/reflect/Executable 
+</code></pre></div><p>It seems like the JDK 1.8 compiler must have different algorithms for calculating the Stack Map Table, and when set to <code>-source 1.7</code>, it changes to an algorithm, that, ironically, picks a different type (<code>Executable</code> instead of <code>AccessibleObject</code>) for the table even though that type won&rsquo;t be available on JDK 1.7.</p>
+<h2 id=how-to-avoid-this-option-1>
+How To Avoid This: Option 1
+<a class=heading-link href=#how-to-avoid-this-option-1>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h2>
+<p>Astute readers might have noticed the tip off go by; <code>javac</code> warns about using the default (JDK 1.8) bootstrap classpath when compiling with <code>source</code>/<code>target</code> flags.</p>
+<p>This is basically <code>javac</code> warning us that, right, it knows this might happen&ndash;we&rsquo;re giving it a JDK 1.8 standard library, and expecting the compiler to &ldquo;just know&rdquo; not to include references to any 1.8-only classes (whether due to internal decisions like this stack map, or even to user-code level decisions like calling JDK 1.8-only methods).</p>
+<p>The <code>javac</code> compiler, understandably, doesn&rsquo;t really have this &ldquo;what&rsquo;s in 1.7 vs. 1.8&rdquo; metadata, so it is requesting that we override the bootstrap classpath, and make sure we&rsquo;re passing in a standard library that matches our <code>source</code> and <code>target</code> flags.</p>
+<p>And, it turns out, if we heed the warning and use the bootstrap classpath:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>$ javac -version
+1.8.0
+$ javac -source 1.7 -target 1.7 -bootclasspath /usr/lib/jvm/java-7-oracle/jre/lib/rt.jar Foo.java 
+$ java Foo
+<span style=color:#66d9ef>done</span>
+$ /usr/lib/jvm/java-7-oracle/bin/java Foo
+<span style=color:#66d9ef>done</span>
+</code></pre></div><p>Then order is restored to the world, and we can run 1.8-compiled classes on both JDK 1.8 and JDK 1.7.</p>
+<p>The bytecode has gone back to only knowing about <code>AccessibleObject</code>:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>$ javap -v Foo | grep <span style=color:#e6db74>&#39;stack =&#39;</span>
+      stack <span style=color:#f92672>=</span> <span style=color:#f92672>[</span> class java/lang/reflect/AccessibleObject 
+</code></pre></div><p>As (I assume), even though <code>javac</code> is using it&rsquo;s &ldquo;JDK 1.7&rdquo; algorithm for the Stack Map Table, <code>Executable</code> isn&rsquo;t even on the classpath at all, for it to find and reference. So the algorithm ends up with <code>AccessibleObject</code> instead, which is what we want.</p>
+<p>What is odd about this option, ensuring to pass the <code>-bootclasspath</code>, is that, previously, I thought the whole point of compiling with <code>-source</code>/<code>-target</code> was to use them when you did not have old JVMs installed, but still needed to target their platforms.</p>
+<p>This is showing saying that, even if you&rsquo;re using a JDK 1.8 compiler, to avoid gotchas like this <code>NoClassDefFoundError</code>, even with codebases that look 100% JDK 1.7 compatible, you need to use the <code>bootclasspath</code> to ensure <code>javac</code> only uses 1.7-available classes in the resulting bytecode.</p>
+<h2 id=how-to-avoid-this-option-2>
+How To Avoid This: Option 2
+<a class=heading-link href=#how-to-avoid-this-option-2>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h2>
+<p>Just compile with JDK 1.7.</p>
+<p>If you have to have the bootstrap classpath anyway, might as well set <code>JAVA_HOME</code> to a JDK 1.7 install and be done with it.</p>
+<p>This is what I did for my GWT trunk build, and it quickly went back to working as expected.</p>
+</div>
+<footer>
+<div id=disqus_thread></div>
+<script type=application/javascript>var disqus_config=function(){};(function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById('disqus_thread').innerHTML='Disqus comments not available by default when the website is previewed locally.';return}var b=document,a=b.createElement('script');a.async=!0,a.src='//shaberman.disqus.com/embed.js',a.setAttribute('data-timestamp',+new Date),(b.head||b.body).appendChild(a)})()</script>
+<noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript>
+<a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a>
+</footer>
+</article>
+</section>
+</div>
+<footer class=footer>
+<section class=container>
+©
+2008 -
+2021
+Stephen Haberman
+·
+Powered by <a href=https://gohugo.io/>Hugo</a> & <a href=https://github.com/luizdepra/hugo-coder/>Coder</a>.
+</section>
+</footer>
+</main>
+<script src=/js/coder.min.03b17769f4f91ae35667e1f2a1ca8c16f50562576cf90ff32b3179926914daa5.js integrity="sha256-A7F3afT5GuNWZ+HyocqMFvUFYlds+Q/zKzF5kmkU2qU="></script>
+</body>
+</html>

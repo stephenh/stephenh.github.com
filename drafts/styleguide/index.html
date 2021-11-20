@@ -1,0 +1,379 @@
+<!doctype html><html lang=en>
+<head>
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width,initial-scale=1">
+<meta http-equiv=content-language content="en">
+<meta name=color-scheme content="light dark">
+<meta name=author content="Stephen Haberman">
+<meta name=description content="Avoid Local Variables   E.g.
+String foo = ...; nowDoSomeWork(foo); // instead: nowDoSomeWork(...);   Reduce mental overhead of Unless foo is a very descriptive name that makes the code more readable, e.g. an intermediate result  Declare Local Variables Close to their Usage   Prefer Methods with no Blank Lines   E.g.:
+public int foo() { int i; for (thing : things) { i++; } return i; } // instead: public int foo() { int i; for (thing : things) { i++; } return i; }   Makes methods easier to visually chunk Makes jumping through code with { and } move by methods Doesn&rsquo;t work for larger methods (avoid larger methods if possible)  Field Ordering   public class Foo { public static final f1; public static final f2; private static final f3; public final String f4; private final String f6; public String f5; private String f7; public void doFoo() { } private void doBar() { } public static class Foo { } private class Bar { } }  DTO Best Practices    Prefer final fields Use constructors arguments for all instantiations  Means callers will break when new fields are added Clients expect a fully-populated DTO, that is the essence of DTOs Makes it clear what is/is not going over the wire Clarity is worth the extra field/constructor parameter/assignment dance.">
+<meta name=keywords content="blog,developer,personal">
+<meta name=twitter:card content="summary">
+<meta name=twitter:title content>
+<meta name=twitter:description content="Avoid Local Variables   E.g.
+String foo = ...; nowDoSomeWork(foo); // instead: nowDoSomeWork(...);   Reduce mental overhead of Unless foo is a very descriptive name that makes the code more readable, e.g. an intermediate result  Declare Local Variables Close to their Usage   Prefer Methods with no Blank Lines   E.g.:
+public int foo() { int i; for (thing : things) { i++; } return i; } // instead: public int foo() { int i; for (thing : things) { i++; } return i; }   Makes methods easier to visually chunk Makes jumping through code with { and } move by methods Doesn&rsquo;t work for larger methods (avoid larger methods if possible)  Field Ordering   public class Foo { public static final f1; public static final f2; private static final f3; public final String f4; private final String f6; public String f5; private String f7; public void doFoo() { } private void doBar() { } public static class Foo { } private class Bar { } }  DTO Best Practices    Prefer final fields Use constructors arguments for all instantiations  Means callers will break when new fields are added Clients expect a fully-populated DTO, that is the essence of DTOs Makes it clear what is/is not going over the wire Clarity is worth the extra field/constructor parameter/assignment dance.">
+<meta property="og:title" content>
+<meta property="og:description" content="Avoid Local Variables   E.g.
+String foo = ...; nowDoSomeWork(foo); // instead: nowDoSomeWork(...);   Reduce mental overhead of Unless foo is a very descriptive name that makes the code more readable, e.g. an intermediate result  Declare Local Variables Close to their Usage   Prefer Methods with no Blank Lines   E.g.:
+public int foo() { int i; for (thing : things) { i++; } return i; } // instead: public int foo() { int i; for (thing : things) { i++; } return i; }   Makes methods easier to visually chunk Makes jumping through code with { and } move by methods Doesn&rsquo;t work for larger methods (avoid larger methods if possible)  Field Ordering   public class Foo { public static final f1; public static final f2; private static final f3; public final String f4; private final String f6; public String f5; private String f7; public void doFoo() { } private void doBar() { } public static class Foo { } private class Bar { } }  DTO Best Practices    Prefer final fields Use constructors arguments for all instantiations  Means callers will break when new fields are added Clients expect a fully-populated DTO, that is the essence of DTOs Makes it clear what is/is not going over the wire Clarity is worth the extra field/constructor parameter/assignment dance.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="http://draconianoverlord.com/drafts/styleguide/"><meta property="article:section" content="drafts">
+<title>
+· Draconian Overlord
+</title>
+<link rel=canonical href=http://draconianoverlord.com/drafts/styleguide/>
+<link rel=preload href="/fonts/forkawesome-webfont.woff2?v=1.2.0" as=font type=font/woff2 crossorigin>
+<link rel=stylesheet href=/css/coder.min.d9fddbffe6f27e69985dc5fe0471cdb0e57fbf4775714bc3d847accb08f4a1f6.css integrity="sha256-2f3b/+byfmmYXcX+BHHNsOV/v0d1cUvD2Eesywj0ofY=" crossorigin=anonymous media=screen>
+<link rel=stylesheet href=/css/coder-dark.min.aa883b9ce35a8ff4a2a5008619005175e842bb18a8a9f9cc2bbcf44dab2d91fa.css integrity="sha256-qog7nONaj/SipQCGGQBRdehCuxioqfnMK7z0Tastkfo=" crossorigin=anonymous media=screen>
+<link rel=icon type=image/png href=/images/favicon-32x32.png sizes=32x32>
+<link rel=icon type=image/png href=/images/favicon-16x16.png sizes=16x16>
+<link rel=apple-touch-icon href=/images/apple-touch-icon.png>
+<link rel=apple-touch-icon sizes=180x180 href=/images/apple-touch-icon.png>
+<meta name=generator content="Hugo 0.89.4">
+</head>
+<body class="preload-transitions colorscheme-auto">
+<div class=float-container>
+<a id=dark-mode-toggle class=colorscheme-toggle>
+<i class="fa fa-adjust fa-fw" aria-hidden=true></i>
+</a>
+</div>
+<main class=wrapper>
+<nav class=navigation>
+<section class=container>
+<a class=navigation-title href=/>Draconian Overlord</a>
+Oppressing software entropy
+</section>
+</nav>
+<div class=content>
+<section class="container page">
+<article>
+<header>
+<h1 class=title>
+<a class=title-link href=http://draconianoverlord.com/drafts/styleguide/>
+</a>
+</h1>
+</header>
+<ol>
+<li>Avoid Local Variables</li>
+</ol>
+<hr>
+<p>E.g.</p>
+<pre><code>String foo = ...;
+nowDoSomeWork(foo);
+
+// instead:
+nowDoSomeWork(...);
+</code></pre>
+<ul>
+<li>Reduce mental overhead of</li>
+<li>Unless <code>foo</code> is a very descriptive name that makes the code more readable, e.g. an intermediate result</li>
+</ul>
+<ol start=2>
+<li>Declare Local Variables Close to their Usage</li>
+</ol>
+<hr>
+<ol start=3>
+<li>Prefer Methods with no Blank Lines</li>
+</ol>
+<hr>
+<p>E.g.:</p>
+<pre><code>public int foo() {
+  int i;
+
+  for (thing : things) {
+    i++;
+  }
+
+  return i;
+}
+
+ // instead:
+public int foo() {
+  int i;
+  for (thing : things) {
+    i++;
+  }
+  return i;
+}
+</code></pre>
+<ul>
+<li>Makes methods easier to visually chunk</li>
+<li>Makes jumping through code with { and } move by methods</li>
+<li>Doesn&rsquo;t work for larger methods (avoid larger methods if possible)</li>
+</ul>
+<ol start=4>
+<li>Field Ordering</li>
+</ol>
+<hr>
+<pre><code>public class Foo {
+  public static final f1;
+  public static final f2;
+  private static final f3;
+
+  public final String f4;
+  private final String f6;
+
+  public String f5;
+  private String f7;
+
+  public void doFoo() {
+  }
+
+  private void doBar() {
+  }
+
+  public static class Foo {
+  }
+
+  private class Bar {
+  }
+}
+</code></pre>
+<ol start=5>
+<li>DTO Best Practices</li>
+</ol>
+<hr>
+<ul>
+<li>Prefer final fields</li>
+<li>Use constructors arguments for all instantiations
+<ul>
+<li>Means callers will break when new fields are added</li>
+<li>Clients expect a fully-populated DTO, that is the essence of DTOs</li>
+<li>Makes it clear what is/is not going over the wire</li>
+<li>Clarity is worth the extra field/constructor parameter/assignment dance.</li>
+</ul>
+</li>
+</ul>
+<ol start=6>
+<li>Abbreviations</li>
+</ol>
+<hr>
+<ul>
+<li>Prefer spelled out, as long as it&rsquo;s not too long, unless clarity is really important</li>
+<li>Use a single-char abbreviation (e.g. <code>p</code> for Partner), but only when it&rsquo;s incredibly clear what <code>p</code> is and it isn&rsquo;t used for more than 3-4 lines of code after it&rsquo;s declaration</li>
+<li>Use <code>FooBarZaz</code> -> <code>fbz</code> abbreviation as a last resort.</li>
+</ul>
+<ol>
+<li>Avoid Local Variables</li>
+</ol>
+<hr>
+<p>E.g.</p>
+<pre><code>String foo = ...;
+nowDoSomeWork(foo);
+
+// instead:
+nowDoSomeWork(...);
+</code></pre>
+<ul>
+<li>Reduce mental overhead of</li>
+<li>Unless <code>foo</code> is a very descriptive name that makes the code more readable, e.g. an intermediate result</li>
+</ul>
+<ol start=2>
+<li>Declare Local Variables Close to their Usage</li>
+</ol>
+<hr>
+<ol start=3>
+<li>Prefer Methods with no Blank Lines</li>
+</ol>
+<hr>
+<p>E.g.:</p>
+<pre><code>public int foo() {
+  int i;
+
+  for (thing : things) {
+    i++;
+  }
+
+  return i;
+}
+
+ // instead:
+public int foo() {
+  int i;
+  for (thing : things) {
+    i++;
+  }
+  return i;
+}
+</code></pre>
+<ul>
+<li>Makes methods easier to visually chunk</li>
+<li>Makes jumping through code with { and } move by methods</li>
+<li>Doesn&rsquo;t work for larger methods (avoid larger methods if possible)</li>
+</ul>
+<ol start=4>
+<li>Field Ordering</li>
+</ol>
+<hr>
+<pre><code>public class Foo {
+  public static final f1;
+  public static final f2;
+  private static final f3;
+
+  public final String f4;
+  private final String f6;
+
+  public String f5;
+  private String f7;
+
+  public void doFoo() {
+  }
+
+  private void doBar() {
+  }
+
+  public static class Foo {
+  }
+
+  private class Bar {
+  }
+}
+</code></pre>
+<ol start=5>
+<li>DTO Best Practices</li>
+</ol>
+<hr>
+<ul>
+<li>Prefer final fields</li>
+<li>Use constructors arguments for all instantiations
+<ul>
+<li>Means callers will break when new fields are added</li>
+<li>Clients expect a fully-populated DTO, that is the essence of DTOs</li>
+<li>Makes it clear what is/is not going over the wire</li>
+<li>Clarity is worth the extra field/constructor parameter/assignment dance.</li>
+</ul>
+</li>
+</ul>
+<ol start=6>
+<li>Abbreviations</li>
+</ol>
+<hr>
+<ul>
+<li>Prefer spelled out, as long as it&rsquo;s not too long, unless clarity is really important</li>
+<li>Use a single-char abbreviation (e.g. <code>p</code> for Partner), but only when it&rsquo;s incredibly clear what <code>p</code> is and it isn&rsquo;t used for more than 3-4 lines of code after it&rsquo;s declaration</li>
+<li>Use <code>FooBarZaz</code> -> <code>fbz</code> abbreviation as a last resort.</li>
+</ul>
+<ol>
+<li>Avoid Local Variables</li>
+</ol>
+<hr>
+<p>E.g.</p>
+<pre><code>String foo = ...;
+nowDoSomeWork(foo);
+
+// instead:
+nowDoSomeWork(...);
+</code></pre>
+<ul>
+<li>Reduce mental overhead of</li>
+<li>Unless <code>foo</code> is a very descriptive name that makes the code more readable, e.g. an intermediate result</li>
+</ul>
+<ol start=2>
+<li>Declare Local Variables Close to their Usage</li>
+</ol>
+<hr>
+<ol start=3>
+<li>Prefer Methods with no Blank Lines</li>
+</ol>
+<hr>
+<p>E.g.:</p>
+<pre><code>public int foo() {
+  int i;
+
+  for (thing : things) {
+    i++;
+  }
+
+  return i;
+}
+
+ // instead:
+public int foo() {
+  int i;
+  for (thing : things) {
+    i++;
+  }
+  return i;
+}
+</code></pre>
+<ul>
+<li>Makes methods easier to visually chunk</li>
+<li>Makes jumping through code with { and } move by methods</li>
+<li>Doesn&rsquo;t work for larger methods (avoid larger methods if possible)</li>
+</ul>
+<ol start=4>
+<li>Field Ordering</li>
+</ol>
+<hr>
+<pre><code>public class Foo {
+  public static final f1;
+  public static final f2;
+  private static final f3;
+
+  public final String f4;
+  private final String f6;
+
+  public String f5;
+  private String f7;
+
+  public void doFoo() {
+  }
+
+  private void doBar() {
+  }
+
+  public static class Foo {
+  }
+
+  private class Bar {
+  }
+}
+</code></pre>
+<ol start=5>
+<li>DTO Best Practices</li>
+</ol>
+<hr>
+<ul>
+<li>Prefer final fields</li>
+<li>Use constructors arguments for all instantiations
+<ul>
+<li>Means callers will break when new fields are added</li>
+<li>Clients expect a fully-populated DTO, that is the essence of DTOs</li>
+<li>Makes it clear what is/is not going over the wire</li>
+<li>Clarity is worth the extra field/constructor parameter/assignment dance.</li>
+</ul>
+</li>
+</ul>
+<ol start=6>
+<li>Abbreviations</li>
+</ol>
+<hr>
+<ul>
+<li>Prefer spelled out, as long as it&rsquo;s not too long, unless clarity is really important</li>
+<li>Use a single-char abbreviation (e.g. <code>p</code> for Partner), but only when it&rsquo;s incredibly clear what <code>p</code> is and it isn&rsquo;t used for more than 3-4 lines of code after it&rsquo;s declaration</li>
+<li>Use <code>FooBarZaz</code> -> <code>fbz</code> abbreviation as a last resort.</li>
+</ul>
+<p>At some point, nouns get long enough that just using the type as a variable name becomes unwieldy. Mark will know what I mean, given the previous system we worked on together had some annoying long table/entity names. That is there my &ldquo;LinkedInAdVariation&rdquo;->&ldquo;liav&rdquo; (or just &ldquo;av&rdquo; if you want to drop the LI prefix) naming convention developed, and I think it does make code more readable, with the caveat that the variable name is only used within 2-3 lines of being declared.</p>
+<p>E.g. if you have a 30 line method, yeah, seeing &ldquo;av&rdquo; 20 lines after it&rsquo;s declared, is going to suck; but within short/tight code like this, I think short/abbreviated variable names actually help readability because the eye/mind can match &ldquo;av&rdquo; in the 3-4 surrounding lines much easier than &ldquo;linkedInAdVariation&rdquo; especially when there is also &ldquo;linkedInCampaign&rdquo; and &ldquo;getLinkedInAdVariations&rdquo;, etc., there is too many &ldquo;inkedIn"s that my eye can&rsquo;t immediately just to it anymore.</p>
+<p>It&rsquo;s kinda the same with Scala closures&mldr;e.g.
+map <em>.toString
+; using &ldquo;</em>&rdquo; (or &ldquo;i&rdquo; or whatever) is a horrible idea over 20-30 lines of code &mldr; but within 1 line, the variable name goes away, and your mind just kinda knows what it means, such that less is actually more/better.</p>
+</article>
+</section>
+</div>
+<footer class=footer>
+<section class=container>
+©
+2008 -
+2021
+Stephen Haberman
+·
+Powered by <a href=https://gohugo.io/>Hugo</a> & <a href=https://github.com/luizdepra/hugo-coder/>Coder</a>.
+</section>
+</footer>
+</main>
+<script src=/js/coder.min.03b17769f4f91ae35667e1f2a1ca8c16f50562576cf90ff32b3179926914daa5.js integrity="sha256-A7F3afT5GuNWZ+HyocqMFvUFYlds+Q/zKzF5kmkU2qU="></script>
+</body>
+</html>

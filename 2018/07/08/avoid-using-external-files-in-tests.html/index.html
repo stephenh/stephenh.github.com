@@ -1,0 +1,351 @@
+<!doctype html><html lang=en>
+<head>
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width,initial-scale=1">
+<meta http-equiv=content-language content="en">
+<meta name=color-scheme content="light dark">
+<meta name=author content="Stephen Haberman">
+<meta name=description content="I&rsquo;ve seen more projects using external files in unit tests lately.
+By external files, I mean a unit test that uses checked-in files like test/.../MyTest-input.json or test/.../MyTest-output.json for doing either input data setup or output data verification.
+It seems like I went awhile without seeing many of these file-based tests, at least widely used, but then recently two primary culprits seem to have made them more popular:
+ Jest snaphots of DOM/React trees HTTP request/response input/output mocking  Although I understand their allure, I&rsquo;m generally not a fan of these approaches; specifically, I don&rsquo;t like that they cause:">
+<meta name=keywords content="blog,developer,personal">
+<meta name=twitter:card content="summary">
+<meta name=twitter:title content="Avoid Using External Files in Tests">
+<meta name=twitter:description content="I&rsquo;ve seen more projects using external files in unit tests lately.
+By external files, I mean a unit test that uses checked-in files like test/.../MyTest-input.json or test/.../MyTest-output.json for doing either input data setup or output data verification.
+It seems like I went awhile without seeing many of these file-based tests, at least widely used, but then recently two primary culprits seem to have made them more popular:
+ Jest snaphots of DOM/React trees HTTP request/response input/output mocking  Although I understand their allure, I&rsquo;m generally not a fan of these approaches; specifically, I don&rsquo;t like that they cause:">
+<meta property="og:title" content="Avoid Using External Files in Tests">
+<meta property="og:description" content="I&rsquo;ve seen more projects using external files in unit tests lately.
+By external files, I mean a unit test that uses checked-in files like test/.../MyTest-input.json or test/.../MyTest-output.json for doing either input data setup or output data verification.
+It seems like I went awhile without seeing many of these file-based tests, at least widely used, but then recently two primary culprits seem to have made them more popular:
+ Jest snaphots of DOM/React trees HTTP request/response input/output mocking  Although I understand their allure, I&rsquo;m generally not a fan of these approaches; specifically, I don&rsquo;t like that they cause:">
+<meta property="og:type" content="article">
+<meta property="og:url" content="http://draconianoverlord.com/2018/07/08/avoid-using-external-files-in-tests.html/"><meta property="article:section" content="posts">
+<meta property="article:published_time" content="2018-07-08T00:00:00+00:00">
+<meta property="article:modified_time" content="2018-07-08T00:00:00+00:00">
+<title>
+Avoid Using External Files in Tests · Draconian Overlord
+</title>
+<link rel=canonical href=http://draconianoverlord.com/2018/07/08/avoid-using-external-files-in-tests.html/>
+<link rel=preload href="/fonts/forkawesome-webfont.woff2?v=1.2.0" as=font type=font/woff2 crossorigin>
+<link rel=stylesheet href=/css/coder.min.d9fddbffe6f27e69985dc5fe0471cdb0e57fbf4775714bc3d847accb08f4a1f6.css integrity="sha256-2f3b/+byfmmYXcX+BHHNsOV/v0d1cUvD2Eesywj0ofY=" crossorigin=anonymous media=screen>
+<link rel=stylesheet href=/css/coder-dark.min.aa883b9ce35a8ff4a2a5008619005175e842bb18a8a9f9cc2bbcf44dab2d91fa.css integrity="sha256-qog7nONaj/SipQCGGQBRdehCuxioqfnMK7z0Tastkfo=" crossorigin=anonymous media=screen>
+<link rel=icon type=image/png href=/images/favicon-32x32.png sizes=32x32>
+<link rel=icon type=image/png href=/images/favicon-16x16.png sizes=16x16>
+<link rel=apple-touch-icon href=/images/apple-touch-icon.png>
+<link rel=apple-touch-icon sizes=180x180 href=/images/apple-touch-icon.png>
+<meta name=generator content="Hugo 0.89.4">
+</head>
+<body class="preload-transitions colorscheme-auto">
+<div class=float-container>
+<a id=dark-mode-toggle class=colorscheme-toggle>
+<i class="fa fa-adjust fa-fw" aria-hidden=true></i>
+</a>
+</div>
+<main class=wrapper>
+<nav class=navigation>
+<section class=container>
+<a class=navigation-title href=/>Draconian Overlord</a>
+Oppressing software entropy
+</section>
+</nav>
+<div class=content>
+<section class="container post">
+<article>
+<header>
+<div class=post-title>
+<h1 class=title>
+<a class=title-link href=http://draconianoverlord.com/2018/07/08/avoid-using-external-files-in-tests.html/>
+Avoid Using External Files in Tests
+</a>
+</h1>
+</div>
+<div class=post-meta>
+<div class=date>
+<span class=posted-on>
+<i class="fa fa-calendar" aria-hidden=true></i>
+<time datetime=2018-07-08T00:00:00Z>
+July 8, 2018
+</time>
+</span>
+<span class=reading-time>
+<i class="fa fa-clock-o" aria-hidden=true></i>
+14-minute read
+</span>
+</div>
+<div class=categories>
+<i class="fa fa-folder" aria-hidden=true></i>
+<a href=/categories/testing/>Testing</a></div>
+</div>
+</header>
+<div>
+<p>I&rsquo;ve seen more projects using external files in unit tests lately.</p>
+<p>By external files, I mean a unit test that uses checked-in files like <code>test/.../MyTest-input.json</code> or <code>test/.../MyTest-output.json</code> for doing either input data setup or output data verification.</p>
+<p>It seems like I went awhile without seeing many of these file-based tests, at least widely used, but then recently two primary culprits seem to have made them more popular:</p>
+<ul>
+<li>Jest snaphots of DOM/React trees</li>
+<li>HTTP request/response input/output mocking</li>
+</ul>
+<p>Although I understand their allure, I&rsquo;m generally not a fan of these approaches; specifically, I don&rsquo;t like that they cause:</p>
+<h2 id=constant-eye-jumping-during-code-reviews>
+Constant Eye Jumping During Code Reviews
+<a class=heading-link href=#constant-eye-jumping-during-code-reviews>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h2>
+<p>In my opinion, code reviews with input/output files are a mess.</p>
+<p>My eye has to constantly jump around:</p>
+<ul>
+<li>&ldquo;Okay, what boundary case is this&mldr;look in the test&mldr;the test name is &lsquo;expect foo bar&rsquo;&mldr;&rdquo;</li>
+<li>&ldquo;Okay, go find the &lsquo;foo bar&rsquo; input file&mldr;where it is, find-by &lsquo;foo bar&rsquo;, okay got it!&rdquo;</li>
+<li>&ldquo;Okay, now actually read the input file, does that much the boundary test we say it is?&rdquo;</li>
+<li>&ldquo;Damn it, what was the boundary case? Skim back to the test file&mldr;okay, it&rsquo;s X&mldr;&rdquo;</li>
+<li>&ldquo;Back to the input file&mldr;yes, yes, that looks like X, good.&rdquo;</li>
+</ul>
+<p>This jumping around wastes a ton of time, and mental pattern matching that I should be applying to &ldquo;does the code/test actually do what it says it does&rdquo;.</p>
+<p>With one or maybe two tests in a PR, I can hold out, but especially once there are ~3+ boundary cases in a PR, I inevitably give up and figure, well, the author probably got it right.</p>
+<p>(I have considered adapting my PR workflow to always have two windows open, side-by-side, so I can read the test on the left, and the input/output file on the right, but I&rsquo;ve not tried this yet.)</p>
+<h2 id=input-data-overload-during-code-reviews>
+Input Data Overload During Code Reviews
+<a class=heading-link href=#input-data-overload-during-code-reviews>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h2>
+<p>As I&rsquo;ll likely repeat a few times, file-based input has zero abstractions, which means constant repetition in the files themselves.</p>
+<p>This can <em>seem</em> like simplicity, &ldquo;the input data is obvious because all 20 lines of the input file/HTTP request/whatever are right there&rdquo;.</p>
+<p>However, in a code review, or maintenance, it&rsquo;s exactly the opposite:</p>
+<ul>
+<li>&ldquo;Okay, what boundary case is this&mldr;okay, &lsquo;when the account is frozen&rsquo;&mldr;&rdquo;</li>
+<li>&ldquo;Okay, go find the input file&mldr;there are 10 accounts in this input file&mldr;which one is the frozen one&mldr;?&rdquo;</li>
+<li>&ldquo;Okay, found the test account that I&rsquo;m ~80% sure is for the frozen boundary case&mldr;there are 20 lines of JSON attributes for this one account&mldr;how many of them matter for this test? Just status=frozen?&mldr;&rdquo;</li>
+<li>&ldquo;Huh, on this frozen account, the account name is slightly different than the other accounts in this file&mldr;does that matter for this boundary case?&rdquo;</li>
+<li>&ldquo;What about this account status date? Is that just default status date, and so I should ignore it, or does the combination of status=frozen and status date matter?&rdquo;</li>
+</ul>
+<p>The purported simplicity of &ldquo;you see exactly what all of the input data is&rdquo; actually drowns out the signal of &ldquo;what matters for this test case&rdquo;.</p>
+<p>I&rsquo;ll discuss this more below, but I think abstractions are good to say &ldquo;here&rsquo;s all the default stuff you don&rsquo;t care about (hidden behind 1-2 lines of fixture code) + here&rsquo;s what makes this case unique&rdquo;. This gives you a much higher signal to noise ratio.</p>
+<h2 id=output-data-overload-during-code-reviews>
+Output Data Overload During Code Reviews
+<a class=heading-link href=#output-data-overload-during-code-reviews>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h2>
+<p>The same thing happens when doing code reviews of output files, e.g. Jest snapshots or HTTP responses.</p>
+<p>For example, if a test is for the &ldquo;turn the button blue&rdquo; UI boundary case:</p>
+<ul>
+<li>&ldquo;Okay, what boundary case is this&mldr;the button turns to blue&mldr;&rdquo;</li>
+<li>&ldquo;Okay, go find the output file&mldr;found it&mldr;&rdquo;</li>
+<li>&ldquo;Okay, there are ~20 lines of JSON here with random tree of DOM tags in it&mldr;where is &lsquo;blue&rsquo;&mldr;&rdquo;</li>
+<li>&ldquo;Ah, found it, line 15 of 20&mldr;yep, looks good&rdquo;</li>
+</ul>
+<p>I&rsquo;ve had to skim-to-ignore 95% (19/20) lines in the output file to find the <em>single</em> line that is meaningful to this boundary case.</p>
+<p>Note that, for test cases that do focus on &ldquo;how is the entire tree of DOM elements rendered&rdquo;, I think Jest snapshots are more warranted/can be okay. You get the obvious portrayal of &ldquo;no really, here is how <em>all</em> of your components look&rdquo;. That&rsquo;s great, and I think is what starts people down the &ldquo;these snapshots are amazing&rdquo; path.</p>
+<p>However, I assert these &ldquo;focus on the shape of the entire tree&rdquo; boundary tests are only a small subset of your UI tests, and that most will be &ldquo;how did this <em>one</em> aspect of the UI change&rdquo;, and for those tests, output file verification over-encode way more data than needs to be there.</p>
+<h2 id=output-data-over-specification-leads-to-false-negatives>
+Output Data Over-Specification Leads to False Negatives
+<a class=heading-link href=#output-data-over-specification-leads-to-false-negatives>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h2>
+<p>Following on the previous point, file-based output assertions are very likely to break unnecessarily.</p>
+<p>For example, consider the &ldquo;turn the button to blue&rdquo; boundary case again.</p>
+<p>With a snapshot test, if I change my component layout in any way, every single snapshot test for that component will break.</p>
+<p>But did I really break the &ldquo;change the button to blue&rdquo; business logic? Probably not. &mldr;or maybe so&mldr; Who knows?</p>
+<p>To figure this out, we&rsquo;re back to the game of &ldquo;guess what lines of the output file actually matter&rdquo;:</p>
+<ul>
+<li>&ldquo;Okay, the snapshot for this &lsquo;change to blue&rsquo; test changed&mldr;&rdquo;</li>
+<li>&ldquo;I see line -10 red lines and +10 green lines in git diff&mldr;&rdquo;</li>
+<li>&ldquo;What exactly in the red lines before was good/actually mattered&mldr;oh right, the line that says &lsquo;blue&rsquo;&rdquo;</li>
+<li>&ldquo;Where is the new line that says &lsquo;blue&rsquo;&mldr;okay, it&rsquo;s over here&mldr;yes! that is still working&rdquo;</li>
+</ul>
+<p>And, also, we have to play this game <em>at least</em> twice: once when the author figures it out, and again when the code reviewer verifies the change. (It can also easily be more than two times, if the author has to attempt their refactoring more than once, and also if there is more than one code reviewer.)</p>
+<p>So, now you&rsquo;re staring at ~15 snapshot-based test failures (assuming your component has ~15 boundary cases it covers), that are all failing due to nit-picky tree changes, with tons of red/green lines, are you really going to read every single line, and figure out &ldquo;did this 1 line of JSON out of 30 lines of JSON still look like it should?&rdquo;</p>
+<p>No, you&rsquo;re going to skim it, assume &ldquo;yeah, it&rsquo;s probably good&rdquo;, and commit.</p>
+<p>And then your code reviewer will do the same thing on the PR.</p>
+<h2 id=no-capability-to-build-abstractions>
+No Capability To Build Abstractions
+<a class=heading-link href=#no-capability-to-build-abstractions>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h2>
+<p>All of the issues so far have hinged on the same thing: files have no ability to apply abstractions.</p>
+<p>With file formats, like JSON or XML or plain/text files, you have no ability for code reuse: all you can do is copy/paste.</p>
+<p>Programming languages have abstractions for a reason, and we&rsquo;re programmers, leveraging and building good abstractions is what we do (less bad abstractions, more good abstractions); so, let&rsquo;s stay in the language and get that benefit.</p>
+<h2 id=too-much-accidental-focus-on-serde>
+Too Much Accidental Focus on Serde
+<a class=heading-link href=#too-much-accidental-focus-on-serde>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h2>
+<p>Besides just lack of abstraction, file-based formats are typically over-coupled to the serde (serialization/de-serialization) concerns/details of your system.</p>
+<p>For example, let&rsquo;s say my boundary case is &ldquo;make sure I upload the account with status=closed&rdquo;.</p>
+<p>That&rsquo;s what I really want to make sure my business logic does.</p>
+<p>But what does the file-based HTTP response output/snapshot look like? It&rsquo;s a dump of what an account serialized as JSON with <code>status: closed</code> looks like.</p>
+<p>Does my test really care whether my wire protocol is JSON? No. Does my test really care that I talk HTTP to my external system? No.</p>
+<p>However, because I&rsquo;m using file-based input/output snapshots, I&rsquo;ve introduced this accidental coupling to all of my tests that &ldquo;when this account is dropped on the wire, it&rsquo;s in JSON, via HTTP, with these various HTTP headers&rdquo;.</p>
+<p>All sorts of things that don&rsquo;t matter to the business case of &ldquo;just set the status to closed&rdquo;.</p>
+<p>Typically I avoid this by using client interfaces (as in Java interfaces, or whatever equivalent your language of choice has), e.g. instead of asserting &ldquo;JSON on the wire looks like X&rdquo;, you assert &ldquo;I handed off the account to be saved&rdquo;, e.g. <code>accountClient.save(account)</code> was called (or, even better, have a <a href=/2010/07/09/why-i-dont-like-mocks.html>state-based stub/fake client</a>), and that your code-under-test passed the <code>account</code> with the right attributes/state for your test case.</p>
+<p>Basically you have an abstraction layer (ideally a type-safe contract!) between your system and outside systems, and have the majority of your tests use that decoupled contract, but can be blithely unaware of how that contract puts things on the wire in production.</p>
+<p>Granted, you&rsquo;re giving up &ldquo;covering what this account <em>actually</em> looks like on the wire&rdquo;, but that should be tested elsewhere: you should have dedicated tests for &ldquo;how does <code>AccountClient</code> put <code>Account</code> JSON on the wire&rdquo;, and test that once/in one place, and not sprinkle/duplicate that concern in every single account business logic test.</p>
+<p>(I talked about this <a href=/2012/07/23/faking-at-the-right-level.html>back in 2012</a> but the article needs some touching up.)</p>
+<p>(Also, I understand that asserting &ldquo;<code>accountClient.save(account)</code> is good enough&rdquo; but then having non-trivial serde logic behind the <code>save</code> method that is untested can be unnerving, and that is very valid, but it&rsquo;s also why I enjoy IDL-/code generation-driven schemas/contracts, because you can trust the codegen-/library-based serde.)</p>
+<h2 id=so-why-is-it-so-popular>
+So Why Is It So Popular?
+<a class=heading-link href=#so-why-is-it-so-popular>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h2>
+<p>So, if &ldquo;snapshot testing sucks&rdquo; (taken to the extreme), why is it so popular?</p>
+<p>I think there are a variety of reasons that file-based input/output testing is initially compelling:</p>
+<ol>
+<li>
+<p>An increased sense of confidence, because you&rsquo;re asserting more &ldquo;end to end&rdquo; (as in to the wire level).</p>
+<p>A tongue-in-cheek version of this is: &ldquo;look at all the output it&rsquo;s asserting against, it must be better&rdquo;.</p>
+<p>And, granted, <a href=/2017/08/23/futility-of-cross-system-integration-testing.html>cross-system integration testing sucks</a>, so I&rsquo;m very sympathetic of trying to solve that problem, I just think file-based input/output is too behavior-based and too low-level.</p>
+<p>Granted, building state-based abstractions is expensive (e.g. a fake stateful backend), but you could at least construct your behavior-based input/output via abstractions/builders instead of copy/paste (avoids information overload and over-specification).</p>
+</li>
+<li>
+<p>Dynamically-typed languages lack basic guarantees over serde, so forcing even business logic tests down to the serde-level assertions in less total tests, as you&rsquo;ve combined your &ldquo;does business logic work&rdquo; with &ldquo;does serde work&rdquo;.</p>
+<p>E.g. with dynamic formats like JSON, constructed in dynamic languages like JavaScript, via just maps of maps of maps, intricate/rare pieces of your serde output may only be exercised when specifically driven by equally-intricate/rare business logic, and it would be tedious to make two tests (one logic, one serde) for each rare business case in your system.</p>
+<p>So, for these systems, it is technically cheaper to test both at once. Which is true, but for me is a (debatable) local optimum vs. finding/moving to a better global optimum of having a more reliable, typed contract interface between systems.</p>
+</li>
+<li>
+<p>Assuming you get snapshot infra out-of-the-box (e.g. Jest snapshots or VCR libraries), file-based input/output tests are extremely quick and cheap to get started.</p>
+<p>E.g. for input-based tests, you don&rsquo;t have to write/explore a builder/DSL/fixture library that is inherently specific to your domain (i.e. by definition you <em>can&rsquo;t</em> get off the shelf) to setup &ldquo;world looks like X&rdquo;. This takes time and investment, vs. something like record/replay, where you just assume &ldquo;hey, we&rsquo;ve got this huge production database, let&rsquo;s record that, and we&rsquo;re done&rdquo;.</p>
+<p>And e.g. for output-based tests, you don&rsquo;t have to write assertion helpers to tease apart your &ldquo;world now looks like Y&rdquo; component/system/state, you can just learn a single <code>.toMatchSnapshot()</code> convention up-front, and then get the &ldquo;make sure it hasn&rsquo;t changed&rdquo; assertion &ldquo;for free&rdquo; in all of your tests.</p>
+</li>
+<li>
+<p>File-based approaches are similar to table-based testing, e.g. a fairly declarative &ldquo;take X, make it Y&rdquo;.</p>
+<p>I actually like declarative approaches, but my angst is that ideally the declarations of <code>input X</code>, <code>output Y</code> are small and specific (which makes writing, debugging, and code reviewing the test&rsquo;s boundary case easier), vs. external files which are typically large/repetitive.</p>
+<p>E.g. your declarations should be succinct enough to fit into the test&rsquo;s source code file directly.</p>
+</li>
+</ol>
+<h2 id=sometimes-they-do-make-sense>
+Sometimes They Do Make Sense
+<a class=heading-link href=#sometimes-they-do-make-sense>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h2>
+<p>As a quick aside, I don&rsquo;t think file-based tests are always inherently evil: sometimes they do make sense.</p>
+<p>If you&rsquo;re parsing real file-based input (e.g. large/binary input), or generating real file-based output (e.g. PDFs), both of which would be hard to represent in source code &ldquo;here&rsquo;s my few lines of input&rdquo; form, then external files can be good/necessary.</p>
+<p>Particularly if your output assertions are very intricate, e.g. I&rsquo;ve seen compiler test suites use text-encoded versions of the AST of parsed input as output assertions: this makes sense to me as ASTs are extremely verbose/tedious, and also compilers in general have to be very exact (but are also low-churn, e.g. I don&rsquo;t imagine how a compiler parses a given input program into a given output AST changes that much).</p>
+<p>(This is in contrast to React/DOM trees, which are often validly high-churn, hence the previously-mentioned risk of over-specification and false negatives.)</p>
+<h2 id=what-to-do-instead-first-principles>
+What To Do Instead? First Principles
+<a class=heading-link href=#what-to-do-instead-first-principles>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h2>
+<p>Fine, I&rsquo;ve complained a lot, what should we do instead?</p>
+<p>Instead of just saying &ldquo;I like this better&rdquo;, I propose the following two 1st principles:</p>
+<ol>
+<li>
+<p>A boundary case&rsquo;s test method should have lines of code that <em>only matter to that boundary case</em>.</p>
+<p>If I&rsquo;m setting up account input data for handling closed accounts, there shouldn&rsquo;t be lines about &ldquo;the account name is foo&rdquo; (doesn&rsquo;t matter), &ldquo;the account currency is USD&rdquo; (doesn&rsquo;t matter), or whatever the other boilerplate/default attributes of my entities are. Similarly, I shouldn&rsquo;t have lines that are coupled to the serde format (unless these test methods are specifically dedicated to testing the serde format itself).</p>
+<p>If I&rsquo;m asserting against button output behavior (e.g &ldquo;when clicked, turn blue&rdquo;), there should not be lines about &ldquo;the button has the text &lsquo;Save&rsquo;&rdquo; (doesn&rsquo;t matter), &ldquo;the button is nested within a container with attributes &mldr;&rdquo; (doesn&rsquo;t matter).</p>
+<p><strong>Only lines that differentiate the input data and output data for this specific boundary case matter.</strong></p>
+<p>The benefits here are as highlighted above: maintainers and reviewers don&rsquo;t get lost considering &ldquo;does this line matter to the test? which lines do matter? which lines do I care about?&rdquo;</p>
+</li>
+<li>
+<p>A boundary case&rsquo;s test method should have <em>as much locality as possible</em>.</p>
+<p>The author/maintainer and code reviewer should be able to stay locally within the method, as much as possible.</p>
+<p><strong>This keeps their attention in one place, and avoids breaking flow, for both writing and reviewing code.</strong></p>
+<p>Obviously this pretty much disqualifies file-based input/output outright.</p>
+<p>(Note that, I advocate test fixtures/DSLs and, pedantically, if you are new to the DSL, your first few times you do need to go read the fixture/DSL methods and figure out what they do, however: a) ideally they are extremely obvious, e.g. <code>newAccount().closed()</code> is probably a closed account, and b) you&rsquo;ll quickly learn the DSL, know to trust/infer the data it is creating, and keep your primary attention to within the test method itself.)</p>
+</li>
+</ol>
+<h2 id=what-do-to-instead-an-example>
+What Do To Instead? An Example
+<a class=heading-link href=#what-do-to-instead-an-example>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h2>
+<p>As long as you follow these principles, I&rsquo;m generally ambivalent about what your tests look like (probably&mldr;), but for me they lead to my &ldquo;one true format for tests&rdquo;:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>testWhatever</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
+  <span style=color:#75715e>// Given the world looks like X
+</span><span style=color:#75715e></span>  <span style=color:#f92672>...</span><span style=color:#a6e22e>make</span> entity one<span style=color:#f92672>...</span>
+  <span style=color:#f92672>...</span><span style=color:#a6e22e>make</span> entity two<span style=color:#f92672>...</span>
+  <span style=color:#f92672>...</span><span style=color:#a6e22e>make</span> entity three<span style=color:#f92672>...</span>
+
+  <span style=color:#75715e>// When action happens
+</span><span style=color:#75715e></span>  <span style=color:#f92672>...</span><span style=color:#a6e22e>system</span> under test<span style=color:#f92672>...</span>
+
+  <span style=color:#75715e>// Then the world looks like Y
+</span><span style=color:#75715e></span>  <span style=color:#f92672>...</span><span style=color:#a6e22e>assert</span> entity one is now<span style=color:#f92672>...</span>
+  <span style=color:#f92672>...</span><span style=color:#a6e22e>assert</span> entity two is now<span style=color:#f92672>...</span>
+<span style=color:#f92672>}</span>
+</code></pre></div><p>This builds on many things: <a href=/2017/11/28/given-when-then.html>Using Given/When/Testing</a>, <a href=/2017/01/07/obsessively-simple-test-values.html>Obsessively Simple Test Values</a>, <a href=/2010/07/09/why-i-dont-like-mocks.html>Why I Don&rsquo;t Like Mocks</a>, and an as-yet-unwritten piece of test builders/fixtures.</p>
+<p>Making this more concrete, for &ldquo;save the account&rdquo; test, what I like to see is:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>testSaveAFrozenAccountAsClosed</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
+  <span style=color:#75715e>// Given a user with a frozen account
+</span><span style=color:#75715e></span>  var user <span style=color:#f92672>=</span> newUser<span style=color:#f92672>().</span><span style=color:#a6e22e>defaults</span><span style=color:#f92672>();</span>
+  var account <span style=color:#f92672>=</span> user<span style=color:#f92672>.</span><span style=color:#a6e22e>newAccount</span><span style=color:#f92672>().</span><span style=color:#a6e22e>frozen</span><span style=color:#f92672>().</span><span style=color:#a6e22e>defaults</span><span style=color:#f92672>();</span>
+
+  <span style=color:#75715e>// When we process the account
+</span><span style=color:#75715e></span>  process<span style=color:#f92672>(</span>account<span style=color:#f92672>);</span>
+
+  <span style=color:#75715e>// Then we&#39;ve flagged it as closed
+</span><span style=color:#75715e></span>  assertThat<span style=color:#f92672>(</span>load<span style=color:#f92672>(</span>account<span style=color:#f92672>).</span><span style=color:#a6e22e>getStatus</span><span style=color:#f92672>,</span> is<span style=color:#f92672>(</span>CLOSED<span style=color:#f92672>));</span>
+<span style=color:#f92672>}</span>
+</code></pre></div><p>For a component test that is &ldquo;make the button blue&rdquo;, what I like to see is:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-javascript data-lang=javascript><span style=color:#a6e22e>it</span>(<span style=color:#e6db74>&#39;turns the button blue&#39;</span>, () =&gt; {
+  <span style=color:#75715e>// given our component is mounted
+</span><span style=color:#75715e></span>  <span style=color:#66d9ef>const</span> <span style=color:#a6e22e>view</span> <span style=color:#f92672>=</span> <span style=color:#a6e22e>mount</span>(<span style=color:#f92672>&lt;</span><span style=color:#a6e22e>Hello</span> <span style=color:#a6e22e>name</span><span style=color:#f92672>=</span><span style=color:#e6db74>&#34;World&#34;</span> <span style=color:#f92672>/&gt;</span>);
+
+  <span style=color:#75715e>// when the user does something good
+</span><span style=color:#75715e></span>  <span style=color:#a6e22e>view</span>.<span style=color:#a6e22e>find</span>(<span style=color:#a6e22e>Button</span>).<span style=color:#a6e22e>filter</span>({ <span style=color:#a6e22e>title</span><span style=color:#f92672>:</span> <span style=color:#e6db74>&#34;+&#34;</span> }).<span style=color:#a6e22e>props</span>().<span style=color:#a6e22e>onPress</span>();
+
+  <span style=color:#75715e>// then we&#39;ve turned the text blue
+</span><span style=color:#75715e></span>  <span style=color:#a6e22e>expect</span>(<span style=color:#a6e22e>view</span>.<span style=color:#a6e22e>find</span>(<span style=color:#a6e22e>Text</span>).<span style=color:#a6e22e>hasClass</span>(<span style=color:#e6db74>&#39;blue&#39;</span>)).<span style=color:#a6e22e>toBeTruthy</span>();
+})
+</code></pre></div><p>For both of these cases:</p>
+<ul>
+<li>I&rsquo;ve used test builders/DSLs/fixtures to quickly configure a &ldquo;world looks like X&rdquo; input. Using abstractions.</li>
+<li>I have a single (or ~2-4 max) lines of assertions that pin-point exactly what the test cares about, for &ldquo;world now looks like Y&rdquo;, and nothing else.</li>
+<li>It&rsquo;s extremely easy to copy/paste ~these 10 line test methods into a new test method, tweak the input case, and go back to TDD.</li>
+</ul>
+<p>As a maintainer, and a code reviewer, I would feel more much comfortable scanning these ~10 lines of code, all in one screen, and vetting &ldquo;yep, this does what the boundary case says&rdquo;, vs. finding/scanning/finding/scanning external files.</p>
+<p>Granted, the code reviewer and maintainer have to know and trust the DSL: e.g. maybe I don&rsquo;t know what <code>mount</code> does, or maybe <code>mount</code> is broken: but that is life as a programmer, learn the abstraction, make sure the abstraction works, and then reuse it across your entire codebase. That is where the pay-off is; if we wrote <code>mount</code> and only used it once, it&rsquo;d be super expensive and silly. But if we used it across all React components in our project? Then it&rsquo;s probably useful.</p>
+<h2 id=conclusion>
+Conclusion
+<a class=heading-link href=#conclusion>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h2>
+<p>tldr: I think external file-based tests are tedious write, maintain, and code review.</p>
+<p>It is more up-front work, but I think systems are better off building abstractions and infra to allow <strong>high signal to noise ratios</strong> and <strong>high test locality</strong> with test methods, to <strong>avoid data overload</strong> and <strong>overly specific/fragile/coupled tests</strong>.</p>
+<p>(Apologies, I might be <strong>abusing bold text</strong>.)</p>
+<h2 id=see-also>
+See Also
+<a class=heading-link href=#see-also>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h2>
+<ul>
+<li><a href=https://engineering.ezcater.com/the-case-against-react-snapshot-testing>The case against React snapshot testing</a> makes many of the same points</li>
+</ul>
+</div>
+<footer>
+<div id=disqus_thread></div>
+<script type=application/javascript>var disqus_config=function(){};(function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById('disqus_thread').innerHTML='Disqus comments not available by default when the website is previewed locally.';return}var b=document,a=b.createElement('script');a.async=!0,a.src='//shaberman.disqus.com/embed.js',a.setAttribute('data-timestamp',+new Date),(b.head||b.body).appendChild(a)})()</script>
+<noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript>
+<a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a>
+</footer>
+</article>
+</section>
+</div>
+<footer class=footer>
+<section class=container>
+©
+2008 -
+2021
+Stephen Haberman
+·
+Powered by <a href=https://gohugo.io/>Hugo</a> & <a href=https://github.com/luizdepra/hugo-coder/>Coder</a>.
+</section>
+</footer>
+</main>
+<script src=/js/coder.min.03b17769f4f91ae35667e1f2a1ca8c16f50562576cf90ff32b3179926914daa5.js integrity="sha256-A7F3afT5GuNWZ+HyocqMFvUFYlds+Q/zKzF5kmkU2qU="></script>
+</body>
+</html>

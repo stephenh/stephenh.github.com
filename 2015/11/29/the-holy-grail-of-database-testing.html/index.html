@@ -1,0 +1,158 @@
+<!doctype html><html lang=en>
+<head>
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width,initial-scale=1">
+<meta http-equiv=content-language content="en">
+<meta name=color-scheme content="light dark">
+<meta name=author content="Stephen Haberman">
+<meta name=description content="Quill looks like the latest &ldquo;embedded SQL DSL&rdquo; for Scala, and so far I think it looks fairly compelling:
+case class Person(name: String, age: Int) val q = quote { query[Person].filter { _.name == &#34;John&#34; }.map { _.age } } // SELECT age FROM person WHERE name = 'John' testDb.run(q) They even have compile-time validation of your queries against the database.
+E.g. if you typo the Person.age field in the case class as agee (note the extra e), there will be a testDb.">
+<meta name=keywords content="blog,developer,personal">
+<meta name=twitter:card content="summary">
+<meta name=twitter:title content="The Holy Grail of Database Testing">
+<meta name=twitter:description content="Quill looks like the latest &ldquo;embedded SQL DSL&rdquo; for Scala, and so far I think it looks fairly compelling:
+case class Person(name: String, age: Int) val q = quote { query[Person].filter { _.name == &#34;John&#34; }.map { _.age } } // SELECT age FROM person WHERE name = 'John' testDb.run(q) They even have compile-time validation of your queries against the database.
+E.g. if you typo the Person.age field in the case class as agee (note the extra e), there will be a testDb.">
+<meta property="og:title" content="The Holy Grail of Database Testing">
+<meta property="og:description" content="Quill looks like the latest &ldquo;embedded SQL DSL&rdquo; for Scala, and so far I think it looks fairly compelling:
+case class Person(name: String, age: Int) val q = quote { query[Person].filter { _.name == &#34;John&#34; }.map { _.age } } // SELECT age FROM person WHERE name = 'John' testDb.run(q) They even have compile-time validation of your queries against the database.
+E.g. if you typo the Person.age field in the case class as agee (note the extra e), there will be a testDb.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="http://draconianoverlord.com/2015/11/29/the-holy-grail-of-database-testing.html/"><meta property="article:section" content="posts">
+<meta property="article:published_time" content="2015-11-29T00:00:00+00:00">
+<meta property="article:modified_time" content="2015-11-29T00:00:00+00:00">
+<title>
+The Holy Grail of Database Testing · Draconian Overlord
+</title>
+<link rel=canonical href=http://draconianoverlord.com/2015/11/29/the-holy-grail-of-database-testing.html/>
+<link rel=preload href="/fonts/forkawesome-webfont.woff2?v=1.2.0" as=font type=font/woff2 crossorigin>
+<link rel=stylesheet href=/css/coder.min.d9fddbffe6f27e69985dc5fe0471cdb0e57fbf4775714bc3d847accb08f4a1f6.css integrity="sha256-2f3b/+byfmmYXcX+BHHNsOV/v0d1cUvD2Eesywj0ofY=" crossorigin=anonymous media=screen>
+<link rel=stylesheet href=/css/coder-dark.min.aa883b9ce35a8ff4a2a5008619005175e842bb18a8a9f9cc2bbcf44dab2d91fa.css integrity="sha256-qog7nONaj/SipQCGGQBRdehCuxioqfnMK7z0Tastkfo=" crossorigin=anonymous media=screen>
+<link rel=icon type=image/png href=/images/favicon-32x32.png sizes=32x32>
+<link rel=icon type=image/png href=/images/favicon-16x16.png sizes=16x16>
+<link rel=apple-touch-icon href=/images/apple-touch-icon.png>
+<link rel=apple-touch-icon sizes=180x180 href=/images/apple-touch-icon.png>
+<meta name=generator content="Hugo 0.89.4">
+</head>
+<body class="preload-transitions colorscheme-auto">
+<div class=float-container>
+<a id=dark-mode-toggle class=colorscheme-toggle>
+<i class="fa fa-adjust fa-fw" aria-hidden=true></i>
+</a>
+</div>
+<main class=wrapper>
+<nav class=navigation>
+<section class=container>
+<a class=navigation-title href=/>Draconian Overlord</a>
+Oppressing software entropy
+</section>
+</nav>
+<div class=content>
+<section class="container post">
+<article>
+<header>
+<div class=post-title>
+<h1 class=title>
+<a class=title-link href=http://draconianoverlord.com/2015/11/29/the-holy-grail-of-database-testing.html/>
+The Holy Grail of Database Testing
+</a>
+</h1>
+</div>
+<div class=post-meta>
+<div class=date>
+<span class=posted-on>
+<i class="fa fa-calendar" aria-hidden=true></i>
+<time datetime=2015-11-29T00:00:00Z>
+November 29, 2015
+</time>
+</span>
+<span class=reading-time>
+<i class="fa fa-clock-o" aria-hidden=true></i>
+6-minute read
+</span>
+</div>
+<div class=categories>
+<i class="fa fa-folder" aria-hidden=true></i>
+<a href=/categories/testing/>Testing</a></div>
+</div>
+</header>
+<div>
+<p><a href=http://getquill.io/>Quill</a> looks like the latest &ldquo;embedded SQL DSL&rdquo; for Scala, and so far I think it looks fairly compelling:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-scala data-lang=scala><span style=color:#66d9ef>case</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>Person</span><span style=color:#f92672>(</span>name<span style=color:#66d9ef>:</span> <span style=color:#66d9ef>String</span><span style=color:#f92672>,</span> age<span style=color:#66d9ef>:</span> <span style=color:#66d9ef>Int</span><span style=color:#f92672>)</span>
+
+<span style=color:#66d9ef>val</span> q <span style=color:#66d9ef>=</span> quote <span style=color:#f92672>{</span>
+  query<span style=color:#f92672>[</span><span style=color:#66d9ef>Person</span><span style=color:#f92672>].</span>filter <span style=color:#f92672>{</span> <span style=color:#66d9ef>_</span><span style=color:#f92672>.</span>name <span style=color:#f92672>==</span> <span style=color:#e6db74>&#34;John&#34;</span> <span style=color:#f92672>}.</span>map <span style=color:#f92672>{</span> <span style=color:#66d9ef>_</span><span style=color:#f92672>.</span>age <span style=color:#f92672>}</span>
+<span style=color:#f92672>}</span>
+
+<span style=color:#75715e>// SELECT age FROM person WHERE name = &#39;John&#39;
+</span><span style=color:#75715e></span>testDb<span style=color:#f92672>.</span>run<span style=color:#f92672>(</span>q<span style=color:#f92672>)</span>
+</code></pre></div><p>They even have compile-time validation of your queries against the database.</p>
+<p>E.g. if you typo the <code>Person.age</code> field in the case class as <code>agee</code> (note the extra <code>e</code>), there will be a <code>testDb.run</code> compilation error, with error text from the MySQL database itself, where Quill tried to execute the query and it failed.</p>
+<p>(Although, for this specific feature, I wonder how having random queries executed against your database would mess with your local test data; e.g. AFAICT the query <a href=https://github.com/getquill/quill/blob/master/quill-jdbc/src/main/scala/io/getquill/source/jdbc/JdbcSource.scala#L31>is actually executed</a> <em>during compilation</em>, which I suppose means having two local databases: one for test data/selenium/unit tests, and one for Quill.)</p>
+<p>My biggest angst about query DSLs is that I think it&rsquo;s hard for them to support truly everything you&rsquo;d want to do in a database query, and so you will always need an escape hatch down to raw SQL. E.g. this is the case for Joist&rsquo;s DSL, albeit it is much more amateur than Quill.</p>
+<p>However, Quill looks like it could handle most queries in an intuitive/non-surprising manner.</p>
+<p>If it could, then Quill looks like a potential/intriguing abstraction for my mused &ldquo;holy grail of database testing&rdquo;: to not use the database at all.</p>
+<p>E.g. in a typical project setup, I like to break the tests up into groups:</p>
+<ol>
+<li>Pure in-memory tests, e.g. validation that only works against the in-memory domain objects/input themselves.</li>
+<li>Domain database tests, which commit domain objects all the way to the database.</li>
+</ol>
+<ul>
+<li>These can also be process tests, which are typically background/batch jobs that inherently use multiple transactions/Units of Work</li>
+</ul>
+<ol start=3>
+<li>Selenium tests.</li>
+</ol>
+<p>The run time for these quickly goes: 1) blazingly fast, 2) basically good, 3) horrible.</p>
+<p>The large caveat for group 2, domain database tests, is that they typically run fast enough individually, but can take awhile in aggregate.</p>
+<p>E.g. for Joist, Joist will generate a <code>flush_test_database</code> stored procedure that <code>TRUNCATE</code>s all entity tables in your database (only locally, not in production of course). You can then issue 1 JDBC query before each test method to reset your database, then setup your new test-specific data, and each test method can run in ~0.1 seconds (assuming you have your local database&rsquo;s <code>fsync</code>/etc. disabled). E.g.:</p>
+<p>400 database tests in 20 seconds is pretty good.</p>
+<p>In fact, for database tests, I think it&rsquo;s basically good enough, in that I haven&rsquo;t spent time trying to optimize it more than this. (Although I did have to downgrade to MySQL 5.5, as <code>TRUNCATE</code> is order of magnitudes slower in MySQL 5.6 and 5.7, which a topic for another blog post.)</p>
+<p>Nonetheless, let&rsquo;s say we <em>did</em> want to get faster than ~0.1 seconds/database test, and approach in the speed of in-memory tests, say an order of magnitude faster, like ~0.01 seconds/test.</p>
+<p>I think the only way to do that is stay entirely in-process (e.g. we can talk about in-RAM/ramdisk MySQL/H2/etc., but I think anything that involves JDBC touching a socket is going to hit a ~10ths of a second order of magnitude).</p>
+<p>So something entirely in-process might look something like:</p>
+<ol>
+<li>Have a <code>Repository</code> interface that can do basic persistence, e.g. <code>load(Domain.class, id)</code>, <code>save(domainInstance)</code></li>
+<li>Objects are not serialized to any on-disk/other store, instead are kept in basic collections (this is for testing only, so no on-disk safety is needed or even wanted)</li>
+</ol>
+<ul>
+<li>Each <code>load(Domain.class, id)</code> just returns the object directly, albeit a copied version</li>
+</ul>
+<ol start=3>
+<li>To maintain the facade of database ACID, we still need &ldquo;transactions&rdquo;, but that can be a giant <code>synchronized</code> block around each Unit of Work</li>
+<li>Queries can be run via <code>Repository.query(Query)</code> and are evaluated directly against the in-memory objects/collections</li>
+</ol>
+<ul>
+<li>This is where Quill comes in, as historically there hasn&rsquo;t been a sufficiently decoupled query language. You could use SQL itself, and somehow write a SQL parser than eval&rsquo;d against in-memory objects, but then you&rsquo;re still going through the JDBC stack, and I think one of the potential speedups is to avoid <code>PreparedStatement</code>, <code>ResultSet</code>, etc., that all together and just take Quill&rsquo;s (or equivalent&rsquo;s) AST directly</li>
+</ul>
+<p>So, that is the holy grail. Obviously I think it would be a lot of infrastructure work, because you&rsquo;d need to get the whole stack to a point where you really trust it. E.g. if the in-ram tests passed, but you still felt like you had to execute it against the database to &ldquo;make sure it really works&rdquo;, when it would not be a useful abstraction. Too leaky and what not.</p>
+<p>But if you can trust it, e.g. that the (framework-provided) <code>InMemoryRepository</code> has 100% of the same semantics as the (also framework-provided) <code>ActualJdbcRepository</code>, then you can remove it from the code you need to test, and focus solely on your domain/process logic. And if it works against the <code>InMemoryRepository</code>, you can assume it works against the <code>ActualJdbcRepository</code>.</p>
+<p>(Tangentially, a <code>Repository</code> interface that has JDBC and in-memory implementations, e.g. <code>JdbcEmployeeRepository</code> and <code>RamEmployeeRepository</code>, is an old-school technique in <a href=https://en.wikipedia.org/wiki/Domain-driven_design>Domain Driven Design</a>. However, the approaches I&rsquo;ve always seen involved hand-coded implementations of <code>JdbcEmployeeRepository.findByName</code> that uses SQL, and a <code>RamEmployeeRepository.findByName</code> that uses Java code, which I think is a) wasteful by having to write two method implementations of the same logic, and b) doesn&rsquo;t actually solve the database-abstraction problem, because I really want the SQL-using <code>findByName</code> tested anyway. Also, the <code>RamEmployeeRepository</code> implementations rarely obey ACID/etc. semantics that are exactly needed by the cross-Unit Of Work domain/process tests that we weren&rsquo;t able to test purely in RAM.)</p>
+<p>(Also tangentially, this framework-provided &ldquo;trusted abstraction of an expensive dependency&rdquo; is the main feature of <a href=http://www.tessell.org>Tessell</a>, which provides &ldquo;implementations you can trust&rdquo; of both in-memory and then browser-coupled DOM elements/GWT widgets, so that you can run your presenters against the in-memory version (stubs), and then trust it will work the same against the browser versions. And, if you accept this trust, your tests can run much, much faster. Granted, Tessell cheats a bit by not providing any rendering-level logic, e.g. pixel offsets/etc., that are thankfully rare to need in presenters themselves.)</p>
+<p>So, anyway, if I were to embark on a Quixote-like quest for a next-generation ORM, that I knew was going to be used in a &ldquo;100s to 1000s&rdquo;-entity enterprise software project, that is the approach I would attempt.</p>
+<p>(I think enterprise projects are interesting, in that the focus is different from startups: in my experience, startups typically have simpler domains, with relatively few total entities, but the novelty is on raw volume (&ldquo;Internet scale&rdquo; and what not), where as enterprises typically have much larger, more complex domains, perhaps due to the maturity, or just age/cruft, of their business models. So the success of the enterprise project, over the long term, is less about production-time concerns like raw volume/throughput, and more on just managing the developer-time complexity, e.g. not ending up with a tangled mess. As a very concrete example, a startup could hand-code their persistence layer of ~10-50 entities, but this would be a nightmare for a ~500-1000-entity enterprise code base.)</p>
+</div>
+<footer>
+<div id=disqus_thread></div>
+<script type=application/javascript>var disqus_config=function(){};(function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById('disqus_thread').innerHTML='Disqus comments not available by default when the website is previewed locally.';return}var b=document,a=b.createElement('script');a.async=!0,a.src='//shaberman.disqus.com/embed.js',a.setAttribute('data-timestamp',+new Date),(b.head||b.body).appendChild(a)})()</script>
+<noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript>
+<a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a>
+</footer>
+</article>
+</section>
+</div>
+<footer class=footer>
+<section class=container>
+©
+2008 -
+2021
+Stephen Haberman
+·
+Powered by <a href=https://gohugo.io/>Hugo</a> & <a href=https://github.com/luizdepra/hugo-coder/>Coder</a>.
+</section>
+</footer>
+</main>
+<script src=/js/coder.min.03b17769f4f91ae35667e1f2a1ca8c16f50562576cf90ff32b3179926914daa5.js integrity="sha256-A7F3afT5GuNWZ+HyocqMFvUFYlds+Q/zKzF5kmkU2qU="></script>
+</body>
+</html>

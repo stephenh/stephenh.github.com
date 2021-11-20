@@ -1,0 +1,204 @@
+<!doctype html><html lang=en>
+<head>
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width,initial-scale=1">
+<meta http-equiv=content-language content="en">
+<meta name=color-scheme content="light dark">
+<meta name=author content="Stephen Haberman">
+<meta name=description content="It is often said that we should treat test code like production code, and have it be DRY, readable, well refactored, etc.
+But I think, compared to production code, there is generally less discussion about how to actually do this within test code. (Well, maybe not, if you count all of the TDD/BDD posts, but those tend to be more process oriented that code oriented.)
+Anyway, the pattern I strive for with most tests is (ha) BDD inspired:">
+<meta name=keywords content="blog,developer,personal">
+<meta name=twitter:card content="summary">
+<meta name=twitter:title content="High Level Assertions">
+<meta name=twitter:description content="It is often said that we should treat test code like production code, and have it be DRY, readable, well refactored, etc.
+But I think, compared to production code, there is generally less discussion about how to actually do this within test code. (Well, maybe not, if you count all of the TDD/BDD posts, but those tend to be more process oriented that code oriented.)
+Anyway, the pattern I strive for with most tests is (ha) BDD inspired:">
+<meta property="og:title" content="High Level Assertions">
+<meta property="og:description" content="It is often said that we should treat test code like production code, and have it be DRY, readable, well refactored, etc.
+But I think, compared to production code, there is generally less discussion about how to actually do this within test code. (Well, maybe not, if you count all of the TDD/BDD posts, but those tend to be more process oriented that code oriented.)
+Anyway, the pattern I strive for with most tests is (ha) BDD inspired:">
+<meta property="og:type" content="article">
+<meta property="og:url" content="http://draconianoverlord.com/2012/12/26/high-level-assertions.html/"><meta property="article:section" content="posts">
+<meta property="article:published_time" content="2012-12-26T00:00:00+00:00">
+<meta property="article:modified_time" content="2012-12-26T00:00:00+00:00">
+<title>
+High Level Assertions · Draconian Overlord
+</title>
+<link rel=canonical href=http://draconianoverlord.com/2012/12/26/high-level-assertions.html/>
+<link rel=preload href="/fonts/forkawesome-webfont.woff2?v=1.2.0" as=font type=font/woff2 crossorigin>
+<link rel=stylesheet href=/css/coder.min.d9fddbffe6f27e69985dc5fe0471cdb0e57fbf4775714bc3d847accb08f4a1f6.css integrity="sha256-2f3b/+byfmmYXcX+BHHNsOV/v0d1cUvD2Eesywj0ofY=" crossorigin=anonymous media=screen>
+<link rel=stylesheet href=/css/coder-dark.min.aa883b9ce35a8ff4a2a5008619005175e842bb18a8a9f9cc2bbcf44dab2d91fa.css integrity="sha256-qog7nONaj/SipQCGGQBRdehCuxioqfnMK7z0Tastkfo=" crossorigin=anonymous media=screen>
+<link rel=icon type=image/png href=/images/favicon-32x32.png sizes=32x32>
+<link rel=icon type=image/png href=/images/favicon-16x16.png sizes=16x16>
+<link rel=apple-touch-icon href=/images/apple-touch-icon.png>
+<link rel=apple-touch-icon sizes=180x180 href=/images/apple-touch-icon.png>
+<meta name=generator content="Hugo 0.89.4">
+</head>
+<body class="preload-transitions colorscheme-auto">
+<div class=float-container>
+<a id=dark-mode-toggle class=colorscheme-toggle>
+<i class="fa fa-adjust fa-fw" aria-hidden=true></i>
+</a>
+</div>
+<main class=wrapper>
+<nav class=navigation>
+<section class=container>
+<a class=navigation-title href=/>Draconian Overlord</a>
+Oppressing software entropy
+</section>
+</nav>
+<div class=content>
+<section class="container post">
+<article>
+<header>
+<div class=post-title>
+<h1 class=title>
+<a class=title-link href=http://draconianoverlord.com/2012/12/26/high-level-assertions.html/>
+High Level Assertions
+</a>
+</h1>
+</div>
+<div class=post-meta>
+<div class=date>
+<span class=posted-on>
+<i class="fa fa-calendar" aria-hidden=true></i>
+<time datetime=2012-12-26T00:00:00Z>
+December 26, 2012
+</time>
+</span>
+<span class=reading-time>
+<i class="fa fa-clock-o" aria-hidden=true></i>
+5-minute read
+</span>
+</div>
+<div class=categories>
+<i class="fa fa-folder" aria-hidden=true></i>
+<a href=/categories/testing/>Testing</a></div>
+</div>
+</header>
+<div>
+<p>It is often said that we should treat test code like production code, and have it be DRY, readable, well refactored, etc.</p>
+<p>But I think, compared to production code, there is generally less discussion about how to actually do this within test code. (Well, maybe not, if you count all of the TDD/BDD posts, but those tend to be more process oriented that code oriented.)</p>
+<p>Anyway, the pattern I strive for with most tests is (ha) BDD inspired:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>someTest</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
+  <span style=color:#75715e>// given &lt;some business condition&gt;
+</span><span style=color:#75715e></span>  setupTheBusinessCondition<span style=color:#f92672>();</span>
+
+  <span style=color:#75715e>// when &lt;some business event happens&gt;
+</span><span style=color:#75715e></span>  invokeTheEvent<span style=color:#f92672>();</span>
+
+  <span style=color:#75715e>// then &lt;some business artifact is observable&gt;
+</span><span style=color:#75715e></span>  assertSomething<span style=color:#f92672>();</span>
+<span style=color:#f92672>}</span>
+</code></pre></div><p>Where ideally the comments of &ldquo;given, when, then&rdquo; document the why, the meaning of what&rsquo;s going on, so that 6 months from now, any programmer, yourself included, could glance at the comments and follow what is going on.</p>
+<p>(Unfortunately I don&rsquo;t know any programming language that is so fluent/high-level that comments are unnecessary; given that mainstream programming languages always instruct &ldquo;how&rdquo;, I think comments of &ldquo;why&rdquo; will always have their place.)</p>
+<p>Okay, to the point, within this idiom, it&rsquo;s import for each step (given, when, then) to be as small as possible, so that the reader only has to deal with <a href=http://en.wikipedia.org/wiki/The_Magical_Number_Seven,_Plus_or_Minus_Two>7+/-2</a> lines of code to comprehend the test.</p>
+<p>Of course, this 7+/-2 limitation is hard to accomplish.</p>
+<h2 id=approach-for-assertions>
+Approach for Assertions
+<a class=heading-link href=#approach-for-assertions>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h2>
+<p>One trick I&rsquo;ve occasionally used, specifically within the &ldquo;then&rdquo; assertion section, is to make custom, higher-/business-level assertions.</p>
+<p>E.g. often you&rsquo;ll see code that wants to assert &ldquo;there are two $50 credit transactions&rdquo;, but it takes 5 lines of code to accomplish:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java>assertThat<span style=color:#f92672>(</span>txns<span style=color:#f92672>.</span><span style=color:#a6e22e>getSize</span><span style=color:#f92672>(),</span> is<span style=color:#f92672>(</span>5<span style=color:#f92672>));</span>
+assertThat<span style=color:#f92672>(</span>txns<span style=color:#f92672>.</span><span style=color:#a6e22e>get</span><span style=color:#f92672>(</span>0<span style=color:#f92672>).</span><span style=color:#a6e22e>getAmount</span><span style=color:#f92672>(),</span> is<span style=color:#f92672>(</span>Money<span style=color:#f92672>.</span><span style=color:#a6e22e>dollars</span><span style=color:#f92672>(</span>50<span style=color:#f92672>.</span><span style=color:#a6e22e>00</span><span style=color:#f92672>));</span>
+assertThat<span style=color:#f92672>(</span>txns<span style=color:#f92672>.</span><span style=color:#a6e22e>get</span><span style=color:#f92672>(</span>0<span style=color:#f92672>).</span><span style=color:#a6e22e>getType</span><span style=color:#f92672>(),</span> is<span style=color:#f92672>(</span>CREDIT<span style=color:#f92672>));</span>
+assertThat<span style=color:#f92672>(</span>txns<span style=color:#f92672>.</span><span style=color:#a6e22e>get</span><span style=color:#f92672>(</span>1<span style=color:#f92672>).</span><span style=color:#a6e22e>getAmount</span><span style=color:#f92672>(),</span> is<span style=color:#f92672>(</span>Money<span style=color:#f92672>.</span><span style=color:#a6e22e>dollars</span><span style=color:#f92672>(</span>50<span style=color:#f92672>.</span><span style=color:#a6e22e>00</span><span style=color:#f92672>));</span>
+assertThat<span style=color:#f92672>(</span>txns<span style=color:#f92672>.</span><span style=color:#a6e22e>get</span><span style=color:#f92672>(</span>1<span style=color:#f92672>).</span><span style=color:#a6e22e>getType</span><span style=color:#f92672>(),</span> is<span style=color:#f92672>(</span>CREDIT<span style=color:#f92672>));</span>
+</code></pre></div><p>We just ate more than half of our 7 LOC budget.</p>
+<p>So, in thinking how we can make this assertion simpler, and more direct, I&rsquo;ve wound up occasionally using strings (gasp) to encode a high-/business-level meaning, e.g.:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java>assertTxns<span style=color:#f92672>(</span>txns<span style=color:#f92672>,</span> <span style=color:#e6db74>&#34;1/1 $50 CREDIT&#34;</span><span style=color:#f92672>,</span> <span style=color:#e6db74>&#34;1/1 $50 CREDIT&#34;</span><span style=color:#f92672>);</span>
+</code></pre></div><p>Or, if you have attributes about an account (like overpaid or overdue), you might do:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=color:#75715e>// then the 1st account is bad
+</span><span style=color:#75715e></span>assertAccount<span style=color:#f92672>(</span>account1<span style=color:#f92672>,</span> <span style=color:#e6db74>&#34;#1234 CHECKING (overpaid, overdue)&#34;</span><span style=color:#f92672>);</span>
+<span style=color:#75715e>// and the 2nd account is okay
+</span><span style=color:#75715e></span>assertAccount<span style=color:#f92672>(</span>account2<span style=color:#f92672>,</span> <span style=color:#e6db74>&#34;#5678 CHECKING&#34;</span><span style=color:#f92672>);</span>
+</code></pre></div><p>Note how ideally information you normally wouldn&rsquo;t care about, like an account being overpaid (which is hopefully unusual), is not included in the default description, as it would be noise that most test cases don&rsquo;t care about.</p>
+<h2 id=pros>
+Pros
+<a class=heading-link href=#pros>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h2>
+<p>I think the benefit of this approach is that you&rsquo;re able to pack a lot of information into a single LOC. It&rsquo;s like making a mini-DSL for your assertions.</p>
+<p>It is similar to <a href=http://fit.c2.com/>FIT</a> table-based assertions, where the assertions are declarations of desired output that a business person would understand, and not manual, imperative checks.</p>
+<p>I think these high-level assertions can be very nice to read, which is useful especially if you&rsquo;re quickly scanning tests, trying to understand each boundary condition.</p>
+<h2 id=cons>
+Cons
+<a class=heading-link href=#cons>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h2>
+<p>Granted, there are some things to watch out for:</p>
+<ol>
+<li>
+<p>You have to carefully pick and choose what the relevant information you include in the description.</p>
+<p>If you choose too little information, the <code>assertAccount</code> will not be useful, and tests will have to fall back to low-level assertions.</p>
+<p>If you choose too much information, then each <code>assertAccount</code> call has a lot of extra noise, which is distracting to read (&ldquo;Do we really care about attribute X for this test case? Or is it just in the description by default?").</p>
+<p>You also risk having a whole lot of assertions fail if they include information they don&rsquo;t technically care about, but somehow changes due to an otherwise unrelated change.</p>
+</li>
+<li>
+<p>These are strings, so are hidden from refactoring and &ldquo;find caller&rdquo; references, and can generally be a pita to update if they have to change.</p>
+<p>(As a minor justification for this, I can at least know that all of these strings are evaluated at test time.)</p>
+</li>
+<li>
+<p>Making a DSL has a cost that will only pay off if you have a lot of similar assertions.</p>
+<p>This likely means it&rsquo;s only worthwhile for larger, more complex projects that have many use cases for the same entities. E.g. a banking system would surely have an awful lot of assertions against account balances/attributes.</p>
+</li>
+</ol>
+<h2 id=potential-alternative>
+Potential Alternative
+<a class=heading-link href=#potential-alternative>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h2>
+<p>I haven&rsquo;t tried it yet, but I could see addressing the cons with an assertion method that used optional parameters, e.g. in Scala:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-scala data-lang=scala>assertAccount<span style=color:#f92672>(</span>account1<span style=color:#f92672>,</span> id <span style=color:#66d9ef>=</span> <span style=color:#ae81ff>1234</span><span style=color:#f92672>,</span> <span style=color:#66d9ef>type</span> <span style=color:#f92672>=</span> <span style=color:#a6e22e>Checking</span><span style=color:#f92672>);</span>
+
+<span style=color:#75715e>// here&#39;s the custom assertion method:
+</span><span style=color:#75715e></span><span style=color:#66d9ef>def</span> assertAccount<span style=color:#f92672>(</span>
+  account<span style=color:#66d9ef>:</span> <span style=color:#66d9ef>Account</span><span style=color:#f92672>,</span>
+  id<span style=color:#66d9ef>:</span> <span style=color:#66d9ef>Int</span> <span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span><span style=color:#f92672>,</span>
+  type<span style=color:#66d9ef>:</span> <span style=color:#66d9ef>AccountType</span> <span style=color:#f92672>=</span> <span style=color:#66d9ef>null</span><span style=color:#f92672>,</span>
+  overpaid<span style=color:#66d9ef>:</span> <span style=color:#66d9ef>Boolean</span> <span style=color:#f92672>=</span> <span style=color:#66d9ef>null</span><span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
+  <span style=color:#75715e>// only assert against parameters that were provided
+</span><span style=color:#75715e></span>  <span style=color:#66d9ef>if</span> <span style=color:#f92672>(</span>overpaid <span style=color:#f92672>!=</span> <span style=color:#66d9ef>null</span><span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
+    assertThat<span style=color:#f92672>(</span>account<span style=color:#f92672>.</span>getOverpaid<span style=color:#f92672>,</span> is <span style=color:#f92672>(</span>overpaid<span style=color:#f92672>))</span>
+  <span style=color:#f92672>}</span>
+<span style=color:#f92672>}</span>
+</code></pre></div><p>This way each test method could opt-in to only asserting the attributes it cares about. &mldr;although this sounds very similar to the imperative approach, and is just kind of hacking it to be one 1 line.</p>
+<p>I&rsquo;m also not sure how this would work with multiple entities (like asserting against a list of accounts), although maybe the compromise is that you just have to have 1 assertion per entity.</p>
+<h2 id=conclusion>
+Conclusion
+<a class=heading-link href=#conclusion>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h2>
+<p>Anyway, my basic thought is that &ldquo;then&rdquo; assertion sections of tests can easily become too many lines of code, with too many repetitive, imperative assertions, and so it&rsquo;s worth keeping in mind how/when you could switch over to a more declarative DSL-/FIT-style approach, even within the confines of regular xUnit tests.</p>
+</div>
+<footer>
+<div id=disqus_thread></div>
+<script type=application/javascript>var disqus_config=function(){};(function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById('disqus_thread').innerHTML='Disqus comments not available by default when the website is previewed locally.';return}var b=document,a=b.createElement('script');a.async=!0,a.src='//shaberman.disqus.com/embed.js',a.setAttribute('data-timestamp',+new Date),(b.head||b.body).appendChild(a)})()</script>
+<noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript>
+<a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a>
+</footer>
+</article>
+</section>
+</div>
+<footer class=footer>
+<section class=container>
+©
+2008 -
+2021
+Stephen Haberman
+·
+Powered by <a href=https://gohugo.io/>Hugo</a> & <a href=https://github.com/luizdepra/hugo-coder/>Coder</a>.
+</section>
+</footer>
+</main>
+<script src=/js/coder.min.03b17769f4f91ae35667e1f2a1ca8c16f50562576cf90ff32b3179926914daa5.js integrity="sha256-A7F3afT5GuNWZ+HyocqMFvUFYlds+Q/zKzF5kmkU2qU="></script>
+</body>
+</html>

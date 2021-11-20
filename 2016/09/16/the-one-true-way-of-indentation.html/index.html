@@ -1,0 +1,377 @@
+<!doctype html><html lang=en>
+<head>
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width,initial-scale=1">
+<meta http-equiv=content-language content="en">
+<meta name=color-scheme content="light dark">
+<meta name=author content="Stephen Haberman">
+<meta name=description content="My preferred way of indentation is wrap-all, indent-by-one, which looks like:
+// method call foo( param1, param2, param3, param4); // method declaration public void foo( String param1, String param2, String param3, String param4) { // implementation } (Pretend that the lines were long enough to need wrapping.)
+&ldquo;wrap-all&rdquo; means, if a line passes the max line length (e.g. 120), don&rsquo;t just break it into only two lines, but wrap each segment of the method call/method declaration on it&rsquo;s own line, even if this creates more lines than necessary.">
+<meta name=keywords content="blog,developer,personal">
+<meta name=twitter:card content="summary">
+<meta name=twitter:title content="The One True Way Of Indentation">
+<meta name=twitter:description content="My preferred way of indentation is wrap-all, indent-by-one, which looks like:
+// method call foo( param1, param2, param3, param4); // method declaration public void foo( String param1, String param2, String param3, String param4) { // implementation } (Pretend that the lines were long enough to need wrapping.)
+&ldquo;wrap-all&rdquo; means, if a line passes the max line length (e.g. 120), don&rsquo;t just break it into only two lines, but wrap each segment of the method call/method declaration on it&rsquo;s own line, even if this creates more lines than necessary.">
+<meta property="og:title" content="The One True Way Of Indentation">
+<meta property="og:description" content="My preferred way of indentation is wrap-all, indent-by-one, which looks like:
+// method call foo( param1, param2, param3, param4); // method declaration public void foo( String param1, String param2, String param3, String param4) { // implementation } (Pretend that the lines were long enough to need wrapping.)
+&ldquo;wrap-all&rdquo; means, if a line passes the max line length (e.g. 120), don&rsquo;t just break it into only two lines, but wrap each segment of the method call/method declaration on it&rsquo;s own line, even if this creates more lines than necessary.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="http://draconianoverlord.com/2016/09/16/the-one-true-way-of-indentation.html/"><meta property="article:section" content="posts">
+<meta property="article:published_time" content="2016-09-16T00:00:00+00:00">
+<meta property="article:modified_time" content="2016-09-16T00:00:00+00:00">
+<title>
+The One True Way Of Indentation · Draconian Overlord
+</title>
+<link rel=canonical href=http://draconianoverlord.com/2016/09/16/the-one-true-way-of-indentation.html/>
+<link rel=preload href="/fonts/forkawesome-webfont.woff2?v=1.2.0" as=font type=font/woff2 crossorigin>
+<link rel=stylesheet href=/css/coder.min.d9fddbffe6f27e69985dc5fe0471cdb0e57fbf4775714bc3d847accb08f4a1f6.css integrity="sha256-2f3b/+byfmmYXcX+BHHNsOV/v0d1cUvD2Eesywj0ofY=" crossorigin=anonymous media=screen>
+<link rel=stylesheet href=/css/coder-dark.min.aa883b9ce35a8ff4a2a5008619005175e842bb18a8a9f9cc2bbcf44dab2d91fa.css integrity="sha256-qog7nONaj/SipQCGGQBRdehCuxioqfnMK7z0Tastkfo=" crossorigin=anonymous media=screen>
+<link rel=icon type=image/png href=/images/favicon-32x32.png sizes=32x32>
+<link rel=icon type=image/png href=/images/favicon-16x16.png sizes=16x16>
+<link rel=apple-touch-icon href=/images/apple-touch-icon.png>
+<link rel=apple-touch-icon sizes=180x180 href=/images/apple-touch-icon.png>
+<meta name=generator content="Hugo 0.89.4">
+</head>
+<body class="preload-transitions colorscheme-auto">
+<div class=float-container>
+<a id=dark-mode-toggle class=colorscheme-toggle>
+<i class="fa fa-adjust fa-fw" aria-hidden=true></i>
+</a>
+</div>
+<main class=wrapper>
+<nav class=navigation>
+<section class=container>
+<a class=navigation-title href=/>Draconian Overlord</a>
+Oppressing software entropy
+</section>
+</nav>
+<div class=content>
+<section class="container post">
+<article>
+<header>
+<div class=post-title>
+<h1 class=title>
+<a class=title-link href=http://draconianoverlord.com/2016/09/16/the-one-true-way-of-indentation.html/>
+The One True Way Of Indentation
+</a>
+</h1>
+</div>
+<div class=post-meta>
+<div class=date>
+<span class=posted-on>
+<i class="fa fa-calendar" aria-hidden=true></i>
+<time datetime=2016-09-16T00:00:00Z>
+September 16, 2016
+</time>
+</span>
+<span class=reading-time>
+<i class="fa fa-clock-o" aria-hidden=true></i>
+10-minute read
+</span>
+</div>
+<div class=categories>
+<i class="fa fa-folder" aria-hidden=true></i>
+<a href=/categories/productivity/>Productivity</a></div>
+</div>
+</header>
+<div>
+<p>My preferred way of indentation is wrap-all, indent-by-one, which looks like:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=color:#75715e>// method call
+</span><span style=color:#75715e></span>foo<span style=color:#f92672>(</span>
+  param1<span style=color:#f92672>,</span>
+  param2<span style=color:#f92672>,</span>
+  param3<span style=color:#f92672>,</span>
+  param4<span style=color:#f92672>);</span>
+
+<span style=color:#75715e>// method declaration
+</span><span style=color:#75715e></span><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>foo</span><span style=color:#f92672>(</span>
+  String param1<span style=color:#f92672>,</span>
+  String param2<span style=color:#f92672>,</span>
+  String param3<span style=color:#f92672>,</span>
+  String param4<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
+  <span style=color:#75715e>// implementation
+</span><span style=color:#75715e></span><span style=color:#f92672>}</span>
+</code></pre></div><p>(Pretend that the lines were long enough to need wrapping.)</p>
+<p>&ldquo;wrap-all&rdquo; means, if a line passes the max line length (e.g. 120), don&rsquo;t just break it into only two lines, but wrap each segment of the method call/method declaration on it&rsquo;s own line, even if this creates more lines than necessary.</p>
+<p>So, in our example above, we put all four parameters on their own line, taking 4 lines total, even though we could have also put <code>param1</code> and <code>param2</code> together, and then <code>param3</code> and <code>param4</code> together, and used only 2 lines (see the &ldquo;wrap-when-needed&rdquo; section below for an example).</p>
+<p>&ldquo;indent-by-one&rdquo; means, when wrapping, start the wrapped line one indentation level (e.g. 2 spaces or whatever your project&rsquo;s configured indent level is) past the current line&rsquo;s indentation.</p>
+<p>The reason these two styles work well is that they:</p>
+<ol>
+<li>Minimize ugly diffs, as wrap-all + indent-by-one is very resilient to changes</li>
+<li>Reduces the busywork of re-wrapping/re-indenting (which granted should be done by a formatter anyway)</li>
+<li>Has the best readability/eye-friendly scanning for code reviews</li>
+</ol>
+<h1 id=why-not-wrap-when-needed>
+Why not wrap-when-needed
+<a class=heading-link href=#why-not-wrap-when-needed>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h1>
+<p>One alternate indentation style is wrap-when-needed, which looks like:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=color:#75715e>// method call
+</span><span style=color:#75715e></span>foo<span style=color:#f92672>(</span>param1<span style=color:#f92672>,</span> param2<span style=color:#f92672>,</span>
+  param3<span style=color:#f92672>,</span> param4<span style=color:#f92672>);</span>
+
+<span style=color:#75715e>// method declaration
+</span><span style=color:#75715e></span><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>foo</span><span style=color:#f92672>(</span>String param1<span style=color:#f92672>,</span> String param2<span style=color:#f92672>,</span>
+    String param3<span style=color:#f92672>,</span> String param4<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
+  <span style=color:#75715e>// implementation
+</span><span style=color:#75715e></span><span style=color:#f92672>}</span>
+</code></pre></div><p>There are several problems here: one is ugly diffs, and the other is just bad readability.</p>
+<p>Ugly diffs result because when we add/remove/reorder a parameter that is in the middle of the arguments, it&rsquo;s going to shift all of other parameters around. E.g. the new version might look like, adding <code>newParam</code>:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=color:#75715e>// method call
+</span><span style=color:#75715e></span>foo<span style=color:#f92672>(</span>param1<span style=color:#f92672>,</span> newParam<span style=color:#f92672>,</span>
+  param2<span style=color:#f92672>,</span> param3<span style=color:#f92672>,</span> param4<span style=color:#f92672>);</span>
+
+<span style=color:#75715e>// method declaration
+</span><span style=color:#75715e></span><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>foo</span><span style=color:#f92672>(</span>String param1<span style=color:#f92672>,</span> String newParam<span style=color:#f92672>,</span>
+    String param2<span style=color:#f92672>,</span> String param3<span style=color:#f92672>,</span> String param4<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
+  <span style=color:#75715e>// implementation
+</span><span style=color:#75715e></span><span style=color:#f92672>}</span>
+</code></pre></div><p>Note how <code>param2</code> was shifted down onto the next line, and <code>param2</code>/<code>param3</code> shifted over.</p>
+<p>Even with a diff/code review tool that is smart about white space, and can inner highlight changes, this is a lot of parameters moving around for no reason. This was also a very vanilla addition/shift, diffs can easily get annoying where you have to stare at each line to see which parameters moved/were added/removed.</p>
+<p>With wrap-all, adding a new parameter to already-wrapped lines results in a very nice diff:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-diff data-lang=diff>// method call
+foo(
+  param1,
+<span style=color:#a6e22e>+ newParam,
+</span><span style=color:#a6e22e></span>  param2,
+  param3,
+  param4);
+
+// method declaration
+public void foo(
+  String param1,
+<span style=color:#a6e22e>+ String newParam,
+</span><span style=color:#a6e22e></span>  String param2,
+  String param3,
+  String param4) {
+  // implementation
+}
+</code></pre></div><p>The issue with general readability is that if I have ~5-10 plus method parameters (and yes, we can talk about refactoring to parameter objects, etc., etc., but the reality is that real code looks like this), then my eye has too parse ~5-10 parameters out from a condensed line, e.g.:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-scala data-lang=scala><span style=color:#75715e>// method declaration
+</span><span style=color:#75715e></span><span style=color:#66d9ef>def</span> foo<span style=color:#f92672>(</span>param1<span style=color:#66d9ef>:</span> <span style=color:#66d9ef>Option</span><span style=color:#f92672>[</span><span style=color:#66d9ef>String</span><span style=color:#f92672>]</span> <span style=color:#66d9ef>=</span> <span style=color:#a6e22e>None</span><span style=color:#f92672>,</span> param2<span style=color:#66d9ef>:</span> <span style=color:#66d9ef>Option</span><span style=color:#f92672>[</span><span style=color:#66d9ef>String</span><span style=color:#f92672>]</span> <span style=color:#66d9ef>=</span> <span style=color:#a6e22e>None</span><span style=color:#f92672>,</span>
+  param3<span style=color:#66d9ef>:</span> <span style=color:#66d9ef>Option</span><span style=color:#f92672>[</span><span style=color:#66d9ef>String</span><span style=color:#f92672>]</span> <span style=color:#66d9ef>=</span> <span style=color:#a6e22e>None</span><span style=color:#f92672>,</span> param4<span style=color:#66d9ef>:</span> <span style=color:#66d9ef>Option</span><span style=color:#f92672>[</span><span style=color:#66d9ef>String</span><span style=color:#f92672>]</span> <span style=color:#66d9ef>=</span> <span style=color:#a6e22e>None</span><span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
+  <span style=color:#75715e>// implementation
+</span><span style=color:#75715e></span><span style=color:#f92672>}</span>
+</code></pre></div><p>I can&rsquo;t easily glance at that and see &ldquo;okay, we have four parameters, <code>param1</code>, <code>param2</code>, <code>param3</code>, <code>param4</code>.&rdquo;</p>
+<p>If this was wrapped wrap-all, it&rsquo;s trivial to scan:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-scala data-lang=scala><span style=color:#75715e>// method declaration
+</span><span style=color:#75715e></span><span style=color:#66d9ef>def</span> foo<span style=color:#f92672>(</span>
+  param1<span style=color:#66d9ef>:</span> <span style=color:#66d9ef>Option</span><span style=color:#f92672>[</span><span style=color:#66d9ef>String</span><span style=color:#f92672>]</span> <span style=color:#66d9ef>=</span> <span style=color:#a6e22e>None</span><span style=color:#f92672>,</span>
+  param2<span style=color:#66d9ef>:</span> <span style=color:#66d9ef>Option</span><span style=color:#f92672>[</span><span style=color:#66d9ef>String</span><span style=color:#f92672>]</span> <span style=color:#66d9ef>=</span> <span style=color:#a6e22e>None</span><span style=color:#f92672>,</span>
+  param3<span style=color:#66d9ef>:</span> <span style=color:#66d9ef>Option</span><span style=color:#f92672>[</span><span style=color:#66d9ef>String</span><span style=color:#f92672>]</span> <span style=color:#66d9ef>=</span> <span style=color:#a6e22e>None</span><span style=color:#f92672>,</span>
+  param4<span style=color:#66d9ef>:</span> <span style=color:#66d9ef>Option</span><span style=color:#f92672>[</span><span style=color:#66d9ef>String</span><span style=color:#f92672>]</span> <span style=color:#66d9ef>=</span> <span style=color:#a6e22e>None</span><span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
+  <span style=color:#75715e>// implementation
+</span><span style=color:#75715e></span><span style=color:#f92672>}</span>
+</code></pre></div><p>Now all of the parameter names can be read with one eye sweep.</p>
+<h1 id=why-not-indent-on-column>
+Why not indent-on-column
+<a class=heading-link href=#why-not-indent-on-column>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h1>
+<p>Another option is indent-on-column, which looks like:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=color:#75715e>// method call
+</span><span style=color:#75715e></span>someMethodName<span style=color:#f92672>(</span>param1<span style=color:#f92672>,</span>
+               param2<span style=color:#f92672>,</span>
+               param3<span style=color:#f92672>,</span>
+               param4<span style=color:#f92672>);</span>
+
+<span style=color:#75715e>// method declaration
+</span><span style=color:#75715e></span><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>someMethodName</span><span style=color:#f92672>(</span>String param1<span style=color:#f92672>,</span>
+                           String param2<span style=color:#f92672>,</span>
+                           String param3<span style=color:#f92672>,</span>
+                           String param4<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
+  <span style=color:#75715e>// implementation
+</span><span style=color:#75715e></span><span style=color:#f92672>}</span>
+</code></pre></div><p>There are several problems here: again ugly diffs, but now wasted white space, and also general inconsistency.</p>
+<p>For diffs, when <code>someMethodName</code> is renamed, all of the wrapped parameter lines are going to shift. Which, yes, sophisticated diff/code review tools can hopefully ignore this white space-only change (although the one we use at work does not), but it&rsquo;s still needless noise.</p>
+<p>For wasted white space, the wrapped lines are shifted way over to where <code>someMethodName</code> ends, which means they have less space for their own names. (Granted, if indent-on-column is used with wrap-all, this is not as bad, because each parameter get it&rsquo;s own (shortened) line of space. However, if you combine indent-on-column with wrap-when-needed, that space is more valuable.)</p>
+<p>For inconsistency, if I have multiple wrapped lines, my eye now has a random place to find the wrapped parameters, e.g.:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=color:#75715e>// method call
+</span><span style=color:#75715e></span>someMethodName<span style=color:#f92672>(</span>param1<span style=color:#f92672>,</span>
+               param2<span style=color:#f92672>,</span>
+               param3<span style=color:#f92672>,</span>
+               param4<span style=color:#f92672>);</span>
+
+<span style=color:#75715e>// another method call
+</span><span style=color:#75715e></span>someNiceVariableName<span style=color:#f92672>.</span><span style=color:#a6e22e>withAnotherNiceName</span><span style=color:#f92672>(</span>param1<span style=color:#f92672>,</span>
+                                         param2<span style=color:#f92672>,</span>
+                                         param3<span style=color:#f92672>,</span>
+                                         param4<span style=color:#f92672>);</span>
+</code></pre></div><p>Where <code>param2</code> ends up vertically is basically random (based on the method name being called), instead of being consistent.</p>
+<p>In contrast, indent-by-one handles all of these: nice diffs, no wasted space, and wrapping is consistent.</p>
+<h1 id=indent-by-two-for-method-declarations>
+Indent-by-two for method declarations
+<a class=heading-link href=#indent-by-two-for-method-declarations>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h1>
+<p>One good exception for indent-by-one is to use indent-by-two for method declarations.</p>
+<p>This pushes the wrapped parameter declarations in another level, so that then they are not vertically aligned with the lines in the method body, and so don&rsquo;t accidentally blend into the method body:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=color:#75715e>// method declaration
+</span><span style=color:#75715e></span><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>foo</span><span style=color:#f92672>(</span>
+    String param1<span style=color:#f92672>,</span>
+    String param2<span style=color:#f92672>,</span>
+    String param3<span style=color:#f92672>,</span>
+    String param4<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
+  <span style=color:#75715e>// implementation
+</span><span style=color:#75715e></span><span style=color:#f92672>}</span>
+</code></pre></div><h1 id=wrap-all-for-fluent-call-chains>
+Wrap-all for fluent call chains
+<a class=heading-link href=#wrap-all-for-fluent-call-chains>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h1>
+<p>Wrap-all also works really well for fluent call chains, such as a series of <code>map</code>, <code>filter</code>, etc. calls on a collection, or a series of <code>setFirstName</code>, <code>setLastName</code>, etc., calls on a builder.</p>
+<p>For example calls on a collection with wrap-all:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-scala data-lang=scala>someAccounts
+  <span style=color:#f92672>.</span>filter <span style=color:#f92672>{</span> <span style=color:#66d9ef>_</span><span style=color:#f92672>.</span>hasSomethingSpecial<span style=color:#f92672>()</span> <span style=color:#f92672>}</span>
+  <span style=color:#f92672>.</span>flatMap <span style=color:#f92672>{</span> <span style=color:#66d9ef>_</span><span style=color:#f92672>.</span>getTransactions<span style=color:#f92672>()</span> <span style=color:#f92672>}</span>
+  <span style=color:#f92672>.</span>sortBy <span style=color:#f92672>{</span> <span style=color:#66d9ef>_</span><span style=color:#f92672>.</span>getDate <span style=color:#f92672>}</span>
+  <span style=color:#f92672>.</span>map <span style=color:#f92672>{</span> t <span style=color:#66d9ef>=&gt;</span> someFunctiont<span style=color:#f92672>(</span>t<span style=color:#f92672>);</span> <span style=color:#f92672>}</span>
+</code></pre></div><p>Since each transformation is on it&rsquo;s own line, it&rsquo;s easy to scan down the list and track what is the current type in the collection.</p>
+<p>With wrap-when-necessary, the transformations become jumbled together and it&rsquo;s hard to tease out what each separate step is. E.g. with wrap-when-necessary:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-scala data-lang=scala>someAccounts
+  <span style=color:#f92672>.</span>filter <span style=color:#f92672>{</span> <span style=color:#66d9ef>_</span><span style=color:#f92672>.</span>hasSomethingSpecial<span style=color:#f92672>()</span> <span style=color:#f92672>}.</span>flatMap <span style=color:#f92672>{</span> <span style=color:#66d9ef>_</span><span style=color:#f92672>.</span>getTransactions<span style=color:#f92672>()</span> <span style=color:#f92672>}</span>
+  <span style=color:#f92672>.</span>sortBy <span style=color:#f92672>{</span> <span style=color:#66d9ef>_</span><span style=color:#f92672>.</span>getDate <span style=color:#f92672>}.</span>map <span style=color:#f92672>{</span> t <span style=color:#66d9ef>=&gt;</span> someFunctiont<span style=color:#f92672>(</span>t<span style=color:#f92672>);</span> <span style=color:#f92672>}</span>
+</code></pre></div><p>When my eye hits the <code>.sortBy</code> on the 2nd line, it&rsquo;s not immediately clear which steps have happened before this; I see the <code>filter</code>, but I have to parse the entire 1st line (which in this case only has two steps, but in real code could have ~3-4) to see what type the <code>.sortBy</code> will have.</p>
+<p>I basically have to shift my thinking into mini-parser mode, and start paying (more) attention to matching <code>{</code> and <code>}</code> to see what the steps are.</p>
+<p>Which of course I can do, and is trivial, but it subtly shifts my mind from &ldquo;semantic mode&rdquo; to &ldquo;syntax mode&rdquo;, and then I&rsquo;ll have to shift back.</p>
+<p>Builder call chains work similarly well with wrap-all:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-scala data-lang=scala><span style=color:#66d9ef>new</span> <span style=color:#a6e22e>Employee</span><span style=color:#f92672>()</span>
+  <span style=color:#f92672>.</span>setFirstName<span style=color:#f92672>(</span><span style=color:#e6db74>&#34;foo&#34;</span><span style=color:#f92672>)</span>
+  <span style=color:#f92672>.</span>setLastName<span style=color:#f92672>(</span><span style=color:#e6db74>&#34;bar&#34;</span><span style=color:#f92672>)</span>
+  <span style=color:#f92672>.</span>setAddress<span style=color:#f92672>(</span>
+    <span style=color:#66d9ef>new</span> <span style=color:#a6e22e>Address</span><span style=color:#f92672>()</span>
+    <span style=color:#f92672>.</span>setStreet<span style=color:#f92672>(</span><span style=color:#e6db74>&#34;street&#34;</span><span style=color:#f92672>)</span>
+    <span style=color:#f92672>.</span>setCity<span style=color:#f92672>(</span><span style=color:#e6db74>&#34;city&#34;</span><span style=color:#f92672>)</span>
+    <span style=color:#f92672>.</span>build<span style=color:#f92672>());</span>
+</code></pre></div><p>Fluent collections and builders are such a great use of wrap-all that I&rsquo;ve noticed several times in codebases that otherwise uses wrap-when-necessary, programmers will naturally format collections/builders as wrap-all, because it works so well.</p>
+<h1 id=ide-format-on-save>
+IDE format on save
+<a class=heading-link href=#ide-format-on-save>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h1>
+<p>One potentially controversial aspect of formatting is whether it should be programmer-enforced or IDE-/formatter-enforced (whether invoked from the IDE manually or automatically on save).</p>
+<p>There are pros/cons to each.</p>
+<p>IDE-enforced pros/cons:</p>
+<ul>
+<li>Pro: keeps the codebase look and feel defacto consistent, because it&rsquo;s always kept in the formatter-dictated format</li>
+<li>Pro: minimizes noisy format-only changes in diffs</li>
+<li>Con: if you have a mixed IDE environment then, even if configured very similarily, the formatter results will be slightly different across IDEs</li>
+<li>Con: the formatter may pick a bad formatting choice</li>
+</ul>
+<p>Programmer-enforced pros/cons:</p>
+<ul>
+<li>Pro: Gives programmers very direct/personal control over formatting</li>
+<li>Con: Leads to inconsistencies depending on the developer who wrote the code</li>
+<li>Con: Leads to noisy diffs when/if someone does decide to auto-format the code</li>
+</ul>
+<p>All things considered, I think IDE-enforced formatting (via format on save) is a net win.</p>
+<p>Today&rsquo;s formatters (Eclipse&rsquo;s Java formatter is what I have the most experience with) are, in my experience, very good if you configure them correctly.</p>
+<p>For dealing with mixed-IDE environments, one interesting approach, for the Java/Eclipse/IntelliJ world, is that Eclipse&rsquo;s formatter can be used in standalone mode. So there is an <a href=https://plugins.jetbrains.com/plugin/6546>IntelliJ plugin</a> that will run the Eclipse formatter, with your project&rsquo;s Eclipse formatter settings, from within IntelliJ. I have briefly tried it, and it was surprisingly seamless. In theory you could apply this to other IDEs, and even integrate it into vim/CLI builds.</p>
+<p>Also, if you&rsquo;re in a mixed-IDE environment, two other potential options are:</p>
+<ol>
+<li>
+<p>Configure the IDE to only format changed lines</p>
+<p>For Eclipse, this only works in Save Actions, so if you hit <code>Control Shift F</code>, it will still format the whole file.</p>
+<p>But if you rely on the Save Action formatting, then you won&rsquo;t make noisy diffs in parts of the file you don&rsquo;t touch.</p>
+</li>
+<li>
+<p>Configure the IDE to never join already wrapped lines</p>
+<p>This would mean IDE won&rsquo;t re-evaluate already-wrapped lines and so come to potentially different conclusions than whoever (person or other IDE) originally wrapped the line.</p>
+<p>(There is an Eclipse option for this, I don&rsquo;t know about IntelliJ.)</p>
+</li>
+</ol>
+<p>I&rsquo;ve not personally used either of these options, and so just from experience prefer letting the IDE reformat the entire file on every save. But if that causes too many noisy diffs, I&rsquo;d definitely explore using these to avoid the constant annoyance of noisy diffs.</p>
+<h1 id=the-heller-special-formatter-trick>
+The Heller-special formatter trick
+<a class=heading-link href=#the-heller-special-formatter-trick>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h1>
+<p>Although IDE formatters typically make good choices, it is occasionally useful to tweak where the formatter wraps.</p>
+<p>(Or, if you&rsquo;re working on a project that uses wrap-when-necessary, but you have a collection/builder call chain that would be dramatically easier to read with wrap-all&mldr;)</p>
+<p>You can do this by using a trick a colleague of mine discovered ~10 years ago, which is using fake comment entries, <code>//</code>, to force line breaks.</p>
+<p>When the formatter sees the start of the <code>//</code> comment, even if you don&rsquo;t put any text after it, it must wrap the next line, because condensing the lines means the 2nd line of code would be commented out.</p>
+<p>So, you can do something like:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java>someAccounts <span style=color:#75715e>//
+</span><span style=color:#75715e></span>  <span style=color:#f92672>.</span><span style=color:#a6e22e>stream</span><span style=color:#f92672>()</span> <span style=color:#75715e>//
+</span><span style=color:#75715e></span>  <span style=color:#f92672>.</span><span style=color:#a6e22e>filter</span> <span style=color:#f92672>{</span> a <span style=color:#f92672>-&gt;</span> a<span style=color:#f92672>.</span><span style=color:#a6e22e>hasSomethingSpecial</span><span style=color:#f92672>()</span> <span style=color:#f92672>}</span> <span style=color:#75715e>//
+</span><span style=color:#75715e></span>  <span style=color:#f92672>.</span><span style=color:#a6e22e>flatMap</span> <span style=color:#f92672>{</span> a <span style=color:#f92672>-&gt;</span> a<span style=color:#f92672>.</span><span style=color:#a6e22e>getTransactions</span><span style=color:#f92672>().</span><span style=color:#a6e22e>stream</span><span style=color:#f92672>()</span> <span style=color:#f92672>}</span> <span style=color:#75715e>//
+</span><span style=color:#75715e></span>  <span style=color:#f92672>.</span><span style=color:#a6e22e>sortBy</span> <span style=color:#f92672>{</span> t <span style=color:#f92672>-&gt;</span> t<span style=color:#f92672>.</span><span style=color:#a6e22e>getDate</span><span style=color:#f92672>()</span> <span style=color:#f92672>}</span> <span style=color:#75715e>//
+</span><span style=color:#75715e></span>  <span style=color:#f92672>.</span><span style=color:#a6e22e>map</span> <span style=color:#f92672>{</span> t <span style=color:#f92672>-&gt;</span> someFunctiont<span style=color:#f92672>(</span>t<span style=color:#f92672>)</span> <span style=color:#f92672>}</span>
+</code></pre></div><p>The first few times people see this, they have a very &ldquo;wtf is that&rdquo; reaction. And rightly so.</p>
+<p>This trick is not at all something I&rsquo;d recommend using liberally in your codebase. If you use it all the time, it insinuates your formatter settings are wrong, or your project is using wrap-when-necessary when you really want wrap-all, or something like that.</p>
+<p>That said, used judiciously, teams that I&rsquo;ve worked on have had success with this.</p>
+<p>(We have admittedly used it more than we should on projects that use wrap-when-necessary, when really we should stop beating around the bush and push for moving the projects over to wrap-all.)</p>
+<h1 id=application-to-other-languages>
+Application to other languages
+<a class=heading-link href=#application-to-other-languages>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h1>
+<p>My examples so far have all used Java or Scala, but wrap-all and indent-by-one apply to basically all mainstream programming languages (maybe not LISPs? not sure).</p>
+<p>For example, one of my pet peeves is SQL that is wrap-when-necessary, e.g.</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sql data-lang=sql><span style=color:#66d9ef>SELECT</span> first_name, last_name, street_1, street_2
+  city, <span style=color:#66d9ef>state</span>, zip, phone <span style=color:#66d9ef>FROM</span> <span style=color:#66d9ef>table</span>
+  <span style=color:#66d9ef>WHERE</span> first_name <span style=color:#f92672>=</span> <span style=color:#e6db74>&#39;...&#39;</span> <span style=color:#66d9ef>AND</span> (city <span style=color:#f92672>=</span> <span style=color:#e6db74>&#39;...&#39;</span>
+  <span style=color:#66d9ef>OR</span> city <span style=color:#f92672>=</span> <span style=color:#e6db74>&#39;...&#39;</span>)
+</code></pre></div><p>This is a mess to read; it has the same flaws as the wrap-when-necessary Java code: hard to see which columns are returned, ugly diffs when we add/remove columns, seemingly arbitrary wrapping (e.g. in the middle of an <code>OR</code> clause).</p>
+<p>Using wrap-all + indent-by-one, you can format this as:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sql data-lang=sql><span style=color:#66d9ef>SELECT</span>
+  first_name,
+  last_name,
+  street_1,
+  street_2
+  city,
+  <span style=color:#66d9ef>state</span>,
+  zip,
+  phone
+<span style=color:#66d9ef>FROM</span> <span style=color:#66d9ef>table</span>
+<span style=color:#66d9ef>WHERE</span>
+  first_name <span style=color:#f92672>=</span> <span style=color:#e6db74>&#39;...&#39;</span>
+  <span style=color:#66d9ef>AND</span> (
+    city <span style=color:#f92672>=</span> <span style=color:#e6db74>&#39;...&#39;</span>
+    <span style=color:#66d9ef>OR</span> city <span style=color:#f92672>=</span> <span style=color:#e6db74>&#39;...&#39;</span>)
+</code></pre></div><p>Is it more lines of code? Yes. But is it also more readable and resilient to change? Definitely yes.</p>
+<h1 id=the-one-true-way>
+The one true way
+<a class=heading-link href=#the-one-true-way>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h1>
+<p>Historically, I&rsquo;ve considered indentation to be in the &ldquo;personal preference&rdquo; category of software decision making.</p>
+<p>But now that code reviews are an integral part of software development, I think the easy readability and clean diff benefits of wrap-all, indent-by-one means it should be the standard/best practice indentation that new codebases use, and historical codebases should be migrated towards this when/if possible.</p>
+<p>The differences seem small, but when you&rsquo;re reading a code review with a variety of changes, spread across several files, in code you may/may not be familiar with, then these little readability issues really add up.</p>
+<p>Because the easier the code (and code reviews) is to read syntactically, the more thought processes you can spend on understanding the semantics, which is the most important thing.</p>
+</div>
+<footer>
+<div id=disqus_thread></div>
+<script type=application/javascript>var disqus_config=function(){};(function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById('disqus_thread').innerHTML='Disqus comments not available by default when the website is previewed locally.';return}var b=document,a=b.createElement('script');a.async=!0,a.src='//shaberman.disqus.com/embed.js',a.setAttribute('data-timestamp',+new Date),(b.head||b.body).appendChild(a)})()</script>
+<noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript>
+<a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a>
+</footer>
+</article>
+</section>
+</div>
+<footer class=footer>
+<section class=container>
+©
+2008 -
+2021
+Stephen Haberman
+·
+Powered by <a href=https://gohugo.io/>Hugo</a> & <a href=https://github.com/luizdepra/hugo-coder/>Coder</a>.
+</section>
+</footer>
+</main>
+<script src=/js/coder.min.03b17769f4f91ae35667e1f2a1ca8c16f50562576cf90ff32b3179926914daa5.js integrity="sha256-A7F3afT5GuNWZ+HyocqMFvUFYlds+Q/zKzF5kmkU2qU="></script>
+</body>
+</html>

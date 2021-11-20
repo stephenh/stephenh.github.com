@@ -1,0 +1,252 @@
+<!doctype html><html lang=en>
+<head>
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width,initial-scale=1">
+<meta http-equiv=content-language content="en">
+<meta name=color-scheme content="light dark">
+<meta name=author content="Stephen Haberman">
+<meta name=description content="I&rsquo;ve been reading a lot of docs and blog posts on GRPC and GraphQL lately; both of which seem like cool, well-built technologies.
+I buy into GraphQL being game-changing for the client.
+And I also buy into GRPC being super-high-performance, HTTP/2, etc., etc.
+That said, I have a somewhat major nit-pick for both technologies, and it&rsquo;s around their purported superiority in terms of API consistency.
+If you read any GRPC blog post, they invariably tout how, in contrast to REST, GRPC parameters are uniform and de facto consistent.">
+<meta name=keywords content="blog,developer,personal">
+<meta name=twitter:card content="summary">
+<meta name=twitter:title content="The Half-Truth of GRPC &amp;amp; GraphQL Consistency">
+<meta name=twitter:description content="I&rsquo;ve been reading a lot of docs and blog posts on GRPC and GraphQL lately; both of which seem like cool, well-built technologies.
+I buy into GraphQL being game-changing for the client.
+And I also buy into GRPC being super-high-performance, HTTP/2, etc., etc.
+That said, I have a somewhat major nit-pick for both technologies, and it&rsquo;s around their purported superiority in terms of API consistency.
+If you read any GRPC blog post, they invariably tout how, in contrast to REST, GRPC parameters are uniform and de facto consistent.">
+<meta property="og:title" content="The Half-Truth of GRPC &amp;amp; GraphQL Consistency">
+<meta property="og:description" content="I&rsquo;ve been reading a lot of docs and blog posts on GRPC and GraphQL lately; both of which seem like cool, well-built technologies.
+I buy into GraphQL being game-changing for the client.
+And I also buy into GRPC being super-high-performance, HTTP/2, etc., etc.
+That said, I have a somewhat major nit-pick for both technologies, and it&rsquo;s around their purported superiority in terms of API consistency.
+If you read any GRPC blog post, they invariably tout how, in contrast to REST, GRPC parameters are uniform and de facto consistent.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="http://draconianoverlord.com/2018/07/02/the-half-truth-of-grpc-amp-graphql-consistency.html/"><meta property="article:section" content="posts">
+<meta property="article:published_time" content="2018-07-02T00:00:00+00:00">
+<meta property="article:modified_time" content="2018-07-02T00:00:00+00:00">
+<title>
+The Half-Truth of GRPC &amp;amp; GraphQL Consistency · Draconian Overlord
+</title>
+<link rel=canonical href=http://draconianoverlord.com/2018/07/02/the-half-truth-of-grpc-amp-graphql-consistency.html/>
+<link rel=preload href="/fonts/forkawesome-webfont.woff2?v=1.2.0" as=font type=font/woff2 crossorigin>
+<link rel=stylesheet href=/css/coder.min.d9fddbffe6f27e69985dc5fe0471cdb0e57fbf4775714bc3d847accb08f4a1f6.css integrity="sha256-2f3b/+byfmmYXcX+BHHNsOV/v0d1cUvD2Eesywj0ofY=" crossorigin=anonymous media=screen>
+<link rel=stylesheet href=/css/coder-dark.min.aa883b9ce35a8ff4a2a5008619005175e842bb18a8a9f9cc2bbcf44dab2d91fa.css integrity="sha256-qog7nONaj/SipQCGGQBRdehCuxioqfnMK7z0Tastkfo=" crossorigin=anonymous media=screen>
+<link rel=icon type=image/png href=/images/favicon-32x32.png sizes=32x32>
+<link rel=icon type=image/png href=/images/favicon-16x16.png sizes=16x16>
+<link rel=apple-touch-icon href=/images/apple-touch-icon.png>
+<link rel=apple-touch-icon sizes=180x180 href=/images/apple-touch-icon.png>
+<meta name=generator content="Hugo 0.89.4">
+</head>
+<body class="preload-transitions colorscheme-auto">
+<div class=float-container>
+<a id=dark-mode-toggle class=colorscheme-toggle>
+<i class="fa fa-adjust fa-fw" aria-hidden=true></i>
+</a>
+</div>
+<main class=wrapper>
+<nav class=navigation>
+<section class=container>
+<a class=navigation-title href=/>Draconian Overlord</a>
+Oppressing software entropy
+</section>
+</nav>
+<div class=content>
+<section class="container post">
+<article>
+<header>
+<div class=post-title>
+<h1 class=title>
+<a class=title-link href=http://draconianoverlord.com/2018/07/02/the-half-truth-of-grpc-amp-graphql-consistency.html/>
+The Half-Truth of GRPC &amp;amp; GraphQL Consistency
+</a>
+</h1>
+</div>
+<div class=post-meta>
+<div class=date>
+<span class=posted-on>
+<i class="fa fa-calendar" aria-hidden=true></i>
+<time datetime=2018-07-02T00:00:00Z>
+July 2, 2018
+</time>
+</span>
+<span class=reading-time>
+<i class="fa fa-clock-o" aria-hidden=true></i>
+9-minute read
+</span>
+</div>
+<div class=categories>
+<i class="fa fa-folder" aria-hidden=true></i>
+<a href=/categories/architecture/>Architecture</a></div>
+</div>
+</header>
+<div>
+<p>I&rsquo;ve been reading a lot of docs and blog posts on GRPC and GraphQL lately; both of which seem like cool, well-built technologies.</p>
+<p>I buy into GraphQL being game-changing for the client.</p>
+<p>And I also buy into GRPC being super-high-performance, HTTP/2, etc., etc.</p>
+<p>That said, I have a somewhat major nit-pick for both technologies, and it&rsquo;s around their purported superiority in terms of API consistency.</p>
+<p>If you read any GRPC blog post, they invariably tout how, in contrast to REST, GRPC parameters are uniform and de facto consistent.</p>
+<p>E.g. while REST gives you lots of freedom in where to put parameters:</p>
+<pre tabindex=0><code>POST /employee/:does_id_go_here?id=or_id_here
+Header: or_id_here
+</code></pre><p>With an IDL, like GRPC and GraphQL, you define it declaratively:</p>
+<pre tabindex=0><code>message EmployeeInput {
+  string id = 1;
+}
+</code></pre><p>And then it&rsquo;s automatically/uniformly put in the same spot.</p>
+<p>And the same thing with GraphQL, e.g.:</p>
+<pre tabindex=0><code>type EmployeeInput {
+  id: String
+}
+</code></pre><p>And, per the blog posts, this is the 1st/universal evidence of REST being inferior (granted, they go on to other reasons, but typically start here).</p>
+<h2 id=syntax--vs-semantic-level-consistency>
+Syntax- vs. Semantic-Level Consistency
+<a class=heading-link href=#syntax--vs-semantic-level-consistency>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h2>
+<p>However, my annoyance is that this &ldquo;where does the parameter go&rdquo; is a small sliver of the overall picture of an API&rsquo;s consistency.</p>
+<p>To me, &ldquo;where does this parameter go&rdquo; (or &ldquo;how is it encoded on the wire&rdquo;) is important, but is low, &ldquo;syntax-level&rdquo; consistency (making up terminology), and ignores a whole different layer of &ldquo;semantic-level&rdquo; consistency.</p>
+<p>A brief list of these semantic-level concerns are:</p>
+<ul>
+<li>Are inputs uniform across all similar endpoints? When I submit a new employee or a new employer, are the inputs a list of fields, or one field that is a struct? Is it the same struct that I get on read? Or a different struct with a subset of fields?</li>
+<li>Are the success results uniform across all similar endpoints? What does the &ldquo;entity created&rdquo; look like for all of your entity endpoints? Is the new object&rsquo;s id always returned? Is that field name always the same? Is a copy of the new entity returned?</li>
+<li>Are the errors results uniform? If there is an error code, is it always in the same spot? If the name field was invalid, is that error message always in the same spot?</li>
+<li>Are dates encoded uniformly in the inputs? The outputs? Are they always strings? Longs? Millis? What about other user types?</li>
+<li>Is paging conistent across all applicable queries? Is it always start/offset?</li>
+<li>Is sorting consistent across all endpoints? How do I say &ldquo;sort by name asc&rdquo;?</li>
+<li>Is filtering consistent across all endpoints? How do I say &ldquo;only return unpaid invoices&rdquo;? How do I say &ldquo;only return invoices whose companies are in the state of California&rdquo;?</li>
+</ul>
+<p>The answer with GRPC is that none of these are defined by GRPC itself (and same with GraphQL, for the most part), so you&rsquo;re perfectly free to be wildly inconsistent across your entire API.</p>
+<p>Which, to a certain extent, I get, GRPC shouldn&rsquo;t box anyone in on &ldquo;where&rsquo;s how you have to do paging&rdquo;&ndash;that&rsquo;s fine, but let&rsquo;s not pretend it is enforcing some magical level of consistency, because it is not.</p>
+<h2 id=where-are-the-entities>
+Where Are The Entities?
+<a class=heading-link href=#where-are-the-entities>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h2>
+<p>Continuing my rant/tangent, what both of GRPC (more so) and GraphQL (less so, but still) are woefully mute on is: what are the entities?</p>
+<p>Entities, and consistency for entities, has been core to any system I&rsquo;ve worked on (which are admittedly all, at the end of the day, &ldquo;enterprise spreadsheets&rdquo;, e.g. CRUD + a ton of business logic).</p>
+<p>So, echoing some of the previous list, for me what&rsquo;s really important, when we talk about API consistency, is <em>entity consistency</em>:</p>
+<ul>
+<li>What&rsquo;s the name of the <code>ID</code> field? <code>id</code>? <code>key</code>? <code>primaryKey</code>? (GraphQL at least has an <code>ID</code> type which is great.)</li>
+<li>How do I create an entity? What&rsquo;s the message name (GRPC)? What&rsquo;s the mutation name (GraphQL)?</li>
+<li>How do I update/delete an entity? (Same thing.)</li>
+<li>How do I query an entity? (Same thing.)</li>
+</ul>
+<p>For me, this is the true consistency, semantic-level, entity-level consistency, that can make or break the simplicity of building business systems in the large.</p>
+<h2 id=why-does-entity-level-consistency-matter>
+Why Does Entity-Level Consistency Matter?
+<a class=heading-link href=#why-does-entity-level-consistency-matter>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h2>
+<p>There are two reasons:</p>
+<ol>
+<li>
+<p>Developer Productivity</p>
+<p>When you have consistency, life just gets easier. Developers know where to look, they know where to change things, debugging is not as stressful. They just go faster.</p>
+<p>Granted, developer speed is a hard metric to quantify, and developers are also good at just buckling down and dealing with the lack of consistency.</p>
+<p>As a friend of mine remarked once, if you&rsquo;ve not been in a super-consistent system, it&rsquo;s hard to appreciate how easy life can be.</p>
+</li>
+<li>
+<p>Tooling</p>
+<p>Consistency can make tooling dramatically easier to build (because there are less edge cases to handle), so a number of problems become more generalizable:</p>
+<ul>
+<li>Writing generic API libraries around your endpoints</li>
+<li>Providing CRUD stubs for your system</li>
+<li>Mapping calls/results to local/offline caches</li>
+<li>&mldr;other things&mldr; (ha)</li>
+</ul>
+<p>That if you try to build these on top of &ldquo;just a random bunch GRPC messages&rdquo; or &ldquo;just a random bunch GraphQL mutations&rdquo;, would likely become a mess.</p>
+<p>But if you step back, and constraint your input, they are more likely to be doable.</p>
+</li>
+</ol>
+<h2 id=hibernate-vs-joist>
+Hibernate vs. Joist
+<a class=heading-link href=#hibernate-vs-joist>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h2>
+<p>A small, concrete example from my past around consistency and ease of tooling is <a href=http://hibernate.org/>Hibernate</a>, the Goliath of Java ORMs, and <a href=http://joist.ws/>Joist</a>, my now-dead ORM hobby project.</p>
+<p>Hibernate is for &ldquo;not consistent at all&rdquo; schemas: it has annotations and mapping files to model any possible database schema you will ever see. It has the complexity that comes with that mission, and was ~100K LOC (IIRC, when I looked ~10 years ago).</p>
+<p>Joist is for &ldquo;super consistent&rdquo; schemas: it assumes all of your entity tables look like <code>X</code> (the primary column is <code>id</code>, it&rsquo;s a sequence number, there is a <code>version</code> column for op-locks, etc.). Your join tables always look like <code>Y</code> (it also has an <code>id</code> column, the other columns are deterministically named, etc.).</p>
+<p>Because of this, Joist is dramatically simpler, and only ~10K LOC (which still seems too big).</p>
+<p>So, not that you should go write your own ORM; but, if you have a entity consistency, you <em>at least have that option</em>.</p>
+<p>Well, you can technically attempt bespoke tooling without entity consistency, but you risk it being a quagmire.</p>
+<p>In my opinion, you should cheat and get entity consistency first, and then your tooling will at least be easier.</p>
+<h2 id=rest-almost-got-consistency-right>
+REST Almost Got Consistency Right
+<a class=heading-link href=#rest-almost-got-consistency-right>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h2>
+<p>Back to REST and GRPC/GraphQL, another irksome aspect is that, despite REST not being the cool kid anymore, it <em>almost</em> got this right.</p>
+<p>(As a disclaimer, I&rsquo;m going to purposefully talk about pragmatic-REST and not Fielding-/HATEOS-purist REST.)</p>
+<p>REST is about resources, which, if you squint, are entities.</p>
+<p>And given how easily REST verbs map to CRUD operations, we&rsquo;re ~90% of the way to entity consistency.</p>
+<p>&mldr;except that REST stopped at resources, and didn&rsquo;t encode the last ~10% of &ldquo;what is the id&rdquo;, &ldquo;what <em>exactly</em> does the path look like&rdquo;, etc.</p>
+<p>So, ironically, REST is <em>closer to semantic-level consistency than GRPC</em> (resources are/can be entities), but has essentially no syntax-level consistency (you&rsquo;re free to encode your resource inputs/outputs however you like).</p>
+<p>Which, to be fair, I understand why web-/Fielding/document-style REST does not need these tight constraints, but ~90% of all JSON APIs are, in my opinion, basically entity APIs, that would do well to adopt a strict subset of conventions.</p>
+<h2 id=granted-entities-can-look-different>
+Granted, Entities Can Look Different
+<a class=heading-link href=#granted-entities-can-look-different>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h2>
+<p>I also understand that entities will look different across the industry, and so it&rsquo;s not realistic for REST itself, or GRPC itself, to encode very tight, semantic-level details.</p>
+<p>E.g. I&rsquo;m sure Google&rsquo;s entities likely look slightly (or extremely) different than your entities or my entities.</p>
+<p>So, I admit it makes sense for GRPC to punt on entity consistency.</p>
+<p>Especially since GRPC is meant for lower-level, raw RPC calls, e.g. when building distributed systems, where non-entity communication is a major use case.</p>
+<p>However, my suspicion is that a ton of GRPC users are adopting GRPC precisely as a &ldquo;better JSON API&rdquo; or a &ldquo;better entity API&rdquo; solution, and kind of missing the point that it doesn&rsquo;t actually bring any entity-specific strengths or conventions to the table.</p>
+<h2 id=graphql-was-really-close>
+GraphQL was Really Close
+<a class=heading-link href=#graphql-was-really-close>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h2>
+<p>I was initially very impressed with GraphQL (and still am), especially when I saw their <code>type Foo { id: ID... }</code> notation&mldr;finally! An IDL that is about entities!</p>
+<p>They also talk very generically, e.g. <a href=https://graphql.org/learn/thinking-in-graphs/>Thinking in Graphs</a>, which sounds &ldquo;entity-ish&rdquo;, if you make your graph nodes entities. I&rsquo;d be fine with that.</p>
+<p>However, I was disappointed to see that they have basically zero consistency around mutations. Mutations can be anything, can do anything, can be named anything, and are completely opaque-/server-defined implementation details.</p>
+<p>Unfortunately, I think they did this on purpose, as &ldquo;opaque, named mutations&rdquo; are basically an encoding of the command pattern, where the client must trigger explicit &ldquo;perform action X&rdquo; commands, and the server will respond appropriately. Which, for long-lived mobile applications, the flexibility to update &ldquo;what does command <code>X</code> do&rdquo; without an app update is admittedly very nice.</p>
+<p>However, personally, I think ~80% of an application&rsquo;s mutations are boilerplate CRUD. And, granted, some small percentage, e.g. ~20% or so, will have to be done server-side, because they are non-CRUD, or require special server-side logic/resources.</p>
+<p>And so, while I think I understand their motivation, I wish GraphQL would have been more opinionated about &ldquo;this is what CRUD mutations look like&rdquo;.</p>
+<p>(I have more thoughts on GraphQL and offline apps, but am deferring that to another post.)</p>
+<p>(Facebook is also generally competent, so perhaps their opaque mutations == command-pattern really is best-practice, and I will come around. Not sure yet.)</p>
+<h2 id=just-use-your-own-convention>
+Just Use Your Own Convention
+<a class=heading-link href=#just-use-your-own-convention>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h2>
+<p>So, anyway, none of REST, nor GRPC, nor GraphQL are panaceas for &ldquo;if you use this, you&rsquo;ll automatically have amazing API consistency&rdquo;.</p>
+<p>It will still come down to trying, finding, documenting, and enforcing your own conventions.</p>
+<p>As is our lot in life as software engineers. (&mldr;although maybe that is why we shouldn&rsquo;t call ourselves engineers? I think real engineering professions have this sort of stuff figured out and standardized.)</p>
+<p>I do muse that, maybe someday, a true entity-based IDL will become popular (the closest I&rsquo;ve seen so far is <a href=https://docs.dsl-platform.com/ddd-aggregate-root>dsl-platform</a>. Maybe not something that Google, Amazon, and a two-person start-up can all use. But something that solves the 80% case.</p>
+</div>
+<footer>
+<div id=disqus_thread></div>
+<script type=application/javascript>var disqus_config=function(){};(function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById('disqus_thread').innerHTML='Disqus comments not available by default when the website is previewed locally.';return}var b=document,a=b.createElement('script');a.async=!0,a.src='//shaberman.disqus.com/embed.js',a.setAttribute('data-timestamp',+new Date),(b.head||b.body).appendChild(a)})()</script>
+<noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript>
+<a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a>
+</footer>
+</article>
+</section>
+</div>
+<footer class=footer>
+<section class=container>
+©
+2008 -
+2021
+Stephen Haberman
+·
+Powered by <a href=https://gohugo.io/>Hugo</a> & <a href=https://github.com/luizdepra/hugo-coder/>Coder</a>.
+</section>
+</footer>
+</main>
+<script src=/js/coder.min.03b17769f4f91ae35667e1f2a1ca8c16f50562576cf90ff32b3179926914daa5.js integrity="sha256-A7F3afT5GuNWZ+HyocqMFvUFYlds+Q/zKzF5kmkU2qU="></script>
+</body>
+</html>

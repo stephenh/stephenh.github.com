@@ -1,0 +1,267 @@
+<!doctype html><html lang=en>
+<head>
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width,initial-scale=1">
+<meta http-equiv=content-language content="en">
+<meta name=color-scheme content="light dark">
+<meta name=author content="Stephen Haberman">
+<meta name=description content="As most anyone who has had a conversation about programming languages with me knows, I&rsquo;m a static typing bigot.
+Briefly, here&rsquo;s why.
+What I Like About Static Typing      Types act as documentation.
+When I read dynamically typed code, I feel completely lost looking at untyped variables and untyped method calls.
+E.g. if I&rsquo;m in a method doSomething(employee), what methods can I call on this employee parameter?">
+<meta name=keywords content="blog,developer,personal">
+<meta name=twitter:card content="summary">
+<meta name=twitter:title content="Why I'm a Static Typing Bigot">
+<meta name=twitter:description content="As most anyone who has had a conversation about programming languages with me knows, I&rsquo;m a static typing bigot.
+Briefly, here&rsquo;s why.
+What I Like About Static Typing      Types act as documentation.
+When I read dynamically typed code, I feel completely lost looking at untyped variables and untyped method calls.
+E.g. if I&rsquo;m in a method doSomething(employee), what methods can I call on this employee parameter?">
+<meta property="og:title" content="Why I'm a Static Typing Bigot">
+<meta property="og:description" content="As most anyone who has had a conversation about programming languages with me knows, I&rsquo;m a static typing bigot.
+Briefly, here&rsquo;s why.
+What I Like About Static Typing      Types act as documentation.
+When I read dynamically typed code, I feel completely lost looking at untyped variables and untyped method calls.
+E.g. if I&rsquo;m in a method doSomething(employee), what methods can I call on this employee parameter?">
+<meta property="og:type" content="article">
+<meta property="og:url" content="http://draconianoverlord.com/2010/11/24/why-im-a-static-typing-bigot.html/"><meta property="article:section" content="posts">
+<meta property="article:published_time" content="2010-11-24T00:00:00+00:00">
+<meta property="article:modified_time" content="2010-11-24T00:00:00+00:00">
+<title>
+Why I'm a Static Typing Bigot · Draconian Overlord
+</title>
+<link rel=canonical href=http://draconianoverlord.com/2010/11/24/why-im-a-static-typing-bigot.html/>
+<link rel=preload href="/fonts/forkawesome-webfont.woff2?v=1.2.0" as=font type=font/woff2 crossorigin>
+<link rel=stylesheet href=/css/coder.min.d9fddbffe6f27e69985dc5fe0471cdb0e57fbf4775714bc3d847accb08f4a1f6.css integrity="sha256-2f3b/+byfmmYXcX+BHHNsOV/v0d1cUvD2Eesywj0ofY=" crossorigin=anonymous media=screen>
+<link rel=stylesheet href=/css/coder-dark.min.aa883b9ce35a8ff4a2a5008619005175e842bb18a8a9f9cc2bbcf44dab2d91fa.css integrity="sha256-qog7nONaj/SipQCGGQBRdehCuxioqfnMK7z0Tastkfo=" crossorigin=anonymous media=screen>
+<link rel=icon type=image/png href=/images/favicon-32x32.png sizes=32x32>
+<link rel=icon type=image/png href=/images/favicon-16x16.png sizes=16x16>
+<link rel=apple-touch-icon href=/images/apple-touch-icon.png>
+<link rel=apple-touch-icon sizes=180x180 href=/images/apple-touch-icon.png>
+<meta name=generator content="Hugo 0.89.4">
+</head>
+<body class="preload-transitions colorscheme-auto">
+<div class=float-container>
+<a id=dark-mode-toggle class=colorscheme-toggle>
+<i class="fa fa-adjust fa-fw" aria-hidden=true></i>
+</a>
+</div>
+<main class=wrapper>
+<nav class=navigation>
+<section class=container>
+<a class=navigation-title href=/>Draconian Overlord</a>
+Oppressing software entropy
+</section>
+</nav>
+<div class=content>
+<section class="container post">
+<article>
+<header>
+<div class=post-title>
+<h1 class=title>
+<a class=title-link href=http://draconianoverlord.com/2010/11/24/why-im-a-static-typing-bigot.html/>
+Why I'm a Static Typing Bigot
+</a>
+</h1>
+</div>
+<div class=post-meta>
+<div class=date>
+<span class=posted-on>
+<i class="fa fa-calendar" aria-hidden=true></i>
+<time datetime=2010-11-24T00:00:00Z>
+November 24, 2010
+</time>
+</span>
+<span class=reading-time>
+<i class="fa fa-clock-o" aria-hidden=true></i>
+15-minute read
+</span>
+</div>
+<div class=categories>
+<i class="fa fa-folder" aria-hidden=true></i>
+<a href=/categories/favorites/>Favorites</a></div>
+</div>
+</header>
+<div>
+<p>As most anyone who has had a conversation about programming languages with me knows, I&rsquo;m a static typing bigot.</p>
+<p><del>Briefly</del>, here&rsquo;s why.</p>
+<h2 id=what-i-like-about-static-typing>
+What I Like About Static Typing
+<a class=heading-link href=#what-i-like-about-static-typing>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h2>
+<ol>
+<li>
+<p>Types act as documentation.</p>
+<p>When I read dynamically typed code, I feel completely lost looking at untyped variables and untyped method calls.</p>
+<p>E.g. if I&rsquo;m in a method <code>doSomething(employee)</code>, what methods can I call on this <code>employee</code> parameter? What exactly is it going to be? A map? An object? An int?</p>
+<p>I have to guess what the type is based on: a) the variable name, and b) the method calls made against it.</p>
+<p>Sometimes this is very easy, e.g. only the <code>Employee</code> type has an <code>isFired</code> method, so if I read <code>employee.isFired</code>, I&rsquo;m 95% sure that&rsquo;s an <code>Employee</code> instance. Other times, especially in a large/unfamiliar codebase, this is quite hard; you have to hunt down callers (usually with some form of <code>grep</code>), see what most of them are passing, and make an educated guess.</p>
+<p>This mental overhead is basically &ldquo;programmer-time&rdquo; type inference, and, for me, is a big distraction from the core task of understanding &ldquo;what does this code really do?&rdquo;.</p>
+<p>Contrast this to a static language, where you can simply glance up to a type declaration (or hover in an IDE for inferred types), know right away what types you&rsquo;re dealing with, and then proceed to analyze the actual semantics of the code you&rsquo;re reading.</p>
+<p>There are several sub-points here:</p>
+<ul>
+<li>
+<p>This is why &ldquo;dynamic languages are fine, I&rsquo;ll just add comprehensive unit tests&rdquo; is not a compelling argument to me: that line of reasoning focuses soley on correctness: instead of &ldquo;the compiler says the code is correct&rdquo;, we say &ldquo;the unit tests say it is correct&rdquo;.</p>
+<p>Which I actually completely agree with. Relying on the compiler for correctness is naive, so the more unit tests, the better.</p>
+<p>However, unit tests do not address the documentation aspect of static typing, e.g. when I look at a method, can I immediately tell (without jumping to callers or the unit test), what the expected input types are, what the expected output types are, etc.</p>
+</li>
+<li>
+<p>Henry-Milner-based languages (e.g. Haskell, OCaml) also implicitly focus solely on &ldquo;static types for correctness&rdquo;, to the deteriment of types-as-documentation, because they infer so much (they can infer even method input types and return types) that they force the programmer back into programmer-time type inference.</p>
+<p>This was a surprising insight to me, because I&rsquo;d always thought I&rsquo;d really enjoy something like Haskell/OCaml, because I think they are seen as &ldquo;the most pure&rdquo; form of static typing.</p>
+</li>
+<li>
+<p>I do not buy the assertion that I should not care what the types of variables are&ndash;that, like Smalltalk, objects will react to whatever messages I send them and I shouldn&rsquo;t care beyond that.</p>
+<p>While <code>method_missing</code> is occasionally very handy (see the meta-programming discussion later), in the far majority of cases, I assert simple method resolution semantics are going happen anyway (e.g. <code>foo.bar()</code> is going to call the explicitly-declared method <code>void bar()</code> in the <code>Foo</code> class), so the language might as well clue me in when this extremely common/simple case applies.</p>
+</li>
+</ul>
+</li>
+<li>
+<p>Types make abstractions explicit. (<strong>Added July 2016</strong> based on <a href=https://vsavkin.com/writing-angular-2-in-typescript-1fa77c78d8e8#.wxyd5yv7w>Victor Savkin&rsquo;s blog post</a>.)</p>
+<p>Really I should just copy/paste Victor&rsquo;s &ldquo;Types make abstraction explicit&rdquo; here, because it&rsquo;s a great point, and very well articulated.</p>
+<p>My inadequate summary is basically that all programming involves finding the right abstractions, and building up those abstractions up into a coherent, well-designed system.</p>
+<p>Writing code in either static or dynamic languages involves making these abstractions, so they are always there&ndash;the difference is that in dynamic languages, you don&rsquo;t even see them.</p>
+<p>I base this &ldquo;you don&rsquo;t even see them&rdquo; on the assertion that abstractions are, in OO languages, basically always interfaces: a named contract that a set of types implement. (Or maybe type classes/etc., but same sort of thing.)</p>
+<p>In dynamic languages, you do have types, e.g. you can declare classes/etc., but you don&rsquo;t declare, or even come up with a name, the abstractions/interfaces that declare contracts across types.</p>
+<p>Granted, you can assert &ldquo;I don&rsquo;t need the compiler to enforce that I implemented a contract; I have a unit test to do that&rdquo;, but the nuance here is that it&rsquo;s not about compiler enforcement (although that is nice): it&rsquo;s about not even having a term, a common language, to connate what the abstraction is.</p>
+</li>
+<li>
+<p>A type system provides free, blazing-fast, type-check &ldquo;tests&rdquo;.</p>
+<p>Of course you still need real unit tests. Just like having unit tests doesn&rsquo;t absolve you from having acceptance tests, having type-check &ldquo;tests&rdquo; does not absolve you from having unit tests.</p>
+<p>That made clear, to me the benefit of compiler-based type tests is the quick feedback. No matter how fast my unit tests are, a compiler can follow me along and more quickly check for trivial errors. In a mature IDE like Eclipse&rsquo;s JDT, this happens as you type, which is pretty darn quick.</p>
+<p>Assuming the type-check tests pass, then you proceed to unit tests (or maybe you&rsquo;ve written them first, TDD-style, and so now they compile). Just like after your unit tests pass, you proceed to an integration test or two. Gradually progressing to slower, but more encompassing, levels of tests.</p>
+</li>
+<li>
+<p>Runtime meta-programming (adding new methods/types on the fly) is not as dynamic as one would think, and ideally can be done just as well with compile-time meta-programming.</p>
+<p>(In terms of meta-programming, I&rsquo;m talking about Rails adding <code>getter</code>/<code>setter</code> methods for each database column to ActiveRecord domain objects, and other similar <code>method_missing</code> or <code>instance_eval</code> in Ruby or changing prototypes in JavaScript.)</p>
+<p>I assert most dynamic/runtime meta programming is done relatively immediately at program startup time, and then things settle down and start to look more static in nature&ndash;hence most of it could (in theory) be done just as well at compile-time (e.g. per the Rails example, by a pre-compilation &ldquo;look at the database schema and generate code&rdquo; code generator).</p>
+<p>To explain, I think a generic timeline for all meta-programming (either run-time or compile-time) is:</p>
+<ol>
+<li>The programmer types input-program</li>
+<li>Meta-programming magic transforms input-program to result-program</li>
+<li>The result-program runs</li>
+</ol>
+<p>In dynamic languages, step 2 is done at runtime, so it is very coupled with step 3, to where people consider them the same thing (because, yes, they are). However, I naively think that step 2 could run just as well at compile-time, after the programmer types, via compile-time meta-programming (either AST transformations or even more simple &ldquo;just generate some source files&rdquo; code generation).</p>
+<p>For example, I think it is unlikely that, after ActiveRecord adds database columns to the <code>Employee</code> model class, and ActiveSupport opens up <code>String</code> to add helper methods, after two weeks of uptime, there will suddenly be new methods popping up in <code>Employee</code>, <code>String</code>, or other classes. E.g. &ldquo;dynamic meta programming&rdquo; is, in reality, not <em>that</em> dynamic; it&rsquo;s not &ldquo;adding new dynamic behavior throughout the lifetime of the program&rdquo;, but more like &ldquo;add a few things at program initialization time&rdquo;.</p>
+<p>Furthermore, if meta-programming (step 2) is done at compile-time, then the result-program is also available at compile-time. So now the compiler/type-aware IDE can type check your entire program, not just the parts that don&rsquo;t use runtime <code>method_missing</code> or <code>instance_eval</code> (for Ruby) or runtime bytecode generation (for Java) magic.</p>
+<p>(Note: I&rsquo;m not talking about changing code on-the-fly like during development, e.g. hot reloading; I think that is a great productivity boost, see the &ldquo;Other Notes&rdquo; section below.)</p>
+<p><strong>Update:</strong> This <a href=http://gnuu.org/2010/12/13/too-lazy-to-type/>blog post</a> by Loren Segal states this point much better than I do and includes links to papers/profiling results that back up the assertion.</p>
+</li>
+<li>
+<p>Deep down all programmers want the features of a type-aware IDE.</p>
+<p>Look at the success of IntelliJ&rsquo;s <a href=http://www.jetbrains.com/ruby/>RubyMine</a> and Spring&rsquo;s <a href=http://www.springsource.com/developer/grails>STS</a> for Groovy. (<strong>Update May 2018</strong> for context, this was originally written in 2010. Today&rsquo;s examples would be Visual Studio Code&rsquo;s JavaScript support.)</p>
+<p>The IDEs take dynamic languages and, via IDE-time type inference, layer on static features like IntelliSense/autocomplete and basic/best-guess type checking.</p>
+<p>These IDEs make programmers who&rsquo;ve been using dynamic languages drool with their type-aware hints (code completion), navigation, and refactoring. (Granted, there are vim/emacs hold-outs in any language, but I&rsquo;m generalizing. Although I love vim bindings, I just sneak them in via &ldquo;good enough for me&rdquo; IDE plugins like <a href=http://vrapper.sourceforge.net/documentation/>Vrapper</a>.)</p>
+<p>My assertion is: if bolted-on, IDE-time type inference is such an awesome thing, shouldn&rsquo;t it just be spec&rsquo;d as part of the language, instead of leaving it up to ad-hoc, per-IDE implementations?</p>
+</li>
+</ol>
+<h2 id=what-i-dont-like-about-static-typing>
+What I Don&rsquo;t Like About Static Typing
+<a class=heading-link href=#what-i-dont-like-about-static-typing>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h2>
+<p>However, even in my bigotry, I will definitely concede static languages have their downsides:</p>
+<ol>
+<li>
+<p>Type-aware IDEs (Eclipse, IntelliJ, etc.) are hard to build and so become barriers to entry.</p>
+<p>Compilers themselves, for either static or dynamic languages, are a very well-known, basically solved problem&ndash;lots of books, parser libraries, etc. The compilation environment is also very static: take input text X and transform it into output code Y.</p>
+<p>IDEs, however, are really hard. The compilation environment is no longer static&ndash;the IDE still transforms X to Y, but while transforming X to Y, it also has to put errors on the right line, squiggles under the right words, pop ups at the right place, cache the entire program&rsquo;s type data to provide instant navigation, and all while the user is flying around the source file changing things and trying to make the IDE developer&rsquo;s life a nightmare.</p>
+<p>Supposedly JVM-based languages can leverage Eclipse&rsquo;s existing IDE infrastructure. But from looking at the Groovy and Scala IDE plugin histories, it still takes a really long time to get solid, quick integration with the Eclipse JDT.</p>
+<p>Type-aware IDEs also stifle innovation as they become a barrier to entry for new languages. Designers of new languages can&rsquo;t just have a great language, with a great library, with a great community&ndash;they also need to invest a very non-trivial amount of time into an IDE, if they want to see the sort of massive adoption that requires getting the average autocomplete-loving programmer to switch to their new language.</p>
+<p>(<strong>Update May 2018</strong>: The <a href=http://langserver.org/>language server protocol</a> is doing a lot to democratize IDEs, by separating the compiler from the GUI, and is amazing.)</p>
+</li>
+<li>
+<p>Type systems are hard.</p>
+<p>Type theory is a very academic field. You don&rsquo;t see hobbyists sitting down and writing a new type system for their language over the weekend. But you see plenty of hobbyists sitting down and writing a new syntax for their language over the weekend.</p>
+<p>This is mini-point that really leads to:</p>
+</li>
+<li>
+<p>Consequently, static languages always lag behind dynamic languages. Especially with regards to syntax.</p>
+<p>I wish static languages evolved at the rate that dynamic ones do, as I like shiny new things as much as the next programmer.</p>
+<p>However, the reality is that dynamically-typed languages will always evolve faster, because they need comparatively so much less infrastructure, that innovation shows up in dynamic languages first (e.g. a new language written by one guy and then eventually stewarded by a small team).</p>
+<p>And then, eventually, static languages finally catch up, when an organization (who typically prints money in some other industry, so can bankroll their own technology innovation) assembles a large team to crank out a new language (e.g. Go, TypeScript, Flow, etc).</p>
+<p>(The delay to get new static languages is also why I pine so much for compile-time meta-programming&ndash;in theory that capability would allow similar, individual-programmer-driven productivity enhancements without having to build a brand new language each time.)</p>
+<p><strong>Update May 2018</strong>: This &ldquo;static languages evolve slower&rdquo; opinion also aligns with an <a href=https://en.wikipedia.org/wiki/Anders_Hejlsberg>Anders Hejlsberg</a> quote: &ldquo;I don’t see a lot of downsides to static typing other than the fact that it may not be practical to put in place, and it is harder to put in place and therefore takes longer for us to get there with static typing, but once you do have static typing. I mean, gosh, you know, like hey – the compiler is going to report the errors before the space shuttle flies instead of whilst it’s flying, that’s a good thing!&rdquo;</p>
+</li>
+<li>
+<p>Type systems can be too constraining, and I&rsquo;ll accept that they occasionally need to be circumvented for the better good.</p>
+<p>So, yes, reaching outside the type-system, e.g. via reflection or what not, is occasionally needed. That&rsquo;s perfectly fine, when used judiciously.</p>
+<p>However, I don&rsquo;t think needing to rarely circumvent the type system (e.g. calling <code>foo.bar()</code> when the method <code>bar</code> does not actually exist), e.g. maybe 5% or likely less of the total method/etc. calls in your application, means that the other normal/bland 95% of your application (where the <code>foo.bar()</code> method does actually exist) should have to give up on type checking and be forced back to programmer-time inference.</p>
+</li>
+<li>
+<p>Compile-time meta programming is still a fringe technique.</p>
+<p>Much to my chagrin, compile-time meta programming is not going to be in a mainstream static language anytime soon. Despite promising alternatives (<a href=http://boo.codehaus.org>boo</a>, <a href=http://nemerle.org>nemerle</a>, <a href=http://projectlombok.org>lombok</a>, <a href=http://code.google.com/p/groovypptest>groovy++</a>), it&rsquo;s lacking from more leading &ldquo;Java next&rdquo; contenders like <a href=http://www.scala-lang.org>Scala</a>.</p>
+<p>(<strong>Update May 2018</strong>: Still fringe. I&rsquo;ve heard Rust has macros that are promising, but haven&rsquo;t looked at them yet. In particular macros that also integrate 100% with the IDE, e.g. you get autocomplete/etc. within a macro body, seems unsolved, AFAIK.)</p>
+</li>
+</ol>
+<h2 id=other-notes>
+Other Notes
+<a class=heading-link href=#other-notes>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h2>
+<ol>
+<li>
+<p>Dynamic languages are well-known for their &ldquo;reload on the fly&rdquo; productivity. Code can be changed without restarting a process, leading to a faster feedback loop for developers.</p>
+<p>I think this is a great thing&ndash;and that static languages really should be able to do this as well. Unfortunately, for the JVM anyway, until this <a href=http://wikis.sun.com/display/mlvm/HotSwap>OpenJDK patch</a> lands, you need <a href=http://www.zeroturnaround.com/jrebel>JRebel</a> or framework-level classloader gymnastics to get more than the JVM&rsquo;s default &ldquo;only method contents can be updated&rdquo; behavior. Yeah, this is unfortunate, but a <em>cough</em> temporary <em>cough</em> limitation. <strong>Update July 2016:</strong> Still coughing. <strong>Update May 2018:</strong> Still coughing, but see <a href=https://github.com/HotswapProjects/HotswapAgent>HotswapAgent</a> for a community that has formed around that JDK patch.</p>
+<p>For static languages, applying the type changes, especially if any compile-time meta-programming is involved, likely means using an IDE debugger to change running types, instead of the &ldquo;just retype the function in a console&rdquo; approach some dynamic languages can use. But I think the effect is the same.</p>
+</li>
+<li>
+<p>Dynamic languages often have better-designed libraries.</p>
+<p>Java in particular is known for it&rsquo;s ugly APIs. However, I assert these APIs are not due to inherent flaws in the language, they are just due to stylistic differences and/or lack of abstractions (e.g. the built-in Java library APIs are ~20 years old at this point, and have maintained backwards compatibility that entire time).</p>
+<p>Instead, I assert you can find well-designed APIs for most things, albeit maybe not built-in. E.g. for the frequently-cited &ldquo;I can&rsquo;t succinctly read a file from Java&rdquo; problem, see the archetypical Apache <a href=http://commons.apache.org/io/api-1.4/org/apache/commons/io/FileUtils.html>commons-io</a> library, or Rickard&rsquo;s elegant alternative <a href=http://www.jroller.com/rickard/entry/a_generic_input_output_api>I/O API</a>. <strong>Update July 2016:</strong> Guava also has a nice <a href=https://github.com/google/guava/wiki/IOExplained>sources/sink abstraction</a> that can make some nice one-liners.</p>
+</li>
+<li>
+<p>Language implementation choice is a very minor factor in resulting code quality.</p>
+<p>Perhaps I should have written this up-front as a disclaimer, but I&rsquo;ve read the spectrum of &ldquo;very good&rdquo;, &ldquo;good&rdquo;, &ldquo;bad&rdquo;, and &ldquo;very bad code&rdquo; in both dynamic and static languages.</p>
+<p>So, admittedly, the type checks, IDE tooling, etc. is somewhat quibbling, because a good programmer should be able to produce good code in either type of language.</p>
+<p><strong>Update May 2018</strong>: Although, I do feel much more confident/emboldened to make changes in a statically-typed codebase, partly because of the refactoring tooling, but more so because I know I&rsquo;ll quickly be told how badly (or not) my change messed things up (e.g. &ldquo;500 compiler errors? Wow, maybe I&rsquo;ll put that back&mldr;"). So, if static types leads to more refactoring, then it can lead to demonstrably cleaner codebases over the long-term.</p>
+</li>
+<li>
+<p>As an additional thought experiment about &ldquo;programmer-time&rdquo; type inference: let&rsquo;s say you&rsquo;re going to write a method <code>void foo(arg1, arg2)</code>.</p>
+<p>I assert, when you write the <code>foo</code> method, you de facto already have the types of <code>arg1</code> and <code>arg2</code> in your head. You would never write <code>foo</code> thinking &ldquo;eh, whatever the type of <code>arg1</code> is, I don&rsquo;t care&rdquo;&mldr;(unless you legitimately are writing a method that will works on all <code>Object</code>s, but there again you still have the type <code>Object</code> in your head).</p>
+<p>The types are actually there: all mainstream languages these days, static or dynamic, have types.</p>
+<p>Now, you open a code review. As your reviewer, you&rsquo;re basically hiding information from me: you know in your head that <code>arg1</code> is supposed to be type <code>Xyz</code>. But I don&rsquo;t. I have to infer it. And I might get it wrong.</p>
+<p>Now, someone (or you yourself) comes into the codebase 6 months later. They have to fix something in <code>foo</code>, and so look at <code>arg1</code>. They have to wonder, and again infer on their own, &ldquo;what type did the author have in mind when they wrote this method?&rdquo;.</p>
+<p>In this way, you can think of static typing in terms of information theory: it communicates demonstrably more information from the author to the reviewer to the maintainer.</p>
+<p>This is basically a re-iteration of the &ldquo;types as documentation&rdquo; point, but with the thought experiment of a real-world scenario highlighting that the information is already there (at author time), in either static or dynamic languages, but effectively gets &ldquo;lost&rdquo; in dynamic languages.</p>
+<p>As a disclaimer, this line of reasoning can actually extend to local variable type inference, e.g. that <code>val foo = ...</code> is a similar disservice to reviewers/maintainers (which is <a href=http://blog.joda.org/2016/03/var-and-val-in-java.html>Stephen Colebourne&rsquo;s view</a>). I don&rsquo;t agree, and my rationalization is that with local variable type inference, you already have known types (from the declared types of method parameters/etc.) to start from and to guide your programmer-time inference. And, in IDEs anyway (unfortunately not code reviews), you can hover for the compiler-inferred type.)</p>
+</li>
+</ol>
+<h2 id=over-emphasis>
+Over Emphasis
+<a class=heading-link href=#over-emphasis>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h2>
+<p>I don&rsquo;t think I have added anything interesting to the dynamic vs. static debate, though that wasn&rsquo;t my intent&ndash;I just wanted to codify my opinion.</p>
+<p>I do have a gnawing suspicion that most users of dynamic languages would, without realizing it, prefer a static language, if there existed a sufficiently robust static language with a syntax, type system, and runtime that would allow them to keep their current style of development.</p>
+<p>That being said, there are several developers I respect who are more self-aware than this, and still love dynamic languages. So, to each his own.</p>
+<p><strong>Update July 2016</strong>: Since writing this post, or at least during this current phase of my career, I&rsquo;m starting to feel more bold about asserting static languages are demonstrably better, <em>especially for large software projects</em>. I&rsquo;ll certainly accept everyone can have personal preferences for what they personally enjoy working in. But, when you start talking about 10+ person software projects, written over 3-5+ years, with new people joining and leaving the team, the types-as-documentation rationale I think becomes a very compelling argument that the team&rsquo;s net productivity will be higher in a statically typed language (of course controlling for the other more important factors like test coverage, a good architecture, attention to detail, etc.).</p>
+</div>
+<footer>
+<div id=disqus_thread></div>
+<script type=application/javascript>var disqus_config=function(){};(function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById('disqus_thread').innerHTML='Disqus comments not available by default when the website is previewed locally.';return}var b=document,a=b.createElement('script');a.async=!0,a.src='//shaberman.disqus.com/embed.js',a.setAttribute('data-timestamp',+new Date),(b.head||b.body).appendChild(a)})()</script>
+<noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript>
+<a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a>
+</footer>
+</article>
+</section>
+</div>
+<footer class=footer>
+<section class=container>
+©
+2008 -
+2021
+Stephen Haberman
+·
+Powered by <a href=https://gohugo.io/>Hugo</a> & <a href=https://github.com/luizdepra/hugo-coder/>Coder</a>.
+</section>
+</footer>
+</main>
+<script src=/js/coder.min.03b17769f4f91ae35667e1f2a1ca8c16f50562576cf90ff32b3179926914daa5.js integrity="sha256-A7F3afT5GuNWZ+HyocqMFvUFYlds+Q/zKzF5kmkU2qU="></script>
+</body>
+</html>

@@ -1,0 +1,317 @@
+<!doctype html><html lang=en>
+<head>
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width,initial-scale=1">
+<meta http-equiv=content-language content="en">
+<meta name=color-scheme content="light dark">
+<meta name=author content="Stephen Haberman">
+<meta name=description content="At Bizo, we use basically exclusively Scala on the server-side. We&rsquo;re big fans.
+That said, we have a few Java codebases left, either legacy server-side codebases that haven&rsquo;t been converted/rewritten yet, or GWT client-side webapps.
+Now that Java 8 is coming out in March 2014 (don&rsquo;t jinx it!), I&rsquo;ve been mulling what would make Java &ldquo;good enough&rdquo;, e.g. for it not to be completely painful to write Java code after having been spoiled by Scala.">
+<meta name=keywords content="blog,developer,personal">
+<meta name=twitter:card content="summary">
+<meta name=twitter:title content="Can Java Be Good Enough?">
+<meta name=twitter:description content="At Bizo, we use basically exclusively Scala on the server-side. We&rsquo;re big fans.
+That said, we have a few Java codebases left, either legacy server-side codebases that haven&rsquo;t been converted/rewritten yet, or GWT client-side webapps.
+Now that Java 8 is coming out in March 2014 (don&rsquo;t jinx it!), I&rsquo;ve been mulling what would make Java &ldquo;good enough&rdquo;, e.g. for it not to be completely painful to write Java code after having been spoiled by Scala.">
+<meta property="og:title" content="Can Java Be Good Enough?">
+<meta property="og:description" content="At Bizo, we use basically exclusively Scala on the server-side. We&rsquo;re big fans.
+That said, we have a few Java codebases left, either legacy server-side codebases that haven&rsquo;t been converted/rewritten yet, or GWT client-side webapps.
+Now that Java 8 is coming out in March 2014 (don&rsquo;t jinx it!), I&rsquo;ve been mulling what would make Java &ldquo;good enough&rdquo;, e.g. for it not to be completely painful to write Java code after having been spoiled by Scala.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="http://draconianoverlord.com/2014/01/28/can-java-be-good-enough.html/"><meta property="article:section" content="posts">
+<meta property="article:published_time" content="2014-01-28T00:00:00+00:00">
+<meta property="article:modified_time" content="2014-01-28T00:00:00+00:00">
+<title>
+Can Java Be Good Enough? · Draconian Overlord
+</title>
+<link rel=canonical href=http://draconianoverlord.com/2014/01/28/can-java-be-good-enough.html/>
+<link rel=preload href="/fonts/forkawesome-webfont.woff2?v=1.2.0" as=font type=font/woff2 crossorigin>
+<link rel=stylesheet href=/css/coder.min.d9fddbffe6f27e69985dc5fe0471cdb0e57fbf4775714bc3d847accb08f4a1f6.css integrity="sha256-2f3b/+byfmmYXcX+BHHNsOV/v0d1cUvD2Eesywj0ofY=" crossorigin=anonymous media=screen>
+<link rel=stylesheet href=/css/coder-dark.min.aa883b9ce35a8ff4a2a5008619005175e842bb18a8a9f9cc2bbcf44dab2d91fa.css integrity="sha256-qog7nONaj/SipQCGGQBRdehCuxioqfnMK7z0Tastkfo=" crossorigin=anonymous media=screen>
+<link rel=icon type=image/png href=/images/favicon-32x32.png sizes=32x32>
+<link rel=icon type=image/png href=/images/favicon-16x16.png sizes=16x16>
+<link rel=apple-touch-icon href=/images/apple-touch-icon.png>
+<link rel=apple-touch-icon sizes=180x180 href=/images/apple-touch-icon.png>
+<meta name=generator content="Hugo 0.89.4">
+</head>
+<body class="preload-transitions colorscheme-auto">
+<div class=float-container>
+<a id=dark-mode-toggle class=colorscheme-toggle>
+<i class="fa fa-adjust fa-fw" aria-hidden=true></i>
+</a>
+</div>
+<main class=wrapper>
+<nav class=navigation>
+<section class=container>
+<a class=navigation-title href=/>Draconian Overlord</a>
+Oppressing software entropy
+</section>
+</nav>
+<div class=content>
+<section class="container post">
+<article>
+<header>
+<div class=post-title>
+<h1 class=title>
+<a class=title-link href=http://draconianoverlord.com/2014/01/28/can-java-be-good-enough.html/>
+Can Java Be Good Enough?
+</a>
+</h1>
+</div>
+<div class=post-meta>
+<div class=date>
+<span class=posted-on>
+<i class="fa fa-calendar" aria-hidden=true></i>
+<time datetime=2014-01-28T00:00:00Z>
+January 28, 2014
+</time>
+</span>
+<span class=reading-time>
+<i class="fa fa-clock-o" aria-hidden=true></i>
+9-minute read
+</span>
+</div>
+<div class=categories>
+<i class="fa fa-folder" aria-hidden=true></i>
+<a href=/categories/languages/>Languages</a></div>
+</div>
+</header>
+<div>
+<p>At <a href=http://www.bizo.com>Bizo</a>, we use basically exclusively Scala on the server-side. We&rsquo;re big fans.</p>
+<p>That said, we have a few Java codebases left, either legacy server-side codebases that haven&rsquo;t been converted/rewritten yet, or GWT client-side webapps.</p>
+<p>Now that Java 8 is coming out in March 2014 (don&rsquo;t jinx it!), I&rsquo;ve been mulling what would make Java &ldquo;good enough&rdquo;, e.g. for it not to be completely painful to write Java code after having been spoiled by Scala.</p>
+<p>Obviously this would be different for everyone. But after thinking about it, I think, for me, I can distill it down to 2 syntax features, and 1 type system feature, half of which are already on the way:</p>
+<ul>
+<li>Lambdas with powerful collections (Java 8)</li>
+<li>The <code>val</code> keyword</li>
+<li>Declaration-site type variance</li>
+</ul>
+<h2 id=lambdas-with-powerful-collections>
+Lambdas with powerful collections
+<a class=heading-link href=#lambdas-with-powerful-collections>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h2>
+<p>Java 8 is already addressing this, of course, but it has been the biggest pain point for years.</p>
+<p>After you&rsquo;ve written cute code like this all day:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-scala data-lang=scala><span style=color:#66d9ef>val</span> bar <span style=color:#66d9ef>=</span> foo<span style=color:#f92672>.</span>filter <span style=color:#f92672>{</span> <span style=color:#66d9ef>_</span><span style=color:#f92672>.</span>getColor <span style=color:#f92672>==</span> <span style=color:#e6db74>&#34;red&#34;</span> <span style=color:#f92672>}</span>
+</code></pre></div><p>Going back to:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java>List<span style=color:#f92672>&lt;</span>SomeType<span style=color:#f92672>&gt;</span> bar <span style=color:#f92672>=</span> <span style=color:#66d9ef>new</span> ArrayList<span style=color:#f92672>&lt;</span>SomeType<span style=color:#f92672>&gt;();</span>
+<span style=color:#66d9ef>for</span> <span style=color:#f92672>(</span>SomeType foo <span style=color:#f92672>:</span> foos<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
+  <span style=color:#66d9ef>if</span> <span style=color:#f92672>(</span>foo<span style=color:#f92672>.</span><span style=color:#a6e22e>getColor</span><span style=color:#f92672>().</span><span style=color:#a6e22e>equals</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;red&#34;</span><span style=color:#f92672>))</span> <span style=color:#f92672>{</span>
+    bar<span style=color:#f92672>.</span><span style=color:#a6e22e>add</span><span style=color:#f92672>(</span>foo<span style=color:#f92672>);</span>
+  <span style=color:#f92672>}</span>
+<span style=color:#f92672>}</span>
+</code></pre></div><p>Is brutal. So many Java methods are 2-4x longer than they need to be solely due to this.</p>
+<p>But, the future is (almost) here:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java>List<span style=color:#f92672>&lt;</span>SomeType<span style=color:#f92672>&gt;</span> bar <span style=color:#f92672>=</span> foos<span style=color:#f92672>.</span><span style=color:#a6e22e>filter</span><span style=color:#f92672>(</span>f <span style=color:#f92672>-&gt;</span> f<span style=color:#f92672>.</span><span style=color:#a6e22e>getColor</span><span style=color:#f92672>().</span><span style=color:#a6e22e>equals</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;red&#34;</span><span style=color:#f92672>));</span>
+</code></pre></div><p>I&rsquo;ll readily admit that I still prefer the Scala version (the <code>_</code> placeholder, no <code>;</code>, no parenthesis, etc.), but I&rsquo;d still take the Java version.</p>
+<h2 id=the-val-keyword>
+The val keyword
+<a class=heading-link href=#the-val-keyword>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h2>
+<p>Personally, I believe Scala has just the right mix of type inference.</p>
+<p>You need type declarations at method boundaries (so you need to document your parameter types and return type, i.e. no program-wide inference), but within the method, most things can be inferred.</p>
+<p>After typing:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-scala data-lang=scala><span style=color:#66d9ef>val</span> bar <span style=color:#66d9ef>=</span> getSomeDataStructure<span style=color:#f92672>();</span>
+</code></pre></div><p>Going back to explicit types for every single little variable:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-scala data-lang=scala><span style=color:#66d9ef>final</span> <span style=color:#a6e22e>Map</span><span style=color:#f92672>&lt;</span><span style=color:#a6e22e>OneTypeThatIsReallyLong</span><span style=color:#f92672>,</span> <span style=color:#a6e22e>List</span><span style=color:#f92672>&lt;</span><span style=color:#a6e22e>SomeTypeThatIsReallyLong</span><span style=color:#f92672>&gt;&gt;</span> bar <span style=color:#66d9ef>=</span>
+    getSomeDataStructure<span style=color:#f92672>();</span>
+</code></pre></div><p>Makes my fingers cry a little each time.</p>
+<p>I would love to have <code>val</code> in for loops as well:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=color:#66d9ef>for</span> <span style=color:#f92672>(</span>val foo <span style=color:#f92672>:</span> foos<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
+  foo<span style=color:#f92672>.</span><span style=color:#a6e22e>whatever</span><span style=color:#f92672>();</span>
+<span style=color:#f92672>}</span>
+</code></pre></div><p>Unfortunately, I suspect that <code>val</code> is never going to happen in Java (aside from <a href=http://projectlombok.org/>Lombok</a>, those crazy, wonderful guys), because it goes against the ethos of &ldquo;be boring and explicit everywhere&rdquo;.</p>
+<p>Which, yeah, I understand why boring and explicit is, a lot of times, good for the long-term readability and maintenance of a codebase.</p>
+<p>But I&rsquo;d still appreciate some leeway, especially within method bodies, by having <code>val</code> available.</p>
+<p>And, hey, C# has it (<code>var</code>).</p>
+<h2 id=declaration-site-type-variance>
+Declaration-site Type Variance
+<a class=heading-link href=#declaration-site-type-variance>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h2>
+<p>I&rsquo;m not going to try and do a good of explanation of this, but Scala&rsquo;s feature where you can decide <em>once</em> for each type (like <code>ArrayList</code> or <code>Seq</code>, etc.) whether it&rsquo;s contra-variant is so much more succinct and DRY than Java&rsquo;s use-site type variance.</p>
+<p>I&rsquo;ll try a small example. Here&rsquo;s some code in Java:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>processFruit</span><span style=color:#f92672>(</span>List<span style=color:#f92672>&lt;?</span> <span style=color:#66d9ef>extends</span> Fruit<span style=color:#f92672>&gt;</span> fruits<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
+  <span style=color:#75715e>// do something with fruits...
+</span><span style=color:#75715e></span><span style=color:#f92672>}</span>
+
+List<span style=color:#f92672>&lt;</span>Apple<span style=color:#f92672>&gt;</span> apples <span style=color:#f92672>=</span> <span style=color:#66d9ef>new</span> ArrayList<span style=color:#f92672>&lt;</span>Apple<span style=color:#f92672>&gt;();</span>
+processFruit<span style=color:#f92672>(</span>apples<span style=color:#f92672>);</span>
+</code></pre></div><p>Note the really ugly <code>&lt;? extends Fruit></code>. In Java, you just get used to typing these all the time when you want to pass lists around with polymorphism.</p>
+<p>(Pedantically, the <code>?</code> keeps <code>processFruit</code> type-safe; because <code>processFruit</code> has no idea what the <code>?</code> type actually is, it can never call <code>fruits.add</code>. This is actually good, because calling <code>fruits.add(banana)</code> would be bad when the caller had passed in an <code>List&lt;Apple></code>.)</p>
+<p>Scala has a much better solution:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-scala data-lang=scala><span style=color:#66d9ef>def</span> processFruit<span style=color:#f92672>(</span>fruits<span style=color:#66d9ef>:</span> <span style=color:#66d9ef>Seq</span><span style=color:#f92672>[</span><span style=color:#66d9ef>Fruit</span><span style=color:#f92672>])</span> <span style=color:#66d9ef>=</span> <span style=color:#f92672>{</span>
+  <span style=color:#75715e>// do something with fruits
+</span><span style=color:#75715e></span><span style=color:#f92672>}</span>
+
+<span style=color:#66d9ef>val</span> apples<span style=color:#66d9ef>:</span> <span style=color:#66d9ef>Seq</span><span style=color:#f92672>[</span><span style=color:#66d9ef>Apple</span><span style=color:#f92672>]</span> <span style=color:#66d9ef>=</span> <span style=color:#a6e22e>Buffer</span><span style=color:#f92672>[</span><span style=color:#66d9ef>Apple</span><span style=color:#f92672>]();</span>
+processFruit<span style=color:#f92672>(</span>apples<span style=color:#f92672>)</span>
+</code></pre></div><p>Note we can just type <code>Seq[Fruit]</code>. How short and sweet!</p>
+<p>This is because the <code>Seq</code> type was declared like:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-scala data-lang=scala><span style=color:#66d9ef>trait</span> <span style=color:#a6e22e>Set</span><span style=color:#f92672>[</span><span style=color:#66d9ef>+T</span><span style=color:#f92672>]</span> <span style=color:#f92672>{</span> <span style=color:#f92672>...</span> <span style=color:#f92672>}</span>
+</code></pre></div><p>Note that <code>+</code> before <code>T</code>. That basically tells the type system that &ldquo;you can always assume the user really meant <code>Seq[? extends T]</code>&rdquo; whenever they actually typed <code>Seq[T]</code>.</p>
+<p>(Pedantically, again, the reason this works is that <code>Seq</code> <em>has no add method</em>. Because it has no mutating methods, it basically doesn&rsquo;t matter if <code>processFruit</code> treats <code>Seq[Apple]</code> as if it was a <code>Seq[Fruit]</code>. It can never accidentally add a <code>Banana</code>, so it is still, like the Java version, type-safe.)</p>
+<p>The rub is that, in in Scala, the <em>type</em> declared it&rsquo;s variance type-safety <em>just once</em>, and now every single method parameter or local variable that wants to generically accept the type does not have to repeat the <code>? extends Fruit</code> incantation. This is really nice.</p>
+<p>I am not at all a type system expert, but I&rsquo;d like to think that since the Java type system already has the notion of use-site variance, that declaration-site variance could be grafted on in a basically pleasant manner.</p>
+<h2 id=traits>
+Traits
+<a class=heading-link href=#traits>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h2>
+<p>I almost did include traits, and it&rsquo;s not on my official list, because I only occasionally find myself missing them, vs. the previous things that I find myself cursing on a regular basis.</p>
+<p>But, hey, Java 8 is getting <a href=http://zeroturnaround.com/rebellabs/java-8-explained-default-methods/>default methods</a>.</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>interface</span> <span style=color:#a6e22e>A</span> <span style=color:#f92672>{</span>
+  <span style=color:#66d9ef>default</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>foo</span><span style=color:#f92672>(){</span>
+    System<span style=color:#f92672>.</span><span style=color:#a6e22e>out</span><span style=color:#f92672>.</span><span style=color:#a6e22e>println</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;foo called&#34;</span><span style=color:#f92672>);</span>
+  <span style=color:#f92672>}</span>
+<span style=color:#f92672>}</span>
+</code></pre></div><p>Which is the same as:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-scala data-lang=scala><span style=color:#66d9ef>trait</span> <span style=color:#a6e22e>A</span> <span style=color:#f92672>{</span>
+  <span style=color:#66d9ef>def</span> foo<span style=color:#f92672>()</span><span style=color:#66d9ef>:</span> <span style=color:#66d9ef>Unit</span> <span style=color:#f92672>=</span> <span style=color:#f92672>{</span>
+    println<span style=color:#f92672>(</span><span style=color:#e6db74>&#34;foo called&#34;</span><span style=color:#f92672>)</span>
+  <span style=color:#f92672>}</span>
+<span style=color:#f92672>}</span>
+</code></pre></div><p>So we might as well mention it.</p>
+<h2 id=scala-features-that-didnt-make-the-cut>
+Scala Features That Didn&rsquo;t Make the Cut
+<a class=heading-link href=#scala-features-that-didnt-make-the-cut>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h2>
+<p>Contrary to some FUD, I really do think Scala is a clean, elegant language. I generally don&rsquo;t complain that any of the features are too complex or too unwieldy. I think it all fits nicely together.</p>
+<p>That said, there are some Scala features that, all things considered, I don&rsquo;t often find myself missing in Java:</p>
+<ul>
+<li>
+<p>The <code>object</code> keyword&ndash;this is nice, but really it just makes it &ldquo;okay&rdquo; (blessed by the language) to sprinkle singletons all over your codebase. Not something I find myself missing.</p>
+</li>
+<li>
+<p>Implicit conversions&ndash;as a framework/DSL writer, these are sexy, but not critical.</p>
+</li>
+<li>
+<p>Operator overloading&ndash;nice to have, but eh.</p>
+</li>
+<li>
+<p>Macros&ndash;this is somewhat surprising, given I am an admitted compile-time code generation junky, but so far Scala&rsquo;s macros haven&rsquo;t convinced me they&rsquo;re indepensible.</p>
+</li>
+<li>
+<p>Typeclasses&ndash;<em>maybe</em> if Scala eventually uses these for type-safe equality, I&rsquo;d be a fan, but otherwise I don&rsquo;t often (ever?) find myself thinking &ldquo;damn, I wish I could do type classes here&rdquo;.</p>
+</li>
+<li>
+<p>Pattern matching&ndash;I use pattern matching all the time in Scala (especially with <code>Option</code>), but I rarely feel the twinge &ldquo;man I wish I had that&rdquo; when in Java. I think pattern matching is very nicely integrated into the Scala language, but I don&rsquo;t think that means that Java (or other languages) must automatically copy it.</p>
+</li>
+</ul>
+<p>These all fit nicely into the Scala language, but I don&rsquo;t think any of them would have to be shoved into Java to consider Java a &ldquo;good enough&rdquo; language.</p>
+<h2 id=java-strengths-that-i-personally-still-enjoy>
+Java Strengths That I Personally Still Enjoy
+<a class=heading-link href=#java-strengths-that-i-personally-still-enjoy>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h2>
+<p>Despite the lagging reputation, Java still has a lot of strengths:</p>
+<ul>
+<li>
+<p>The compile speed! I had not realized how spoiled Eclipse&rsquo;s <code>ecj</code> and Oracle&rsquo;s <code>javac</code> had made me, in making compile time basically never noticable.</p>
+<p>I don&rsquo;t think Scala is bad enough to allow chair-jousting time, but, yeah, it&rsquo;s not great.</p>
+</li>
+<li>
+<p>The Java IDEs &ldquo;just work&rdquo;. The Eclipse Scala IDE has gotten an awful lot better, but the polish just isn&rsquo;t there yet.</p>
+</li>
+<li>
+<p>The Java IDEs have refactorings that are actually implemented. I know Scala has a toolset in place for this, but whenever I try refactorings in the IDE, they still don&rsquo;t do anything.</p>
+</li>
+<li>
+<p>Java is the lowest common denominator of the JVM&ndash;you can write a library or framework, and not worry about other JVM languages have difficulty consuming your work.</p>
+</li>
+</ul>
+<h2 id=when-would-i-use-scala-vs-java>
+When Would I use Scala vs. Java?
+<a class=heading-link href=#when-would-i-use-scala-vs-java>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h2>
+<p>At this point, Scala is my default language. It&rsquo;s just that nice. That said, I&rsquo;m not a zealot, and could see myself opting for Java:</p>
+<ul>
+<li>
+<p>If Scala is not supported/well-supported in a given environment (embedded?, Android?, GWT is important to me, etc.).</p>
+</li>
+<li>
+<p>If I knew that the codebase would eventually be 50k+ LOC. I can&rsquo;t imagine the Scala compiler being very pleasant on codebases over 20-30k LOC.</p>
+</li>
+<li>
+<p>If I knew that the codebase would live 5+ years. Java will definitely be around and healthy in 5 years. What about Scala? The VCs will have wanted TypeSafe flipped by then, so perhaps it ends up at VMWare, or, well, VMWare, and they&rsquo;re continuing to invest it. Which, who knows, an even larger break from academia might be good for Scala in the long run.</p>
+</li>
+</ul>
+<p>To these last two points, perhaps the answer is to just avoid 50k+ LOC/5+ year systems in the first place. Which I know to many is just naive, but I&rsquo;ve been surprised at how well Bizo has managed to evolve as &ldquo;100s of small codebases&rdquo; rather than &ldquo;1-2 huge codebases&rdquo;.</p>
+<h2 id=peak-scala>
+Peak Scala?
+<a class=heading-link href=#peak-scala>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h2>
+<p>I cannot take credit for this, but one of my astute coworkers made this observation:</p>
+<ol>
+<li>
+<p>Anyone who is so frustrated with Java that they&rsquo;d adopt Scala, probably already has.</p>
+</li>
+<li>
+<p>With Java 8, Java is getting demonstrably more &ldquo;good enough&rdquo; (especially to those who have held out using it for this long), that it&rsquo;s actually becoming less likely that Java users will convert to Scala.</p>
+</li>
+</ol>
+<p>So, based on these observations, is it likely that Scala has hit peak adoption? Who&rsquo;s left to switch?</p>
+<p>I was originally very skeptical of his claim, as it smacks of FUD.</p>
+<p>And, personally, I know I constantly underestimate &ldquo;how many people are out there&rdquo;, be it as customers of online retail, brick and mortar retail, or even just users of programming languages. My weakness is always assuming that the current state is a steady state, and not still a transition.</p>
+<p>So, yes, there are probably many, many programmers out there who will still switch to Scala. I hope they do. It&rsquo;s a great language.</p>
+<p>But, since my static typing bias keeps me in GWT, and so Java, on a daily basis, with Java 8 coming soon and promising to usher in an era of &ldquo;modern Java&rdquo;&mldr;I dunno. It&rsquo;s interesting.</p>
+<h2 id=can-oracle-pull-off-a-modern-java>
+Can Oracle Pull Off a Modern Java?
+<a class=heading-link href=#can-oracle-pull-off-a-modern-java>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h2>
+<p>It is tempting to be seduced into thinking Oracle might build some momentum here, and continue on a road to a modern Java that is not embarrassing for programmers to admit is their primary/preferred language.</p>
+<p>That said, I have not been super-impressed with the post-Java 8 road maps. The Jigsaw/OSGI thing in particular seems like a large distraction, IMO. Dunno, I could very well end being wrong on Jigsaw, but personally I&rsquo;d prefer more Java-the-language focus.</p>
+<p>If Oracle did happen to get serious about making modern Java (basically catching up/passing C#), I think it would be a huge dent in the adoption of the various &ldquo;Java Next&rdquo; contenders (Scala, Ceylon, Fantom, etc.).</p>
+<p>Perhaps this is an obvious assertion, but I think it&rsquo;s much more realistic now than it has been in the past.</p>
+<h2 id=so-can-java-be-good-enough>
+So, Can Java Be Good Enough?
+<a class=heading-link href=#so-can-java-be-good-enough>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h2>
+<p>I know several of my coworkers will heavily object to the idea that &ldquo;Java + a few fixes&rdquo; would ever be as sexy as Scala.</p>
+<p>And they&rsquo;re right. Scala is always going to be the sexier language when compared to Java.</p>
+<p>And, to their credit, I highly doubt that, while at Bizo, I&rsquo;ll ever lobby to start a new server-side project in Java. Even if it was super-high performance/whatever. For us, Scala has won.</p>
+<p>But an industry standard language doesn&rsquo;t necessarily have to be (and almost always isn&rsquo;t) the sexiest language on the block. It just needs to GSD.</p>
+<p>So, I guess I&rsquo;m saying to Oracle, Java will never be Scala&ndash;but that&rsquo;s fine, you could still win me back.</p>
+<p>Java can be good enough. And Java 8 is much closer. Keep it up!</p>
+</div>
+<footer>
+<div id=disqus_thread></div>
+<script type=application/javascript>var disqus_config=function(){};(function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById('disqus_thread').innerHTML='Disqus comments not available by default when the website is previewed locally.';return}var b=document,a=b.createElement('script');a.async=!0,a.src='//shaberman.disqus.com/embed.js',a.setAttribute('data-timestamp',+new Date),(b.head||b.body).appendChild(a)})()</script>
+<noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript>
+<a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a>
+</footer>
+</article>
+</section>
+</div>
+<footer class=footer>
+<section class=container>
+©
+2008 -
+2021
+Stephen Haberman
+·
+Powered by <a href=https://gohugo.io/>Hugo</a> & <a href=https://github.com/luizdepra/hugo-coder/>Coder</a>.
+</section>
+</footer>
+</main>
+<script src=/js/coder.min.03b17769f4f91ae35667e1f2a1ca8c16f50562576cf90ff32b3179926914daa5.js integrity="sha256-A7F3afT5GuNWZ+HyocqMFvUFYlds+Q/zKzF5kmkU2qU="></script>
+</body>
+</html>

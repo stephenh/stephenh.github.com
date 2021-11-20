@@ -1,0 +1,303 @@
+<!doctype html><html lang=en>
+<head>
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width,initial-scale=1">
+<meta http-equiv=content-language content="en">
+<meta name=color-scheme content="light dark">
+<meta name=author content="Stephen Haberman">
+<meta name=description content="This post is half-ranting about features of ORMs I don&rsquo;t like and half-evangelizing my own ORM, Joist.
+I&rsquo;m sure my thoughts on how I prefer an ORM to work do not hold for every single project out there. I&rsquo;ve been fortunate to work on relatively sane schemas and architectures that don&rsquo;t need more esoteric features like handling a schema designed in the 1980s. So, I just wanted explicitly note the disclaimer of &ldquo;for me&rdquo; in the title and note that YMMV.">
+<meta name=keywords content="blog,developer,personal">
+<meta name=twitter:card content="summary">
+<meta name=twitter:title content="Joist, the Java ORM for Me">
+<meta name=twitter:description content="This post is half-ranting about features of ORMs I don&rsquo;t like and half-evangelizing my own ORM, Joist.
+I&rsquo;m sure my thoughts on how I prefer an ORM to work do not hold for every single project out there. I&rsquo;ve been fortunate to work on relatively sane schemas and architectures that don&rsquo;t need more esoteric features like handling a schema designed in the 1980s. So, I just wanted explicitly note the disclaimer of &ldquo;for me&rdquo; in the title and note that YMMV.">
+<meta property="og:title" content="Joist, the Java ORM for Me">
+<meta property="og:description" content="This post is half-ranting about features of ORMs I don&rsquo;t like and half-evangelizing my own ORM, Joist.
+I&rsquo;m sure my thoughts on how I prefer an ORM to work do not hold for every single project out there. I&rsquo;ve been fortunate to work on relatively sane schemas and architectures that don&rsquo;t need more esoteric features like handling a schema designed in the 1980s. So, I just wanted explicitly note the disclaimer of &ldquo;for me&rdquo; in the title and note that YMMV.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="http://draconianoverlord.com/2012/03/21/joist-the-java-orm-for-me.html/"><meta property="article:section" content="posts">
+<meta property="article:published_time" content="2012-03-21T00:00:00+00:00">
+<meta property="article:modified_time" content="2012-03-21T00:00:00+00:00">
+<title>
+Joist, the Java ORM for Me · Draconian Overlord
+</title>
+<link rel=canonical href=http://draconianoverlord.com/2012/03/21/joist-the-java-orm-for-me.html/>
+<link rel=preload href="/fonts/forkawesome-webfont.woff2?v=1.2.0" as=font type=font/woff2 crossorigin>
+<link rel=stylesheet href=/css/coder.min.d9fddbffe6f27e69985dc5fe0471cdb0e57fbf4775714bc3d847accb08f4a1f6.css integrity="sha256-2f3b/+byfmmYXcX+BHHNsOV/v0d1cUvD2Eesywj0ofY=" crossorigin=anonymous media=screen>
+<link rel=stylesheet href=/css/coder-dark.min.aa883b9ce35a8ff4a2a5008619005175e842bb18a8a9f9cc2bbcf44dab2d91fa.css integrity="sha256-qog7nONaj/SipQCGGQBRdehCuxioqfnMK7z0Tastkfo=" crossorigin=anonymous media=screen>
+<link rel=icon type=image/png href=/images/favicon-32x32.png sizes=32x32>
+<link rel=icon type=image/png href=/images/favicon-16x16.png sizes=16x16>
+<link rel=apple-touch-icon href=/images/apple-touch-icon.png>
+<link rel=apple-touch-icon sizes=180x180 href=/images/apple-touch-icon.png>
+<meta name=generator content="Hugo 0.89.4">
+</head>
+<body class="preload-transitions colorscheme-auto">
+<div class=float-container>
+<a id=dark-mode-toggle class=colorscheme-toggle>
+<i class="fa fa-adjust fa-fw" aria-hidden=true></i>
+</a>
+</div>
+<main class=wrapper>
+<nav class=navigation>
+<section class=container>
+<a class=navigation-title href=/>Draconian Overlord</a>
+Oppressing software entropy
+</section>
+</nav>
+<div class=content>
+<section class="container post">
+<article>
+<header>
+<div class=post-title>
+<h1 class=title>
+<a class=title-link href=http://draconianoverlord.com/2012/03/21/joist-the-java-orm-for-me.html/>
+Joist, the Java ORM for Me
+</a>
+</h1>
+</div>
+<div class=post-meta>
+<div class=date>
+<span class=posted-on>
+<i class="fa fa-calendar" aria-hidden=true></i>
+<time datetime=2012-03-21T00:00:00Z>
+March 21, 2012
+</time>
+</span>
+<span class=reading-time>
+<i class="fa fa-clock-o" aria-hidden=true></i>
+11-minute read
+</span>
+</div>
+<div class=categories>
+<i class="fa fa-folder" aria-hidden=true></i>
+<a href=/categories/joist/>Joist</a></div>
+</div>
+</header>
+<div>
+<p>This post is half-ranting about features of ORMs I don&rsquo;t like and half-evangelizing my own ORM, <a href=http://joist.ws>Joist</a>.</p>
+<p>I&rsquo;m sure my thoughts on how I prefer an ORM to work do not hold for every single project out there. I&rsquo;ve been fortunate to work on relatively sane schemas and architectures that don&rsquo;t need more esoteric features like handling a schema designed in the 1980s. So, I just wanted explicitly note the disclaimer of &ldquo;for me&rdquo; in the title and note that YMMV.</p>
+<p>In other words, Joist is opinionated. But since Rails came long, that&rsquo;s a feature, right?</p>
+<h2 id=speed-of-development>
+Speed of Development
+<a class=heading-link href=#speed-of-development>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h2>
+<p>The overriding concern I have when working with an ORM is how fast it makes me as a developer. How much code do I have to write? How long do the tests take to run? How long is the application startup time?</p>
+<p>I think this concern of developer efficiency affects a lot of implementation decisions in an ORM. For example, for Java/JVM-based ORMs, I think it means:</p>
+<ol>
+<li>Leveraging build-time code generation to reduce developer typing (discussed more below).</li>
+<li>Avoiding run-time code generation (CGLib/ASM proxies) to avoid long startup times.</li>
+</ol>
+<p>These concerns are not as big of a deal for projects-in-the-small. If you have 10 entities, manually typing out getters, setters, or waiting for CGLib to make 10 proxies on each startup, is not going to sink your project.</p>
+<p>But these concerns become much more important for projects-in-the-large. If you have 100 entities or 500 entities, these start become very important issues, and at that point you can&rsquo;t really fix them unless your ORM is specifically built to handle them.</p>
+<h2 id=the-schema-is-the-master>
+The Schema is the Master
+<a class=heading-link href=#the-schema-is-the-master>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h2>
+<p>A core tenet of my take on ORMs is that the database schema should be the master definition of what the data being stored is, and what the objects look like. Yes, this assumes a sane schema.</p>
+<p>Many projects try and let developers write the domain objects first, asserting &ldquo;objects are the most important thing&rdquo;, and then reverse engineering the schema from there. I disagree with this, for two reasons:</p>
+<ol>
+<li>
+<p>It&rsquo;s wrong&ndash;at the end of the day, the database really is where the data lives, and trying to pretend it is not will just exasperate the impedance mismatch.</p>
+</li>
+<li>
+<p>Once you&rsquo;ve deployed 1.0 and have production data, you&rsquo;ll have to have migration scripts instead of &ldquo;here, ORM tool, crap out a from-scratch schema for me.&rdquo; Assuming you actually ship, maintenance always lasts longer than initial development, so I think projects should embrace migrations into their workflow from day 1.</p>
+</li>
+</ol>
+<h2 id=no-boilerplate>
+No Boilerplate
+<a class=heading-link href=#no-boilerplate>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h2>
+<p>Given the previous tenet, the following assertion is that anything that can be derived from the schema is waste and should be avoided at all costs.</p>
+<p>I did not fully appreciate the boilerplate involved in most Java domain models until working in Rails and seeing a model like:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-ruby data-lang=ruby><span style=color:#66d9ef>class</span> <span style=color:#a6e22e>Employee</span> <span style=color:#f92672>&lt;</span> <span style=color:#66d9ef>ActiveRecord</span><span style=color:#f92672>::</span><span style=color:#66d9ef>Base</span>
+<span style=color:#66d9ef>end</span>
+</code></pre></div><p>Rails then, of course, uses a sort of startup-time code generation to create getters, setters, etc. Unfortunately, while Java can do runtime code generation (CGLib, etc.), it means the generated code is not available to the programmer in their IDE to do code completion/etc. against.</p>
+<p>Hence, in my opinion, build-time code generation is the way ORMs should work. Joist in particular achieves a Rails-like brevity by using a base class that hides all of the cruft:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>Employee</span> <span style=color:#66d9ef>extends</span> EmployeeCodegen <span style=color:#f92672>{</span>
+<span style=color:#f92672>}</span>
+</code></pre></div><p>Note that it&rsquo;s critical that code generation can be used throughout the life of the project. Tools that reverse engineer a schema and generate a bunch of <code>.java</code> files that then developers have to maintain by hand are useless once you start adding business logic to your domain model. You must be able to have the generated code and your changes coexist so that the generator can rerun with the latest schema/settings/etc. and not overwrite your changes.</p>
+<p>While C# has awesome things like partial classes, in Java I think the simplest solution is putting generated cruft in a base class. Other solutions like AspectJ inter-type declarations seem more magical than they&rsquo;re worth, in my opinion.</p>
+<h2 id=annotations-suck>
+Annotations Suck
+<a class=heading-link href=#annotations-suck>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h2>
+<p>I personally believe annotations in domain objects are an anti-pattern because they violate the DRY principle and are just another form of getter-/setter-style boilerplate.</p>
+<p>For example, if you want describe a one-to-many relation in Hibernate/JPA, it might look like:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=color:#a6e22e>@OneToMany</span><span style=color:#f92672>(</span>
+    cascade <span style=color:#f92672>=</span> <span style=color:#f92672>{</span> CascadeType<span style=color:#f92672>.</span><span style=color:#a6e22e>ALL</span> <span style=color:#f92672>},</span>
+    fetch <span style=color:#f92672>=</span> FetchType<span style=color:#f92672>.</span><span style=color:#a6e22e>EAGER</span><span style=color:#f92672>,</span>
+    mappedBy <span style=color:#f92672>=</span> <span style=color:#e6db74>&#34;parent&#34;</span><span style=color:#f92672>,</span>
+    orphanRemoval <span style=color:#f92672>=</span> <span style=color:#66d9ef>true</span><span style=color:#f92672>,</span>
+    targetEntity <span style=color:#f92672>=</span> Child<span style=color:#f92672>.</span><span style=color:#a6e22e>class</span><span style=color:#f92672>)</span>
+<span style=color:#a6e22e>@OrderBy</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;id&#34;</span><span style=color:#f92672>)</span>
+<span style=color:#66d9ef>private</span> Set<span style=color:#f92672>&lt;</span>Child<span style=color:#f92672>&gt;</span> children<span style=color:#f92672>;</span>
+</code></pre></div><p>Now, what about the next one-to-many you want to map? Copy/paste another 7 lines. Repeat for each one-to-many (and many-to-many) relation in your project. Even if the mapping is not 7 lines, say it&rsquo;s 2, or even 1, that adds up to a lot of copy/pasting that all developers on the project (who may not all understand the intricacies of what they&rsquo;re pasting) will do.</p>
+<p>Or, let&rsquo;s say you decide to map <code>datetime</code> columns as <code>TimePoint</code>s from the excellent <a href=http://timeandmoney.sf.net/>timeandmoney</a> library. With annotations, you must 1) use the <code>TimePoint</code> type for the fields, getters, and setters and 2) add some sort of <code>Type</code> annotation:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=color:#a6e22e>@Type</span><span style=color:#f92672>(</span>type<span style=color:#f92672>=</span><span style=color:#e6db74>&#34;com.yourapp.TimePointCustomType&#34;</span><span style=color:#f92672>)</span>
+<span style=color:#66d9ef>private</span> TimePoint created<span style=color:#f92672>;</span>
+</code></pre></div><p>And then remember to do this for every single <code>datetime</code> column in your application.</p>
+<p>I consider this to be a violation of DRY. So, in Joist, this decision of &ldquo;use TimePoints for datetimes&rdquo; is specified in just one place as a code generation rule:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java>codegenConfig<span style=color:#f92672>.</span><span style=color:#a6e22e>setJavaType</span><span style=color:#f92672>(</span>
+  <span style=color:#e6db74>&#34;datetime&#34;</span><span style=color:#f92672>,</span>
+  <span style=color:#e6db74>&#34;com.domainlanguage.time.TimePoint&#34;</span><span style=color:#f92672>,</span>
+  <span style=color:#e6db74>&#34;joist.domain.orm.queries.columns.TimePointAliasColumn&#34;</span><span style=color:#f92672>);</span>
+</code></pre></div><p>And now all of the <code>datetime</code> columns across the entire application will be mapped correctly.</p>
+<p>Note that you can also do pattern matching, e.g. any integer column ending with &ldquo;_amount&rdquo; is treated as <code>Money</code>:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java>codegenConfig<span style=color:#f92672>.</span><span style=color:#a6e22e>setJavaTypePattern</span><span style=color:#f92672>(</span>
+  <span style=color:#e6db74>&#34;integer&#34;</span><span style=color:#f92672>,</span>
+  <span style=color:#e6db74>&#34;.*amount$&#34;</span><span style=color:#f92672>,</span>
+  <span style=color:#e6db74>&#34;com.domainlanguage.money.Money&#34;</span><span style=color:#f92672>,</span>
+  <span style=color:#e6db74>&#34;joist.domain.orm.queries.columns.MoneyAliasColumn&#34;</span><span style=color:#f92672>);</span>
+</code></pre></div><p>Of course, there are a few caveats here:</p>
+<ul>
+<li>
+<p>The annotation may be only 1-2 lines, I admittedly picked a long example; but it is still something that needs maintained instead of inferred from the schema.</p>
+</li>
+<li>
+<p>Annotations do allow you to tweak each individual field/collection in your domain model&ndash;however <em>that is not a good thing</em>.</p>
+<p>In my opinion, every collection in your system should be mapped exactly the same way. It keeps with the principle of least surprise. Otherwise developers will, over-time, get confused which mappings settings are used on which collections, which they should use when creating new ones, etc. The complexity of choice for every collection is not needed and not worth it.</p>
+<p>Better to just pick one style and be consistent.</p>
+</li>
+</ul>
+<h2 id=relationship-management>
+Relationship Management
+<a class=heading-link href=#relationship-management>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h2>
+<p>Another thing I find important is consistency. In the data store, of course (yes, NoSQL is awesome for big data, but ACID makes life a lot simpler if you can leverage it), but also in the domain objects.</p>
+<p>A pet peeve is using a domain model/ORM where the domain objects become inconsistent, as in:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java>Parent p <span style=color:#f92672>=</span> findSomeParent<span style=color:#f92672>();</span>
+Child c <span style=color:#f92672>=</span> <span style=color:#66d9ef>new</span> Child<span style=color:#f92672>();</span>
+c<span style=color:#f92672>.</span><span style=color:#a6e22e>setParent</span><span style=color:#f92672>(</span>p<span style=color:#f92672>);</span>
+<span style=color:#75715e>// now, does this assertion pass?
+</span><span style=color:#75715e></span>assertTrue<span style=color:#f92672>(</span>p<span style=color:#f92672>.</span><span style=color:#a6e22e>getChildren</span><span style=color:#f92672>().</span><span style=color:#a6e22e>contains</span><span style=color:#f92672>(</span>c<span style=color:#f92672>));</span>
+</code></pre></div><p>If the assertion fails here, the <code>Parent</code> and <code>Child</code> objects have become inconsistent with each other and you&rsquo;re just asking for heartburn when business logic that is based on the <code>Parent</code> starts looking for <code>Children</code> and doesn&rsquo;t have the latest changes.</p>
+<p>This is especially important for validation logic in your domain objects. Something like &ldquo;all of a parent&rsquo;s <code>p.getChildren()</code> must satisfy constraint X&rdquo; might get skipped if <code>c.setParent(p)</code> was called but <code>p.getChildren()</code> was not updated.</p>
+<p>My theory is that most projects probably don&rsquo;t bother with this because the code to maintain both sides of a relationship is very boilerplate-ish. Which makes it a perfect target for code generation, which is what Joist does.</p>
+<p>Tangentially, Hibernate has a feature for collections, setting <code>inverse=true</code>, where you can control whether a <code>child.parent_id</code> field is updated based on the <code>child.get/setParent</code> or the <code>parent.getChildren().add/remove</code>. This seems entirely dumb to me, as it&rsquo;s a feature that admits it lets your domain objects get out of sync.</p>
+<h2 id=always-implicit-savecascading>
+Always Implicit Save/Cascading
+<a class=heading-link href=#always-implicit-savecascading>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h2>
+<p>I don&rsquo;t like ORM APIs that have methods like <code>saveOrUpdate(object)</code>, which you have to call after having modified your domain object. To me this is redundant, and just asking for the developer to make a mistake and forget a step. But modifying a domain object, e.g. any getter or setter call, I think that should automatically get the changes persisted to the database when the transaction commits.</p>
+<p>I&rsquo;m not sure why you would want it work any other way&ndash;when would you call a setter but then <em>not</em> want it to be saved (other than rolling back the whole transaction)? Seems like a non-feature that adds complication to me.</p>
+<p>For Joist, any time you touch a domain object within a Unit of Work (open transaction), it will get validated and saved. Nothing extra to worry about.</p>
+<p>Along the same lines, some ORMs let you configure cascading. E.g. if a <code>Parent</code> is persisted, you can configure whether the <code>parent.getChildren</code> are persisted. To me this is another quizzical non-feature. When would you not want the parent&rsquo;s children to also be persisted? Seems like a violation of least surprise if they were not.</p>
+<h2 id=explicit-transaction-management>
+Explicit Transaction Management
+<a class=heading-link href=#explicit-transaction-management>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h2>
+<p>Implicit transaction management is very popular these days, especially with some aspect-oriented magic where calling service layer methods automatically opens/closes the transaction. E.g. in a web app:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java>Employee e1 <span style=color:#f92672>=</span> employeeService<span style=color:#f92672>.</span><span style=color:#a6e22e>find</span><span style=color:#f92672>(</span>1<span style=color:#f92672>);</span> <span style=color:#75715e>// 1 txn here
+</span><span style=color:#75715e></span>e1<span style=color:#f92672>.</span><span style=color:#a6e22e>setSomething</span><span style=color:#f92672>(...);</span>
+employeeService<span style=color:#f92672>.</span><span style=color:#a6e22e>save</span><span style=color:#f92672>(</span>e1<span style=color:#f92672>);</span> <span style=color:#75715e>// another txn here
+</span></code></pre></div><p>This leads to a number of cons:</p>
+<ol>
+<li>
+<p>My biggest complaint is that it breaks the transaction up so that the business logic is no longer wholly contained within 1 transaction. If multiple entities are retrieved from their respective service APIs, mutated, and then separately committed to their respective service APIs, there is no guarantee our business logic was all-or-nothing.</p>
+</li>
+<li>
+<p>If you do not pre-load all of the Employee&rsquo;s data you need within the <code>find</code> API call, you&rsquo;ll suffer from the infamous <code>LazyInitializationException</code>. It&rsquo;s easy to think that, no big deal, just pre-load the data within <code>find</code>, but I&rsquo;ve seen this quickly degenerate where domain objects are over-fetching data to fulfill the union of all the business logic requirements instead of getting only what is needed for each one.</p>
+</li>
+</ol>
+<p>Note that I think course-grained service APIs have their place&ndash;primarily when you expose them on the wire to external clients. However, within a JVM, the coarse granularity doesn&rsquo;t make sense, in my opinion.</p>
+<p>Admittedly, projects like to leverage these service APIs for mocking, but I think that is a mistake as well. Briefly, because the mocks can never enforce the schema/validation constraints like the real database will, and, with Joist anyway, your database tests should be fast enough to just use the real database instead.</p>
+<p>Instead of service APIs, Joist uses a thread-local transaction (Unit of Work) that you generally open as early as possible and close as late as possible (e.g. leave it open within your view). E.g.:</p>
+<pre><code>// in a filter
+UoW.open();
+
+// ... in servlet/etc.
+// business logic just assumes txn is open
+Employee.queries.findBy(&quot;asdf&quot;);
+
+// if you need to ensure this committed, e.g. to get
+// auto-assigned ids
+UoW.commit();
+</code></pre>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=color:#75715e>// back in the filter
+</span><span style=color:#75715e></span>UoW<span style=color:#f92672>.</span><span style=color:#a6e22e>commit</span><span style=color:#f92672>();</span>
+UoW<span style=color:#f92672>.</span><span style=color:#a6e22e>close</span><span style=color:#f92672>();</span>
+</code></pre></div><p>Or, alternatively, you can use an oh-god-Java-is-ugly closure style:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java>UoW<span style=color:#f92672>.</span><span style=color:#a6e22e>go</span><span style=color:#f92672>(</span><span style=color:#66d9ef>new</span> Block<span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
+  <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>go</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
+    <span style=color:#75715e>// in a txn now, it will commit on exit
+</span><span style=color:#75715e></span>  <span style=color:#f92672>}</span>
+<span style=color:#f92672>});</span>
+</code></pre></div><p>Note that, if I was doing this all over again, I would probably not use static methods on the <code>UoW</code> class and instead pass around the <code>UnitOfWork</code> context. But I haven&rsquo;t gotten to refactoring that yet.</p>
+<h2 id=type-safe-queries>
+Type Safe Queries
+<a class=heading-link href=#type-safe-queries>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h2>
+<p>Given we&rsquo;re in Java/the JVM, I think ORMs should attempt some amount of type-safety around their queries. This is a hard problem though, and can range from simple (constants for database table/field names) to complex (modeling relational algebra in Scala).</p>
+<p>Joist takes a sort of middle ground, with <a href=http://joist.ws/typeSafeQueries.html>type safe queries</a> that are a mini-DSL for simple queries, e.g.:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=color:#66d9ef>public</span> Child <span style=color:#a6e22e>findByName</span><span style=color:#f92672>(</span>String name<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>  
+  ChildAlias c <span style=color:#f92672>=</span> <span style=color:#66d9ef>new</span> ChildAlias<span style=color:#f92672>(</span><span style=color:#e6db74>&#34;c&#34;</span><span style=color:#f92672>);</span>  
+  <span style=color:#66d9ef>return</span> Select<span style=color:#f92672>.</span><span style=color:#a6e22e>from</span><span style=color:#f92672>(</span>c<span style=color:#f92672>).</span><span style=color:#a6e22e>where</span><span style=color:#f92672>(</span>c<span style=color:#f92672>.</span><span style=color:#a6e22e>name</span><span style=color:#f92672>.</span><span style=color:#a6e22e>equals</span><span style=color:#f92672>(</span>name<span style=color:#f92672>)).</span><span style=color:#a6e22e>unique</span><span style=color:#f92672>();</span>  
+<span style=color:#f92672>}</span>  
+</code></pre></div><p>In my experience this has been &ldquo;good enough&rdquo;, especially for Java. I think doing anything more complex (modeling relational algebra) takes jumping to Scala to do well.</p>
+<h2 id=tests-have-to-commit>
+Tests Have to Commit
+<a class=heading-link href=#tests-have-to-commit>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h2>
+<p>Often times ORMs will abuse transactions to make their tests fast&ndash;specifically, before a test method runs, they open a transaction, execute the test method, and then rollback any changes the test made so than the next test method has a clean view of the database. This has several problems:</p>
+<ol>
+<li>
+<p>It&rsquo;s not actually testing that your persistence code works&ndash;any constraints that are checked by the database at transaction commit time (deferred foreign key constraints, deferred unique key constraints) are skipped and you risk having undetected bugs.</p>
+</li>
+<li>
+<p>If the test failed, but it&rsquo;s data has been rolled back, you can&rsquo;t go manually inspect what it looked like to try and debug what went wrong.</p>
+</li>
+</ol>
+<p>Of course, I do strongly believe that each test should have it&rsquo;s own &ldquo;fresh&rdquo; view the database, so that tests are not dependent on the order in which they are ran. However, I think this is best achieved by having a screaming fast way to reset the database between each test.</p>
+<p>For Joist, it leverages the code generation cycle to also generate a stored procedure (only in development) called <code>flush_test_database</code>, that will delete the data from all non-stable tables (stable are tables like enums/codes). This means <code>setUp</code> can make 1 wire call to the database and have everything reset.</p>
+<h2 id=try-it>
+Try It!
+<a class=heading-link href=#try-it>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h2>
+<p>So, Joist is my attempt to achieve all of these goals in an ORM built cleanly, from scratch to satisfy them and not a myriad of other use cases.</p>
+<p>I&rsquo;ve been using Joist successfully for day job and hobby projects for 2 years now, am on version 1.2.16, and feel pretty confident in its abilities.</p>
+<p>Please check out the <a href=http://joist.ws>Joist</a> website, the <a href=http://github.com/stephenh/joist>code</a>, or the <a href=https://groups.google.com/forum/?fromgroups#!forum/joist>Joist dicussion list</a>.</p>
+</div>
+<footer>
+<div id=disqus_thread></div>
+<script type=application/javascript>var disqus_config=function(){};(function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById('disqus_thread').innerHTML='Disqus comments not available by default when the website is previewed locally.';return}var b=document,a=b.createElement('script');a.async=!0,a.src='//shaberman.disqus.com/embed.js',a.setAttribute('data-timestamp',+new Date),(b.head||b.body).appendChild(a)})()</script>
+<noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript>
+<a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a>
+</footer>
+</article>
+</section>
+</div>
+<footer class=footer>
+<section class=container>
+©
+2008 -
+2021
+Stephen Haberman
+·
+Powered by <a href=https://gohugo.io/>Hugo</a> & <a href=https://github.com/luizdepra/hugo-coder/>Coder</a>.
+</section>
+</footer>
+</main>
+<script src=/js/coder.min.03b17769f4f91ae35667e1f2a1ca8c16f50562576cf90ff32b3179926914daa5.js integrity="sha256-A7F3afT5GuNWZ+HyocqMFvUFYlds+Q/zKzF5kmkU2qU="></script>
+</body>
+</html>

@@ -1,0 +1,228 @@
+<!doctype html><html lang=en>
+<head>
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width,initial-scale=1">
+<meta http-equiv=content-language content="en">
+<meta name=color-scheme content="light dark">
+<meta name=author content="Stephen Haberman">
+<meta name=description content="As a static typing bigot, I like static types. But I&rsquo;m also pragmatic, and realize there are times when types get in the way, annoy programmers, and drive them to use Ruby.
+One particular instance of &ldquo;when types suck&rdquo; that I&rsquo;m acutely aware of is when it leads to an inability, or annoying difficulty, to have abstractions and generic infrastructure.
+Application Code vs. Infrastructure Code    To explain my point, it&rsquo;s useful to think of a typically program as (at least) two parts: the application code and the infrastructure code.">
+<meta name=keywords content="blog,developer,personal">
+<meta name=twitter:card content="summary">
+<meta name=twitter:title content="Abstracting Types Across Domains">
+<meta name=twitter:description content="As a static typing bigot, I like static types. But I&rsquo;m also pragmatic, and realize there are times when types get in the way, annoy programmers, and drive them to use Ruby.
+One particular instance of &ldquo;when types suck&rdquo; that I&rsquo;m acutely aware of is when it leads to an inability, or annoying difficulty, to have abstractions and generic infrastructure.
+Application Code vs. Infrastructure Code    To explain my point, it&rsquo;s useful to think of a typically program as (at least) two parts: the application code and the infrastructure code.">
+<meta property="og:title" content="Abstracting Types Across Domains">
+<meta property="og:description" content="As a static typing bigot, I like static types. But I&rsquo;m also pragmatic, and realize there are times when types get in the way, annoy programmers, and drive them to use Ruby.
+One particular instance of &ldquo;when types suck&rdquo; that I&rsquo;m acutely aware of is when it leads to an inability, or annoying difficulty, to have abstractions and generic infrastructure.
+Application Code vs. Infrastructure Code    To explain my point, it&rsquo;s useful to think of a typically program as (at least) two parts: the application code and the infrastructure code.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="http://draconianoverlord.com/2012/06/16/abstracting-types-across-domains.html/"><meta property="article:section" content="posts">
+<meta property="article:published_time" content="2012-06-16T00:00:00+00:00">
+<meta property="article:modified_time" content="2012-06-16T00:00:00+00:00">
+<title>
+Abstracting Types Across Domains · Draconian Overlord
+</title>
+<link rel=canonical href=http://draconianoverlord.com/2012/06/16/abstracting-types-across-domains.html/>
+<link rel=preload href="/fonts/forkawesome-webfont.woff2?v=1.2.0" as=font type=font/woff2 crossorigin>
+<link rel=stylesheet href=/css/coder.min.d9fddbffe6f27e69985dc5fe0471cdb0e57fbf4775714bc3d847accb08f4a1f6.css integrity="sha256-2f3b/+byfmmYXcX+BHHNsOV/v0d1cUvD2Eesywj0ofY=" crossorigin=anonymous media=screen>
+<link rel=stylesheet href=/css/coder-dark.min.aa883b9ce35a8ff4a2a5008619005175e842bb18a8a9f9cc2bbcf44dab2d91fa.css integrity="sha256-qog7nONaj/SipQCGGQBRdehCuxioqfnMK7z0Tastkfo=" crossorigin=anonymous media=screen>
+<link rel=icon type=image/png href=/images/favicon-32x32.png sizes=32x32>
+<link rel=icon type=image/png href=/images/favicon-16x16.png sizes=16x16>
+<link rel=apple-touch-icon href=/images/apple-touch-icon.png>
+<link rel=apple-touch-icon sizes=180x180 href=/images/apple-touch-icon.png>
+<meta name=generator content="Hugo 0.89.4">
+</head>
+<body class="preload-transitions colorscheme-auto">
+<div class=float-container>
+<a id=dark-mode-toggle class=colorscheme-toggle>
+<i class="fa fa-adjust fa-fw" aria-hidden=true></i>
+</a>
+</div>
+<main class=wrapper>
+<nav class=navigation>
+<section class=container>
+<a class=navigation-title href=/>Draconian Overlord</a>
+Oppressing software entropy
+</section>
+</nav>
+<div class=content>
+<section class="container post">
+<article>
+<header>
+<div class=post-title>
+<h1 class=title>
+<a class=title-link href=http://draconianoverlord.com/2012/06/16/abstracting-types-across-domains.html/>
+Abstracting Types Across Domains
+</a>
+</h1>
+</div>
+<div class=post-meta>
+<div class=date>
+<span class=posted-on>
+<i class="fa fa-calendar" aria-hidden=true></i>
+<time datetime=2012-06-16T00:00:00Z>
+June 16, 2012
+</time>
+</span>
+<span class=reading-time>
+<i class="fa fa-clock-o" aria-hidden=true></i>
+10-minute read
+</span>
+</div>
+<div class=categories>
+<i class="fa fa-folder" aria-hidden=true></i>
+<a href=/categories/architecture/>Architecture</a></div>
+</div>
+</header>
+<div>
+<p>As a <a href=/2010/11/24/why-im-a-static-typing-bigot.html>static typing bigot</a>, I like static types. But I&rsquo;m also pragmatic, and realize there are times when types get in the way, annoy programmers, and drive them to use Ruby.</p>
+<p>One particular instance of &ldquo;when types suck&rdquo; that I&rsquo;m acutely aware of is when it leads to an inability, or annoying difficulty, to have abstractions and generic infrastructure.</p>
+<h2 id=application-code-vs-infrastructure-code>
+Application Code vs. Infrastructure Code
+<a class=heading-link href=#application-code-vs-infrastructure-code>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h2>
+<p>To explain my point, it&rsquo;s useful to think of a typically program as (at least) two parts: the application code and the infrastructure code.</p>
+<p>What exactly is &ldquo;application code&rdquo; vs. &ldquo;infrastructure code&rdquo; changes depending on the application, but for certain classes of application&rsquo;s, there are fairly standard understandings. E.g. in a line-of-business application, application code is your business logic, which is usually entity-specific, while infrastructure code is your persistence logic, which is (hopefully) entity-generic.</p>
+<p>For example, in business logic, the programmer is intrinsically reasoning about business-/application-specific details. E.g. introducing a method <code>doSomeCalculation</code> and then calling it later from another part of code. Here is it beneficial that each entity is a distinct type with distinct properties and methods, as it facilitates organizing and reasoning about (and type-checking) the code. So you&rsquo;ll have <code>Employee</code>, <code>Employer</code>, etc., for each entity in your application domain.</p>
+<p>Contrast this with the infrastructure logic, say the persistence layer, which is more generic&ndash;&ldquo;fetch entity X&rdquo;, &ldquo;save entity X&rdquo;, etc. for each entity in the system. Once you&rsquo;ve solve it for entity X, there generally isn&rsquo;t anything special about doing it for entity Y (ideally). Here, you generally don&rsquo;t want distinct types with distinct properties, but instead your domain is based on on higher-level abstractions like types of just <code>Entity</code> and <code>Property</code>.</p>
+<h2 id=so-what-about-types>
+So, What about Types?
+<a class=heading-link href=#so-what-about-types>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h2>
+<p>My assertion is that types are for programmers.</p>
+<p>Historically, avoiding the runtime cost of dynamic method dispatch was important for performance, but I think it&rsquo;s accepted that lately VMs in even supposedly static languages like Java (which actually has a lot of polymorphic dynamic dispatch) show that, for most applications, dynamic vs. static typing is a wash.</p>
+<p>But that&rsquo;s fine, performance aside, I like types for the benefit to the programmer. Each method call becomes a mini-unit test that the other side is fulfilling at least some minimal contract in agreeing to be called.</p>
+<p>For business logic, this means you want your types to model the business domain, and have all of this nit-picky static checking against the distinct business objects and methods.</p>
+<p>However, once you move into infrastructure code, you want your level of abstraction to go up&ndash;instead of working against specific entities (<code>Employee</code> or <code>Employer</code>), you want your types to model the infrastructure domain, e.g. <code>Entity</code> or <code>Table</code>.</p>
+<p>As soon as you&rsquo;ve done this, you can generically write your infrastructure. Which means less boilerplate, less lines of code, and less bugs. Awesome.</p>
+<h2 id=declaring-types-in-multiple-domains>
+Declaring Types in Multiple Domains
+<a class=heading-link href=#declaring-types-in-multiple-domains>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h2>
+<p>Seems obvious, right? I think it is in principle. So where does it go wrong?</p>
+<p>I think one of the weakness of static typing systems is that it&rsquo;s hard to declare types in multiple domains.</p>
+<p>Or, more specifically, to succinctly declare a single type (say <code>Employee</code>) as a member of two domains (e.g. as a domain object in the application layer and an entity in the persistence layer) in a elegant fashion, such that each domain has the information about that type that it needs.</p>
+<p>Usually when you declare a type like <code>Employee</code>, you&rsquo;re thinking of your business domain. But you&rsquo;re also implicitly adding <code>Employee</code> to the persistence domain. And so while you want distinct methods (<code>getName</code>, <code>setName</code>, <code>doBilling</code>) for the business domain, you want a generic list of properties (<code>id</code>, <code>name</code>, etc.) for the persistence domain.</p>
+<p>Maintaining both these (distinct classes/methods that are yet also somehow generic) is not something that I think static languages do very well. But it&rsquo;s very important for non-trivial codebases.</p>
+<p>If you fail to capture this abstraction, you typically wind up with boilerplate as you have to maintain the type in each of the relevant domains by hand.</p>
+<p>(Tangentially, I&rsquo;ve seen several Java enterprise applications fall into this trap. Usually it&rsquo;s from an amateur architect who&rsquo;s built a custom stack, and enough of a prototype that &ldquo;works great&rdquo;&mldr;for 2-3 entities. But without abstraction, there are garish violations of DRY as otherwise simple tasks like adding or modifying entities requires modifications to multiple layers of the code (business, persistence, etc.) and it just doesn&rsquo;t scale.)</p>
+<h2 id=meta-programming-to-the-rescue>
+Meta-Programming to the Rescue
+<a class=heading-link href=#meta-programming-to-the-rescue>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h2>
+<p>The boilerplate approach is usually untenable, so we reach for the programmer&rsquo;s best friend: automation. Meta-programming is usually a great way avoid the boilerplate duplication and project a single conceptual type into multiple domains.</p>
+<p>Several implementation options that come to mind are:</p>
+<ul>
+<li>
+<p>Annotations</p>
+<p>For example, when the declaring the types for entities in the business domain, e.g. <code>class Employee</code>, you can add an annotation, e.g. <code>@Entity</code>, that acts as metadata for the persistence domain. You similarly annotate fields with <code>@Persistent</code>, or what not.</p>
+<p>I suppose technically this is getting a single type mapped into both domains&ndash;my issue, elaborated on in the &ldquo;Annotations Suck&rdquo; section of <a href=/2012/03/21/joist-orm.html>Joist, the Java ORM for Me</a>, is that it is still prone to boilerplate tedium, especially as annotation parameters get more plentiful, configurable, and hence confusing.</p>
+<p>Annotations can be accessed two ways, one via runtime reflection and the other via compile-time annotation processors. Both seem fine, though I generally prefer the compile-time aspect of annotation processors (of course)&ndash;to me it seems like accessing them as runtime increases your risk that the annotations were mapped incorrectly.</p>
+<p>(Tagentially, I went on quite the annotation processor bender for awhile, but am lately not favoring them as much because the Eclipse support is (very) occassionally wonky, and you&rsquo;re limited to only generating new code.)</p>
+</li>
+<li>
+<p>Old-school reflection</p>
+<p>Even in static languages like Java, it&rsquo;s possible even without annotations to use reflection to interrogate an instance of a type from one domain and sometimes implictly project it into the other domain. E.g. look at an instances <code>getXxx</code> methods and infer the entity&rsquo;s properties.</p>
+<p>The limitation here is that, given it&rsquo;s just reflection, you&rsquo;re limited to the information the reflection API gives you, which is obviously very implementation-oriented&ndash;everything is in terms of <code>Method</code>s and <code>Constructor</code>s, etc., instead of your persistence domain. So you may not have all of the metadata necessary to do the implicit mapping. (Granted, this is basically what annotations solve.)</p>
+</li>
+<li>
+<p>Code generation of types/metadata for one or multiple domains from a master data source.</p>
+<p>E.g. <a href=http://joist.ws>Joist</a> generates both domain objects for the business domain plus metadata information for the persistence domain from a single data source, the application&rsquo;s relational database schema.</p>
+<p>This can work really well, and is probably my favorite approach, but takes some up-front investment to build.</p>
+<p>And you might run into limitations based on what information can be stored in your master schema (e.g. relational schemas can only handle simple constraints like required, max length, etc.).</p>
+</li>
+<li>
+<p>Runtime meta-programming in dynamic languages.</p>
+<p>Dynamic languages really shine here, and I think the ease of meta-programming has really helped their popularity. E.g. see how ActiveRecord leverages Ruby&rsquo;s runtime class modification to take a generic list of fields (from the persistence domain/schema) and project it into the business domain as getters/setters.</p>
+<p>I think the reason dynamic languages can map a single type into multiple domains so easily is that, for the most part, dynamic objects are just maps of properties, so each layer can add it&rsquo;s own magic to the instance however it wants. Couple this with the ability to use hooks like replacing methods with new implementations that do magic and then call the old ones, basically aspect-oriented programming, and you&rsquo;ve got a pretty powerful way contort objects to your whim.</p>
+<p>&mldr;if only that magic could be type checked. :-)</p>
+</li>
+<li>
+<p>Compile-time meta-programming in static languages.</p>
+<p>I.e. Scala macros FTW. I think there is a lot of promise in compile-time macros to handle maintaining types in separate domains. Unfortunately I don&rsquo;t have a lot of experience with this option yet, so we&rsquo;ll see how it goes.</p>
+</li>
+</ul>
+<h2 id=example-rich-clients>
+Example: Rich Clients
+<a class=heading-link href=#example-rich-clients>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h2>
+<p>I&rsquo;ve been mulling over this type abstraction problem within the context of client/server communication. E.g. between a AJAX client and the backend server.</p>
+<p>I think it&rsquo;s fair to characterize the AJAX client as having application logic, and a place where you want an <code>Employee</code> type, <code>Employer</code> type, etc. But the serialization code to the server is very much infrastructure code, and not something you want to redo all of the time.</p>
+<p>Since the AJAX client is rich, the application types are typically rich models, that fire events on property change, and all that fancy stuff. However, none of this richness should be serialized over the wire to the server, as it&rsquo;s meaningless to the server-side.</p>
+<p><em>And</em>, while I won&rsquo;t address it here, the server-side typically has it&rsquo;s own backend domain objects that it wants to map client requests to/from. So, for an entity Employee, you actually have a variety of layers involved: server-side peristence (e.g. to the database), server-side application, server-side serialization, client-side serialization, and finally client-side application. Fun!</p>
+<p>So, ignoring the server-side issues, there are a few client-side approaches:</p>
+<ol>
+<li>
+<p><a href=http://angularjs.org>AngularJS</a> takes an interesting approach by avoiding the client-side serialization vs. model problem all together. Its models are the very same simple JavaScript objects that go to/from the server (assuming JSON).</p>
+<p>I&rsquo;m not entirely sure how this scales up to creating/maintaining non-trivial application logic. You lose the ability to hang extra methods and rules off the model types (<code>Employee</code>/<code>Employer</code>/etc.) as they are basically just DTOs/JavaScript hash objects, so you have to maintain this logic someplace else. Which is less OO, I think, though not necessarily bad. I need to look into how they handle this more.</p>
+</li>
+<li>
+<p><a href=http://www.tessell.org>Tessell</a> uses rich models that wrap simple JavaScript/DTO objects.</p>
+<p>Tessell&rsquo;s models wrap DTOs because, being GWT-based, even incoming/outgoing AJAX requests are typically represented using type-safe objects. If using GWT-RPC, this means both your server-side and client-side can reuse the same DTOs, which adds another safety blanket of cross-layer type checking to the application.</p>
+<p>However, it does mean maintaining types in two domains&ndash;an <code>EmployeeDto</code> (for the serialization domain) and an <code>EmployeeModel</code> (for the application domain).</p>
+<p>Thankfully <a href=http://github.com/stephenh/dtonator>dtonator</a> provides some Tessell-specific code generation to minimize the DTO to-/from-model boilerplate. And, as a bonus, it also maps server-side domain objects onto the DTOs as well, so helps solve server-side cross-domain mapping as well.</p>
+</li>
+<li>
+<p>More dynamic language magic? I have admittedly not looked into the implementation details of <a href=http://backbonejs.org>Backbone</a> or <a href=http://knockoutjs.com>Knockout</a>, and how they map JSON to/from their models. From the examples I&rsquo;ve seen, it seems suitably slick/magical, I&rsquo;m just not sure how.</p>
+</li>
+<li>
+<p>Ah, I almost forgot <a href=http://www.meteor.com/>Meteor</a>. Talk about magic. It takes the very provocative approach of reading that line where I listed all of the layers involved (multiple server-side domains, multiple client-side domains), and says &ldquo;screw it&rdquo;, and basically just does all of that for you.</p>
+<p>On one hand, it seems very unique; on another, it seems vaguely familiar to what OO-databases might have tried to do back in the 90s (automatically distributed objects). But I have nothing against trying again, especially with today&rsquo;s technologies (databases, servers, browsers, etc.) all being that much more advanced.</p>
+<p>It will be interesting to see how Meteor plays out&ndash;it certainly seems to have the promise of drastically increasing developer productivity.</p>
+</li>
+</ol>
+<h2 id=example-sql>
+Example: SQL
+<a class=heading-link href=#example-sql>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h2>
+<p>SQL is a tangential example of application- vs. infrastructure-code. Well, primarily in the context of thinking about client-/server-communication (not in the implementation of the database itself).</p>
+<p>While SQL the language has aspects of static typing (explicit tables, properties, etc.), the over-the-wire protocol itself is generic (just strings for commands and relations for results).</p>
+<p>This lets the infrastructure code (JDBC drivers, etc.) be implemented just once and reused without any knowledge of the application domain.</p>
+<h2 id=conclusion>
+Conclusion
+<a class=heading-link href=#conclusion>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h2>
+<p>I&rsquo;ve always had a special hate for boilerplate, but I don&rsquo;t think I&rsquo;d explicitly organized my thinking around the concepts of the different domains in a codebase. Perhaps this seems silly, as N-layer/N-tier architectures are all that I&rsquo;ve ever really worked in.</p>
+<p>Regardless, having separate domains (application vs. infrastructure, etc.) within a code base is, in my opinion, key to scaling a non-trivial application.</p>
+<p>The tricky part is maintaining the types, dependencies, and mappings between domains in an elegant fashion. There are various ways of doing this, but, AFAIK, no silver bullets. Good luck.</p>
+</div>
+<footer>
+<div id=disqus_thread></div>
+<script type=application/javascript>var disqus_config=function(){};(function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById('disqus_thread').innerHTML='Disqus comments not available by default when the website is previewed locally.';return}var b=document,a=b.createElement('script');a.async=!0,a.src='//shaberman.disqus.com/embed.js',a.setAttribute('data-timestamp',+new Date),(b.head||b.body).appendChild(a)})()</script>
+<noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript>
+<a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a>
+</footer>
+</article>
+</section>
+</div>
+<footer class=footer>
+<section class=container>
+©
+2008 -
+2021
+Stephen Haberman
+·
+Powered by <a href=https://gohugo.io/>Hugo</a> & <a href=https://github.com/luizdepra/hugo-coder/>Coder</a>.
+</section>
+</footer>
+</main>
+<script src=/js/coder.min.03b17769f4f91ae35667e1f2a1ca8c16f50562576cf90ff32b3179926914daa5.js integrity="sha256-A7F3afT5GuNWZ+HyocqMFvUFYlds+Q/zKzF5kmkU2qU="></script>
+</body>
+</html>

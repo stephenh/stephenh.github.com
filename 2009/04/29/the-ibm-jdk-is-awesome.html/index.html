@@ -1,0 +1,130 @@
+<!doctype html><html lang=en>
+<head>
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width,initial-scale=1">
+<meta http-equiv=content-language content="en">
+<meta name=color-scheme content="light dark">
+<meta name=author content="Stephen Haberman">
+<meta name=description content="The IBM JDK is Awesome    Insofar as its J9 JRE supports adding methods to classes at runtime. For me, this is a real boon for productivity.
+(Edit: To clarify, I&rsquo;m talking about editing source code while debugging and having changes applied by &ldquo;hot swapping&rdquo; classes in the running JVM without having to restart. Not the Ruby-style meta-programming of modifying classes at runtime.)
+I don&rsquo;t understand why Sun has not fixed this in their JREs, see bug 4910812, to bring Java development that much closer to the Smalltalk &ldquo;always-running&rdquo; ideal I&rsquo;ve heard Smalltalkers wax poetic about.">
+<meta name=keywords content="blog,developer,personal">
+<meta name=twitter:card content="summary">
+<meta name=twitter:title content="The IBM JDK is Awesome">
+<meta name=twitter:description content="The IBM JDK is Awesome    Insofar as its J9 JRE supports adding methods to classes at runtime. For me, this is a real boon for productivity.
+(Edit: To clarify, I&rsquo;m talking about editing source code while debugging and having changes applied by &ldquo;hot swapping&rdquo; classes in the running JVM without having to restart. Not the Ruby-style meta-programming of modifying classes at runtime.)
+I don&rsquo;t understand why Sun has not fixed this in their JREs, see bug 4910812, to bring Java development that much closer to the Smalltalk &ldquo;always-running&rdquo; ideal I&rsquo;ve heard Smalltalkers wax poetic about.">
+<meta property="og:title" content="The IBM JDK is Awesome">
+<meta property="og:description" content="The IBM JDK is Awesome    Insofar as its J9 JRE supports adding methods to classes at runtime. For me, this is a real boon for productivity.
+(Edit: To clarify, I&rsquo;m talking about editing source code while debugging and having changes applied by &ldquo;hot swapping&rdquo; classes in the running JVM without having to restart. Not the Ruby-style meta-programming of modifying classes at runtime.)
+I don&rsquo;t understand why Sun has not fixed this in their JREs, see bug 4910812, to bring Java development that much closer to the Smalltalk &ldquo;always-running&rdquo; ideal I&rsquo;ve heard Smalltalkers wax poetic about.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="http://draconianoverlord.com/2009/04/29/the-ibm-jdk-is-awesome.html/"><meta property="article:section" content="posts">
+<meta property="article:published_time" content="2009-04-29T00:00:00+00:00">
+<meta property="article:modified_time" content="2009-04-29T00:00:00+00:00">
+<title>
+The IBM JDK is Awesome · Draconian Overlord
+</title>
+<link rel=canonical href=http://draconianoverlord.com/2009/04/29/the-ibm-jdk-is-awesome.html/>
+<link rel=preload href="/fonts/forkawesome-webfont.woff2?v=1.2.0" as=font type=font/woff2 crossorigin>
+<link rel=stylesheet href=/css/coder.min.d9fddbffe6f27e69985dc5fe0471cdb0e57fbf4775714bc3d847accb08f4a1f6.css integrity="sha256-2f3b/+byfmmYXcX+BHHNsOV/v0d1cUvD2Eesywj0ofY=" crossorigin=anonymous media=screen>
+<link rel=stylesheet href=/css/coder-dark.min.aa883b9ce35a8ff4a2a5008619005175e842bb18a8a9f9cc2bbcf44dab2d91fa.css integrity="sha256-qog7nONaj/SipQCGGQBRdehCuxioqfnMK7z0Tastkfo=" crossorigin=anonymous media=screen>
+<link rel=icon type=image/png href=/images/favicon-32x32.png sizes=32x32>
+<link rel=icon type=image/png href=/images/favicon-16x16.png sizes=16x16>
+<link rel=apple-touch-icon href=/images/apple-touch-icon.png>
+<link rel=apple-touch-icon sizes=180x180 href=/images/apple-touch-icon.png>
+<meta name=generator content="Hugo 0.89.4">
+</head>
+<body class="preload-transitions colorscheme-auto">
+<div class=float-container>
+<a id=dark-mode-toggle class=colorscheme-toggle>
+<i class="fa fa-adjust fa-fw" aria-hidden=true></i>
+</a>
+</div>
+<main class=wrapper>
+<nav class=navigation>
+<section class=container>
+<a class=navigation-title href=/>Draconian Overlord</a>
+Oppressing software entropy
+</section>
+</nav>
+<div class=content>
+<section class="container post">
+<article>
+<header>
+<div class=post-title>
+<h1 class=title>
+<a class=title-link href=http://draconianoverlord.com/2009/04/29/the-ibm-jdk-is-awesome.html/>
+The IBM JDK is Awesome
+</a>
+</h1>
+</div>
+<div class=post-meta>
+<div class=date>
+<span class=posted-on>
+<i class="fa fa-calendar" aria-hidden=true></i>
+<time datetime=2009-04-29T00:00:00Z>
+April 29, 2009
+</time>
+</span>
+<span class=reading-time>
+<i class="fa fa-clock-o" aria-hidden=true></i>
+2-minute read
+</span>
+</div>
+<div class=categories>
+<i class="fa fa-folder" aria-hidden=true></i>
+<a href=/categories/java/>Java</a></div>
+</div>
+</header>
+<div>
+<h1 id=the-ibm-jdk-is-awesome>
+The IBM JDK is Awesome
+<a class=heading-link href=#the-ibm-jdk-is-awesome>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h1>
+<p>Insofar as its <a href=http://en.wikipedia.org/wiki/IBM_J9>J9</a> JRE supports adding methods to classes at runtime. For me, this is a real boon for productivity.</p>
+<p>(Edit: To clarify, I&rsquo;m talking about editing source code while debugging and having changes applied by &ldquo;hot swapping&rdquo; classes in the running JVM without having to restart. Not the Ruby-style meta-programming of modifying classes at runtime.)</p>
+<p>I don&rsquo;t understand why Sun has not fixed this in their JREs, see bug <a href="http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4910812">4910812</a>, to bring Java development that much closer to the Smalltalk &ldquo;always-running&rdquo; ideal I&rsquo;ve heard Smalltalkers wax poetic about.</p>
+<p>If you haven&rsquo;t voted for 4910812, please go do so. It has only 379 votes, which seems surprisingly low for the number of developers whose productivity would be positively effected by it being implemented. I remember seeing a &ldquo;vote 4910812&rdquo; meme go around awhile ago, but it must not have caught on.</p>
+<p>Compared to the IBM JDK, I generally prefer the Sun JDK because it:</p>
+<ul>
+<li>
+<p>Seams less finicky (which is very subjective, I know)</p>
+</li>
+<li>
+<p>Ships with the source code for its Java class library (which IBM&rsquo;s JDK does not)&ndash;not that I read Java class library source code all day, but I flinch every time the &ldquo;unattached source&rdquo; view pops up in Eclipse</p>
+</li>
+<li>
+<p>Is faster than the J9 JRE in the one micro benchmark I ran&ndash;while recording stats for bindgen, I was confused about why it was suddenly so slow, but it turned out I had switched my workspace preferences to the IBM JDK. Switching back to the Sun JDK restored the performance numbers to their previous values.</p>
+</li>
+</ul>
+<p>But I can deal with these in my development environment to get the awesomeness of the J9 JRE adding methods without restarting.</p>
+<p>I&rsquo;ve tried other JDKs, like BEA/Oracle&rsquo;s JRockit, Apache&rsquo;s Harmony, but none of them do hot method adding like IBM&rsquo;s J9. I was surprised because I&rsquo;ve always heard good things about JRockit, and Harmony has some sort of access to J9, but neither have pulled it off yet.</p>
+<p>I added small entry about the IBM JDK to Joist&rsquo;s <a href=http://joist.ws/eclipseTips.html>Eclipse Tips</a> page if you&rsquo;re interested in how to get it/set it up, though it is pretty easy.</p>
+<p>One of these days I&rsquo;ll play with <a href=http://www.zeroturnaround.com/>ZeroTurnaround</a>, but having the JRE support it natively just seems cleaner.</p>
+</div>
+<footer>
+<div id=disqus_thread></div>
+<script type=application/javascript>var disqus_config=function(){};(function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById('disqus_thread').innerHTML='Disqus comments not available by default when the website is previewed locally.';return}var b=document,a=b.createElement('script');a.async=!0,a.src='//shaberman.disqus.com/embed.js',a.setAttribute('data-timestamp',+new Date),(b.head||b.body).appendChild(a)})()</script>
+<noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript>
+<a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a>
+</footer>
+</article>
+</section>
+</div>
+<footer class=footer>
+<section class=container>
+©
+2008 -
+2021
+Stephen Haberman
+·
+Powered by <a href=https://gohugo.io/>Hugo</a> & <a href=https://github.com/luizdepra/hugo-coder/>Coder</a>.
+</section>
+</footer>
+</main>
+<script src=/js/coder.min.03b17769f4f91ae35667e1f2a1ca8c16f50562576cf90ff32b3179926914daa5.js integrity="sha256-A7F3afT5GuNWZ+HyocqMFvUFYlds+Q/zKzF5kmkU2qU="></script>
+</body>
+</html>

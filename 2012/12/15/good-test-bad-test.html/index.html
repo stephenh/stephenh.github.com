@@ -1,0 +1,193 @@
+<!doctype html><html lang=en>
+<head>
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width,initial-scale=1">
+<meta http-equiv=content-language content="en">
+<meta name=color-scheme content="light dark">
+<meta name=author content="Stephen Haberman">
+<meta name=description content="I caught myself writing a bad test yesterday, but while setting up the code review thought, er, if I was reviewing this code, I would be less than thrilled.
+So, I refactored the test and updated the code review to include it.
+The difference in test quality was so much better, IMO, that I thought I&rsquo;d post it here as an example.
+The Code    So, what I am testing is a substringBetween utility method, with just finds two tokens and replaces what is between them with a new string.">
+<meta name=keywords content="blog,developer,personal">
+<meta name=twitter:card content="summary">
+<meta name=twitter:title content="Good Test, Bad Test">
+<meta name=twitter:description content="I caught myself writing a bad test yesterday, but while setting up the code review thought, er, if I was reviewing this code, I would be less than thrilled.
+So, I refactored the test and updated the code review to include it.
+The difference in test quality was so much better, IMO, that I thought I&rsquo;d post it here as an example.
+The Code    So, what I am testing is a substringBetween utility method, with just finds two tokens and replaces what is between them with a new string.">
+<meta property="og:title" content="Good Test, Bad Test">
+<meta property="og:description" content="I caught myself writing a bad test yesterday, but while setting up the code review thought, er, if I was reviewing this code, I would be less than thrilled.
+So, I refactored the test and updated the code review to include it.
+The difference in test quality was so much better, IMO, that I thought I&rsquo;d post it here as an example.
+The Code    So, what I am testing is a substringBetween utility method, with just finds two tokens and replaces what is between them with a new string.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="http://draconianoverlord.com/2012/12/15/good-test-bad-test.html/"><meta property="article:section" content="posts">
+<meta property="article:published_time" content="2012-12-15T00:00:00+00:00">
+<meta property="article:modified_time" content="2012-12-15T00:00:00+00:00">
+<title>
+Good Test, Bad Test · Draconian Overlord
+</title>
+<link rel=canonical href=http://draconianoverlord.com/2012/12/15/good-test-bad-test.html/>
+<link rel=preload href="/fonts/forkawesome-webfont.woff2?v=1.2.0" as=font type=font/woff2 crossorigin>
+<link rel=stylesheet href=/css/coder.min.d9fddbffe6f27e69985dc5fe0471cdb0e57fbf4775714bc3d847accb08f4a1f6.css integrity="sha256-2f3b/+byfmmYXcX+BHHNsOV/v0d1cUvD2Eesywj0ofY=" crossorigin=anonymous media=screen>
+<link rel=stylesheet href=/css/coder-dark.min.aa883b9ce35a8ff4a2a5008619005175e842bb18a8a9f9cc2bbcf44dab2d91fa.css integrity="sha256-qog7nONaj/SipQCGGQBRdehCuxioqfnMK7z0Tastkfo=" crossorigin=anonymous media=screen>
+<link rel=icon type=image/png href=/images/favicon-32x32.png sizes=32x32>
+<link rel=icon type=image/png href=/images/favicon-16x16.png sizes=16x16>
+<link rel=apple-touch-icon href=/images/apple-touch-icon.png>
+<link rel=apple-touch-icon sizes=180x180 href=/images/apple-touch-icon.png>
+<meta name=generator content="Hugo 0.89.4">
+</head>
+<body class="preload-transitions colorscheme-auto">
+<div class=float-container>
+<a id=dark-mode-toggle class=colorscheme-toggle>
+<i class="fa fa-adjust fa-fw" aria-hidden=true></i>
+</a>
+</div>
+<main class=wrapper>
+<nav class=navigation>
+<section class=container>
+<a class=navigation-title href=/>Draconian Overlord</a>
+Oppressing software entropy
+</section>
+</nav>
+<div class=content>
+<section class="container post">
+<article>
+<header>
+<div class=post-title>
+<h1 class=title>
+<a class=title-link href=http://draconianoverlord.com/2012/12/15/good-test-bad-test.html/>
+Good Test, Bad Test
+</a>
+</h1>
+</div>
+<div class=post-meta>
+<div class=date>
+<span class=posted-on>
+<i class="fa fa-calendar" aria-hidden=true></i>
+<time datetime=2012-12-15T00:00:00Z>
+December 15, 2012
+</time>
+</span>
+<span class=reading-time>
+<i class="fa fa-clock-o" aria-hidden=true></i>
+3-minute read
+</span>
+</div>
+<div class=categories>
+<i class="fa fa-folder" aria-hidden=true></i>
+<a href=/categories/testing/>Testing</a></div>
+</div>
+</header>
+<div>
+<p>I caught myself writing a bad test yesterday, but while setting up the code review thought, er, if I was reviewing this code, I would be less than thrilled.</p>
+<p>So, I refactored the test and updated the code review to include it.</p>
+<p>The difference in test quality was so much better, IMO, that I thought I&rsquo;d post it here as an example.</p>
+<h2 id=the-code>
+The Code
+<a class=heading-link href=#the-code>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h2>
+<p>So, what I am testing is a <code>substringBetween</code> utility method, with just finds two tokens and replaces what is between them with a new string.</p>
+<p>Note that the places we use this are very limited/special, so we&rsquo;re assuming the tokens will always exist, and so ignoring some boundary conditions that would otherwise need handled.</p>
+<p>Anyway, here&rsquo;s the code:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>static</span> String <span style=color:#a6e22e>replaceBetween</span><span style=color:#f92672>(</span>
+    <span style=color:#66d9ef>final</span> String s<span style=color:#f92672>,</span>
+    <span style=color:#66d9ef>final</span> String startToken<span style=color:#f92672>,</span>
+    <span style=color:#66d9ef>final</span> String endToken<span style=color:#f92672>,</span>
+    <span style=color:#66d9ef>final</span> String replacement<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
+  <span style=color:#66d9ef>final</span> <span style=color:#66d9ef>int</span> i <span style=color:#f92672>=</span> s<span style=color:#f92672>.</span><span style=color:#a6e22e>indexOf</span><span style=color:#f92672>(</span>startToken<span style=color:#f92672>);</span>
+  <span style=color:#66d9ef>final</span> <span style=color:#66d9ef>int</span> j <span style=color:#f92672>=</span> s<span style=color:#f92672>.</span><span style=color:#a6e22e>indexOf</span><span style=color:#f92672>(</span>endToken<span style=color:#f92672>,</span> i <span style=color:#f92672>+</span> startToken<span style=color:#f92672>.</span><span style=color:#a6e22e>length</span><span style=color:#f92672>());</span>
+  <span style=color:#66d9ef>return</span> s<span style=color:#f92672>.</span><span style=color:#a6e22e>substring</span><span style=color:#f92672>(</span>0<span style=color:#f92672>,</span> i <span style=color:#f92672>+</span> startToken<span style=color:#f92672>.</span><span style=color:#a6e22e>length</span><span style=color:#f92672>())</span>
+    <span style=color:#f92672>+</span> replacement
+    <span style=color:#f92672>+</span> s<span style=color:#f92672>.</span><span style=color:#a6e22e>substring</span><span style=color:#f92672>(</span>j<span style=color:#f92672>);</span>
+<span style=color:#f92672>}</span>
+</code></pre></div><h2 id=bad-test>
+Bad Test
+<a class=heading-link href=#bad-test>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h2>
+<p>So, this is the test I started out with:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=color:#a6e22e>@Test</span>
+<span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>testReplaceBetween</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
+  assertThat<span style=color:#f92672>(</span>
+    replaceBetween<span style=color:#f92672>(</span><span style=color:#e6db74>&#34;one two three four&#34;</span><span style=color:#f92672>,</span> <span style=color:#e6db74>&#34;two&#34;</span><span style=color:#f92672>,</span> <span style=color:#e6db74>&#34;three&#34;</span><span style=color:#f92672>,</span> <span style=color:#e6db74>&#34;!&#34;</span><span style=color:#f92672>),</span>
+    is<span style=color:#f92672>(</span><span style=color:#e6db74>&#34;one two!three four&#34;</span><span style=color:#f92672>));</span>
+  assertThat<span style=color:#f92672>(</span>
+    replaceBetween<span style=color:#f92672>(</span><span style=color:#e6db74>&#34;aaaabccaa&#34;</span><span style=color:#f92672>,</span> <span style=color:#e6db74>&#34;b&#34;</span><span style=color:#f92672>,</span> <span style=color:#e6db74>&#34;a&#34;</span><span style=color:#f92672>,</span> <span style=color:#e6db74>&#34;CC&#34;</span><span style=color:#f92672>),</span>
+    is<span style=color:#f92672>(</span><span style=color:#e6db74>&#34;aaaabCCaa&#34;</span><span style=color:#f92672>));</span>
+  assertThat<span style=color:#f92672>(</span>
+    replaceBetween<span style=color:#f92672>(</span><span style=color:#e6db74>&#34;starttoken ... tend&#34;</span><span style=color:#f92672>,</span> <span style=color:#e6db74>&#34;starttoken&#34;</span><span style=color:#f92672>,</span> <span style=color:#e6db74>&#34;t&#34;</span><span style=color:#f92672>,</span> <span style=color:#e6db74>&#34; !!! &#34;</span><span style=color:#f92672>),</span>
+    is<span style=color:#f92672>(</span><span style=color:#e6db74>&#34;starttoken !!! tend&#34;</span><span style=color:#f92672>));</span>
+<span style=color:#f92672>}</span>
+</code></pre></div><p>This test covers 3 boundary cases that I cared about, but while setting up the review, I found several things confusing about it:</p>
+<ul>
+<li>The strings/tokens are non-sensical to each case</li>
+<li>The strings/tokens change arbitrarily between each case</li>
+<li>The strings/tokens are arbitrarily longer/shorter between each case</li>
+</ul>
+<p>The result is that it&rsquo;s very hard to quickly glance at these tests and tell what is actually being tested.</p>
+<h2 id=good-test>
+Good Test
+<a class=heading-link href=#good-test>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h2>
+<p>This is what I ended up refactoring the test to:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=color:#a6e22e>@Test</span>
+<span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>testReplaceBetween</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
+  assertThat<span style=color:#f92672>(</span>
+    replaceBetween<span style=color:#f92672>(</span><span style=color:#e6db74>&#34;start middle end&#34;</span><span style=color:#f92672>,</span> <span style=color:#e6db74>&#34;start&#34;</span><span style=color:#f92672>,</span> <span style=color:#e6db74>&#34;end&#34;</span><span style=color:#f92672>,</span> <span style=color:#e6db74>&#34;!&#34;</span><span style=color:#f92672>),</span>
+    is<span style=color:#f92672>(</span><span style=color:#e6db74>&#34;start!end&#34;</span><span style=color:#f92672>));</span>
+<span style=color:#f92672>}</span>
+
+<span style=color:#a6e22e>@Test</span>
+<span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>testWhenEndTokenIsAlsoBeforeTheStartToken</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
+  assertThat<span style=color:#f92672>(</span>
+    replaceBetween<span style=color:#f92672>(</span><span style=color:#e6db74>&#34;end start middle end&#34;</span><span style=color:#f92672>,</span> <span style=color:#e6db74>&#34;start&#34;</span><span style=color:#f92672>,</span> <span style=color:#e6db74>&#34;end&#34;</span><span style=color:#f92672>,</span> <span style=color:#e6db74>&#34;!&#34;</span><span style=color:#f92672>),</span>
+    is<span style=color:#f92672>(</span><span style=color:#e6db74>&#34;end start!end&#34;</span><span style=color:#f92672>));</span>
+<span style=color:#f92672>}</span>
+
+<span style=color:#a6e22e>@Test</span>
+<span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>testWhenEndTokenIsWithinTheStartToken</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
+  assertThat<span style=color:#f92672>(</span>
+    replaceBetween<span style=color:#f92672>(</span><span style=color:#e6db74>&#34;startendstart middle end&#34;</span><span style=color:#f92672>,</span> <span style=color:#e6db74>&#34;startendstart&#34;</span><span style=color:#f92672>,</span> <span style=color:#e6db74>&#34;end&#34;</span><span style=color:#f92672>,</span> <span style=color:#e6db74>&#34;!&#34;</span><span style=color:#f92672>),</span>
+    is<span style=color:#f92672>(</span><span style=color:#e6db74>&#34;startendstart!end&#34;</span><span style=color:#f92672>));</span>
+<span style=color:#f92672>}</span>
+</code></pre></div><p>I think this version is demonstrably better:</p>
+<ul>
+<li>The boundary cases are highlighted in the method names</li>
+<li>The strings under test and tokens are very simple and align with the concepts they are testing</li>
+<li>The strings under test contain minimal noise that is not directly related to the boundary cases being tested</li>
+</ul>
+<p>A big improvement.</p>
+<p>I think this is important because the function of unit tests is not just to put boundary cases under test, it&rsquo;s also to explain these boundary cases to future maintainers so they can understand why the code (and tests) work the way they do.</p>
+<p>Perhaps the bad test, for this small/simple code snippet, is not going to ruin our codebase. But as the code being tested starts getting larger/more complex, and the tests start getting larger/more complex, I think the time taken to make the tests just as clean and readable as the main codebase is time well spent.</p>
+<p>(Obviously this is not a new concept; hopefully I am preaching to the choir.)</p>
+</div>
+<footer>
+<div id=disqus_thread></div>
+<script type=application/javascript>var disqus_config=function(){};(function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById('disqus_thread').innerHTML='Disqus comments not available by default when the website is previewed locally.';return}var b=document,a=b.createElement('script');a.async=!0,a.src='//shaberman.disqus.com/embed.js',a.setAttribute('data-timestamp',+new Date),(b.head||b.body).appendChild(a)})()</script>
+<noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript>
+<a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a>
+</footer>
+</article>
+</section>
+</div>
+<footer class=footer>
+<section class=container>
+©
+2008 -
+2021
+Stephen Haberman
+·
+Powered by <a href=https://gohugo.io/>Hugo</a> & <a href=https://github.com/luizdepra/hugo-coder/>Coder</a>.
+</section>
+</footer>
+</main>
+<script src=/js/coder.min.03b17769f4f91ae35667e1f2a1ca8c16f50562576cf90ff32b3179926914daa5.js integrity="sha256-A7F3afT5GuNWZ+HyocqMFvUFYlds+Q/zKzF5kmkU2qU="></script>
+</body>
+</html>

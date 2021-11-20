@@ -1,0 +1,485 @@
+<!doctype html><html lang=en>
+<head>
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width,initial-scale=1">
+<meta http-equiv=content-language content="en">
+<meta name=color-scheme content="light dark">
+<meta name=author content="Stephen Haberman">
+<meta name=description content="I&rsquo;ve been forming an opinion for awhile that is potentially eyebrow raising, but that I&rsquo;m now basically convinced of: that cross-system integration testing is not worth it, and in most projects is actually an anti-pattern.
+This is potentially surprising, because even in projects that use a good balance of &ldquo;1000s of unit tests with ~10s/100s of integration tests&rdquo;, it&rsquo;s assumed that, of course, we need cross-system integration tests to show that things &ldquo;actually work&rdquo;.">
+<meta name=keywords content="blog,developer,personal">
+<meta name=twitter:card content="summary">
+<meta name=twitter:title content="The Futility of Cross-System Integration Testing">
+<meta name=twitter:description content="I&rsquo;ve been forming an opinion for awhile that is potentially eyebrow raising, but that I&rsquo;m now basically convinced of: that cross-system integration testing is not worth it, and in most projects is actually an anti-pattern.
+This is potentially surprising, because even in projects that use a good balance of &ldquo;1000s of unit tests with ~10s/100s of integration tests&rdquo;, it&rsquo;s assumed that, of course, we need cross-system integration tests to show that things &ldquo;actually work&rdquo;.">
+<meta property="og:title" content="The Futility of Cross-System Integration Testing">
+<meta property="og:description" content="I&rsquo;ve been forming an opinion for awhile that is potentially eyebrow raising, but that I&rsquo;m now basically convinced of: that cross-system integration testing is not worth it, and in most projects is actually an anti-pattern.
+This is potentially surprising, because even in projects that use a good balance of &ldquo;1000s of unit tests with ~10s/100s of integration tests&rdquo;, it&rsquo;s assumed that, of course, we need cross-system integration tests to show that things &ldquo;actually work&rdquo;.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="http://draconianoverlord.com/2017/08/23/the-futility-of-cross-system-integration-testing.html/"><meta property="article:section" content="posts">
+<meta property="article:published_time" content="2017-08-23T00:00:00+00:00">
+<meta property="article:modified_time" content="2017-08-23T00:00:00+00:00">
+<title>
+The Futility of Cross-System Integration Testing · Draconian Overlord
+</title>
+<link rel=canonical href=http://draconianoverlord.com/2017/08/23/the-futility-of-cross-system-integration-testing.html/>
+<link rel=preload href="/fonts/forkawesome-webfont.woff2?v=1.2.0" as=font type=font/woff2 crossorigin>
+<link rel=stylesheet href=/css/coder.min.d9fddbffe6f27e69985dc5fe0471cdb0e57fbf4775714bc3d847accb08f4a1f6.css integrity="sha256-2f3b/+byfmmYXcX+BHHNsOV/v0d1cUvD2Eesywj0ofY=" crossorigin=anonymous media=screen>
+<link rel=stylesheet href=/css/coder-dark.min.aa883b9ce35a8ff4a2a5008619005175e842bb18a8a9f9cc2bbcf44dab2d91fa.css integrity="sha256-qog7nONaj/SipQCGGQBRdehCuxioqfnMK7z0Tastkfo=" crossorigin=anonymous media=screen>
+<link rel=icon type=image/png href=/images/favicon-32x32.png sizes=32x32>
+<link rel=icon type=image/png href=/images/favicon-16x16.png sizes=16x16>
+<link rel=apple-touch-icon href=/images/apple-touch-icon.png>
+<link rel=apple-touch-icon sizes=180x180 href=/images/apple-touch-icon.png>
+<meta name=generator content="Hugo 0.89.4">
+</head>
+<body class="preload-transitions colorscheme-auto">
+<div class=float-container>
+<a id=dark-mode-toggle class=colorscheme-toggle>
+<i class="fa fa-adjust fa-fw" aria-hidden=true></i>
+</a>
+</div>
+<main class=wrapper>
+<nav class=navigation>
+<section class=container>
+<a class=navigation-title href=/>Draconian Overlord</a>
+Oppressing software entropy
+</section>
+</nav>
+<div class=content>
+<section class="container post">
+<article>
+<header>
+<div class=post-title>
+<h1 class=title>
+<a class=title-link href=http://draconianoverlord.com/2017/08/23/the-futility-of-cross-system-integration-testing.html/>
+The Futility of Cross-System Integration Testing
+</a>
+</h1>
+</div>
+<div class=post-meta>
+<div class=date>
+<span class=posted-on>
+<i class="fa fa-calendar" aria-hidden=true></i>
+<time datetime=2017-08-23T00:00:00Z>
+August 23, 2017
+</time>
+</span>
+<span class=reading-time>
+<i class="fa fa-clock-o" aria-hidden=true></i>
+22-minute read
+</span>
+</div>
+<div class=categories>
+<i class="fa fa-folder" aria-hidden=true></i>
+<a href=/categories/testing/>Testing</a>
+<span class=separator>•</span>
+<a href=/categories/architecture/>Architecture</a></div>
+</div>
+</header>
+<div>
+<p>I&rsquo;ve been forming an opinion for awhile that is potentially eyebrow raising, but that I&rsquo;m now basically convinced of: that cross-system integration testing is not worth it, and in most projects is actually an anti-pattern.</p>
+<p>This is potentially surprising, because even in projects that use a good balance of &ldquo;1000s of unit tests with ~10s/100s of integration tests&rdquo;, it&rsquo;s assumed that, of course, we need cross-system integration tests to show that things &ldquo;actually work&rdquo;.</p>
+<p>However, my experience, based on the last ~4-5 systems I&rsquo;ve either built or worked on, is pretty much the opposite, and that the projects with &ldquo;showing things actually work&rdquo; integration tests have not had that investment pay off, and so here I&rsquo;ll try to reason about that and articulate why.</p>
+<h2 id=integration-test-terminology>
+Integration Test Terminology
+<a class=heading-link href=#integration-test-terminology>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h2>
+<p>First, a mea culpa that &ldquo;cross-system&rdquo; as an adjective to integration testing, for traditional usages of the term, seems very redundant.</p>
+<p>E.g. &ldquo;integration testing&rdquo; is de facto cross-system. That&rsquo;s the &ldquo;integration&rdquo;. Obvious.</p>
+<p>But I think there is some slight nuance, mostly around sphere of influence.</p>
+<p>Let&rsquo;s take a typical web application, and it has four standard layers:</p>
+<ol>
+<li>Frontend HTML/CSS/JS</li>
+<li>JSON REST APIs for the frontend JS/AJAX to call</li>
+<li>Database layer for REST APIs that persists data to MySQL</li>
+<li>Gateway layer for REST APIs that calls 3rd-party systems (e.g. vendors like a credit card API)</li>
+</ol>
+<p>Given these four layers, I assert there are two flavors of cross-layer integration testing:</p>
+<ol>
+<li>
+<p>Intra-system integration testing.</p>
+<p>This is integrating (as in starting real versions of) the various sub-systems within the overall system I control, so real-frontend for layer 1 + real-REST servers for layer 2 + real-MySQL database for layer 3.</p>
+<p>So, just like the term &ldquo;integration test&rdquo; insinuates, I could stand all three of these layers/sub-systems up, and do some happy path testing, e.g. with Selenium tests, and make sure things work well across the stack.</p>
+<p>These tests make sense to me.</p>
+</li>
+<li>
+<p>Inter-/cross-system integration testing.</p>
+<p>This is integrating the above sub-systems (real-frontend + real-REST + real-MySQL) <em>plus</em> the real-vendor system that the gateway layer, layer 4, talks to.</p>
+<p>These are the tests I want to avoid.</p>
+</li>
+</ol>
+<p>So, just to highlight, the differentiation between these two flavors is control:</p>
+<ul>
+<li>Intra-system testing == only layers/sub-systems I control</li>
+<li>Cross-system testing == all layers/sub-systems, even those outside my control</li>
+</ul>
+<h2 id=what-do-you-mean-by-control>
+What Do You Mean By Control?
+<a class=heading-link href=#what-do-you-mean-by-control>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h2>
+<p>So, continuing with defining terminology, by &ldquo;control&rdquo;, I mean two things:</p>
+<ol>
+<li>Are my interactions with the system completely isolated (<strong>isolation</strong>), and</li>
+<li>Can I nuke/mutate the system&rsquo;s data whenever I want (<strong>control</strong>)?</li>
+</ol>
+<p>Basically, I want to be able to setup exactly the test data I want for a given test (control) and then execute it with assurances nothing else will muck with my data (isolation).</p>
+<p>So, let&rsquo;s evaluate this &ldquo;do we have control?&rdquo; criteria against each of our sub-systems:</p>
+<ul>
+<li>
+<p>For the frontend HTML/CSS/JS, is my test data isolated from other systems and other tests?</p>
+<p>Yes: each selenium test has its own browser instance so its own cookies, local storage, etc., so it&rsquo;s effectively isolated from the others.</p>
+</li>
+<li>
+<p>For the REST API, is my test data isolated from other systems and other tests?</p>
+<p>Yes: REST APIs are typically stateless, so np.</p>
+</li>
+<li>
+<p>For the MySQL database, is my test data isolated from other systems and other tests?</p>
+<p>Depends: if I create my very own MySQL database, <em>and</em> only run a single test at a time, <em>and</em> nuke the data between every test, then yes, I have data isolation for the tests.</p>
+<p>(Alternatively, if my app already supports sharding, maybe I don&rsquo;t have to nuke the entire database, and instead each test gets it&rsquo;s own shard, but the effect is the same.)</p>
+<p>Basically, because I own this sub-system, I can do whatever gyrations (dedicated, frequently-nuked database) I need to get isolated data.</p>
+</li>
+<li>
+<p>For the vendor API, is my test data isolated from other systems and other tests?</p>
+<p>Typically not at all.</p>
+<p>I&rsquo;ve worked with great vendors and terrible vendors over the years, but even the best vendors have never had a test/integration system that gave me 100% data isolation. There is basically never a way to reset the data in their integration systems.</p>
+<p>Here is where it becomes obvious I don&rsquo;t own this sub-system: I can&rsquo;t hack on it to setup the data isolation I need.</p>
+</li>
+</ul>
+<h2 id=why-does-control-matter>
+Why Does Control Matter?
+<a class=heading-link href=#why-does-control-matter>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h2>
+<p>So, we&rsquo;ve established that control is about which sub-systems whose persistent data is at your whim. But why does that matter?</p>
+<p><strong>Because any automated test that touches a system/sub-system who&rsquo;s data is outside of your control is going to suck.</strong></p>
+<p>A baseline, non-negotiable, requirement for effective tests is the ability to control their data.</p>
+<p>If the test cannot control and isolate it&rsquo;s data, you are risking several bad things:</p>
+<ol>
+<li>Test Flakiness</li>
+<li>Test Complexity</li>
+<li>Test Incompleteness</li>
+<li>System Availability</li>
+</ol>
+<p>I&rsquo;ll drill into each.</p>
+<h4 id=test-flakiness>
+Test Flakiness
+<a class=heading-link href=#test-flakiness>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h4>
+<p>Lack of isolation means it will be very easy for &ldquo;other things&rdquo; to break your tests. Where &ldquo;other things&rdquo; could be other systems, or internal users just harmlessly poking around, or even your tests themselves.</p>
+<p>For example, you setup a test account in your vendor&rsquo;s system. You have ~100s of tests using it, and then the vendor decides to nuke their sandbox database. Your tests now all break.</p>
+<p>Or you have ~100s of tests using the vendor&rsquo;s system, and one of your own tests causes it to tip over an inherent system limit (e.g. maybe every test run only creates data, but cannot delete it), and now the test account is locked/broken/egregiously slow.</p>
+<p>I have worked with systems that have automated tests that use shared data, and it invariably happens that &ldquo;something else&rdquo; pokes the data, and tests break.</p>
+<p>When tests break, especially repeatedly for the same core reasons (lack of a solid foundation), developers quickly get frustrated, become disenfrancised, and the tests themselves and your culture around TDD will suffer.</p>
+<p>You must have 100% data control and isolation from day one, or you are building on quicksand.</p>
+<h4 id=test-complexity>
+Test Complexity
+<a class=heading-link href=#test-complexity>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h4>
+<p>Besides flakiness, even if you <em>think</em> you can build/hack around the above issues, invariably tests that cannot control their data are just inherently complex.</p>
+<p>For example, my gold standard of a test flow is a cadence that looks like:</p>
+<ul>
+<li>Given the world looks like X</li>
+<li>When action Y happens</li>
+<li>Then the world looks like Z</li>
+</ul>
+<p>Just to show a concrete example, here is a real-and-slightly-edited test for one an offline job (to tangentinally highlight/show off that even offload Hadoop/Spark/Pig jobs can have effective, TDD-style test suites):</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=color:#a6e22e>@Test</span>
+<span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>shouldDropExtraPstData</span><span style=color:#f92672>()</span> <span style=color:#66d9ef>throws</span> Exception <span style=color:#f92672>{</span>
+  <span style=color:#75715e>// given one event that happens at 11/3 11pm UTC (so 11/3 PST)
+</span><span style=color:#75715e></span>  <span style=color:#66d9ef>final</span> FooInputEvent i1 <span style=color:#f92672>=</span> newFooInputEvent<span style=color:#f92672>(</span>e <span style=color:#f92672>-&gt;</span> setEventTime<span style=color:#f92672>(</span>e<span style=color:#f92672>,</span> NOV3<span style=color:#f92672>.</span><span style=color:#a6e22e>atTime</span><span style=color:#f92672>(</span>23<span style=color:#f92672>,</span> 0<span style=color:#f92672>)));</span>
+  <span style=color:#75715e>// and another event that happens at 11/4 1am UTC (so also 11/3 PST)
+</span><span style=color:#75715e></span>  <span style=color:#66d9ef>final</span> FooInputEvent i2 <span style=color:#f92672>=</span> newFooInputEvent<span style=color:#f92672>(</span>e <span style=color:#f92672>-&gt;</span> setEventTime<span style=color:#f92672>(</span>e<span style=color:#f92672>,</span> NOV4<span style=color:#f92672>.</span><span style=color:#a6e22e>atTime</span><span style=color:#f92672>(</span>1<span style=color:#f92672>,</span> 0<span style=color:#f92672>)));</span>
+  <span style=color:#75715e>// when the job runs
+</span><span style=color:#75715e></span>  runScript<span style=color:#f92672>(</span>i1<span style=color:#f92672>,</span> i2<span style=color:#f92672>);</span>
+  <span style=color:#75715e>// then we got only 1 combined UTC event out
+</span><span style=color:#75715e></span>  assertEquals<span style=color:#f92672>(</span>outputEvents<span style=color:#f92672>.</span><span style=color:#a6e22e>size</span><span style=color:#f92672>(),</span> 1<span style=color:#f92672>);</span>
+  assertEqualsWithoutHeader<span style=color:#f92672>(</span>outputEvents<span style=color:#f92672>.</span><span style=color:#a6e22e>get</span><span style=color:#f92672>(</span>0<span style=color:#f92672>),</span> newFooOutputEvent<span style=color:#f92672>(</span>0<span style=color:#f92672>));</span>
+<span style=color:#f92672>}</span>
+</code></pre></div><p>In cross-system integration tests where &ldquo;the world&rdquo; is not in your control, it&rsquo;s impossible to have those &ldquo;given X&rdquo; lines at the beginning of your Given/When/Then cadence, so you have to start inventing ways around it, which dramatically increases the complexity of the tests.</p>
+<p>Or, instead of inventing ways around it, sometime cross-system tests just skip it the &ldquo;world looks like X&rdquo; all together, and assume &ldquo;the data is already there&rdquo;. Which, for me, is one of the worst things that could happen, as now the input condition is not part of your test method&rsquo;s source code, but instead is implicitly setup out-of-band, e.g. by an engineer clicking around and manually setting up the test case.</p>
+<p>There are several reprocussions from this:</p>
+<ul>
+<li>Test readability is terrible, because code reviews and maintainers now have no idea what your &ldquo;the world looks like X&rdquo; input data is. They have to guess at what you setup in the shared database.</li>
+<li>The codebase maintainability is terrible, because if a maintainer finds a bug, and says &ldquo;okay, I need a new test with <code>testFooBar</code>&rsquo;s input data, but with flag <code>X</code> set to <code>Y</code> instead of <code>Z</code>&rdquo;, they need to manually copy/paste <code>testFooBar</code>&rsquo;s shared data. This is tedious and so they basically will not do it.</li>
+<li>The test maintainability itself is terrible, because if the shared data is somehow broken/reset, it&rsquo;s now basically guaranteed that no engineer, even the engineer that wrote the test, knows how to re-create <code>testFooBar</code>&rsquo;s &ldquo;the world looks like X&rdquo; input data.</li>
+</ul>
+<p><strong>Basically, if you don&rsquo;t have &ldquo;the world looks like X&rdquo; directly in your test methods, your tests are terrible.</strong></p>
+<p>Note that sometimes cross-system tests will attempt to have &ldquo;world looks like X&rdquo; setup routines, that still live on top of a shared, not-controlled, not-isolated environment, e.g. by creating a brand new user/account in your vendor&rsquo;s integration system for every test run.</p>
+<p>Or you might try to have a clean-up routine, that uses some of the vendor&rsquo;s delete APIs to re-delete what you just created.</p>
+<p>And these gyrations are more admirable than the implicit &ldquo;use data that we setup by hand&rdquo; approahc, but, to me, they&rsquo;re already too far down the slippery slope away from &ldquo;tests that are actually simple to read and maintain&rdquo;, because you&rsquo;ve introduced a slew of cognitive overhead, without actually solving the fundamental control and isolation issues, that compromises the long-term simplicity, readability, and reliability of your test suite.</p>
+<h4 id=test-incompleteness>
+Test Incompleteness
+<a class=heading-link href=#test-incompleteness>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h4>
+<p>Somewhat related to complexity, but the exact opposite, is that without data control and isolation, you risk your tests becoming too simple, and therefore trending towards useless.</p>
+<p>For example, a common approach to the &ldquo;we cannot reset the shared data&rdquo; constraint is to make only either read-only or append-only calls/test cases in your cross-system integration tests.</p>
+<p>E.g. you might write a test that only reads the same data from the shared database each time. It does no writes/mutations, so no problem, it should never break.</p>
+<p>Except now you have entire codepaths (any write/mutation codepath, which is typically where most of the fun/complex logic exists) that is simply untested.</p>
+<h4 id=system-availability>
+System Availability
+<a class=heading-link href=#system-availability>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h4>
+<p>I added this point later, as it&rsquo;s not around test data itself, which for me is the key to great tests, but if you don&rsquo;t have data control and isolation over a vendor&rsquo;s sub-system, it&rsquo;s also very likely you can&rsquo;t ensure the overall availability of that sub-system.</p>
+<p>E.g. if your cross-system automated tests are part of your CI/deployment pipeline, and your vendor&rsquo;s system goes down for maintenance, what do you do? You can&rsquo;t release? What if your vendor also uses their integration system for beta testing, and regularly pushes out bugs? Their bug means you can&rsquo;t release?</p>
+<p>(Granted, there are assertions that this is precisely the point of integration testing, but I&rsquo;ll muse about that later.)</p>
+<p>If you limit your integration testing to intra-system sub-systems, you have de facto 100% control over their availability, and so will have the most resilient automated tests.</p>
+<p><strong>In summary, my assertion is that if you don&rsquo;t have data control and isolation, your automated tests will be a net negative to the long-term health of your codebase, and you just shouldn&rsquo;t write them.</strong></p>
+<h2 id=what-do-we-do-instead>
+What Do We Do Instead?
+<a class=heading-link href=#what-do-we-do-instead>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h2>
+<p>If we give up on cross-system integration testing, of touching their real sub-system during our CI/deployment system, obviously we still want to have <em>some</em> amount of test coverage of our interactions with them. What should that look like?</p>
+<p>To me, the best answer is two things:</p>
+<ol>
+<li>A well-defined contract between the two systems, and</li>
+<li>Stub implementations of that contract.</li>
+</ol>
+<p>A well-defined contract is basically documenting the vendor sub-system&rsquo;s API in some sort of schema, e.g. <a href=https://github.com/google/protobuf>protobuf</a>, <a href=https://thrift.apache.org/>Thrift</a>, <a href=https://swagger.io/>Swagger</a>, etc. It doesn&rsquo;t really matter which one.</p>
+<p>The goal should be to give our codebase a very good idea about &ldquo;is this request well formed?&rdquo;, since we&rsquo;re no longer going to get this validation from the vendor sub-system itself during our automated tests.</p>
+<p>And then once we have that contract, which provides a strong sanity check that &ldquo;we&rsquo;ve asked the vendor system to do X&rdquo; is a fundamental operation that they support, we can use stubs to flush out naive/just-enough-to-work behavior to verify &ldquo;does our system handle the response for request X correctly?&rdquo;</p>
+<p>As a short intro, stubs are basically in-memory versions of vendor sub-systems that you yourself write and maintain. So if your gateway layer has a <code>CreditCardApi</code> interface, you would write your own, that looks something like:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=color:#66d9ef>interface</span> <span style=color:#a6e22e>CreditCardApi</span> <span style=color:#f92672>{</span>
+  <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>charge</span><span style=color:#f92672>(</span>String number<span style=color:#f92672>,</span> <span style=color:#66d9ef>int</span> amount<span style=color:#f92672>);</span>
+<span style=color:#f92672>}</span>
+
+<span style=color:#75715e>// Real implementation that makes API calls
+</span><span style=color:#75715e></span><span style=color:#66d9ef>class</span> <span style=color:#a6e22e>VendorCardCardImpl</span> <span style=color:#66d9ef>implements</span> CreditCardApi <span style=color:#f92672>{</span>
+  <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>charge</span><span style=color:#f92672>(</span>String number<span style=color:#f92672>,</span> <span style=color:#66d9ef>int</span> amount<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
+    <span style=color:#75715e>// make wire call to vendor
+</span><span style=color:#75715e></span>  <span style=color:#f92672>}</span>
+<span style=color:#f92672>}</span>
+
+<span style=color:#75715e>// Stub implementation that does in-memory logic
+</span><span style=color:#75715e></span><span style=color:#66d9ef>class</span> <span style=color:#a6e22e>StubCreditCardImpl</span> <span style=color:#66d9ef>implements</span> CreditCardApi <span style=color:#f92672>{</span>
+  <span style=color:#66d9ef>private</span> List<span style=color:#f92672>&lt;</span>Account<span style=color:#f92672>&gt;</span> accounts <span style=color:#f92672>=</span> <span style=color:#f92672>...;</span>
+
+  <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>charge</span><span style=color:#f92672>(</span>String number<span style=color:#f92672>,</span> <span style=color:#66d9ef>int</span> amount<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
+    Account a <span style=color:#f92672>=</span> findAccount<span style=color:#f92672>(</span>number<span style=color:#f92672>);</span>
+    a<span style=color:#f92672>.</span><span style=color:#a6e22e>charges</span> <span style=color:#f92672>+=</span> <span style=color:#66d9ef>new</span> Charge<span style=color:#f92672>(</span>amount<span style=color:#f92672>);</span>
+  <span style=color:#f92672>}</span>
+<span style=color:#f92672>}</span>
+</code></pre></div><p>I have an older, longer <a href=/2010/07/09/why-i-dont-like-mocks.html>post on mocks vs. stubs</a>, that goes into more details, but focusing on the cross-system testing aspect, there are several pros/cons:</p>
+<ul>
+<li>
+<p>Pro: We have achieved data isolation, as only our test will use the <code>StubCreditCardImpl</code>&rsquo;s internal state.</p>
+</li>
+<li>
+<p>Pro: Our tests should become easier to read, because we now control the &ldquo;world looks like X&rdquo; step, as we can fabricate <code>StubCreditCardImpl</code>&rsquo;s internal state to be whatever we need. Do we need a cancelled account? An account with a zero balance? These scenarios are now easy to produce on the fly, in code.</p>
+<p>For example:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=color:#66d9ef>void</span> <span style=color:#a6e22e>shouldHandleEmptyAccount</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
+  <span style=color:#75715e>// Given our user is out of cash
+</span><span style=color:#75715e></span>  stubCards<span style=color:#f92672>.</span><span style=color:#a6e22e>put</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;a1&#34;</span><span style=color:#f92672>,</span> <span style=color:#66d9ef>new</span> Account<span style=color:#f92672>().</span><span style=color:#a6e22e>setRemaining</span><span style=color:#f92672>(</span>0<span style=color:#f92672>.</span><span style=color:#a6e22e>00</span><span style=color:#f92672>);</span>
+  <span style=color:#75715e>// When our system tries to charge that amount
+</span><span style=color:#75715e></span>  system<span style=color:#f92672>.</span><span style=color:#a6e22e>doThings</span><span style=color:#f92672>();</span>
+  <span style=color:#75715e>// Then we handle the rejection
+</span><span style=color:#75715e></span>  assertThat<span style=color:#f92672>(...);</span>
+<span style=color:#f92672>}</span>
+</code></pre></div></li>
+<li>
+<p>Pro: Again see the article on mocks vs. stubs for more details, but particularly for integration tests, stubs are much more usable than mocks because they are stateful.</p>
+<p>This means they can more naturally handle a longer-running integration-style test like &ldquo;start out with no accounts&rdquo;, &ldquo;load the first page and make an account&rdquo;, &ldquo;now see the account get returned&rdquo;, which are typically very tricky/verbose to setup with mocks.</p>
+<p>(Mocks are more suited for in-the-small unit testing; although pedantically stubs can work well there as well.)</p>
+</li>
+<li>
+<p>Con: We have to write the <code>StubCreditCardImpl</code> ourselves.</p>
+<p>I have another post about <a href=/2013/04/13/services-should-come-with-stubs.html>vendor services providing stubs out of the box</a>, but unfortunately that rarely happens.</p>
+<p>So, you have to weigh the ROI of &ldquo;investment in making stubs&rdquo; vs. the &ldquo;return of a super-reliable test pipeline&rdquo;.</p>
+</li>
+</ul>
+<p>So, if you put these two things together, a strong contract + good-enough stubs, I assert you&rsquo;ll get 80% of the benefit of cross-system integration tests, with 20% (or less) of the pain and suffering that comes from not having data control and isolation.</p>
+<h2 id=but-that-doesnt-test-if-it-really-works>
+But That Doesn&rsquo;t Test If It <em>Really</em> Works?
+<a class=heading-link href=#but-that-doesnt-test-if-it-really-works>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h2>
+<p>The biggest objection to this approach is we don&rsquo;t <em>really know</em> if our cross-system interaction works, e.g. what if we try to charge $1000, and the vendor&rsquo;s API blows up anytime the amount is greater than $900?</p>
+<p>Our testing approach of a documented schema/contract + stubs will never catch this!</p>
+<p>That is true, but I have two rationalizations: the first is syntax vs. semantics, and the second is compensating with quality and agility.</p>
+<h5 id=vendor-api-syntax-vs-api-semantics>
+Vendor API Syntax vs. API Semantics
+<a class=heading-link href=#vendor-api-syntax-vs-api-semantics>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h5>
+<p>To me, you can think of our vendor requests as having two aspects:</p>
+<ol>
+<li>Stateless &ldquo;syntax&rdquo;, e.g. is this a well-formed request?</li>
+<li>Stateful &ldquo;semantics&rdquo;, e.g. does this specific request work given this specific state?</li>
+</ol>
+<p>Per the previous section, the first aspect, the syntax, we have ideally covered at compile/build time by using a strongly-typed schema/contract. So we&rsquo;re good there.</p>
+<p>For the second, my articulation of this aspect, semantics, is &ldquo;does the <em>contents</em> of our requests, given various &lsquo;world looks like X&rsquo; input conditions, pass the business rules of the vendor system?&rdquo;</p>
+<p>When worded like this, what we&rsquo;re basically asking is, &ldquo;will all of our requests pass all of the semantic/business validation rules of the vendor&rsquo;s system?&rdquo;</p>
+<p>I have an interesting rationalization, that admittedly borders on a dodge, which is that it&rsquo;s very unlikely that we&rsquo;re going to really cover all of the business rules.</p>
+<p>For example, they might have 100 business rules around saving a credit card. Name checks, address checks, credit checks, etc. Are we really going to test every single one? Probably not. Even if we wanted to, our cross-system integration suite would grow into the 1000s of tests (which I have seen before), and become a nightmare in turns of runtime.</p>
+<p>Also, even if we thought we could cover all of them, given they are a vendor API, they can make their own releases, and add more business rules for saving a credit card, anytime they want, without telling us. (Granted, vendors often communicate breaking changes, but those are <em>syntax</em> changes, e.g. we removed field <code>X</code>, and it&rsquo;s very easy and common to slip in new <em>semantic</em> rules, e.g. existing field <code>X</code> now must pass business rule <code>Y</code>, without communication or a grace period.)</p>
+<p>So, given we won&rsquo;t cover all business rules, and they can add new business rules at any point in time, what is the best we can do?</p>
+<p>We can:</p>
+<ol>
+<li>Make sure we handle success, and</li>
+<li>Make sure we handle failure, which is any business rule failing.</li>
+</ol>
+<p>As long as we handle these two scenarios, the happy path and a general failure case, our system should basically work. And we don&rsquo;t need to test, as in a cross-system, makes-a-wire-call integration test, each individual semantic variation of &ldquo;it could return card not found&rdquo; or &ldquo;it could return bad address&rdquo; on every single test run.</p>
+<p>Note that I don&rsquo;t mean we should just throw random data at the vendor API. Obviously our system has to to it&rsquo;s own miniature mental-model the vendor&rsquo;s expected semantics, e.g. &ldquo;a $10 charge when the balance is $5 will fail&rdquo;.</p>
+<p>We need to build that mental-model of the vendor&rsquo;s expected behavior into our system, and we do, but we can assert that we play within those semantic boundaries with our unit tests and our stub-based integration tests. We don&rsquo;t need physical wire call verification of them every single time, because they will rarely change.</p>
+<p>And if they do change, we will find out quickly, adapt our unit and/or stub-based tests to encode that new aspect of their semantic mental-model, and continue. Which is basically the next point.</p>
+<h5 id=compensating-with-quality-and-agility>
+Compensating with Quality and Agility
+<a class=heading-link href=#compensating-with-quality-and-agility>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h5>
+<p>So, maybe you don&rsquo;t buy my argument that &ldquo;you won&rsquo;t test all the semantics anyway, so don&rsquo;t bother&rdquo;. You want to try and still have some &ldquo;no really, see, it works&rdquo; cross-system integration tests.</p>
+<p>The closing argument, for me, which is based on the systems that I&rsquo;ve personally worked on, is that the systems <em>without</em> cross-system integration tests end up being higher quality in the long run.</p>
+<p>This is because:</p>
+<ol>
+<li>
+<p>Their test suites use the given/when/then &ldquo;world looks like X&rdquo; convention, so copy/pasting a &ldquo;world looks like X&rdquo; test into a &ldquo;world looks like Y&rdquo; test is very quick and simple, so reproducing production bugs is very quick. You&rsquo;re testing infrastructure is already there and easy to use.</p>
+<p>In a cross-system environment, per previous sections, reproducing a production bug with a slight variation of an existing test&rsquo;s data is tedious and time-consuming.</p>
+</li>
+<li>
+<p>Their build pipelines are typically super-fast and super-reliable, so after the production issue is reproduced and fixed, it&rsquo;s very quick to get a release out.</p>
+<p>In a cross-system environment, cross-system integration tests typically make more/slower wire calls, and coupled their inherent flakiness, either slow down (as in wall clock time) or slow down (as in false negatives and ensuing manual investigation/reruns) the release process.</p>
+</li>
+<li>
+<p>Their tests, with predominantly unit tests and some intra-system integration tests, are fast and stable enough that developers feel empowered to ruthlessly refactor, maintaining a high quality bar, which overtime means production bugs stay quick to diagnose and fix.</p>
+<p>(Admittedly, intra-system integration tests make wire calls as well, so this point, for me, is based more on observation and correlation than direct causation.)</p>
+</li>
+</ol>
+<p>The combination of these two factors (API syntax vs. semantics, and compensating with quality and agility) is why I feel confident, for the projects I&rsquo;m leading and personally responsible for, having no cross-system integration tests.</p>
+<h2 id=who-is-a-vendor>
+Who is a Vendor?
+<a class=heading-link href=#who-is-a-vendor>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h2>
+<p>So, hopefully you&rsquo;re following my logic so far and basically in agreement that, sure, if our in-house system integrates with credit card Vendor X (e.g. Stripe or First Data or whoever), we should not couple our test suite and release process to their shared sandbox/integration environment. That&rsquo;s just asking for trouble.</p>
+<p>But my next musing, which is admittedly more/only applicable to larger companies, is: who do you treat as a vendor?</p>
+<p>In the example used so far, the external credit card processing vendor, that is a pretty obvious line to draw around &ldquo;a vendor&rdquo;.</p>
+<p>But what about an internal team that you&rsquo;re working with for a new project? They&rsquo;re providing a <code>FancyFooService</code> API to you. Are they a vendor?</p>
+<p>I think the traditional temptation is to say no, they&rsquo;re not a vendor, they&rsquo;re an internal team, and we can easily access their systems in our dev/test environment, so let&rsquo;s make really sure our flows work, and write integration tests that makes real wire calls to their <code>FancyFooService</code> implementation.</p>
+<p>Unfortunately, even though the team/their sub-system is internal, this rarely means you actually have <em>control</em> of their sub-system, using our definition of control from earlier.</p>
+<p>Specifically: is your test data isolated from other systems and other tests?</p>
+<p>If this is an internal shared environment (e.g. every system in the company runs in kind of a shadow-production environment), the answer is no, your test data is shared with all of the other systems and all of the other tests.</p>
+<p>You don&rsquo;t have control or isolation.</p>
+<p>So, all of my assertions so far, about test complexity and flakiness and system availability, which hopefully led to an obvious conclusion &ldquo;of course that applies to the external vendor&rdquo; <strong>now also apply to the internal, in-house &ldquo;vendor&rdquo;</strong>.</p>
+<p>This system has effectively become a vendor to you.</p>
+<p><strong>Which means you should not write any automated tests against it.</strong></p>
+<h2 id=making-life-easier>
+Making Life Easier
+<a class=heading-link href=#making-life-easier>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h2>
+<p>I have made a lot of points, but besides just pontificating about &ldquo;throw out all your cross-system tests&rdquo;, I wanted to offer some suggestions to alleviate the pain.</p>
+<p>Specifically, if you approach a stubs-based approach to intra-system testing, I think there are two things that can make life easier:</p>
+<ol>
+<li>Use a unified RPC framework across the entire company</li>
+<li>Prefer noun-based RPC frameworks</li>
+<li>Services should ship their own stubs</li>
+</ol>
+<h5 id=unified-rpc-framework>
+Unified RPC Framework
+<a class=heading-link href=#unified-rpc-framework>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h5>
+<p>When you&rsquo;re writing infrastructure to stub (or mock if you must) vendor systems out, you&rsquo;ll get a much higher ROI if you can do that just once.</p>
+<p>E.g. instead of writing infrastructure for faking Thrift for some vendor sub-systems, and infrastructure for faking GRPC for some vendor sub-systems, and infrastructure for faking SOAP for others, and infrastructure for faking bespoke JSON/HTTP for others, you can write a single infrastructure and invest heavily in making it powerful and easy to use.</p>
+<p>Obviously Google has done this by using &ldquo;protobuf everywhere&rdquo; internally. At LinkedIn, we use &ldquo;Rest.li everywhere&rdquo; internally.</p>
+<p>If you&rsquo;re in a larger company, that is more than ~10 years old, it&rsquo;s very unlikely that you have this, and admittedly obtaining this is going to be a nightmare. Unfortunately, I have no good ideas for you.</p>
+<p>But if you&rsquo;re <em>starting</em> a larger company, then choose one and only one up front.</p>
+<h5 id=prefer-noun-based-rpc-frameworks>
+Prefer noun-based RPC frameworks
+<a class=heading-link href=#prefer-noun-based-rpc-frameworks>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h5>
+<p>If you have the luxury of choosing an RPC framework, I&rsquo;ve found noun-based systems to work better than verb-based systems.</p>
+<p>Specifically something like GRPC is a verb-based system, where you make up new verbs of <code>CreateAccount</code>, <code>MakeDeposit</code>, <code>DeleteAccount</code>. All of these are just method calls, that GRPC handles the serialization/etc. for you. Which is fine.</p>
+<p>But noun-based systems, e.g. REST (props to <a href=http://rest.li>Rest.li</a>) and <a href=http://graphql.org/>GraphQL</a>, have a fixed set of verbs, e.g. <code>PUT</code>, <code>GET</code>, <code>UPDATE</code>, that is basically fixed, and then <code>N</code> nouns, e.g. <code>Account</code>, <code>Deposit</code>, etc.</p>
+<p>I can&rsquo;t believe it&rsquo;s from 2006, but see Yegge&rsquo;s post <a href=https://steve-yegge.blogspot.com/2006/03/execution-in-kingdom-of-nouns.html>Execution in a Kingdom of Noun&rsquo;s</a> for more information.</p>
+<p>But, specifically for building infrastructure to fake cross-system integration tests, if you have a noun-based architecture, it becomes really nice and generic to setup cross-sub-system data in a generic way.</p>
+<p>E.g. all a test has to do is create the nouns it wants, &ldquo;make a new Account that looks like this&rdquo;, &ldquo;make a new Deposit that looks like that&rdquo;, and then defer to your generalized infrastructure to put each noun into it&rsquo;s corresponding stub.</p>
+<p>A real-but-edited example is:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>testWithOneUser</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
+  <span style=color:#75715e>// given a single user
+</span><span style=color:#75715e></span>  user <span style=color:#f92672>=</span> <span style=color:#66d9ef>new</span> UserBuilder<span style=color:#f92672>();</span>
+  account <span style=color:#f92672>=</span> <span style=color:#66d9ef>new</span> AccountBuilder<span style=color:#f92672>().</span><span style=color:#a6e22e>withAdmin</span><span style=color:#f92672>(</span>user<span style=color:#f92672>);</span>
+  system<span style=color:#f92672>.</span><span style=color:#a6e22e>setup</span><span style=color:#f92672>(</span>user<span style=color:#f92672>,</span> account<span style=color:#f92672>);</span>
+  <span style=color:#75715e>// when
+</span><span style=color:#75715e></span>  <span style=color:#f92672>...</span>
+<span style=color:#f92672>}</span>
+</code></pre></div><p>Where the <code>User</code> noun and <code>Account</code> noun are from two completely separate &ldquo;vendor&rdquo; sub-systems, e.g. the user API which is owned by internal team X, and the account API which is owned by internal team Y.</p>
+<p>The fact that our inter-system RPC is all noun-based two great outcomes:</p>
+<ol>
+<li>The &ldquo;noun looks like X&rdquo; is basically verbatim what my best-practice &ldquo;given&rdquo; section looks like for &ldquo;world looks like X&rdquo;, and</li>
+<li>Once the test infrastructure supports the fixed set of verbs, e.g. <code>GET</code>, <code>PUT</code>, etc., it can scale really well to <code>N</code> nouns.</li>
+</ol>
+<h5 id=services-should-ship-their-own-stubs>
+Services should ship their own stubs
+<a class=heading-link href=#services-should-ship-their-own-stubs>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h5>
+<p>One final thing that would make life easier for adopting a stub-based approach to fake cross-system integration tests would be if you as a consumer of the vendor API didn&rsquo;t have to write your own stubs in the first place.</p>
+<p>I wrote about this <a href=/2013/04/13/services-should-come-with-stubs.html>back in 2013</a> (although, sheesh, 2006, Yegge&rsquo;s still got me), but to me it makes a lot of sense for owners of the vendor API to write their own stubs, and provide them to their users as a convenience.</p>
+<p>This has two benefits:</p>
+<ol>
+<li>It amoritizes the cost of writing the stubs by having it done once, and then shared across N downstream users</li>
+<li>The vendor API owners are the ones who best know their API, so can make their stubs match (within reason) the production run-time behavior.</li>
+</ol>
+<p>For a concrete example, I think it makes a ton of sense for AWS to ship a stubbed version of it&rsquo;s aws-java-sdk. They already have interfaces for <code>S3Client</code>, <code>DynamoDBClient</code>, etc. How many of their users could write super-effective test suites by using an in-memory <code>StubS3Client</code> or <code>StubDynamoDBClient</code> that did a best-effort mimicking of production?</p>
+<p>I think it&rsquo;d be incredibly useful. Such that at Bizo, we started doing this, by writing/open sourcing our own <a href=https://github.com/bizo/aws-java-sdk-stubs>aws-java-sdk-stubs</a> library, which we used liberally internally, but unfortunately has not seen a ton of adoption otherwise.</p>
+<p>One admitted wrinkle is that typically stubs are written as in-process/in-memory implementations, e.g. &ldquo;just use an in-memory map&rdquo; in whatever your primarily language is. And for a vendor like AWS that supports N languages, it would suck to provide N stub API implementations. One solution is to still write a local/fake version, but use wire calls to cross process/language boundaries, which is exactly what AWS does with <a href=http://docs.aws.amazon.com/amazondynamodb/latest/developerguide/DynamoDBLocal.html>DynamoDB Local</a> and I&rsquo;d done for the old-school <a href=https://github.com/stephenh/fakesdb>simpledb</a>.</p>
+<h2 id=conclusion>
+Conclusion
+<a class=heading-link href=#conclusion>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h2>
+<p>Wrapping up, this is probably my longest post to date, but I&rsquo;ve tried to comprehensively address the topic, as I&rsquo;ve been thinking about it a lot lately.</p>
+<p>Well, shoot, I don&rsquo;t really want to add another section for this, but I am fully supportive of developers being able to touch a vendor&rsquo;s shared integration system, or even touch the vendor&rsquo;s production system, to do initial &ldquo;how does this really work?&rdquo; exploration, trouble shooting, and debugging.</p>
+<p>And having this sort of &ldquo;debug-on-demand&rdquo; cross-system/cross-vendor infrastructure to make exploration and debugging easy is a good, worthwhile investment.</p>
+<p>But my main point, which hopefully I&rsquo;ve articulated well and convinced you of, is that cross-system, cross-vendor infrastructure should not bleed over into automated tests, as without the fundamental first princples of data control and data isolation, I assert you&rsquo;re building on a shaky foundation, and your effort is better spent elsewhere.</p>
+<p>(<strong>Update July 2018</strong>: The Google Testing blog has a post, <a href=https://testing.googleblog.com/2015/04/just-say-no-to-more-end-to-end-tests.html>Just Say No to More End-to-End Tests</a>, which covers some of the common failure scenarios for end-to-end tests, as well as points out how slow their feedback loop is (such that they become cascading failures of &ldquo;rarely is everything green&rdquo;), albeit they end up recommending the same &ldquo;testing period&rdquo; approach, vs. my more draconian stance.)</p>
+</div>
+<footer>
+<div id=disqus_thread></div>
+<script type=application/javascript>var disqus_config=function(){};(function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById('disqus_thread').innerHTML='Disqus comments not available by default when the website is previewed locally.';return}var b=document,a=b.createElement('script');a.async=!0,a.src='//shaberman.disqus.com/embed.js',a.setAttribute('data-timestamp',+new Date),(b.head||b.body).appendChild(a)})()</script>
+<noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript>
+<a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a>
+</footer>
+</article>
+</section>
+</div>
+<footer class=footer>
+<section class=container>
+©
+2008 -
+2021
+Stephen Haberman
+·
+Powered by <a href=https://gohugo.io/>Hugo</a> & <a href=https://github.com/luizdepra/hugo-coder/>Coder</a>.
+</section>
+</footer>
+</main>
+<script src=/js/coder.min.03b17769f4f91ae35667e1f2a1ca8c16f50562576cf90ff32b3179926914daa5.js integrity="sha256-A7F3afT5GuNWZ+HyocqMFvUFYlds+Q/zKzF5kmkU2qU="></script>
+</body>
+</html>

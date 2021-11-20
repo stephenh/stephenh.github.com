@@ -1,0 +1,125 @@
+<!doctype html><html lang=en>
+<head>
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width,initial-scale=1">
+<meta http-equiv=content-language content="en">
+<meta name=color-scheme content="light dark">
+<meta name=author content="Stephen Haberman">
+<meta name=description content="Just a quick note on a topic going around recently; David Heinemeier Hansson first asserted Dependency injection is not a virtue, calling into question a practice that is in some circles sacrosanct.
+Marcel Weiher responded that, no, Dependency Injection is a Virtue. And HN commenter smoyer commented &ldquo;I&rsquo;ll choose MF (Martin Fowler) over DHH anytime both have an opinion&rdquo;.
+So, the discussion has devolved to &ldquo;DI sucks! Nu-huh! Uh-huh!&rdquo;
+What I believe is missing in the conversation is context.">
+<meta name=keywords content="blog,developer,personal">
+<meta name=twitter:card content="summary">
+<meta name=twitter:title content="DHH vs. Fowler">
+<meta name=twitter:description content="Just a quick note on a topic going around recently; David Heinemeier Hansson first asserted Dependency injection is not a virtue, calling into question a practice that is in some circles sacrosanct.
+Marcel Weiher responded that, no, Dependency Injection is a Virtue. And HN commenter smoyer commented &ldquo;I&rsquo;ll choose MF (Martin Fowler) over DHH anytime both have an opinion&rdquo;.
+So, the discussion has devolved to &ldquo;DI sucks! Nu-huh! Uh-huh!&rdquo;
+What I believe is missing in the conversation is context.">
+<meta property="og:title" content="DHH vs. Fowler">
+<meta property="og:description" content="Just a quick note on a topic going around recently; David Heinemeier Hansson first asserted Dependency injection is not a virtue, calling into question a practice that is in some circles sacrosanct.
+Marcel Weiher responded that, no, Dependency Injection is a Virtue. And HN commenter smoyer commented &ldquo;I&rsquo;ll choose MF (Martin Fowler) over DHH anytime both have an opinion&rdquo;.
+So, the discussion has devolved to &ldquo;DI sucks! Nu-huh! Uh-huh!&rdquo;
+What I believe is missing in the conversation is context.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="http://draconianoverlord.com/2013/01/07/dhh-vs.-fowler.html/"><meta property="article:section" content="posts">
+<meta property="article:published_time" content="2013-01-07T00:00:00+00:00">
+<meta property="article:modified_time" content="2013-01-07T00:00:00+00:00">
+<title>
+DHH vs. Fowler · Draconian Overlord
+</title>
+<link rel=canonical href=http://draconianoverlord.com/2013/01/07/dhh-vs.-fowler.html/>
+<link rel=preload href="/fonts/forkawesome-webfont.woff2?v=1.2.0" as=font type=font/woff2 crossorigin>
+<link rel=stylesheet href=/css/coder.min.d9fddbffe6f27e69985dc5fe0471cdb0e57fbf4775714bc3d847accb08f4a1f6.css integrity="sha256-2f3b/+byfmmYXcX+BHHNsOV/v0d1cUvD2Eesywj0ofY=" crossorigin=anonymous media=screen>
+<link rel=stylesheet href=/css/coder-dark.min.aa883b9ce35a8ff4a2a5008619005175e842bb18a8a9f9cc2bbcf44dab2d91fa.css integrity="sha256-qog7nONaj/SipQCGGQBRdehCuxioqfnMK7z0Tastkfo=" crossorigin=anonymous media=screen>
+<link rel=icon type=image/png href=/images/favicon-32x32.png sizes=32x32>
+<link rel=icon type=image/png href=/images/favicon-16x16.png sizes=16x16>
+<link rel=apple-touch-icon href=/images/apple-touch-icon.png>
+<link rel=apple-touch-icon sizes=180x180 href=/images/apple-touch-icon.png>
+<meta name=generator content="Hugo 0.89.4">
+</head>
+<body class="preload-transitions colorscheme-auto">
+<div class=float-container>
+<a id=dark-mode-toggle class=colorscheme-toggle>
+<i class="fa fa-adjust fa-fw" aria-hidden=true></i>
+</a>
+</div>
+<main class=wrapper>
+<nav class=navigation>
+<section class=container>
+<a class=navigation-title href=/>Draconian Overlord</a>
+Oppressing software entropy
+</section>
+</nav>
+<div class=content>
+<section class="container post">
+<article>
+<header>
+<div class=post-title>
+<h1 class=title>
+<a class=title-link href=http://draconianoverlord.com/2013/01/07/dhh-vs.-fowler.html/>
+DHH vs. Fowler
+</a>
+</h1>
+</div>
+<div class=post-meta>
+<div class=date>
+<span class=posted-on>
+<i class="fa fa-calendar" aria-hidden=true></i>
+<time datetime=2013-01-07T00:00:00Z>
+January 7, 2013
+</time>
+</span>
+<span class=reading-time>
+<i class="fa fa-clock-o" aria-hidden=true></i>
+3-minute read
+</span>
+</div>
+<div class=categories>
+<i class="fa fa-folder" aria-hidden=true></i>
+<a href=/categories/architecture/>Architecture</a></div>
+</div>
+</header>
+<div>
+<p>Just a quick note on a topic going around recently; David Heinemeier Hansson first asserted <a href=http://david.heinemeierhansson.com/2012/dependency-injection-is-not-a-virtue.html>Dependency injection is not a virtue</a>, calling into question a practice that is in some circles sacrosanct.</p>
+<p>Marcel Weiher responded that, no, <a href=http://blog.metaobject.com/2013/01/dependency-injection-is-virtue.html>Dependency Injection is a Virtue</a>. And HN commenter smoyer <a href="http://news.ycombinator.com/item?id=5020525">commented</a> &ldquo;I&rsquo;ll choose MF (Martin Fowler) over DHH anytime both have an opinion&rdquo;.</p>
+<p>So, the discussion has devolved to &ldquo;DI sucks! Nu-huh! Uh-huh!&rdquo;</p>
+<p>What I believe is missing in the conversation is context. From my perspective, DHH/Rails and Fowler address two very separate types of systems.</p>
+<p>DHH and Rails are all about pragmatic choices for fairly simple, maybe a little complex webapps built by 1-5-ish programmers (I&rsquo;m sure there are large Rails projects, but I think they&rsquo;re a minority).</p>
+<p>The whole point of Rails is that it makes choices for you, guided by the assumption you&rsquo;re making &ldquo;just yet another webapp&rdquo;. One of these choices, IMO, is playing a little fast and loose with sacred practices like decoupling (which is fine, <em>all decoupling has a cost</em>, which most people don&rsquo;t realize).</p>
+<p>DHH understands Rail&rsquo;s (admittedly very large) niche:</p>
+<ul>
+<li>&ldquo;There’s nothing wrong or shameful with nailing a single use case, like VB did for Windows desktop or PHP for web scripts. It’s beautiful!&rdquo; (<a href=https://twitter.com/dhh/status/284952366317461504>on twitter</a>)</li>
+<li>&ldquo;Rails is omakase&rdquo; (<a href=http://david.heinemeierhansson.com/2012/rails-is-omakase.html>blog post</a>)</li>
+<li>&ldquo;This nonsense (using transaction scripts) is what happens when you actually start believing that “Rails should be a detail” in your Rails app&rdquo; (<a href=https://twitter.com/dhh/status/282965246547750912>on twitter</a>)</li>
+</ul>
+<p>DHH&rsquo;s opinions, and Rails&rsquo;s approach here, are perfectly fine&ndash;they&rsquo;re directly responsible for the huge productivity wins that comes from using Rails for your &ldquo;just yet another webapp&rdquo;. If your app fits that sweet spot, it&rsquo;s great.</p>
+<p>Fowler, on the other hand, is more old-school/enterprise, where applications are not &ldquo;just a webapp&rdquo; (but probably have a webapp in them), and are built by teams an order of magnitude larger (10-20 programmers) than most Rails projects.</p>
+<p>Fowler&rsquo;s realm is where decoupling, dependency injection, etc., are held sacred, and more rightly so (even if I do think <a href=http://draconianoverlord.com/2011/03/17/frameworkless-di.html>DI frameworks are too complex</a>, I appreciate the problem of global state). This is where having global <code>Time</code> variables starts to suck, because there are so many a person can&rsquo;t keep them in their head.</p>
+<p>(And I do not think it&rsquo;s a language issue; Java can and is used wrong, to build systems with overly complex abstractions that cost more than they are worth, but it can have a singleton <code>Time.now</code> that defers to a stub-able implementation without DI frameworks or reams of XML.)</p>
+<p>So, I don&rsquo;t find it very surprising that both camps have different tools and tastes.</p>
+<p>It seems like DHH gets pissed off when people try to apply Fowler-/enterprise-patterns to Rails, which is fine, and I understand why&ndash;but by the same token, I think he should understand why people get pissed off at him for trashing (without context, i.e. he portrays them as fundamentally flawed) the patterns they&rsquo;ve found to work well in their own contexts.</p>
+</div>
+<footer>
+<div id=disqus_thread></div>
+<script type=application/javascript>var disqus_config=function(){};(function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById('disqus_thread').innerHTML='Disqus comments not available by default when the website is previewed locally.';return}var b=document,a=b.createElement('script');a.async=!0,a.src='//shaberman.disqus.com/embed.js',a.setAttribute('data-timestamp',+new Date),(b.head||b.body).appendChild(a)})()</script>
+<noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript>
+<a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a>
+</footer>
+</article>
+</section>
+</div>
+<footer class=footer>
+<section class=container>
+©
+2008 -
+2021
+Stephen Haberman
+·
+Powered by <a href=https://gohugo.io/>Hugo</a> & <a href=https://github.com/luizdepra/hugo-coder/>Coder</a>.
+</section>
+</footer>
+</main>
+<script src=/js/coder.min.03b17769f4f91ae35667e1f2a1ca8c16f50562576cf90ff32b3179926914daa5.js integrity="sha256-A7F3afT5GuNWZ+HyocqMFvUFYlds+Q/zKzF5kmkU2qU="></script>
+</body>
+</html>

@@ -1,0 +1,218 @@
+<!doctype html><html lang=en>
+<head>
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width,initial-scale=1">
+<meta http-equiv=content-language content="en">
+<meta name=color-scheme content="light dark">
+<meta name=author content="Stephen Haberman">
+<meta name=description content="JBoss&rsquo;s Errai project has always been on my list of GWT technologies to play with.
+AFAICT it&rsquo;s original/core purpose was sending events not just between the client and server, but between clients as well (via the server, I assume). This seems pretty useful, but I just hadn&rsquo;t had a need for it yet.
+Lately it seems like Errai&rsquo;s scope is growing&ndash;it&rsquo;s becoming more about &ldquo;bringing JEE to the client-side&rdquo; instead of &ldquo;just an EventBus&rdquo;.">
+<meta name=keywords content="blog,developer,personal">
+<meta name=twitter:card content="summary">
+<meta name=twitter:title content="ErraiUI Initial Impression">
+<meta name=twitter:description content="JBoss&rsquo;s Errai project has always been on my list of GWT technologies to play with.
+AFAICT it&rsquo;s original/core purpose was sending events not just between the client and server, but between clients as well (via the server, I assume). This seems pretty useful, but I just hadn&rsquo;t had a need for it yet.
+Lately it seems like Errai&rsquo;s scope is growing&ndash;it&rsquo;s becoming more about &ldquo;bringing JEE to the client-side&rdquo; instead of &ldquo;just an EventBus&rdquo;.">
+<meta property="og:title" content="ErraiUI Initial Impression">
+<meta property="og:description" content="JBoss&rsquo;s Errai project has always been on my list of GWT technologies to play with.
+AFAICT it&rsquo;s original/core purpose was sending events not just between the client and server, but between clients as well (via the server, I assume). This seems pretty useful, but I just hadn&rsquo;t had a need for it yet.
+Lately it seems like Errai&rsquo;s scope is growing&ndash;it&rsquo;s becoming more about &ldquo;bringing JEE to the client-side&rdquo; instead of &ldquo;just an EventBus&rdquo;.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="http://draconianoverlord.com/2012/06/16/erraiui-initial-impression.html/"><meta property="article:section" content="posts">
+<meta property="article:published_time" content="2012-06-16T00:00:00+00:00">
+<meta property="article:modified_time" content="2012-06-16T00:00:00+00:00">
+<title>
+ErraiUI Initial Impression · Draconian Overlord
+</title>
+<link rel=canonical href=http://draconianoverlord.com/2012/06/16/erraiui-initial-impression.html/>
+<link rel=preload href="/fonts/forkawesome-webfont.woff2?v=1.2.0" as=font type=font/woff2 crossorigin>
+<link rel=stylesheet href=/css/coder.min.d9fddbffe6f27e69985dc5fe0471cdb0e57fbf4775714bc3d847accb08f4a1f6.css integrity="sha256-2f3b/+byfmmYXcX+BHHNsOV/v0d1cUvD2Eesywj0ofY=" crossorigin=anonymous media=screen>
+<link rel=stylesheet href=/css/coder-dark.min.aa883b9ce35a8ff4a2a5008619005175e842bb18a8a9f9cc2bbcf44dab2d91fa.css integrity="sha256-qog7nONaj/SipQCGGQBRdehCuxioqfnMK7z0Tastkfo=" crossorigin=anonymous media=screen>
+<link rel=icon type=image/png href=/images/favicon-32x32.png sizes=32x32>
+<link rel=icon type=image/png href=/images/favicon-16x16.png sizes=16x16>
+<link rel=apple-touch-icon href=/images/apple-touch-icon.png>
+<link rel=apple-touch-icon sizes=180x180 href=/images/apple-touch-icon.png>
+<meta name=generator content="Hugo 0.89.4">
+</head>
+<body class="preload-transitions colorscheme-auto">
+<div class=float-container>
+<a id=dark-mode-toggle class=colorscheme-toggle>
+<i class="fa fa-adjust fa-fw" aria-hidden=true></i>
+</a>
+</div>
+<main class=wrapper>
+<nav class=navigation>
+<section class=container>
+<a class=navigation-title href=/>Draconian Overlord</a>
+Oppressing software entropy
+</section>
+</nav>
+<div class=content>
+<section class="container post">
+<article>
+<header>
+<div class=post-title>
+<h1 class=title>
+<a class=title-link href=http://draconianoverlord.com/2012/06/16/erraiui-initial-impression.html/>
+ErraiUI Initial Impression
+</a>
+</h1>
+</div>
+<div class=post-meta>
+<div class=date>
+<span class=posted-on>
+<i class="fa fa-calendar" aria-hidden=true></i>
+<time datetime=2012-06-16T00:00:00Z>
+June 16, 2012
+</time>
+</span>
+<span class=reading-time>
+<i class="fa fa-clock-o" aria-hidden=true></i>
+8-minute read
+</span>
+</div>
+<div class=categories>
+<i class="fa fa-folder" aria-hidden=true></i>
+<a href=/categories/gwt/>GWT</a></div>
+</div>
+</header>
+<div>
+<p>JBoss&rsquo;s <a href=http://www.jboss.org/errai>Errai</a> project has always been on my list of GWT technologies to play with.</p>
+<p>AFAICT it&rsquo;s original/core purpose was sending events not just between the client and server, but between clients as well (via the server, I assume). This seems pretty useful, but I just hadn&rsquo;t had a need for it yet.</p>
+<p>Lately it seems like Errai&rsquo;s scope is growing&ndash;it&rsquo;s becoming more about &ldquo;bringing JEE to the client-side&rdquo; instead of &ldquo;just an EventBus&rdquo;. As a non-JEE user, I&rsquo;m not entirely sure this is a good idea, but I suppose for existing JEE users it makes more sense.</p>
+<p>The latest feature to be <a href=https://twitter.com/JBossMike/status/214066336375111680>announced</a> is ErraiUI, an approach to HTML templates in GWT that is reminiscent of UiBinder.</p>
+<p>Since I&rsquo;m watching the <a href=http://vimeo.com/44141164>demo video</a> now, I thought I&rsquo;d write up a few thoughts.</p>
+<p>If you want to jump right into their example code that&rsquo;s shown in the video, here are links to their GitHub <a href=https://github.com/lincolnthree/errai-ui-demo>demo project</a> for:</p>
+<ul>
+<li>The <a href=https://github.com/lincolnthree/errai-ui-demo/blob/master/src/main/java/org/jboss/errai/ui/demo/client/local/App.html>App.html</a> template</li>
+<li>The <a href=https://github.com/lincolnthree/errai-ui-demo/blob/master/src/main/java/org/jboss/errai/ui/demo/client/local/App.java>App.java</a> component</li>
+<li>The <a href=https://github.com/lincolnthree/errai-ui-demo/blob/master/src/main/java/org/jboss/errai/ui/demo/client/local/Spotlight.java>Spotlight.java</a> sub-component</li>
+</ul>
+<p>So, my thoughts:</p>
+<ol>
+<li>
+<p>Their pure HTML templates are pretty spiffy.</p>
+<p>The de facto GWT template library, UiBinder, is HTML-<em>ish</em>, but really XML (not even XHTML), so you can&rsquo;t just open it up in a browser. Besides being XML, it has various GWT markup (<code>gwt:TextBox</code>, <code>ui:field</code>) thrown in that won&rsquo;t mean anything until rendered.</p>
+<p>Having worked a lot with UiBinder, I&rsquo;ve gotten used to UiBinder&rsquo;s almost-HTML templates and no longer think it&rsquo;s a big deal. But I can why see sticking with pure HTML templates would be a good idea.</p>
+<p>One cool feature of ErraiUI is that&rsquo;ll strip headers/footers from your <code>.html</code> template file, so if you have a mockup from your designer that looks like:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-html data-lang=html>&lt;<span style=color:#f92672>html</span>&gt;
+  &lt;<span style=color:#f92672>head</span>&gt;<span style=color:#75715e>&lt;!--various js/style stuff--&gt;</span>&lt;/<span style=color:#f92672>head</span>&gt;
+  &lt;<span style=color:#f92672>body</span>&gt;
+    <span style=color:#75715e>&lt;!--common static header--&gt;</span>
+    &lt;<span style=color:#f92672>div</span> <span style=color:#a6e22e>data-field</span><span style=color:#f92672>=</span><span style=color:#e6db74>&#34;template&#34;</span>&gt;
+      <span style=color:#75715e>&lt;!-- the HTML you really care about is here --&gt;</span>
+    <span style=color:#75715e>&lt;!--common static footer--&gt;</span>
+  &lt;/<span style=color:#f92672>body</span>&gt;
+&lt;/<span style=color:#f92672>html</span>&gt;
+</code></pre></div><p>By using the <code>@Templated("#template")</code> annotation, ErraiUI will find the <code>data-field=template</code> element, use it as the root of your component&rsquo;s template, and drop all of the HTML before/after it.</p>
+<p>This makes a lot of sense, because you usually don&rsquo;t want this header/footer cruft in your component itself (the styles/window dressing/etc. have already been drawn when your app loaded), but it&rsquo;s very handy to leave it there for designers/developers to just pop open in a browser and see what the HTML renders like, sans GWT.</p>
+<p>This seems to be their biggest feature and, kudos, it&rsquo;s pretty cool.</p>
+</li>
+<li>
+<p>Another awesome feature is that they can split a single <code>.html</code> file up across multiple components.</p>
+<p>In UiBinder, if you have a parent component with various child components, each child needs it&rsquo;s own new <code>ui.xml</code> file, as there is no way to get separate/multiple <code>UiBinder</code> instances from a single <code>ui.xml</code> file. So you end up with <code>Parent.ui.xml</code> and a separate <code>ParentChild.ui.xml</code> containing just the (typically few) lines of child markup.</p>
+<p>ErraiUI templates, on the other hand, allows you have to take a single static template like:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-html data-lang=html>&lt;<span style=color:#f92672>div</span> <span style=color:#a6e22e>data-field</span><span style=color:#f92672>=</span><span style=color:#e6db74>&#34;parentTemplate&#34;</span>&gt;
+  <span style=color:#75715e>&lt;!-- some stuff --&gt;</span>
+  &lt;<span style=color:#f92672>div</span> <span style=color:#a6e22e>data-field</span><span style=color:#f92672>=</span><span style=color:#e6db74>&#34;children&#34;</span>&gt;
+    &lt;<span style=color:#f92672>div</span> <span style=color:#a6e22e>data-field</span><span style=color:#f92672>=</span><span style=color:#e6db74>&#34;childTemplate&#34;</span>&gt;
+      <span style=color:#75715e>&lt;!-- child markup --&gt;</span>
+      &lt;<span style=color:#f92672>span</span> <span style=color:#a6e22e>data-field</span><span style=color:#f92672>=</span><span style=color:#e6db74>&#34;label&#34;</span>&gt;Child One&lt;/<span style=color:#f92672>label</span>&gt;
+    &lt;/<span style=color:#f92672>div</span>&gt;
+    &lt;<span style=color:#f92672>div</span>&gt;
+      <span style=color:#75715e>&lt;!--
+</span><span style=color:#75715e>        markup for another child the designer included
+</span><span style=color:#75715e>        for illustration, but stripped by ErraUI
+</span><span style=color:#75715e>      --&gt;</span>
+      &lt;<span style=color:#f92672>span</span>&gt;Child Two&lt;/<span style=color:#f92672>label</span>&gt;
+    &lt;/<span style=color:#f92672>div</span>&gt;
+  &lt;/<span style=color:#f92672>div</span>&gt;
+&lt;/<span style=color:#f92672>div</span>&gt;
+</code></pre></div><p>And then you can have two separate component classes, <code>Parent</code> annotated with <code>@Templated("#parentTemplate")</code> and <code>Child</code> annotated with <code>@Templated("Parent.html#childTemplate")</code> getting their respective markup from the same file.</p>
+<p>This is great&ndash;I&rsquo;ve personally wanted to do this with UiBinder for awhile. As usual with UiBinder, you get used to not being able to do it. But it is annoying to make a new <code>ui.xml</code> file every time you need to separate out a child&rsquo;s markup from its parent&rsquo;s markup.</p>
+</li>
+<li>
+<p>Despite ErraiUI&rsquo;s otherwise awesome focus on pure/static HTML templates, sometimes abstracting boilerplate markup is handy, and I&rsquo;m curious how/if they&rsquo;ll handle it.</p>
+<p>For example, Twitter <a href=http://twitter.github.com/bootstrap/>Bootstrap</a> is great, but even if you&rsquo;re using it, once you get into non-trivial HTML forms, there is a lot of markup boilerplate. Each field needs a place for the label, the help text, the validation error, the input itself, all with the right CSS classes/HTML structure, etc.</p>
+<p>The markup for a complete form field (just one field), might look something like (making this up as I go):</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-html data-lang=html>    &lt;<span style=color:#f92672>div</span> <span style=color:#a6e22e>class</span><span style=color:#f92672>=</span><span style=color:#e6db74>&#34;{style.controlGroup}&#34;</span>&gt;
+      &lt;<span style=color:#f92672>div</span> <span style=color:#a6e22e>class</span><span style=color:#f92672>=</span><span style=color:#e6db74>&#34;{style.controlLabel&#34;</span>&gt;
+        &lt;<span style=color:#f92672>span</span>&gt;label&lt;/<span style=color:#f92672>span</span>&gt;
+        &lt;<span style=color:#f92672>i</span> <span style=color:#a6e22e>class</span><span style=color:#f92672>=</span><span style=color:#e6db74>&#34;{style.helpIcon}&#34;</span>&gt;&lt;/<span style=color:#f92672>i</span>&gt;
+      &lt;/<span style=color:#f92672>div</span>&gt;
+      &lt;<span style=color:#f92672>div</span> <span style=color:#a6e22e>class</span><span style=color:#f92672>=</span><span style=color:#e6db74>&#34;{style.control}&#34;</span>&gt;
+        &lt;<span style=color:#f92672>input</span> <span style=color:#a6e22e>type</span><span style=color:#f92672>=</span><span style=color:#e6db74>&#34;text&#34;</span> <span style=color:#a6e22e>name</span><span style=color:#f92672>=</span><span style=color:#e6db74>&#34;name&#34;</span> /&gt;
+      &lt;/<span style=color:#f92672>div</span>&gt;
+      &lt;<span style=color:#f92672>div</span> <span style=color:#a6e22e>class</span><span style=color:#f92672>=</span><span style=color:#e6db74>&#34;{style.errors}&#34;</span>&gt;
+        errors go here
+      &lt;/<span style=color:#f92672>div</span>&gt;
+    &lt;/<span style=color:#f92672>div</span>&gt;
+</code></pre></div><p>Which isn&rsquo;t that bad.</p>
+<p>But then it&rsquo;s copy/pasted for every field in the form. And then copy/pasted for every field <em>in the application</em>.</p>
+<p>This is fine for static mockups&ndash;being static, they have to work this way.</p>
+<p>But once in the application, I think it&rsquo;s another form of boilerplate if you have more than a handful of form fields. Markup like this, that is very commonly used but also non-trivial, should be abstracted into a component so it can be defined once and maintained in a single place.</p>
+<p>With UiBinder, you can make an application-specific <code>TextBox</code> or <code>TextLine</code> component and then in your forms do something like:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-html data-lang=html>    &lt;<span style=color:#f92672>form</span>&gt;
+      &lt;<span style=color:#f92672>app:TextLine</span> <span style=color:#a6e22e>ui:field</span><span style=color:#f92672>=</span><span style=color:#e6db74>&#34;name&#34;</span>/&gt;
+      &lt;<span style=color:#f92672>app:TextLine</span> <span style=color:#a6e22e>ui:field</span><span style=color:#f92672>=</span><span style=color:#e6db74>&#34;title&#34;</span>/&gt;
+      &lt;<span style=color:#f92672>app:TextLine</span> <span style=color:#a6e22e>ui:field</span><span style=color:#f92672>=</span><span style=color:#e6db74>&#34;description&#34;</span>/&gt;
+    &lt;/<span style=color:#f92672>form</span>&gt;
+</code></pre></div><p>Which, personally, I think is a real boon for reducing boilerplate and increasing developer productivity.</p>
+<p>Unfortunately, it doesn&rsquo;t mesh at all with ErraiUI&rsquo;s approach of templates being completely static to facilitate WYSIWYG.</p>
+<p>Part of ErraiUI&rsquo;s philosophy, AFAICT, is that you no longer need to hack up your designer&rsquo;s mockups to use their HTML templates for your application. Which, on one hand is great; I&rsquo;ve done that hacking before, and it&rsquo;s tedious. But, on the other hand, I think there are benefits, namely being able to bring abstractions like components to bare to reduce duplication.</p>
+<p>&mldr;but then, yeah, once your template is using not-just-static-HTML abstractions, there goes WYSIWYG. So, who knows, pick your trade off, I guess.</p>
+</li>
+<li>
+<p>ErraiUI seems like slightly less boilerplate than UiBinder, primarily because there is no <code>GWT.create</code> in sight.</p>
+<p>I would not get overly excited about this, however, as it just means the <code>GWT.create</code> is hidden behind some annotations. It is a few less lines of code, and I&rsquo;ll readily admit much cleaner, but the coupling (to deferred binding magic) is still there. Just better hidden.</p>
+</li>
+<li>
+<p>Which brings me to my biggest question with ErraiUI: how do you do MVP?</p>
+<p>AFAICT, ErraiUI heavily relies on the Errai JEE-style injection infrastructure. Having not used Errai before, I&rsquo;m not sure, but would all of the injection/data-binding work in a unit test? I&rsquo;m kinda guessing not.</p>
+<p>Even if did, the demo code at least directly uses GWT&rsquo;s <code>Button</code> and <code>TextBox</code> classes, which can&rsquo;t be unit tested outside of a <code>GWTTestCase</code>.</p>
+<p>Both <a href=https://developers.google.com/web-toolkit/articles/mvp-architecture>traditional MVP</a> and <a href=http://www.tessell.org>Tessell</a> use a different approach, that has the application refer to interfaces, e.g. <code>HasText</code> or <code>IsTextBox</code>, which can be doubled out at test time. This gets you awfully quick tests, and is something I&rsquo;d be really hard pressed to give up.</p>
+<p>Perhaps the intention with ErraiUI is that you could still do MVP, but ErraiUI is only concerned with your view implementation itself, and not the higher-level presenter. I would say this really makes sense, but the demo had included data binding logic, which is something I generally like to have be the presenter&rsquo;s responsibility so it can be tested.</p>
+</li>
+<li>
+<p>As a final nit, ErraiUI still involves basically duplicating the fields within the template into the Java class.</p>
+<p>This was one of my original frustrations with UiBinder: after I add <code>&lt;input type=text ... /></code> to the template, I have to also add a <code>private TextBox text;</code> to my Java class.</p>
+<p>In ErraiUI&rsquo;s case, it means another field (<code>private TextBox text</code>) and at least two annotations (<code>@Injected</code> and <code>@DataField)</code>, potentially a 3rd annotation (<code>@SuppressWarnings</code>) if you don&rsquo;t directly access the field and are using their data binding.</p>
+<p>(Tangentially, how weird is that? A field so magical you have to add <code>@SuppressWarnings</code>? To me this is another indication the code is essentially non-working until GWT compile/deferred bindings runs, so can&rsquo;t be unit tested. GWT&rsquo;s deferred bindings are great, but I think within the GWT ecosystem are overly used when more traditional code generation techniques (that let the user&rsquo;s code actually see the output) would be more appropriate. Yet another plug, but see <a href=http://www.tessell.org>Tessell</a> for what I mean.)</p>
+<p>Nonetheless, since ErraiUI is not doing MVP, this template/Java re-declaration of fields isn&rsquo;t that bad, because you&rsquo;re also not updating presenter/view interfaces.</p>
+</li>
+</ol>
+<h2 id=conclusion>
+Conclusion
+<a class=heading-link href=#conclusion>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h2>
+<p>There is a lot I like about ErraiUI. I can tell they had a specific set of goals (using static/designer-produced mockups as much as possible) and did a good job achieving them.</p>
+<p>Admittedly, I like <a href=http://www.tessell.org>Tessell</a>&rsquo;s approach, to both the view and view/model data binding, enough that I&rsquo;m not going to jump to ErraiUI anytime soon.</p>
+<p>Although it would be interesting to look into replacing UiBinder within Tessell&rsquo;s stack with ErraiUI. Especially for having multiple components driven from one template file. If Tessell&rsquo;s code generation saw an ErraIUI <code>.html</code> file, it could MVP-ize it by creating an interface-plus-implementation based on the HTML tags with <code>data-field</code> attributes. Not entirely sure how it would recognize sub-components given they also use <code>data-field</code>. But seems like it could work.</p>
+<p>Just the development of ErraiUI itself is also interesting&ndash;it shows that RedHat/JBoss are quite willing to step away from stock GWT libraries like UiBinder and innovate their own solutions. Which is great. It&rsquo;s awesome to see them putting this much investment in the GWT ecosystem.</p>
+</div>
+<footer>
+<div id=disqus_thread></div>
+<script type=application/javascript>var disqus_config=function(){};(function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById('disqus_thread').innerHTML='Disqus comments not available by default when the website is previewed locally.';return}var b=document,a=b.createElement('script');a.async=!0,a.src='//shaberman.disqus.com/embed.js',a.setAttribute('data-timestamp',+new Date),(b.head||b.body).appendChild(a)})()</script>
+<noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript>
+<a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a>
+</footer>
+</article>
+</section>
+</div>
+<footer class=footer>
+<section class=container>
+©
+2008 -
+2021
+Stephen Haberman
+·
+Powered by <a href=https://gohugo.io/>Hugo</a> & <a href=https://github.com/luizdepra/hugo-coder/>Coder</a>.
+</section>
+</footer>
+</main>
+<script src=/js/coder.min.03b17769f4f91ae35667e1f2a1ca8c16f50562576cf90ff32b3179926914daa5.js integrity="sha256-A7F3afT5GuNWZ+HyocqMFvUFYlds+Q/zKzF5kmkU2qU="></script>
+</body>
+</html>

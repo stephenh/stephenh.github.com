@@ -1,0 +1,504 @@
+<!doctype html><html lang=en>
+<head>
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width,initial-scale=1">
+<meta http-equiv=content-language content="en">
+<meta name=color-scheme content="light dark">
+<meta name=author content="Stephen Haberman">
+<meta name=description content="One of my favorite patterns for writing tests is the Given/When/Then style of Behavior Driven Development.
+The pattern is pretty simple: for each test case, you think through:
+ Given &ldquo;the state of the world is X&rdquo; When &ldquo;something happens&rdquo; Then &ldquo;the state of the world now looks like Y&rdquo;  This pattern focuses each test on a specific boundary (ideally business) case, e.g. you can imagine iterating through boundary conditions like:">
+<meta name=keywords content="blog,developer,personal">
+<meta name=twitter:card content="summary">
+<meta name=twitter:title content="Using Given/When/Then For Tests">
+<meta name=twitter:description content="One of my favorite patterns for writing tests is the Given/When/Then style of Behavior Driven Development.
+The pattern is pretty simple: for each test case, you think through:
+ Given &ldquo;the state of the world is X&rdquo; When &ldquo;something happens&rdquo; Then &ldquo;the state of the world now looks like Y&rdquo;  This pattern focuses each test on a specific boundary (ideally business) case, e.g. you can imagine iterating through boundary conditions like:">
+<meta property="og:title" content="Using Given/When/Then For Tests">
+<meta property="og:description" content="One of my favorite patterns for writing tests is the Given/When/Then style of Behavior Driven Development.
+The pattern is pretty simple: for each test case, you think through:
+ Given &ldquo;the state of the world is X&rdquo; When &ldquo;something happens&rdquo; Then &ldquo;the state of the world now looks like Y&rdquo;  This pattern focuses each test on a specific boundary (ideally business) case, e.g. you can imagine iterating through boundary conditions like:">
+<meta property="og:type" content="article">
+<meta property="og:url" content="http://draconianoverlord.com/2017/11/28/using-given/when/then-for-tests.html/"><meta property="article:section" content="posts">
+<meta property="article:published_time" content="2017-11-28T00:00:00+00:00">
+<meta property="article:modified_time" content="2017-11-28T00:00:00+00:00">
+<title>
+Using Given/When/Then For Tests · Draconian Overlord
+</title>
+<link rel=canonical href=http://draconianoverlord.com/2017/11/28/using-given/when/then-for-tests.html/>
+<link rel=preload href="/fonts/forkawesome-webfont.woff2?v=1.2.0" as=font type=font/woff2 crossorigin>
+<link rel=stylesheet href=/css/coder.min.d9fddbffe6f27e69985dc5fe0471cdb0e57fbf4775714bc3d847accb08f4a1f6.css integrity="sha256-2f3b/+byfmmYXcX+BHHNsOV/v0d1cUvD2Eesywj0ofY=" crossorigin=anonymous media=screen>
+<link rel=stylesheet href=/css/coder-dark.min.aa883b9ce35a8ff4a2a5008619005175e842bb18a8a9f9cc2bbcf44dab2d91fa.css integrity="sha256-qog7nONaj/SipQCGGQBRdehCuxioqfnMK7z0Tastkfo=" crossorigin=anonymous media=screen>
+<link rel=icon type=image/png href=/images/favicon-32x32.png sizes=32x32>
+<link rel=icon type=image/png href=/images/favicon-16x16.png sizes=16x16>
+<link rel=apple-touch-icon href=/images/apple-touch-icon.png>
+<link rel=apple-touch-icon sizes=180x180 href=/images/apple-touch-icon.png>
+<meta name=generator content="Hugo 0.89.4">
+</head>
+<body class="preload-transitions colorscheme-auto">
+<div class=float-container>
+<a id=dark-mode-toggle class=colorscheme-toggle>
+<i class="fa fa-adjust fa-fw" aria-hidden=true></i>
+</a>
+</div>
+<main class=wrapper>
+<nav class=navigation>
+<section class=container>
+<a class=navigation-title href=/>Draconian Overlord</a>
+Oppressing software entropy
+</section>
+</nav>
+<div class=content>
+<section class="container post">
+<article>
+<header>
+<div class=post-title>
+<h1 class=title>
+<a class=title-link href=http://draconianoverlord.com/2017/11/28/using-given/when/then-for-tests.html/>
+Using Given/When/Then For Tests
+</a>
+</h1>
+</div>
+<div class=post-meta>
+<div class=date>
+<span class=posted-on>
+<i class="fa fa-calendar" aria-hidden=true></i>
+<time datetime=2017-11-28T00:00:00Z>
+November 28, 2017
+</time>
+</span>
+<span class=reading-time>
+<i class="fa fa-clock-o" aria-hidden=true></i>
+19-minute read
+</span>
+</div>
+<div class=categories>
+<i class="fa fa-folder" aria-hidden=true></i>
+<a href=/categories/testing/>Testing</a>
+<span class=separator>•</span>
+<a href=/categories/favorites/>Favorites</a></div>
+</div>
+</header>
+<div>
+<p>One of my favorite patterns for writing tests is the Given/When/Then style of Behavior Driven Development.</p>
+<p>The pattern is pretty simple: for each test case, you think through:</p>
+<ul>
+<li>Given &ldquo;the state of the world is X&rdquo;</li>
+<li>When &ldquo;something happens&rdquo;</li>
+<li>Then &ldquo;the state of the world now looks like Y&rdquo;</li>
+</ul>
+<p>This pattern focuses each test on a specific boundary (ideally business) case, e.g. you can imagine iterating through boundary conditions like:</p>
+<ul>
+<li>Given the form input is valid, When &mldr;, Then &mldr;</li>
+<li>Given the form input is invalid, When &mldr;, Then &mldr;</li>
+<li>Given the address is already entered, &mldr;</li>
+<li>Given &mldr;</li>
+</ul>
+<p>Granted, real-world boundary conditions would be more specific (e.g. what form, how was it invalid, etc.), but that is the basic template.</p>
+<p>In the world of requirements, e.g. Product Requirements Documents (PRDs), UML diagrams, and use cases, the Given/When/Then pattern is basically a user scenario (user does this, system does that) turned into a test.</p>
+<h2 id=gwt-leads-to-more-resilient-tests>
+G/W/T Leads to More Resilient Tests
+<a class=heading-link href=#gwt-leads-to-more-resilient-tests>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h2>
+<p>One of the biggest advantages of this style is that it guides the tests to be miniature <em>executable</em> articulations of the requirements.</p>
+<p>Without this guide, I&rsquo;ve noticed that it&rsquo;s easy for tests to become too much about the implementation details, e.g. &ldquo;make sure this method does this&rdquo;, or &ldquo;this esoteric method should have that esoteric behavior&rdquo;, or the worst is &ldquo;make sure this method calls that method&rdquo; (which says nothing about a business requirement, and is solely a brittle implementation detail).</p>
+<p>Instead, if all of our tests are worded as Given/When/Then, and are based around the requirements/language of our system (see <a href=https://martinfowler.com/bliki/UbiquitousLanguage.html>ubiquitous language</a> from Evan&rsquo;s Domain Driven Design), it&rsquo;s extremely likely that these test cases will remain valid over the entire life cycle of the system.</p>
+<p>Or more concretely, using our form example, if your requirement is &ldquo;given invalid form input, when the user clicks submit, we show validation errors&rdquo;, it&rsquo;s unlikely that, while implementing some other feature, this business case will become invalid. You may break the test due to an implementation bug or regression, but the test itself should never become worthless.</p>
+<p>(Unless the requirements <em>do</em> change, at which point it&rsquo;s perfect that tests fail for requirements-change reasons and not unrelated-technical reasons.)</p>
+<p>For an example of what this avoids, I remember in the early ~2000s, there were several reports from Extreme Programming projects that &ldquo;we wrote a ton of unit tests, a la TDD, but now they&rsquo;re slowing us down, because they fail all the time when we refactor things&rdquo;.</p>
+<p>I find reports like this extremely puzzling, because to me it&rsquo;s not an indication that you shouldn&rsquo;t write unit tests, or not do TDD, it&rsquo;s an indication you&rsquo;re writing bad unit tests, that are severely coupled to the internal structure of your system, and not to the real-world requirements you are fulfilling.</p>
+<p>Tangentially, this is one of my few criticisms of <a href=http://www.growing-object-oriented-software.com/>Growing Object-Oriented Systems Guided By Tests</a> (which is otherwise great) is that over-reliance on role interfaces means tests can become more based around &ldquo;this is how layer X of my system interacts with layer Y&rdquo; (brittle, will change with refactorings), instead of &ldquo;this is how my systems fulfills each business/boundary cases&rdquo; (robust and resilient, will live forever).</p>
+<p>(There is a place for role interfaces, specifically at the boundaries of systems where it is too expensive/too coupled to call external libraries, but internally within a single codebase, I think overuse of them is an anti-pattern.)</p>
+<p>Granted, my assertion of robust tests does not mean &ldquo;if you write tests this way, you&rsquo;ll never have to touch them again&rdquo;. Invariably things will come up, and yes, you&rsquo;ll have to refactor your tests, e.g. you might change something about your UI widgets, and so a lot of tests might have to be updated to assert against the UI behavior in a different way.</p>
+<p>However, the point is that these technical changes should not <em>invalidate</em> the test case, as the test cases map to business cases, and business cases rarely change/go away.</p>
+<h2 id=gwt-leads-to-more-readable-tests>
+G/W/T Leads to More Readable Tests
+<a class=heading-link href=#gwt-leads-to-more-readable-tests>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h2>
+<p>Besides guiding the tests to be requirements, I love the readability that comes from using Given/When/Then, e.g. using a flat example (see the next section for a description of flat vs. nested):</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>testFoo</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
+  <span style=color:#75715e>// given the account is in this state
+</span><span style=color:#75715e></span>  <span style=color:#f92672>...</span>
+  <span style=color:#75715e>// when we get a request to do x
+</span><span style=color:#75715e></span>  <span style=color:#f92672>...</span>
+  <span style=color:#75715e>// then the account is canceled
+</span><span style=color:#75715e></span><span style=color:#f92672>}</span>
+</code></pre></div><p>To me, this fulfills my gold-standard/1st principle for tests (whether unit tests or acceptance tests or what not): they should be readable by your product manager.</p>
+<p>Depending on the project, this can be either theoretical or very practical, e.g. one of my career highlights was sitting next to a product manager and collaboratively writing test cases for some non-trivial business cases, with him reading and understanding the tests as I wrote them, as we worked through what the system should do.</p>
+<p>Nonetheless, even if your product manager is not going to actively read your tests, having that goal in mind is great to strive for, because it also means your fellow engineers will have incredibly readable tests to help them review and maintain the system.</p>
+<p>Specifically for code reviews, it might seem like a small thing, but even with well-written tests (e.g. that already have good levels of abstraction in creating the test data, invoking the system under test, and doing assertions), with Given/When/Then comments I can do code reviews much, much quicker.</p>
+<p>This is because it&rsquo;s immediately obvious what business case we&rsquo;re testing, so my job as a code reviewer changes from &ldquo;guess/reverse engineer what business case this test method cares about&rdquo; to &ldquo;verify this test method exercises the business case it says it does&rdquo;.</p>
+<p>And then I can use the mental cycles saved from &ldquo;guess what business case this test method cares about&rdquo; to invest in even more important things, like &ldquo;think about business cases are not covered in this test&rdquo;.</p>
+<h2 id=what-about-dryneedless-comments>
+What about DRY/Needless Comments?
+<a class=heading-link href=#what-about-dryneedless-comments>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h2>
+<p>Granted, having Given/When/Then comments that at each step say &ldquo;here is <em>what</em> this test is doing&rdquo; raises a red flag for violating the DRY and &ldquo;code should be self-describing&rdquo; rules of thumb.</p>
+<p>Both of these are great rules, but, yes, I am advocating purposefully violating them for tests, specifically for Given/When/Then comments.</p>
+<p>This can be a slippery slope, as my colleague pointed out that ~10-20 years ago, tests were often a 2nd-class citizen in codebases, and so very crufty. They were not refactored or maintained. And so there was a legitimate push in the industry in the ~early-2000s for applying all of the same care and craftsmanship that we (hopefully) exercise over production code to our test code.</p>
+<p>Which I definitely agree with: test code should be beautiful code.</p>
+<p>That said, I rationalize Given/When/Then comments, even though they duplicate the <em>what</em> because I purposefully want my tests to be as stupidly simple as possible.</p>
+<p>So, in terms trade-offs, I will purposefully sacrifice otherwise best-practice rules of thumb to gain simplicity. Within reason.</p>
+<p>(Other examples of this first principle, for me, are avoiding <code>for</code> loops and random numbers in tests; see <a href=/2017/01/07/obsessively-simple-test-values.html>Obsessively Simple Test Values</a> for more.)</p>
+<p>Basically, I don&rsquo;t want to expand any mental energy while reading tests; I want all of my mental energy reserved for reading and debugging the production code. I shouldn&rsquo;t have to juggle abstractions on both sides.</p>
+<h2 id=what-about-dsls>
+What About DSLs?
+<a class=heading-link href=#what-about-dsls>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h2>
+<p>So, that&rsquo;s fine, I want simple tests, but another assertion would be to continue refactoring the test code until it meets the goal of being self-describing, but sans comments.</p>
+<p>However, in practice I think it&rsquo;s hard for this &ldquo;no comments&rdquo; ideal to play out.</p>
+<p>For example, to really achieve no comments and still have product manager-readable tests, e.g. &ldquo;reads like English&rdquo;, we&rsquo;d need an extremely high-level DSL, which could do something like:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>testInvalidForm</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
+   givenOurFormHasInvalidInput<span style=color:#f92672>();</span>
+   whenTheUserClicksSubmit<span style=color:#f92672>();</span>
+   thenWeShowAnErrorMessage<span style=color:#f92672>();</span>
+<span style=color:#f92672>}</span>
+</code></pre></div><p>Or maybe a little less high-level:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>testInvalidForm</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
+   givenOurFormHasInput<span style=color:#f92672>(</span>name <span style=color:#f92672>=</span> <span style=color:#e6db74>&#34;invalid&#34;</span><span style=color:#f92672>);</span>
+   whenTheUserClicksSubmit<span style=color:#f92672>();</span>
+   thenWeShowAnErrorMessage<span style=color:#f92672>(</span>message <span style=color:#f92672>=</span> <span style=color:#e6db74>&#34;fix your name&#34;</span><span style=color:#f92672>);</span>
+<span style=color:#f92672>}</span>
+</code></pre></div><p>However, these like-English methods are so high-level that, to me, it&rsquo;s unlikely they&rsquo;ll actually be reused across test methods.</p>
+<p>And, since they are not generic, it means to understand the test, I&rsquo;ll likely have to read the helper method anyway (since it&rsquo;s not from a set of reusable methods I&rsquo;m already familiar with), at which point to me it&rsquo;s actually hurting readability by having to jump back/forth from the test to its used-once/bespoke/high-level methods to see what they&rsquo;re actually doing.</p>
+<p>The challenge of a beautiful &ldquo;reads like English&rdquo; DSL is that you need a set of core primitives that are both very generic and very composable.</p>
+<p>And this is just a very hard problem to solve, so I&rsquo;m accepting the trade-off of Given/When/Then being less DRY, but overall very simple and easy to implement and understand.</p>
+<h2 id=what-about-cucumbergherkin>
+What About Cucumber/Gherkin?
+<a class=heading-link href=#what-about-cucumbergherkin>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h2>
+<p>So that is internal DSLs, but there are also external DSLs for BDD, specifically <a href=https://cucumber.io>Cucumber</a>/Gherkin style tests, which are similarly extremely high level:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-txt data-lang=txt>Scenario: Jeff returns a faulty microwave
+   Given Jeff has bought a microwave for $100
+   And he has a receipt
+   When he returns the microwave
+   Then Jeff should be refunded $100
+</code></pre></div><p>Because Gherkin is an external DSL, it can avoid the constraints of a general purpose programming language, and focus specifically on the goal of being &ldquo;reads like English&rdquo;.</p>
+<p>However, my concern for Gherkin is very similar to the internal DSL approaches: that the fixtures we have to write (which are the glue that translates the &ldquo;And he has a receipt&rdquo; into code for the test to run) are going to be a very large and very intricate set of primitives that are, I worry/assert, not worth the cost of their abstraction.</p>
+<p>And for Gherkin in particular, since the fixtures are essentially a library of regular expressions that must uniquely and deterministically parse our 100s/1000s of plain-text, &ldquo;reads like English&rdquo; tests, it just seems like building on quicksand. The fixtures seem like they would hard to maintain, hard to refactor, hard to discover what your existing/valid DSL language is, etc.</p>
+<p>(E.g. when a new person sits down, and they copy/paste a Gherkin test, and want to change &ldquo;And he has a receipt&rdquo; to &ldquo;And he has a &mldr;&rdquo;, how do they know which statements are currently supported? How do they know when they write a new statement, it won&rsquo;t accidentally parse an existing statement?)</p>
+<p>If there was more tooling behind Gherkin, e.g. avoiding regular expressions, and auto-completion/type checking around statements, which is basically exactly what the now-defunct <a href=https://support.thoughtworks.com/hc/en-us/community/posts/213262186-A-Farewell-to-Twist>ThoughtWorks Twist</a> product provided, I could see this being a better idea.</p>
+<p>&mldr;which, now that I go looking for it, it looks like both Twist&rsquo;s replacement, <a href=https://docs.getgauge.io/language.html#language-steps>Gauge</a>, as well as Cucumber itself, have &ldquo;like an IDE&rdquo; tooling available: <a href=https://github.com/getgauge/gauge-vscode>gauge-vscode</a> and <a href="https://marketplace.visualstudio.com/items?itemName=alexkrechik.cucumberautocomplete">VSCode cucumber</a>.</p>
+<p>Which is great; if you&rsquo;re using either Cucumber/Gauge, I think leveraging this tooling support would be great.</p>
+<p>So I must soften my stance here, since there is tooling available for these external BDD DSLs; but in general my bias and preference is still on the side of just inlining the intent of your BDD scenarios into your tests themselves.</p>
+<p>(Tangentially, it&rsquo;s amazing how Visual Studio Code&rsquo;s <a href=https://github.com/Microsoft/language-server-protocol>language server protocol</a> has democratized IDE building by making it API-/protocol-based instead of GUI-/language-based.)</p>
+<h2 id=gwt-flat-vs-nested-approaches>
+G/W/T Flat vs. Nested Approaches
+<a class=heading-link href=#gwt-flat-vs-nested-approaches>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h2>
+<p>On a more technical level, there are also two general ways of writing Given/When/Then style of tests: flat and nested.</p>
+<p>Flat is where each test method has its own Given/When/Then right after each other, e.g.:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>testFoo</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
+  <span style=color:#75715e>// given ...
+</span><span style=color:#75715e></span>  <span style=color:#f92672>...</span>
+  <span style=color:#75715e>// when ...
+</span><span style=color:#75715e></span>  <span style=color:#f92672>...</span>
+  <span style=color:#75715e>// then ...
+</span><span style=color:#75715e></span>  <span style=color:#f92672>...</span>
+<span style=color:#f92672>}</span>
+</code></pre></div><p>Whereas nested is where a DSL is used to nest whens and thens, e.g.:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-js data-lang=js><span style=color:#a6e22e>describe</span>(<span style=color:#e6db74>&#34;foo&#34;</span>, <span style=color:#66d9ef>function</span>() {
+  <span style=color:#a6e22e>describe</span>(<span style=color:#e6db74>&#34;given ...&#34;</span>, <span style=color:#66d9ef>function</span>() {
+    <span style=color:#a6e22e>describe</span>(<span style=color:#e6db74>&#34;when ...&#34;</span>, <span style=color:#66d9ef>function</span>() {
+      <span style=color:#a6e22e>it</span>(<span style=color:#e6db74>&#34;then ...&#34;</span>, <span style=color:#66d9ef>function</span>() {
+        <span style=color:#75715e>// assert
+</span><span style=color:#75715e></span>      });
+
+      <span style=color:#a6e22e>it</span>(<span style=color:#e6db74>&#34;then ...&#34;</span>, <span style=color:#66d9ef>function</span>() {
+        <span style=color:#75715e>// assert
+</span><span style=color:#75715e></span>      });
+    });
+
+    <span style=color:#a6e22e>describe</span>(<span style=color:#e6db74>&#34;when ...&#34;</span>, <span style=color:#66d9ef>function</span>() {
+      <span style=color:#a6e22e>it</span>(<span style=color:#e6db74>&#34;then ...&#34;</span>, <span style=color:#66d9ef>function</span>() {
+        <span style=color:#75715e>// assert
+</span><span style=color:#75715e></span>      });
+    });
+  });
+});
+</code></pre></div><p>The nested style seems enticing, as it has a purported benefit of being able to nest multiple Whens in a single Given, and multiple Thens in a single When.</p>
+<p>However, I personally find the nested style to be overly cute, and in the end not worth the added complexity.</p>
+<p>In terms of complexity, there is just execution complexity, e.g. I&rsquo;m never 100% sure how the data/objects setup within the outer blocks are shared/reused within the inner? Each <code>it</code> block probably gets its own copy, to ensure isolation? Granted, this is just matter of learning the framework.</p>
+<p>More abstractly, to me a key point of test readability is having the Given/When/Then triple of &ldquo;input data&rdquo;, &ldquo;execution&rdquo;, &ldquo;output data&rdquo; as close together as possible.</p>
+<p>With a nested style, my 10th <code>it</code> block is using input data and execution steps from lines ~10-50 lines above where the <code>it</code> block itself is defined.</p>
+<p>To me this hurts both readability and maintainability. E.g. for readability, I now need to scan (potentially many) more LOCs to fully comprehend a single <code>it</code> block (e.g. skip over all of the <code>it</code> blocks above it), and then for maintainability, if I need to change this <code>it</code> blocks input conditions, I have to extract it from the tree of given/when/thens.</p>
+<p>I prefer the simplicity of the flat approach, where ideally each test method is as standalone as possible, so it&rsquo;s both extremely easy to read (just read it linearly) and easy to move/change (changing one test&rsquo;s given does not change all the other tests).</p>
+<h2 id=use-abstractions-to-keep-given-section-short>
+Use Abstractions to Keep Given Section Short
+<a class=heading-link href=#use-abstractions-to-keep-given-section-short>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h2>
+<p>While I avoid trying to craft the Given/When/Then statements themselves into a DSL, I do like using DSLs for setting up test data, so that tests can succinctly recreate the input conditions necessary for exercising their boundary case.</p>
+<p>Specifically what we want to avoid is having 20-30 line &ldquo;Given&rdquo; sections, e.g.:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>testFormInput</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
+  <span style=color:#75715e>// given a valid account exists
+</span><span style=color:#75715e></span>  Account a <span style=color:#f92672>=</span> <span style=color:#66d9ef>new</span> Account<span style=color:#f92672>();</span>
+  a<span style=color:#f92672>.</span><span style=color:#a6e22e>setName</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;a&#34;</span><span style=color:#f92672>);</span>
+  a<span style=color:#f92672>.</span><span style=color:#a6e22e>setAddress</span><span style=color:#f92672>(</span>123<span style=color:#f92672>);</span>
+  a<span style=color:#f92672>.</span><span style=color:#a6e22e>setOtherThings</span><span style=color:#f92672>(...);</span>
+
+  User u <span style=color:#f92672>=</span> <span style=color:#66d9ef>new</span> User<span style=color:#f92672>();</span>
+  u<span style=color:#f92672>.</span><span style=color:#a6e22e>setName</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;u&#34;</span><span style=color:#f92672>);</span>
+  u<span style=color:#f92672>.</span><span style=color:#a6e22e>setEmail</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;u@u.com&#34;</span><span style=color:#f92672>);</span>
+  u<span style=color:#f92672>.</span><span style=color:#a6e22e>setOtherThings</span><span style=color:#f92672>(...);</span>
+
+  <span style=color:#75715e>// hook up account to user
+</span><span style=color:#75715e></span>  a<span style=color:#f92672>.</span><span style=color:#a6e22e>setUser</span><span style=color:#f92672>(</span>a<span style=color:#f92672>);</span>
+
+  <span style=color:#75715e>// other ugly persistence details
+</span><span style=color:#75715e></span>  accountService<span style=color:#f92672>.</span><span style=color:#a6e22e>save</span><span style=color:#f92672>(</span>a<span style=color:#f92672>);</span>
+  userService<span style=color:#f92672>.</span><span style=color:#a6e22e>save</span><span style=color:#f92672>(</span>u<span style=color:#f92672>);</span>
+
+  <span style=color:#75715e>// when the user enters an invalid name
+</span><span style=color:#75715e></span>  <span style=color:#f92672>...</span>
+  <span style=color:#75715e>// then we show a validation error
+</span><span style=color:#75715e></span>  <span style=color:#f92672>...</span>
+</code></pre></div><p>I&rsquo;m 15+ lines into the test and am still only setting up the &ldquo;given&rdquo; section.</p>
+<p>If our form is going to have ~5-10 boundary cases to test, this is going to get very verbose (and I can see as valid motivation for &ldquo;let&rsquo;s build a DSL for given statements&rdquo;).</p>
+<p>So, I&rsquo;m all for using abstractions and DSLs for creating test data, e.g.:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>testFormInput</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
+  <span style=color:#75715e>// given a valid account exists
+</span><span style=color:#75715e></span>  AccountBuilder a <span style=color:#f92672>=</span> aAccount<span style=color:#f92672>().</span><span style=color:#a6e22e>withAdmin</span><span style=color:#f92672>().</span><span style=color:#a6e22e>withDefaults</span><span style=color:#f92672>();</span>
+  setupForm<span style=color:#f92672>(</span>a<span style=color:#f92672>);</span>
+  <span style=color:#75715e>// when the user enters an invalid name
+</span><span style=color:#75715e></span>  form<span style=color:#f92672>.</span><span style=color:#a6e22e>type</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;invalidName&#34;</span><span style=color:#f92672>);</span>
+  form<span style=color:#f92672>.</span><span style=color:#a6e22e>submit</span><span style=color:#f92672>();</span>
+  <span style=color:#75715e>// then we show a validation error
+</span><span style=color:#75715e></span>  assertValidationError<span style=color:#f92672>(</span>form<span style=color:#f92672>,</span> <span style=color:#e6db74>&#34;asdf&#34;</span><span style=color:#f92672>);</span>
+</code></pre></div><p>The builder pattern I use here is not the canonical builder pattern (which focuses more on creating immutable DTOs in a fluent matter) and instead is Fowler&rsquo;s <a href=https://martinfowler.com/bliki/ObjectMother.html>Object Mother</a> pattern, which is about having helper classes (he calls them object mothers) for creating objects <em>specifically for tests</em>.</p>
+<p>Because the use case for these builders/mothers is solely tests, they can make a lot of assumptions, e.g. filling in defaults that don&rsquo;t matter, that would not be appropriate for a builder that was used in production code.</p>
+<p>The builder/mother pattern is worth exploring separately, but basically you should strive for each of your sections, and particularly the &ldquo;given&rdquo; section, to be relatively short and easy to set up.</p>
+<p>It will take an upfront investment to create these abstractions, but it will quickly pay off as your test suite grows from 10s to 100s to 1000s of tests.</p>
+<p>And, just to explicitly address my dichotomy of &ldquo;don&rsquo;t build a DSL for given/when/then&rdquo; but &ldquo;do build a DSL for test data&rdquo;, in my experience building a DSL for test data is a much more tractable problem: you typically have one <code>FooBuilder</code> for each entity in your system, and it&rsquo;s generally pretty easy to see what the defaults should be/what helper methods would make sense. So, to me, it&rsquo;s just not the same challenge as building the &ldquo;reads like English&rdquo; DSL for Given/When/Then.</p>
+<h2 id=one-assertion-per-test-or-one-case-per-test>
+One Assertion Per Test or One Case Per Test?
+<a class=heading-link href=#one-assertion-per-test-or-one-case-per-test>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h2>
+<p>One stylistic issue for Given/When/Thens is how to hold multiple assertions.</p>
+<p>For example, our form validation might entail both showing an error message as well as disabling the form button.</p>
+<p>One way of doing this is having 1 assertion per test, e.g.:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>shouldShowValidationErrorOnInvalidInput</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
+  <span style=color:#75715e>// given a valid account exists
+</span><span style=color:#75715e></span>  AccountBuilder a <span style=color:#f92672>=</span> aAccount<span style=color:#f92672>().</span><span style=color:#a6e22e>withAdmin</span><span style=color:#f92672>().</span><span style=color:#a6e22e>withDefaults</span><span style=color:#f92672>();</span>
+  <span style=color:#75715e>// when the user enters an invalid name
+</span><span style=color:#75715e></span>  openApp<span style=color:#f92672>(</span>a<span style=color:#f92672>.</span><span style=color:#a6e22e>getAdminUser</span><span style=color:#f92672>());</span>
+  form<span style=color:#f92672>.</span><span style=color:#a6e22e>type</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;invalidName&#34;</span><span style=color:#f92672>);</span>
+  form<span style=color:#f92672>.</span><span style=color:#a6e22e>submit</span><span style=color:#f92672>();</span>
+  <span style=color:#75715e>// then we show a validation error
+</span><span style=color:#75715e></span>  assertValidationError<span style=color:#f92672>(</span>form<span style=color:#f92672>,</span> <span style=color:#e6db74>&#34;asdf&#34;</span><span style=color:#f92672>);</span>
+<span style=color:#f92672>}</span>
+
+<span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>shouldDisableButtonOnInvalidInput</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
+  <span style=color:#75715e>// given a valid account exists
+</span><span style=color:#75715e></span>  AccountBuilder a <span style=color:#f92672>=</span> aAccount<span style=color:#f92672>().</span><span style=color:#a6e22e>withAdmin</span><span style=color:#f92672>().</span><span style=color:#a6e22e>withDefaults</span><span style=color:#f92672>();</span>
+  <span style=color:#75715e>// when the user enters an invalid name
+</span><span style=color:#75715e></span>  openApp<span style=color:#f92672>(</span>a<span style=color:#f92672>.</span><span style=color:#a6e22e>getAdminUser</span><span style=color:#f92672>());</span>
+  form<span style=color:#f92672>.</span><span style=color:#a6e22e>type</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;invalidName&#34;</span><span style=color:#f92672>);</span>
+  form<span style=color:#f92672>.</span><span style=color:#a6e22e>submit</span><span style=color:#f92672>();</span>
+  <span style=color:#75715e>// then we disable the submit button
+</span><span style=color:#75715e></span>  assertFalse<span style=color:#f92672>(</span>button<span style=color:#f92672>.</span><span style=color:#a6e22e>isEnabled</span><span style=color:#f92672>());</span>
+<span style=color:#f92672>}</span>
+</code></pre></div><p>As you can see, this effectively copy/pastes the first ~6 lines of the given/when statement.</p>
+<p>To me, while the rule of thumb &ldquo;one assertion per test&rdquo; is well meant to keep test methods from getting out of hand, in this case it&rsquo;s more pragmatic, and have one test method per When, and have multiple Then statements:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>shouldHandleInvalidName</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
+  <span style=color:#75715e>// given a valid account exists
+</span><span style=color:#75715e></span>  AccountBuilder a <span style=color:#f92672>=</span> aAccount<span style=color:#f92672>().</span><span style=color:#a6e22e>withAdmin</span><span style=color:#f92672>().</span><span style=color:#a6e22e>withDefaults</span><span style=color:#f92672>();</span>
+  <span style=color:#75715e>// when the user enters an invalid name
+</span><span style=color:#75715e></span>  openApp<span style=color:#f92672>(</span>a<span style=color:#f92672>.</span><span style=color:#a6e22e>getAdminUser</span><span style=color:#f92672>());</span>
+  form<span style=color:#f92672>.</span><span style=color:#a6e22e>type</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;invalidName&#34;</span><span style=color:#f92672>);</span>
+  form<span style=color:#f92672>.</span><span style=color:#a6e22e>submit</span><span style=color:#f92672>();</span>
+  <span style=color:#75715e>// then we show a validation error
+</span><span style=color:#75715e></span>  assertValidationError<span style=color:#f92672>(</span>form<span style=color:#f92672>,</span> <span style=color:#e6db74>&#34;asdf&#34;</span><span style=color:#f92672>);</span>
+  <span style=color:#75715e>// and disable the submit button
+</span><span style=color:#75715e></span>  assertFalse<span style=color:#f92672>(</span>button<span style=color:#f92672>.</span><span style=color:#a6e22e>isEnabled</span><span style=color:#f92672>());</span>
+<span style=color:#f92672>}</span>
+</code></pre></div><p>Perhaps it is what I&rsquo;m used to, but being able to scan methods by &ldquo;here are the business conditions handled&rdquo; instead of &ldquo;here are the business conditions handled + each thing we do for that condition&rdquo;, is just easier to follow.</p>
+<p>Granted, maybe my anti-nesting bias is showing, as that would admittedly allow following the &ldquo;one assertion per test&rdquo; rule, by putting &ldquo;show a validation error&rdquo; and &ldquo;disable the submit button&rdquo; in their own &ldquo;it&rdquo; blocks.</p>
+<h2 id=more-than-one-when>
+More Than One When?
+<a class=heading-link href=#more-than-one-when>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h2>
+<p>The canonical form of Given/When/Then has only one of each term, however I&rsquo;ve found there are cases where multiple Whens can be nice, e.g.:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>shouldHandleInvalidName</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
+  <span style=color:#75715e>// given a valid account exists
+</span><span style=color:#75715e></span>  AccountBuilder a <span style=color:#f92672>=</span> aAccount<span style=color:#f92672>().</span><span style=color:#a6e22e>withAdmin</span><span style=color:#f92672>().</span><span style=color:#a6e22e>withDefaults</span><span style=color:#f92672>();</span>
+
+  <span style=color:#75715e>// when the user enters an invalid name
+</span><span style=color:#75715e></span>  openApp<span style=color:#f92672>(</span>a<span style=color:#f92672>.</span><span style=color:#a6e22e>getAdminUser</span><span style=color:#f92672>());</span>
+  form<span style=color:#f92672>.</span><span style=color:#a6e22e>type</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;invalidName&#34;</span><span style=color:#f92672>);</span>
+  form<span style=color:#f92672>.</span><span style=color:#a6e22e>submit</span><span style=color:#f92672>();</span>
+
+  <span style=color:#75715e>// then we show a validation error
+</span><span style=color:#75715e></span>  assertValidationError<span style=color:#f92672>(</span>form<span style=color:#f92672>,</span> <span style=color:#e6db74>&#34;asdf&#34;</span><span style=color:#f92672>);</span>
+  <span style=color:#75715e>// and disable the submit button
+</span><span style=color:#75715e></span>  assertFalse<span style=color:#f92672>(</span>button<span style=color:#f92672>.</span><span style=color:#a6e22e>isEnabled</span><span style=color:#f92672>());</span>
+
+  <span style=color:#75715e>// when they correct the error
+</span><span style=color:#75715e></span>  form<span style=color:#f92672>.</span><span style=color:#a6e22e>type</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;validName&#34;</span><span style=color:#f92672>);</span>
+  form<span style=color:#f92672>.</span><span style=color:#a6e22e>submit</span><span style=color:#f92672>();</span>
+
+  <span style=color:#75715e>// then we submitted the form
+</span><span style=color:#75715e></span>  assertTrue<span style=color:#f92672>(</span>form<span style=color:#f92672>.</span><span style=color:#a6e22e>isSubmitted</span><span style=color:#f92672>());</span>
+<span style=color:#f92672>}</span>
+</code></pre></div><p>This is a fuzzy line, and usually only worthwhile in more expensive or elaborate integration tests, where it takes a bit of setup (even with your DSL), to get to the 2nd When condition.</p>
+<p>Because if it&rsquo;s super easy to setup the 2nd When&rsquo;s input data, without going through the 1st Given/When/Then, then you should prefer that, as it makes the 2nd When&rsquo;s test more isolated, so easier to read and more maintainable.</p>
+<p>So, 90% of the time, you should have only a single When per test, but occasionally having two is fine.</p>
+<h2 id=using-gwt-for-unit-tests>
+Using G/W/T for Unit Tests
+<a class=heading-link href=#using-gwt-for-unit-tests>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h2>
+<p>The Given/When/Then idiom is generally used in acceptance tests, e.g. it came out of BDD/customer acceptance tests, where it&rsquo;s purposefully abstracted from the system&rsquo;s implementation details, and solely about &ldquo;what&rdquo; happens instead of &ldquo;how&rdquo; it happens.</p>
+<p>Which is great, but personally I think that robustness of &ldquo;what should happen&rdquo;-style tests should be applied to unit tests as well.</p>
+<p>Granted, depending on your unit tests, this can feel odd, e.g. a unit test like:</p>
+<pre tabindex=0><code>public void testCallingFoo() {
+  // given the foo method is called
+  resource.foo();
+  // then the service bar method was called
+  verify(resource).bar();
+}
+</code></pre><p>This seems like an odd test to write with Given/When/Then statements, because &ldquo;then the service bar method was called&rdquo; does not seem like a &ldquo;what&rdquo;; it&rsquo;s very much a &ldquo;how&rdquo;.</p>
+<p>But that oddness is actually a good thing, because it&rsquo;s a hint/smell that the test, as-is, is just a brittle repetition of our implementation details: &ldquo;make sure layer X calls layer Y.&rdquo;</p>
+<p>So, even for unit tests, you should try to write unit tests as much like integration tests as possible: assert against input state and output state, as the output state will be the closest to &ldquo;what business case I&rsquo;m trying to solve&rdquo;.</p>
+<h2 id=draconian-formatting>
+Draconian Formatting
+<a class=heading-link href=#draconian-formatting>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h2>
+<p>Besides just using Given/When/Then statements, I also like to encourage tests to be very strict about their use/ordering of each statements.</p>
+<p>Specifically, the order should always be &ldquo;Given&rdquo;, &ldquo;When&rdquo;, &ldquo;Then&rdquo;, and always include each one, e.g. no skipping Given or skipping When.</p>
+<p>Note that &ldquo;Ands&rdquo; are allowed, so it can technically be:</p>
+<ul>
+<li>&ldquo;Given &mldr;&rdquo;</li>
+<li>Zero or more &ldquo;And &mldr;&rdquo;</li>
+<li>&ldquo;When &mldr;&rdquo;</li>
+<li>Zero or more &ldquo;And &mldr;&rdquo;</li>
+<li>&ldquo;Then &mldr;&rdquo;</li>
+<li>Zero or more &ldquo;And &mldr;&rdquo;</li>
+</ul>
+<p>Based on this, we can then have fun being pedantic about new lines.</p>
+<p>The ideal test, in my opinion, is 6 lines, with zero new lines:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>testFormInput</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
+  <span style=color:#75715e>// given a valid account exists
+</span><span style=color:#75715e></span>  whenSomething<span style=color:#f92672>();</span>
+  <span style=color:#75715e>// when the user enters an invalid name
+</span><span style=color:#75715e></span>  doSomething<span style=color:#f92672>();</span>
+  <span style=color:#75715e>// then we show a validation error
+</span><span style=color:#75715e></span>  assertSomething<span style=color:#f92672>();</span>
+<span style=color:#f92672>}</span>
+</code></pre></div><p>This is effectively 3 real lines of code, if you leave out the G/W/T statements, and so for me qualifies for condensed/no-newline formatting.</p>
+<p>I like this (a small method with no newlines), and set it as my ideal, because when you have ~10 or 20 or 30 test methods in a class, it becomes really easy to scan the test methods if each one is visually chunked into a single visual chunk per test. And needless newlines breaks the visual flow into multiple visual chunks.</p>
+<p>And, as a bonus when achieving no-newline methods, if you use vim bindings, the <code>{</code> and <code>}</code> movements, which move to the previous/next empty line, now happen to map to previous/next method, so it makes it extremely quick to navigate around the test cases (you basically get a &ldquo;next test case&rdquo; short cut for free).</p>
+<p>Personally, I think this no-newline ideal can scale to ~3 lines of real code per section, e.g.:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>testFormInput</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
+  <span style=color:#75715e>// given a valid account exists
+</span><span style=color:#75715e></span>  whenSomething<span style=color:#f92672>();</span>
+  whenSomething2<span style=color:#f92672>();</span>
+  whenSomething3<span style=color:#f92672>();</span>
+  <span style=color:#75715e>// when the user enters an invalid name
+</span><span style=color:#75715e></span>  doSomething<span style=color:#f92672>();</span>
+  doSomething2<span style=color:#f92672>();</span>
+  doSomething3<span style=color:#f92672>();</span>
+  <span style=color:#75715e>// then we show a validation error
+</span><span style=color:#75715e></span>  assertSomething<span style=color:#f92672>();</span>
+  assertSomething2<span style=color:#f92672>();</span>
+  assertSomething3<span style=color:#f92672>();</span>
+<span style=color:#f92672>}</span>
+</code></pre></div><p>Would still be acceptably/preferably formatted as no-newlines/a single visual chunk.</p>
+<p>When you get more than ~3-4 lines per section, I think it makes sense to add a space between each section, e.g:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>testFormInput</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
+  <span style=color:#75715e>// given a valid account exists
+</span><span style=color:#75715e></span>  whenSomething<span style=color:#f92672>();</span>
+  whenSomething2<span style=color:#f92672>();</span>
+  whenSomething3<span style=color:#f92672>();</span>
+  whenSomething3<span style=color:#f92672>();</span>
+  whenSomething4<span style=color:#f92672>();</span>
+
+  <span style=color:#75715e>// when the user enters an invalid name
+</span><span style=color:#75715e></span>  doSomething<span style=color:#f92672>();</span>
+  doSomething2<span style=color:#f92672>();</span>
+  doSomething3<span style=color:#f92672>();</span>
+  doSomething4<span style=color:#f92672>();</span>
+
+  <span style=color:#75715e>// then we show a validation error
+</span><span style=color:#75715e></span>  assertSomething<span style=color:#f92672>();</span>
+  assertSomething2<span style=color:#f92672>();</span>
+  assertSomething3<span style=color:#f92672>();</span>
+  assertSomething4<span style=color:#f92672>();</span>
+<span style=color:#f92672>}</span>
+</code></pre></div><p>One wrinkle is what do with Ands. I again trend towards condensing visual chunks, and would prefer them included with their parent section, e.g.:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>testFormInput</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
+  <span style=color:#75715e>// given a valid account exists
+</span><span style=color:#75715e></span>  whenSomething<span style=color:#f92672>();</span>
+  whenSomething2<span style=color:#f92672>();</span>
+  whenSomething3<span style=color:#f92672>();</span>
+  <span style=color:#75715e>// and something else
+</span><span style=color:#75715e></span>  fooBar<span style=color:#f92672>();</span>
+
+  <span style=color:#75715e>// when the user enters an invalid name
+</span><span style=color:#75715e></span>  doSomething<span style=color:#f92672>();</span>
+  doSomething2<span style=color:#f92672>();</span>
+  doSomething3<span style=color:#f92672>();</span>
+  <span style=color:#75715e>// and something else
+</span><span style=color:#75715e></span>  fooBar<span style=color:#f92672>();</span>
+
+  <span style=color:#75715e>// then we show a validation error
+</span><span style=color:#75715e></span>  assertSomething<span style=color:#f92672>();</span>
+  assertSomething2<span style=color:#f92672>();</span>
+  assertSomething3<span style=color:#f92672>();</span>
+  <span style=color:#75715e>// and something else
+</span><span style=color:#75715e></span>  assertSometing4<span style=color:#f92672>();</span>
+<span style=color:#f92672>}</span>
+</code></pre></div><p>But, again, if you reach more than ~3-4 lines for a given &ldquo;And&rdquo;, promoting it to its own visual chunk makes sense.</p>
+<h2 id=conclusion>
+Conclusion
+<a class=heading-link href=#conclusion>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h2>
+<p>I think I&rsquo;ve exhaustively covered all my thoughts on Given/When/Then.</p>
+<p>Basically, I think they are a best practice that can be applied to all tests in a codebase, both unit and acceptance.</p>
+<p>And, despite the initial inclination of seeming un-DRY, in the end the readability and &ldquo;reviewability&rdquo; of your tests will be worth it.</p>
+</div>
+<footer>
+<div id=disqus_thread></div>
+<script type=application/javascript>var disqus_config=function(){};(function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById('disqus_thread').innerHTML='Disqus comments not available by default when the website is previewed locally.';return}var b=document,a=b.createElement('script');a.async=!0,a.src='//shaberman.disqus.com/embed.js',a.setAttribute('data-timestamp',+new Date),(b.head||b.body).appendChild(a)})()</script>
+<noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript>
+<a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a>
+</footer>
+</article>
+</section>
+</div>
+<footer class=footer>
+<section class=container>
+©
+2008 -
+2021
+Stephen Haberman
+·
+Powered by <a href=https://gohugo.io/>Hugo</a> & <a href=https://github.com/luizdepra/hugo-coder/>Coder</a>.
+</section>
+</footer>
+</main>
+<script src=/js/coder.min.03b17769f4f91ae35667e1f2a1ca8c16f50562576cf90ff32b3179926914daa5.js integrity="sha256-A7F3afT5GuNWZ+HyocqMFvUFYlds+Q/zKzF5kmkU2qU="></script>
+</body>
+</html>

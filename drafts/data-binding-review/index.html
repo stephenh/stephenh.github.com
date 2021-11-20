@@ -1,0 +1,335 @@
+<!doctype html><html lang=en>
+<head>
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width,initial-scale=1">
+<meta http-equiv=content-language content="en">
+<meta name=color-scheme content="light dark">
+<meta name=author content="Stephen Haberman">
+<meta name=description content="Data Binding Review    Data binding is interesting topic to me, mostly because of the large effect it can have on an application&rsquo;s view layer.
+A good data binding approach means your view layer is not wasting boilerplate LOC getting and setting data between your UI components and your domain model. Instead, you succinctly bind domain model to UI component and, in 90% of the cases, be done with it.">
+<meta name=keywords content="blog,developer,personal">
+<meta name=twitter:card content="summary">
+<meta name=twitter:title content="Data Binding Review">
+<meta name=twitter:description content="Data Binding Review    Data binding is interesting topic to me, mostly because of the large effect it can have on an application&rsquo;s view layer.
+A good data binding approach means your view layer is not wasting boilerplate LOC getting and setting data between your UI components and your domain model. Instead, you succinctly bind domain model to UI component and, in 90% of the cases, be done with it.">
+<meta property="og:title" content="Data Binding Review">
+<meta property="og:description" content="Data Binding Review    Data binding is interesting topic to me, mostly because of the large effect it can have on an application&rsquo;s view layer.
+A good data binding approach means your view layer is not wasting boilerplate LOC getting and setting data between your UI components and your domain model. Instead, you succinctly bind domain model to UI component and, in 90% of the cases, be done with it.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="http://draconianoverlord.com/drafts/data-binding-review/"><meta property="article:section" content="drafts">
+<title>
+Data Binding Review · Draconian Overlord
+</title>
+<link rel=canonical href=http://draconianoverlord.com/drafts/data-binding-review/>
+<link rel=preload href="/fonts/forkawesome-webfont.woff2?v=1.2.0" as=font type=font/woff2 crossorigin>
+<link rel=stylesheet href=/css/coder.min.d9fddbffe6f27e69985dc5fe0471cdb0e57fbf4775714bc3d847accb08f4a1f6.css integrity="sha256-2f3b/+byfmmYXcX+BHHNsOV/v0d1cUvD2Eesywj0ofY=" crossorigin=anonymous media=screen>
+<link rel=stylesheet href=/css/coder-dark.min.aa883b9ce35a8ff4a2a5008619005175e842bb18a8a9f9cc2bbcf44dab2d91fa.css integrity="sha256-qog7nONaj/SipQCGGQBRdehCuxioqfnMK7z0Tastkfo=" crossorigin=anonymous media=screen>
+<link rel=icon type=image/png href=/images/favicon-32x32.png sizes=32x32>
+<link rel=icon type=image/png href=/images/favicon-16x16.png sizes=16x16>
+<link rel=apple-touch-icon href=/images/apple-touch-icon.png>
+<link rel=apple-touch-icon sizes=180x180 href=/images/apple-touch-icon.png>
+<meta name=generator content="Hugo 0.89.4">
+</head>
+<body class="preload-transitions colorscheme-auto">
+<div class=float-container>
+<a id=dark-mode-toggle class=colorscheme-toggle>
+<i class="fa fa-adjust fa-fw" aria-hidden=true></i>
+</a>
+</div>
+<main class=wrapper>
+<nav class=navigation>
+<section class=container>
+<a class=navigation-title href=/>Draconian Overlord</a>
+Oppressing software entropy
+</section>
+</nav>
+<div class=content>
+<section class="container page">
+<article>
+<header>
+<h1 class=title>
+<a class=title-link href=http://draconianoverlord.com/drafts/data-binding-review/>
+Data Binding Review
+</a>
+</h1>
+</header>
+<h1 id=data-binding-review>
+Data Binding Review
+<a class=heading-link href=#data-binding-review>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h1>
+<p>Data binding is interesting topic to me, mostly because of the large effect it can have on an application&rsquo;s view layer.</p>
+<p>A good data binding approach means your view layer is not wasting boilerplate LOC getting and setting data between your UI components and your domain model. Instead, you succinctly bind domain model to UI component and, in 90% of the cases, be done with it.</p>
+<p>I&rsquo;ve used and built several data binding options and was recently reconsidering property objects dressed up in some of Scala&rsquo;s magic as a potentially elegant approach.</p>
+<p>While thinking about how they&rsquo;d work, I decided to write up descriptions of other approaches I&rsquo;ve used or seen before as well to compare against.</p>
+<p>So, in this post, I&rsquo;ll briefly compare data binding via:</p>
+<ul>
+<li>OGNL</li>
+<li>Bindgen</li>
+<li>Property Objects</li>
+<li>Scala Property Objects</li>
+<li>Lift/Scala Inline Functions</li>
+</ul>
+<p>Granted, these are all admittedly very biased towards the Java platform.</p>
+<h2 id=the-basic-idea-why-data-binding>
+The Basic Idea: Why Data Binding?
+<a class=heading-link href=#the-basic-idea-why-data-binding>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h2>
+<p>Most data binding approaches I&rsquo;ve worked with boil down to an interface that looks like:</p>
+<pre><code>public interface Binding&lt;T&gt; {
+    T get();
+    void set(T value);
+    Class&lt;T&gt; getType();
+}
+</code></pre>
+<p>{: class=&ldquo;brush:java&rdquo;}</p>
+<p>The name is not necessarily &ldquo;Binding&rdquo;, and it may/may not have a generic <code>T</code>, but that&rsquo;s the basic idea.</p>
+<p>At first blush, while rendering a value to the screen (or file or database), having a <code>Binding</code> to call <code>get()</code> on for its value is not much different than just passing the value itself. If anything, its more overhead.</p>
+<p>However, where a <code>Binding</code> proves handy is when you have non-trivial display/processing logic that you&rsquo;d like to have done on your data, but have done by a reusable library (e.g. UI components) instead of doing it yourself.</p>
+<p>For a concrete example, think of a UI component that would render an HTML calendar, then convert the HTTP POST <code>date</code> string parameter into a <code>java.util.Date</code>, etc.. The type of non-trivial stuff you don&rsquo;t want to type out each time you have a date field on a page.</p>
+<p>So, when this is the case, you want to pass the library something to get your data from <em>and</em> also put your data back in to.</p>
+<p>However, in Java, you cannot pick up a <code>setName</code> setter, pass it into a library, and say &ldquo;call this when you have a value ready&rdquo;.</p>
+<p>So, that is what <code>Binding.get</code> and <code>Binding.set</code> are for.</p>
+<p>Assuming this approach works well for your UI layer, the problem now is to implement <code>Binding</code> (or some form of it) for all of the properties in your domain model.</p>
+<h2 id=data-binding-with-ognl>
+Data Binding with OGNL
+<a class=heading-link href=#data-binding-with-ognl>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h2>
+<p>The easiest, and most common, approach to implementing <code>Binding.get/set</code>-style data binding is to just not implement the methods directly at all.</p>
+<p>Instead, use strings with reflection.</p>
+<p>There are several expression language implementations that do this: <a href=http://en.wikipedia.org/wiki/Unified_Expression_Language>Unified Expression Language</a>, <a href=http://mvel.codehaus.org/>MVEL</a>, and <a href=http://www.opensymphony.com/ognl/>OGNL</a>.</p>
+<p>Their usage is all basically calling <code>Library.set(childObject, "parent.name", value)</code> to execute <code>childObject.getParent().setName(value)</code>. The <code>Library.set</code> method can either be used directly or wrapped in your own <code>Binding.set</code> wrapper as needed.</p>
+<p>I had the most success with this approach by using OGNL and integrating it with a <a href=http://click.sf.net>Click</a>-based view layer. The basic idiom is:</p>
+<pre><code>public class EmployeePage {
+  public Employee employee = null; // assigned for us
+  public Form form = new Form();
+
+  public void onInit() {
+    this.form.add(new Textbox(&quot;employee.firstName&quot;));
+    this.form.add(new Textbox(&quot;employee.lastName&quot;));
+  }
+}
+</code></pre>
+<p>{: class=&ldquo;brush:java&rdquo;}</p>
+<p>When the form renders itself, the text boxes use OGNL to evaluate the <code>employee.firstName</code> String against the page object, e.g. <code>page.employee.getFirstName()</code>. This value is included in the rendered HTML.</p>
+<p>When a form POST happens, the text boxes again use OGNL to evaluate <code>employee.firstName = formFieldValue</code>, e.g. <code>page.employee.setFirstName(formFieldValue)</code>. The posted value is then set back into the domain object.</p>
+<p>OGNL also lets you introspect the property types (e.g. equivalent to the <code>Binding.getType</code> method), so basic type conversion can take place if the incoming form String value needs to be, say, a <code>java.util.Date</code>.</p>
+<p>OGNL can also handle tables well. In the above <code>EmployeePage</code>, each OGNL string was evaluated against the current page object. But OGNL strings can also be evaluated against each object in a collection, e.g.:</p>
+<pre><code>public class EmployeesPage {
+  public Employer employer = null; // assigned for us
+  public Table table = new Table();
+
+  public void onInit() {
+    table.add(new Column(&quot;firstName&quot;);
+    table.add(new Column(&quot;lastName&quot;);
+    table.setRows(employer.getEmployees());
+  }
+}
+</code></pre>
+<p>{: class=&ldquo;brush:java&rdquo;}</p>
+<p>Here the table class gets the first <code>Employee</code> as <code>currentObject</code>, renders the columns, with each column calling <code>Ognl.get(currentObject, "firstName")</code> and <code>Ognl.get(currentObject, "lastName")</code>, respectively, and then the table moves on to the next <code>Employee</code> object and repeats.</p>
+<p>For lack of a better term, I&rsquo;ll call this ability &ldquo;arbitrary instance evaluation&rdquo; because a given String can be evaluated against any arbitrary <code>currentObject</code> root instance. This is not a big deal if you&rsquo;re only binding against one instance, but if you want to bind against an iterative list of instances, then its nice to have.</p>
+<p>So, that&rsquo;s OGNL data binding. What&rsquo;s the big deal?</p>
+<p>With a web framework like Click, which is spiffy enough to generate all of the HTML for the form and table objects, this means that on the majority of the application&rsquo;s pages, each form field/table column originates from <strong>1</strong> line of code. Over a large enterprise app, this is a huge savings that can really add up.</p>
+<p>This one-line-per-field (whether its HTML form field, database field, or flat file field) should be the goal of a good data binding approach.</p>
+<p>This would be it, except that OGNL&rsquo;s property language is string-based. This means it is prone to breaking during refactoring. E.g. if <code>employee.getFirstName()</code> changes, the hard-coded string <code>"employee.firstName"</code> will not fail as a compile error. While not a show-stopper, this does become annoying in an environment like Java where developers' expect compile-time type-safety.</p>
+<p><strong>Pros and Cons of OGNL</strong></p>
+<ul>
+<li>Pro: succinct&ndash;1 line-per-field</li>
+<li>Pro: non-invasive&ndash;domain model doesn&rsquo;t know anything about OGNL, uses getters/setters</li>
+<li>Pro: arbitrary instance evaluation</li>
+<li>Con: brittle&ndash;strings are opaque to the compiler and so break with refactoring</li>
+</ul>
+<p>Other than being brittle, OGNL is a great data binding solution. It sets a high standard that is the basis of comparison for the following approaches I&rsquo;ve tried.</p>
+<h2 id=data-binding-with-bindgen>
+Data Binding with Bindgen
+<a class=heading-link href=#data-binding-with-bindgen>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h2>
+<p>When building <a href=http://joist.ws>Joist</a>, I wanted to solve the string-based brittleness issue of OGNL, so I built <a href=http://bindgen.org>Bindgen</a>.</p>
+<p>Instead of using strings and reflection, Bindgen scans for any classes you annotate with a <code>@Bindable</code> annotation and generates type-safe <code>Binding</code> classes for that class&rsquo;s properties.</p>
+<p>To do this, Bindgen is implemented as a JDK6 annotation processor, so it can hook right into the compiler&rsquo;s build cycle and generate the code immediately (even on save in Eclipse).</p>
+<p>For example, if you have a class <code>Employee</code>, Bindgen will generate an <code>EmployeeBinding</code> class. If <code>Employee</code> has a <code>getName()</code> method that returns <code>String</code>, then <code>EmployeeBinding</code> will have a <code>name()</code> method that instead returns a <code>StringBinding</code> whose <code>Binding.get</code> and <code>Binding.set</code> methods are hooked up to <code>getName()</code> and <code>setName()</code>, respectively.</p>
+<p>Given that each <code>XxxBinding</code> instance has <code>get</code> and <code>set</code> methods on it, you can pass the binding around into frameworks and they can get/convert/set your data.</p>
+<p>Using it looks something like:</p>
+<pre><code>@Bindable
+public class EmployeePage {
+  public Employee employee = null; // assigned for us
+  public Form form = new Form();
+
+  public void onInit() {
+    EmployeePageBinding b = new EmployeePageBinding(this);
+    this.form.add(new Textbox(b.employee().firstName()));
+    this.form.add(new Textbox(b.employee().lastName()));
+  }
+}
+</code></pre>
+<p>{: class=&ldquo;brush:java&rdquo;}</p>
+<p>The only classes you create are <code>EmployeePage</code> and <code>Employee</code>, with the usual <code>getFirstName</code>, <code>setFirstName</code>, <code>getLastName</code>, and <code>setLastName</code> methods. Bindgen then generates the <code>EmployeePageBinding</code> class, an <code>employee()</code> method on it that returns an <code>EmployeeBinding</code>, and <code>firstName()</code> and <code>lastName()</code> methods on the <code>EmployeeBinding</code> that return <code>Binding&lt;String></code> instances for first name and last name, respectively.</p>
+<p>The big win here is that strings have gone away. If your <code>Employee</code> class changes, the <code>firstName()</code> and <code>lastName()</code> calls will fail to compile.</p>
+<p>Similarly, Bindgen can handle arbitrary instance evaluation with <code>Binding.getWithRoot</code> and <code>Binding.setWithRoot</code> methods. E.g.:</p>
+<pre><code>@Bindable
+public class EmployeesPage {
+  public Employer employer = null; // assigned for us
+  public Table&lt;Employee&gt; table = new Table&lt;Employee&gt;();
+
+  public void onInit() {
+    // b is not connected to any specific Employee instance
+    EmployeeBinding b = new EmployeeBinding();
+    table.add(new Column(b.firstName());
+    table.add(new Column(b.lastName());
+    table.setRows(employer.getEmployees());
+  }
+}
+</code></pre>
+<p>{: class=&ldquo;brush:java&rdquo;}</p>
+<p>The <code>EmployeeBinding</code> is still used to setup the table&rsquo;s columns, the difference is that <code>b.firstName()</code> is not tied to any particular <code>Employee</code>&rsquo;s first name value.</p>
+<p>As the table iterates over the rows, each <code>Employee</code> is assigned to a <code>currentEmployee</code> variable. Then the columns render their bindings by doing, basically, <code>b.firstName().getWithRoot(currentEmployee)</code>.</p>
+<p><strong>Pros and Cons of Bindgen</strong></p>
+<ul>
+<li>Pro: type-safe&ndash;no strings</li>
+<li>Pro: fast&ndash;the <code>Binding.get/set</code> methods are real methods (no generated bytecode/interpreting/etc.)</li>
+<li>Pro: arbitrary instance evaluation&ndash;via <code>Binding.getWithRoot/setWithRoot</code></li>
+<li>Pro: non-invasive&ndash;the <code>@Bindable</code> annotation on the view will automatically recurse to the <code>Employee</code> domain object and so not require explicitly coupling your domain to Bindgen</li>
+<li>Con: minor LOC overhead&ndash;the <code>@Bindable</code> and <code>EmployeePageBinding b</code> are constant (not per-field) syntactic costs</li>
+<li>Con: Java-only&ndash;having being bitten by the Scala bug recently, it would be nice to write domain objects in Scala. Scala has compiler plugins, but there is no Scala Bindgen implementation (yet).</li>
+</ul>
+<h2 id=data-binding-with-property-objects>
+Data Binding with Property Objects
+<a class=heading-link href=#data-binding-with-property-objects>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h2>
+<p>Fowler talks about Property Objects in his <a href=http://martinfowler.com/eaaDev/uiArchs.html>GUI Architectures</a> piece.</p>
+<p>The basic idea is to promote the usual trio of:</p>
+<ul>
+<li><code>private String name</code></li>
+<li><code>public String getName</code></li>
+<li><code>public void setName(String name)</code></li>
+</ul>
+<p>Into a single:</p>
+<ul>
+<li><code>public StringProperty name()</code></li>
+</ul>
+<p>This makes a lot of sense, because now there is a single object representing and encapsulating the name concept, so it can be passed into a library, have <code>get</code>/<code>set</code> methods called on it, etc. It&rsquo;s a <code>Binding</code>, just with a different name.</p>
+<p>But it does kind of suck when you have to do:</p>
+<pre><code>String name = employee.name().get();
+
+employee.name().set(&quot;new name&quot;);
+</code></pre>
+<p>{: class=&ldquo;brush:java&rdquo;}</p>
+<p>Instead of just the usual <code>getName()</code> and <code>setName()</code> that is etched in our brains.</p>
+<p>The genesis for this post was how Scala could make this better.</p>
+<h2 id=using-scala-for-property-objects>
+Using Scala for Property Objects
+<a class=heading-link href=#using-scala-for-property-objects>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h2>
+<p>So, what if we could add some Scala magic? Here&rsquo;s an experiment:</p>
+<p>Normal Property Objects:</p>
+<pre><code>  val p = new Parent
+  val s: String = p.name.get
+  p.name.set(&quot;Bob&quot;)
+</code></pre>
+<p>{: class=&ldquo;brush:scala&rdquo;}</p>
+<p>Fair enough. But, now with Scala implicit conversion and operator overloading, we can remove both the <code>.get</code> on line 2 and the <code>.set</code> on line 3:</p>
+<pre><code>  val p = new Parent
+  val s: String = p.name
+  p.name := &quot;Bob&quot;
+</code></pre>
+<p>{: class=&ldquo;brush:scala&rdquo;}</p>
+<p>See this <a href=http://gist.github.com/245296>gist</a> for the full code, but most of the magic is:</p>
+<pre><code>/** PropertyObject interface for getting/setting values. */
+trait Property[T] {
+  /** @return the current value */
+  def get: T
+
+  /** @param value the new value */
+  def set(value: T)
+
+  /** @param value the new value via a ':=' operator */
+  def :=(value: T)
+}
+
+/** Companion object to the Property trait. */
+object Property {
+  /** Implicitly called to convert Property[T] -&gt; T */
+  implicit def p2value[T](p: Property[T]): T = p.get
+}
+</code></pre>
+<p>{: class=&ldquo;brush:scala&rdquo;}</p>
+<p>Between the <code>:=</code> operator and the <code>p2value</code> implicit, we&rsquo;ve basically made the Property Objects annoying extra <code>get()</code>/<code>set()</code> method calls go hide behind compiler syntax sugar.</p>
+<p>I like the <code>:=</code> operator too&ndash;it is succinct and just different enough to hint that it isn&rsquo;t a real <code>=</code> operation.</p>
+<p>Very cool. Makes me want to crank out some Scala domain objects.</p>
+<p>However, unfortunately, Property Objects do not support arbitrary instance evaluation.</p>
+<p>The <code>parent.name</code> Property Object is intrinsically linked to its <code>parent</code> instance and cannot be evaluated against other instances, e.g. for the table iterating over a row list example.</p>
+<p><strong>Pros and Cons of Scala Property Objects</strong></p>
+<ul>
+<li>Pro: type-safe</li>
+<li>Pro: fast&ndash;just method calls</li>
+<li>Con: no arbitrary instance evaluation</li>
+<li>Con: invasive&ndash;domain model must be changed to use <code>XxxProperty</code> objects. Though the <code>:=</code>/<code>implicit</code> aspects do make it more lightweight for users of the domain objects.</li>
+</ul>
+<h2 id=listscala-functions>
+List/Scala Functions
+<a class=heading-link href=#listscala-functions>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h2>
+<p>One last Scala trick is taken from <a href=http://liftweb.net/>Lift</a>&rsquo;s form library. It does not directly use bindings, but instead simulates them with Scala&rsquo;s incredibly succinct function declaration syntax.</p>
+<p>A basic example from <a href="http://groups.google.com/group/the-lift-book?pli=1">The Lift Book</a>:</p>
+<pre><code>def login(xhtml : NodeSeq) : NodeSeq = {
+  var user = &quot;&quot;; var pass = &quot;&quot;;
+  def auth () = { ... }
+  bind(&quot;login&quot;, xhtml,
+      &quot;user&quot; -&gt; SHtml.text(user, user = _)
+      &quot;pass&quot; -&gt; SHtml.password(pass, pass = _)
+      &quot;submit&quot; -&gt; SHtml.submit(&quot;Login&quot;, auth))
+}
+</code></pre>
+<p>{: class=&ldquo;brush:scala&rdquo;}</p>
+<p>I&rsquo;m not a Lift expert, but if you note the <code>SHtml.text</code> function, instead of taking 1 binding parameter (e.g. an OGNL string, a <code>Binding</code> instance, or a Property Object), Lift passes two parameters. The first is just the String value <code>user</code>. The second is a <code>Function1[String, Unit]</code> that, when executed, will assign the value passed to it back to the <code>user</code> local variable. It&rsquo;s basically an 8-character anonymous inner class.</p>
+<p>These two parameters form a makeshift <code>get</code>/<code>set</code> duo that does well emulating a <code>Binding</code> instance.</p>
+<p>Although, like property objects, it does not support arbitrary instance evaluation (AFAIK).</p>
+<p><strong>Pros and Cons of Lift/Scala Functions</strong></p>
+<ul>
+<li>Pro: type-safe</li>
+<li>Pro: fast&ndash;just method calls</li>
+<li>Pro: non-invasive</li>
+<li>Con: no arbitrary instance evaluation</li>
+<li>Con: Scala-only (relies on inline function declarations)</li>
+</ul>
+<h2 id=conclusion>
+Conclusion
+<a class=heading-link href=#conclusion>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h2>
+<p>This post ended differently than I thought I would&ndash;I was originally bullish about Scala being an awesome language to do data binding in.</p>
+<p>And, it basically is, with the syntax sugar making property objects more bearable, and Lift&rsquo;s form library highlighting a nice, simple approach.</p>
+<p>However, neither can handle the &ldquo;arbitrary instance evaluation&rdquo; that OGNL and Bindgen can do for UI elements like tables. Which, for non-iterative binding problems, is just fine. But, when you do start doing iterative binding, I think it would be missed.</p>
+<p>In the end, it doesn&rsquo;t so much matter what specific data binding approach you use. Nor do you have to use any of them, if you do not have a UI component/domain model gap to fill. But if your UI layer is getting verbose and repetitive, you might evaluate some of these data binding options and see which one can best fit your architecture and help integrate the UI and domain together.</p>
+</article>
+</section>
+</div>
+<footer class=footer>
+<section class=container>
+©
+2008 -
+2021
+Stephen Haberman
+·
+Powered by <a href=https://gohugo.io/>Hugo</a> & <a href=https://github.com/luizdepra/hugo-coder/>Coder</a>.
+</section>
+</footer>
+</main>
+<script src=/js/coder.min.03b17769f4f91ae35667e1f2a1ca8c16f50562576cf90ff32b3179926914daa5.js integrity="sha256-A7F3afT5GuNWZ+HyocqMFvUFYlds+Q/zKzF5kmkU2qU="></script>
+</body>
+</html>

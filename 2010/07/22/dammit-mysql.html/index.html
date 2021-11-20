@@ -1,0 +1,268 @@
+<!doctype html><html lang=en>
+<head>
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width,initial-scale=1">
+<meta http-equiv=content-language content="en">
+<meta name=color-scheme content="light dark">
+<meta name=author content="Stephen Haberman">
+<meta name=description content="Dammit, MySQL    Update May 2018: This is more rant-ish than I would write now, but it&rsquo;s my only post to hit the front page of HackerNews (it got to the number 2 spot back in 2010; I saved screenshots), so has a soft-place in my heart.
+After being a happy PostgreSQL user for years, I&rsquo;ve finally had to use MySQL for the last 6+ months.
+I have to admit, I was starting to think it wasn&rsquo;t all that bad: that maybe the &ldquo;MySQL is a toy&rdquo; rhetoric was outdated.">
+<meta name=keywords content="blog,developer,personal">
+<meta name=twitter:card content="summary">
+<meta name=twitter:title content="Dammit, MySQL">
+<meta name=twitter:description content="Dammit, MySQL    Update May 2018: This is more rant-ish than I would write now, but it&rsquo;s my only post to hit the front page of HackerNews (it got to the number 2 spot back in 2010; I saved screenshots), so has a soft-place in my heart.
+After being a happy PostgreSQL user for years, I&rsquo;ve finally had to use MySQL for the last 6+ months.
+I have to admit, I was starting to think it wasn&rsquo;t all that bad: that maybe the &ldquo;MySQL is a toy&rdquo; rhetoric was outdated.">
+<meta property="og:title" content="Dammit, MySQL">
+<meta property="og:description" content="Dammit, MySQL    Update May 2018: This is more rant-ish than I would write now, but it&rsquo;s my only post to hit the front page of HackerNews (it got to the number 2 spot back in 2010; I saved screenshots), so has a soft-place in my heart.
+After being a happy PostgreSQL user for years, I&rsquo;ve finally had to use MySQL for the last 6+ months.
+I have to admit, I was starting to think it wasn&rsquo;t all that bad: that maybe the &ldquo;MySQL is a toy&rdquo; rhetoric was outdated.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="http://draconianoverlord.com/2010/07/22/dammit-mysql.html/"><meta property="article:section" content="posts">
+<meta property="article:published_time" content="2010-07-22T00:00:00+00:00">
+<meta property="article:modified_time" content="2010-07-22T00:00:00+00:00">
+<title>
+Dammit, MySQL · Draconian Overlord
+</title>
+<link rel=canonical href=http://draconianoverlord.com/2010/07/22/dammit-mysql.html/>
+<link rel=preload href="/fonts/forkawesome-webfont.woff2?v=1.2.0" as=font type=font/woff2 crossorigin>
+<link rel=stylesheet href=/css/coder.min.d9fddbffe6f27e69985dc5fe0471cdb0e57fbf4775714bc3d847accb08f4a1f6.css integrity="sha256-2f3b/+byfmmYXcX+BHHNsOV/v0d1cUvD2Eesywj0ofY=" crossorigin=anonymous media=screen>
+<link rel=stylesheet href=/css/coder-dark.min.aa883b9ce35a8ff4a2a5008619005175e842bb18a8a9f9cc2bbcf44dab2d91fa.css integrity="sha256-qog7nONaj/SipQCGGQBRdehCuxioqfnMK7z0Tastkfo=" crossorigin=anonymous media=screen>
+<link rel=icon type=image/png href=/images/favicon-32x32.png sizes=32x32>
+<link rel=icon type=image/png href=/images/favicon-16x16.png sizes=16x16>
+<link rel=apple-touch-icon href=/images/apple-touch-icon.png>
+<link rel=apple-touch-icon sizes=180x180 href=/images/apple-touch-icon.png>
+<meta name=generator content="Hugo 0.89.4">
+</head>
+<body class="preload-transitions colorscheme-auto">
+<div class=float-container>
+<a id=dark-mode-toggle class=colorscheme-toggle>
+<i class="fa fa-adjust fa-fw" aria-hidden=true></i>
+</a>
+</div>
+<main class=wrapper>
+<nav class=navigation>
+<section class=container>
+<a class=navigation-title href=/>Draconian Overlord</a>
+Oppressing software entropy
+</section>
+</nav>
+<div class=content>
+<section class="container post">
+<article>
+<header>
+<div class=post-title>
+<h1 class=title>
+<a class=title-link href=http://draconianoverlord.com/2010/07/22/dammit-mysql.html/>
+Dammit, MySQL
+</a>
+</h1>
+</div>
+<div class=post-meta>
+<div class=date>
+<span class=posted-on>
+<i class="fa fa-calendar" aria-hidden=true></i>
+<time datetime=2010-07-22T00:00:00Z>
+July 22, 2010
+</time>
+</span>
+<span class=reading-time>
+<i class="fa fa-clock-o" aria-hidden=true></i>
+7-minute read
+</span>
+</div>
+<div class=categories>
+<i class="fa fa-folder" aria-hidden=true></i>
+<a href=/categories/favorites/>Favorites</a></div>
+</div>
+</header>
+<div>
+<h1 id=dammit-mysql>
+Dammit, MySQL
+<a class=heading-link href=#dammit-mysql>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h1>
+<p><strong>Update May 2018:</strong> This is more rant-ish than I would write now, but it&rsquo;s my only post to hit the front page of HackerNews (it got to the number 2 spot back in 2010; I saved screenshots), so has a soft-place in my heart.</p>
+<p>After being a happy PostgreSQL user for years, I&rsquo;ve finally had to use MySQL for the last 6+ months.</p>
+<p>I have to admit, I was starting to think it wasn&rsquo;t all that bad: that maybe the &ldquo;MySQL is a toy&rdquo; rhetoric was outdated.</p>
+<p>It&rsquo;s not.</p>
+<p>Here is my current laundry list of &ldquo;dammit, MySQL&rdquo; complaints:</p>
+<ul>
+<li>DDL Doesn&rsquo;t Respect Transactions</li>
+<li>No Deferred Foreign Key Constraints</li>
+<li>No Deferred Unique Key Constraints</li>
+<li>ANSI Mode Defaults Off</li>
+<li>Not Really Not Nulls</li>
+<li>Auto-Changing Timestamps</li>
+<li>Crappy Error Messages</li>
+</ul>
+<h2 id=ddl-doesnt-respect-transactions>
+DDL Doesn&rsquo;t Respect Transactions
+<a class=heading-link href=#ddl-doesnt-respect-transactions>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h2>
+<p>My biggest complaint is that MySQL&rsquo;s DDL operations (<code>CREATE TABLE</code>, <code>ADD COLUMN</code>, etc.) do not occur within transactions.</p>
+<p>Well, probably&ndash;in typical MySQL fashion, you can execute <code>CREATE TABLE</code>/etc. within a transaction (e.g. after a <code>BEGIN</code>) and, instead of failing, MySQL will blithely commit all existing work in your transaction, create the table, and then let you continue on your merry way.</p>
+<p>This makes deployments a crap shoot&ndash;whether you&rsquo;re using <a href=http://joist.ws/ormMigrations.html>migrations</a> or a hand-coded SQL upgrade script, you better hope the whole thing applies cleanly, because if your script blows up halfway through, you&rsquo;re stuck with a schema that is somewhere between versions.</p>
+<p>Getting back to a deployable state, or even one where you can rerun the fixed upgrade script, means either manually teasing the schema back to the old version, or reverting to a snapshot and starting all over.</p>
+<p>And this isn&rsquo;t just MyISAM&ndash;this is the InnoDB engine as well.</p>
+<p><a href=http://www.postgresql.org>PostgreSQL</a>, on the other hand, executes all DDL within a real transaction, and if one <code>CREATE TABLE</code>/<code>ADD COLUMN</code> fails, from experience, I know the entire schema rolls back to the prior state.</p>
+<h2 id=no-deferred-foreign-key-constraints>
+No Deferred Foreign Key Constraints
+<a class=heading-link href=#no-deferred-foreign-key-constraints>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h2>
+<p>Deferred foreign key constraints mean you can do:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sql data-lang=sql><span style=color:#66d9ef>BEGIN</span>;
+<span style=color:#66d9ef>INSERT</span> <span style=color:#66d9ef>INTO</span> child (id, parent_id, name) <span style=color:#66d9ef>VALUES</span> (<span style=color:#ae81ff>2</span>, <span style=color:#ae81ff>1</span>, <span style=color:#e6db74>&#39;child&#39;</span>);
+<span style=color:#66d9ef>INSERT</span> <span style=color:#66d9ef>INTO</span> parent (id, name) <span style=color:#66d9ef>VALUES</span> (<span style=color:#ae81ff>1</span>, <span style=color:#e6db74>&#39;parent&#39;</span>);
+<span style=color:#66d9ef>COMMIT</span>;
+</code></pre></div><p>Note that technically we&rsquo;ve inserted <code>child.parent_id=1</code>, but <code>parent.id=1</code> is not in the database yet.</p>
+<p>Having deferred foreign key constraints means this is okay as long as the <code>parent.id=1</code> row shows up before the transaction commits.</p>
+<p>Not having deferred foreign key constraints means <code>INSERT INTO child</code> blows up right away. You instead have to ensure <code>INSERT INTO parent</code> comes first.</p>
+<p>While this doesn&rsquo;t seem to be a big deal, the ability to defer foreign keys and freely order <code>INSERTs</code> within a transaction makes technologies like ORMs much simpler.</p>
+<p>It also becomes crucial if you have a two-way relationship between rows, e.g.:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sql data-lang=sql><span style=color:#66d9ef>BEGIN</span>;
+<span style=color:#66d9ef>INSERT</span> <span style=color:#66d9ef>INTO</span> child (id, parent_id, name) <span style=color:#66d9ef>VALUES</span> (<span style=color:#ae81ff>2</span>, <span style=color:#ae81ff>1</span>, <span style=color:#e6db74>&#39;child&#39;</span>);
+<span style=color:#66d9ef>INSERT</span> <span style=color:#66d9ef>INTO</span> parent (id, name, current_child_id) <span style=color:#66d9ef>VALUES</span> (<span style=color:#ae81ff>1</span>, <span style=color:#e6db74>&#39;parent&#39;</span>, <span style=color:#ae81ff>1</span>);
+<span style=color:#66d9ef>COMMIT</span>;
+</code></pre></div><p>Both statements depend on the other&ndash;there is no way to execute these two statements if you lack deferred foreign key constraints.</p>
+<p>You are reduced to making one of them <code>nullable</code>, e.g. <code>parent.current_child_id</code>, and then creating a partially-valid <code>Parent</code> and fully-valid <code>Child</code>, forcing your ORM to flush to SQL, then going back and updating <code>Parent</code> to point to the new <code>Child</code>, and doing a final flush+commit.</p>
+<p><a href=http://www.mysql.com>MySQL</a> still doesn&rsquo;t have deferred foreign key constraints, <a href=http://www.postgresql.org>PostgreSQL</a> has had them for as long as I&rsquo;ve used it. Even SQLite <a href=http://www.sqlite.org/foreignkeys.html#fk_deferred>has</a> deferred foreign keys constraints.</p>
+<h2 id=no-deferred-unique-key-constraints>
+No Deferred Unique Key Constraints
+<a class=heading-link href=#no-deferred-unique-key-constraints>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h2>
+<p>Deferred unique constraints are similar, but mean you can temporarily violate a unique constraint, as long as you clean things up before the transaction commits. E.g.:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sql data-lang=sql><span style=color:#66d9ef>BEGIN</span>;
+<span style=color:#66d9ef>INSERT</span> <span style=color:#66d9ef>INTO</span> <span style=color:#66d9ef>user</span> (id, username) <span style=color:#66d9ef>VALUES</span> (<span style=color:#ae81ff>1</span>, <span style=color:#e6db74>&#39;bob&#39;</span>);
+<span style=color:#66d9ef>INSERT</span> <span style=color:#66d9ef>INTO</span> <span style=color:#66d9ef>user</span> (id, username) <span style=color:#66d9ef>VALUES</span> (<span style=color:#ae81ff>2</span>, <span style=color:#e6db74>&#39;fred&#39;</span>);
+<span style=color:#66d9ef>COMMIT</span>;
+
+<span style=color:#75715e>-- want to change bob-&gt;fred, fred-&gt;bob
+</span><span style=color:#75715e></span><span style=color:#66d9ef>BEGIN</span>;
+<span style=color:#66d9ef>UPDATE</span> <span style=color:#66d9ef>user</span> <span style=color:#66d9ef>SET</span> username <span style=color:#f92672>=</span> <span style=color:#e6db74>&#39;fred&#39;</span> <span style=color:#66d9ef>WHERE</span> id <span style=color:#f92672>=</span> <span style=color:#ae81ff>1</span>;
+<span style=color:#66d9ef>UPDATE</span> <span style=color:#66d9ef>user</span> <span style=color:#66d9ef>SET</span> username <span style=color:#f92672>=</span> <span style=color:#e6db74>&#39;bob&#39;</span> <span style=color:#66d9ef>WHERE</span> id <span style=color:#f92672>=</span> <span style=color:#ae81ff>2</span>;
+<span style=color:#66d9ef>COMMIT</span>;
+</code></pre></div><p>Without deferred unique constraints, changing <code>bob -> fred</code> would blow up immediately. Instead you have to dance around the issue by using a temporary value, e.g.:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sql data-lang=sql><span style=color:#66d9ef>BEGIN</span>;
+<span style=color:#66d9ef>UPDATE</span> <span style=color:#66d9ef>user</span> <span style=color:#66d9ef>SET</span> username <span style=color:#f92672>=</span> <span style=color:#e6db74>&#39;temp&#39;</span> <span style=color:#66d9ef>WHERE</span> id <span style=color:#f92672>=</span> <span style=color:#ae81ff>1</span>;
+<span style=color:#66d9ef>UPDATE</span> <span style=color:#66d9ef>user</span> <span style=color:#66d9ef>SET</span> username <span style=color:#f92672>=</span> <span style=color:#e6db74>&#39;bob&#39;</span> <span style=color:#66d9ef>WHERE</span> id <span style=color:#f92672>=</span> <span style=color:#ae81ff>2</span>;
+<span style=color:#66d9ef>UPDATE</span> <span style=color:#66d9ef>user</span> <span style=color:#66d9ef>SET</span> username <span style=color:#f92672>=</span> <span style=color:#e6db74>&#39;fred&#39;</span> <span style=color:#66d9ef>WHERE</span> id <span style=color:#f92672>=</span> <span style=color:#ae81ff>1</span>;
+<span style=color:#66d9ef>COMMIT</span>;
+</code></pre></div><p>Like foreign key constraints, this extra hoop means two explicit unit of work flushes as you change <code>User1</code> to a temp value, flush, change <code>User2</code> to the right value, flush, and finally change <code>User1</code> to the right value, flush and commit.</p>
+<p>With deferred unique constraints, it is very simple to set <code>User1</code> to the new value, set <code>User2</code> to the new value, and have your ORM auto-flush. It will just work.</p>
+<p><a href=http://www.mysql.com>MySQL</a> doesn&rsquo;t have deferred unique constraints, <a href=http://www.postgresql.org>PostgreSQL</a> just got them in (the nearly released) 9.0.</p>
+<h2 id=ansi-mode-defaults-off>
+ANSI Mode Defaults Off
+<a class=heading-link href=#ansi-mode-defaults-off>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h2>
+<p>I was dumbfounded to learn about MySQL&rsquo;s <a href=http://dev.mysql.com/doc/refman/5.1/en/server-sql-mode.html>sql-mode</a> option.</p>
+<p>What kind of product:</p>
+<ol>
+<li>Lets users <em>disable standards compliance</em> as a feature?</li>
+<li>Sets the default mode to <strong>not standards complaint</strong>?</li>
+</ol>
+<p>With MySQL, you can use <code>ANSI</code> mode, which affects such non-trivial things as <em>it actually uses the same escape character as the SQL standard</em>. Amazing!</p>
+<p><a href=http://www.postgresql.org>PostgreSQL</a> doesn&rsquo;t screw around like this, it just always implements the standard.</p>
+<h2 id=not-really-not-nulls>
+Not Really Not Nulls
+<a class=heading-link href=#not-really-not-nulls>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h2>
+<p>Also hidden in the <a href=http://dev.mysql.com/doc/refman/5.1/en/server-sql-mode.html>sql-mode</a> docs was an option to make <code>NOT NULL</code> actually mean <code>NOT NULL</code>.</p>
+<p>For example, adding the <code>TRADITIONAL</code> SQL mode restores the sanity:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sql data-lang=sql>mysql<span style=color:#f92672>&gt;</span> <span style=color:#66d9ef>create</span> <span style=color:#66d9ef>table</span> <span style=color:#66d9ef>user</span> (username varchar(<span style=color:#ae81ff>50</span>) <span style=color:#66d9ef>not</span> <span style=color:#66d9ef>null</span>);
+Query OK, <span style=color:#ae81ff>0</span> <span style=color:#66d9ef>rows</span> affected (<span style=color:#ae81ff>0</span>.<span style=color:#ae81ff>00</span> sec)
+
+<span style=color:#75715e>-- this works when it really should not
+</span><span style=color:#75715e></span>mysql<span style=color:#f92672>&gt;</span> <span style=color:#66d9ef>insert</span> <span style=color:#66d9ef>into</span> <span style=color:#66d9ef>user</span> () <span style=color:#66d9ef>values</span> ();
+Query OK, <span style=color:#ae81ff>1</span> <span style=color:#66d9ef>row</span> affected, <span style=color:#ae81ff>1</span> warning (<span style=color:#ae81ff>0</span>.<span style=color:#ae81ff>00</span> sec)
+
+mysql<span style=color:#f92672>&gt;</span> <span style=color:#66d9ef>set</span> sql_mode<span style=color:#f92672>=</span><span style=color:#e6db74>&#39;ANSI&#39;</span>;
+Query OK, <span style=color:#ae81ff>0</span> <span style=color:#66d9ef>rows</span> affected (<span style=color:#ae81ff>0</span>.<span style=color:#ae81ff>00</span> sec)
+
+mysql<span style=color:#f92672>&gt;</span> <span style=color:#66d9ef>insert</span> <span style=color:#66d9ef>into</span> <span style=color:#66d9ef>user</span> () <span style=color:#66d9ef>values</span> ();
+Query OK, <span style=color:#ae81ff>1</span> <span style=color:#66d9ef>row</span> affected, <span style=color:#ae81ff>1</span> warning (<span style=color:#ae81ff>0</span>.<span style=color:#ae81ff>00</span> sec)
+
+mysql<span style=color:#f92672>&gt;</span> <span style=color:#66d9ef>set</span> sql_mode<span style=color:#f92672>=</span><span style=color:#e6db74>&#39;ANSI,TRADITIONAL&#39;</span>;
+Query OK, <span style=color:#ae81ff>0</span> <span style=color:#66d9ef>rows</span> affected (<span style=color:#ae81ff>0</span>.<span style=color:#ae81ff>00</span> sec)
+
+<span style=color:#75715e>-- finally, it blows up
+</span><span style=color:#75715e></span>mysql<span style=color:#f92672>&gt;</span> <span style=color:#66d9ef>insert</span> <span style=color:#66d9ef>into</span> <span style=color:#66d9ef>user</span> () <span style=color:#66d9ef>values</span> ();
+ERROR <span style=color:#ae81ff>1364</span> (HY000): Field <span style=color:#e6db74>&#39;username&#39;</span> doesn<span style=color:#e6db74>&#39;t have a default value
+</span></code></pre></div><p>So, does your MySQL database have some <code>NOT NULL</code> columns? Are you really sure they don&rsquo;t have <code>null</code> values in them? Have you checked your SQL mode?</p>
+<p>If you use <a href=http://www.postgresql.org>PostgreSQL</a>, you can be sure that your <code>NOT NULL</code> columns do not have <code>null</code> values in them.</p>
+<p>(<strong>Update:</strong> I was wrong&ndash;MySQL will not insert <code>null</code>, but instead insert a default value, e.g. 0 for int or empty-string for strings. Personally, since I did not include a <code>DEFAULT</code> clause in my DDL, I did not expect the database to add a <code>DEFAULT</code> value for me.)</p>
+<h2 id=auto-changing-timestamps>
+Auto-Changing Timestamps
+<a class=heading-link href=#auto-changing-timestamps>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h2>
+<p>What would most developers assume happens if today you run:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sql data-lang=sql><span style=color:#66d9ef>CREATE</span> <span style=color:#66d9ef>TABLE</span> employee (
+  id int,
+  name varchar(<span style=color:#ae81ff>50</span>),
+  created <span style=color:#66d9ef>timestamp</span>
+);
+<span style=color:#66d9ef>INSERT</span> <span style=color:#66d9ef>INTO</span> employee (id, name, <span style=color:#66d9ef>timestamp</span>) (<span style=color:#ae81ff>1</span>, <span style=color:#e6db74>&#39;bob&#39;</span>, NOW());
+</code></pre></div><p>Then tomorrow you do:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sql data-lang=sql><span style=color:#66d9ef>UPDATE</span> employee <span style=color:#66d9ef>SET</span> name <span style=color:#f92672>=</span> <span style=color:#e6db74>&#39;fred&#39;</span>;
+</code></pre></div><p>Quick, what&rsquo;s <code>created</code>? Yesterday, right? Ah ha! No. It&rsquo;s <a href=http://dev.mysql.com/doc/refman/5.0/en/timestamp.html>today</a>:</p>
+<p><em>&ldquo;With neither DEFAULT nor ON UPDATE clauses, it is the same as DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP."</em></p>
+<p>See that <code>ON UPDATE CURRENT_TIMESTAMP</code>? That means MySQL <strong>changes the column value each time you update the row</strong>.</p>
+<p>What MySQL developer ever thought that this was a good default behavior? I&rsquo;m trying to think if this is the worst offender of &ldquo;least surprise&rdquo; or the if <code>NOT REALLY NOT NULL</code> is worse. It&rsquo;s close.</p>
+<h2 id=crappy-error-messages>
+Crappy Error Messages
+<a class=heading-link href=#crappy-error-messages>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h2>
+<p>To top it all off, MySQL error messages are a joke. This beauty:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-plain data-lang=plain>Can&#39;t create table &#39;foo.#sql-338_90&#39; (errno: 150)
+</code></pre></div><p>Simply means &ldquo;you tried to reference a non-existent table&rdquo;.</p>
+<p>For as long as MySQL has been around, and how many countless users have run into this issue, you&rsquo;d think they&rsquo;d consider displaying a better error message.</p>
+<p>Even <a href=http://www.git-scm.org>git</a> is better at fixing its ease-of-use issues than MySQL.</p>
+<p>More often than not, <a href=http://www.postgresql.org>PostgreSQL</a> errors say plainly what really went wrong.</p>
+<h2 id=dammit-aws>
+Dammit, AWS
+<a class=heading-link href=#dammit-aws>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h2>
+<p>Unfortunately, <a href=http://aws.amazon.com/rds/>RDS</a> is awesome, and RDS uses MySQL.</p>
+<p>I, and <a href="http://developer.amazonwebservices.com/connect/thread.jspa?threadID=37834">many others</a>, are pulling for Amazon to add PostgreSQL support. Maybe with the first-class replication in the 9.0 release, it will happen sooner rather than later. I can hope.</p>
+</div>
+<footer>
+<div id=disqus_thread></div>
+<script type=application/javascript>var disqus_config=function(){};(function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById('disqus_thread').innerHTML='Disqus comments not available by default when the website is previewed locally.';return}var b=document,a=b.createElement('script');a.async=!0,a.src='//shaberman.disqus.com/embed.js',a.setAttribute('data-timestamp',+new Date),(b.head||b.body).appendChild(a)})()</script>
+<noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript>
+<a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a>
+</footer>
+</article>
+</section>
+</div>
+<footer class=footer>
+<section class=container>
+©
+2008 -
+2021
+Stephen Haberman
+·
+Powered by <a href=https://gohugo.io/>Hugo</a> & <a href=https://github.com/luizdepra/hugo-coder/>Coder</a>.
+</section>
+</footer>
+</main>
+<script src=/js/coder.min.03b17769f4f91ae35667e1f2a1ca8c16f50562576cf90ff32b3179926914daa5.js integrity="sha256-A7F3afT5GuNWZ+HyocqMFvUFYlds+Q/zKzF5kmkU2qU="></script>
+</body>
+</html>

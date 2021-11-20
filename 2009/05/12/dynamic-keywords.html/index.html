@@ -1,0 +1,131 @@
+<!doctype html><html lang=en>
+<head>
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width,initial-scale=1">
+<meta http-equiv=content-language content="en">
+<meta name=color-scheme content="light dark">
+<meta name=author content="Stephen Haberman">
+<meta name=description content="Dynamic Keywords    One of the things I love about boo are its macros that allow you to rewrite the AST at compile time.
+This makes a lot of sense. All of malleability that people loves in dynamic languages like Ruby and Groovy, screwing with classes at runtime, etc., to me, should be done at compile time.
+Typically, meta-programming in dynamic languages is only performed at load time anyway, when the interpreter first loads a file&mldr;it is not like after being deployed for 2 weeks, the Employee object suddenly gets another attribute added to it.">
+<meta name=keywords content="blog,developer,personal">
+<meta name=twitter:card content="summary">
+<meta name=twitter:title content="Dynamic Keywords">
+<meta name=twitter:description content="Dynamic Keywords    One of the things I love about boo are its macros that allow you to rewrite the AST at compile time.
+This makes a lot of sense. All of malleability that people loves in dynamic languages like Ruby and Groovy, screwing with classes at runtime, etc., to me, should be done at compile time.
+Typically, meta-programming in dynamic languages is only performed at load time anyway, when the interpreter first loads a file&mldr;it is not like after being deployed for 2 weeks, the Employee object suddenly gets another attribute added to it.">
+<meta property="og:title" content="Dynamic Keywords">
+<meta property="og:description" content="Dynamic Keywords    One of the things I love about boo are its macros that allow you to rewrite the AST at compile time.
+This makes a lot of sense. All of malleability that people loves in dynamic languages like Ruby and Groovy, screwing with classes at runtime, etc., to me, should be done at compile time.
+Typically, meta-programming in dynamic languages is only performed at load time anyway, when the interpreter first loads a file&mldr;it is not like after being deployed for 2 weeks, the Employee object suddenly gets another attribute added to it.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="http://draconianoverlord.com/2009/05/12/dynamic-keywords.html/"><meta property="article:section" content="posts">
+<meta property="article:published_time" content="2009-05-12T00:00:00+00:00">
+<meta property="article:modified_time" content="2009-05-12T00:00:00+00:00">
+<title>
+Dynamic Keywords · Draconian Overlord
+</title>
+<link rel=canonical href=http://draconianoverlord.com/2009/05/12/dynamic-keywords.html/>
+<link rel=preload href="/fonts/forkawesome-webfont.woff2?v=1.2.0" as=font type=font/woff2 crossorigin>
+<link rel=stylesheet href=/css/coder.min.d9fddbffe6f27e69985dc5fe0471cdb0e57fbf4775714bc3d847accb08f4a1f6.css integrity="sha256-2f3b/+byfmmYXcX+BHHNsOV/v0d1cUvD2Eesywj0ofY=" crossorigin=anonymous media=screen>
+<link rel=stylesheet href=/css/coder-dark.min.aa883b9ce35a8ff4a2a5008619005175e842bb18a8a9f9cc2bbcf44dab2d91fa.css integrity="sha256-qog7nONaj/SipQCGGQBRdehCuxioqfnMK7z0Tastkfo=" crossorigin=anonymous media=screen>
+<link rel=icon type=image/png href=/images/favicon-32x32.png sizes=32x32>
+<link rel=icon type=image/png href=/images/favicon-16x16.png sizes=16x16>
+<link rel=apple-touch-icon href=/images/apple-touch-icon.png>
+<link rel=apple-touch-icon sizes=180x180 href=/images/apple-touch-icon.png>
+<meta name=generator content="Hugo 0.89.4">
+</head>
+<body class="preload-transitions colorscheme-auto">
+<div class=float-container>
+<a id=dark-mode-toggle class=colorscheme-toggle>
+<i class="fa fa-adjust fa-fw" aria-hidden=true></i>
+</a>
+</div>
+<main class=wrapper>
+<nav class=navigation>
+<section class=container>
+<a class=navigation-title href=/>Draconian Overlord</a>
+Oppressing software entropy
+</section>
+</nav>
+<div class=content>
+<section class="container post">
+<article>
+<header>
+<div class=post-title>
+<h1 class=title>
+<a class=title-link href=http://draconianoverlord.com/2009/05/12/dynamic-keywords.html/>
+Dynamic Keywords
+</a>
+</h1>
+</div>
+<div class=post-meta>
+<div class=date>
+<span class=posted-on>
+<i class="fa fa-calendar" aria-hidden=true></i>
+<time datetime=2009-05-12T00:00:00Z>
+May 12, 2009
+</time>
+</span>
+<span class=reading-time>
+<i class="fa fa-clock-o" aria-hidden=true></i>
+3-minute read
+</span>
+</div>
+<div class=categories>
+<i class="fa fa-folder" aria-hidden=true></i>
+<a href=/categories/languages/>Languages</a></div>
+</div>
+</header>
+<div>
+<h1 id=dynamic-keywords>
+Dynamic Keywords
+<a class=heading-link href=#dynamic-keywords>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h1>
+<p>One of the things I love about <a href=http://boo.codehaus.org>boo</a> are its <a href=http://boo.codehaus.org/Syntactic+Macros>macros</a> that allow you to rewrite the AST at compile time.</p>
+<p>This makes a lot of sense. All of malleability that people loves in dynamic languages like Ruby and Groovy, screwing with classes at runtime, etc., to me, should be done at compile time.</p>
+<p>Typically, meta-programming in dynamic languages is only performed at load time anyway, when the interpreter first loads a file&mldr;it is not like after being deployed for 2 weeks, the Employee object suddenly gets another attribute added to it. At least I hope not.</p>
+<p>Historically it has not been possible to plug into the compiler of type-safe languages, so it was easier to go with dynamic languages that let you screw with their types. I&rsquo;ve seen Scala making some progress towards type-safe compiler plugins, but they seem non-trivial to write. Though, granted, I have no real experience other than glancing at them and thinking &ldquo;wow, looks hard.&rdquo;</p>
+<p>Anyway, back to boo, what I find intriguing is if a language was macros all the way down&mldr;i.e. even basic constructs like <code>class</code>, <code>method</code>, and <code>if</code> were not baked into the syntax, but just macros that ship by default and that you could override/add to as needed.</p>
+<p>I think the result would end up looking something like <a href=http://www.iolanguage.com/>io</a>, albeit with the magic happening at compile-time instead of runtime.</p>
+<p>I&rsquo;ve been typing out a syntax:</p>
+<pre><code>class Foo extends(Object) implements(Bar)
+    field name
+
+    method bar param(p1, String) param(p2, String)
+        ...
+    end
+end
+</code></pre>
+<p>Where <code>class</code> is a shipped macro. <code>extends</code> and <code>implements</code> are&mldr;additive-macros? I dunno, either options baked into the <code>class</code> macro itself, or, ideally, layered onto the <code>class</code> macro. So, conceptually, you could add your own extensions, e.g. <code>class Foo mixin(Bar)</code> or what not.</p>
+<p>The <code>field name</code> and <code>method bar</code> lines are a little jarring at first&ndash;in C-based languages, the field-ness/method-ness is taken for granted by being baked into the syntax, so you don&rsquo;t have to explicitly say &ldquo;I&rsquo;m doing a field now&rdquo;, &ldquo;I&rsquo;m doing a method now&rdquo;.</p>
+<p>What I don&rsquo;t have an intelligent answer for is how to differentiate between regular runtime method calls and AST-mucking compile-time macro calls.</p>
+<p>Maybe something silly like prefixes, e.g. <code>$class Foo</code> or <code>@class Foo</code>. A little too Perl for my liking. I also thought of suffixes, e.g. <code>class: Foo</code>, <code>field: name</code>, which seems better.</p>
+<p>There is a risk of ending up too fancy&ndash;a mailing list discussion recently made the comment that Java hits a sweet spot of being simple enough to just glance at and understand, without having to know all of the concise DSL-enabling syntax tricks of Ruby/Groovy.</p>
+<p>Nonetheless, if done right, I think macros all the way down would be very cool.</p>
+</div>
+<footer>
+<div id=disqus_thread></div>
+<script type=application/javascript>var disqus_config=function(){};(function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById('disqus_thread').innerHTML='Disqus comments not available by default when the website is previewed locally.';return}var b=document,a=b.createElement('script');a.async=!0,a.src='//shaberman.disqus.com/embed.js',a.setAttribute('data-timestamp',+new Date),(b.head||b.body).appendChild(a)})()</script>
+<noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript>
+<a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a>
+</footer>
+</article>
+</section>
+</div>
+<footer class=footer>
+<section class=container>
+©
+2008 -
+2021
+Stephen Haberman
+·
+Powered by <a href=https://gohugo.io/>Hugo</a> & <a href=https://github.com/luizdepra/hugo-coder/>Coder</a>.
+</section>
+</footer>
+</main>
+<script src=/js/coder.min.03b17769f4f91ae35667e1f2a1ca8c16f50562576cf90ff32b3179926914daa5.js integrity="sha256-A7F3afT5GuNWZ+HyocqMFvUFYlds+Q/zKzF5kmkU2qU="></script>
+</body>
+</html>

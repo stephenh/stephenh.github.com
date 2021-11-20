@@ -1,0 +1,257 @@
+<!doctype html><html lang=en>
+<head>
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width,initial-scale=1">
+<meta http-equiv=content-language content="en">
+<meta name=color-scheme content="light dark">
+<meta name=author content="Stephen Haberman">
+<meta name=description content="There is a lot written about class vs. prototypical inheritance, much of it very good, and so I&rsquo;m not sure I have that much to add (I&rsquo;m also ~5-10 years late to meaningfully contribute to the conversation).
+But I do want to mention my knawwing suspicion that I don&rsquo;t think they are as different as people think they are.
+Granted, this is likely my old-school class/OO background rationalizing a new way of thinking, but hear me out.">
+<meta name=keywords content="blog,developer,personal">
+<meta name=twitter:card content="summary">
+<meta name=twitter:title content="Are Classes and Prototypes that Different?">
+<meta name=twitter:description content="There is a lot written about class vs. prototypical inheritance, much of it very good, and so I&rsquo;m not sure I have that much to add (I&rsquo;m also ~5-10 years late to meaningfully contribute to the conversation).
+But I do want to mention my knawwing suspicion that I don&rsquo;t think they are as different as people think they are.
+Granted, this is likely my old-school class/OO background rationalizing a new way of thinking, but hear me out.">
+<meta property="og:title" content="Are Classes and Prototypes that Different?">
+<meta property="og:description" content="There is a lot written about class vs. prototypical inheritance, much of it very good, and so I&rsquo;m not sure I have that much to add (I&rsquo;m also ~5-10 years late to meaningfully contribute to the conversation).
+But I do want to mention my knawwing suspicion that I don&rsquo;t think they are as different as people think they are.
+Granted, this is likely my old-school class/OO background rationalizing a new way of thinking, but hear me out.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="http://draconianoverlord.com/2018/03/16/are-classes-and-prototypes-that-different.html/"><meta property="article:section" content="posts">
+<meta property="article:published_time" content="2018-03-16T00:00:00+00:00">
+<meta property="article:modified_time" content="2018-03-16T00:00:00+00:00">
+<title>
+Are Classes and Prototypes that Different? · Draconian Overlord
+</title>
+<link rel=canonical href=http://draconianoverlord.com/2018/03/16/are-classes-and-prototypes-that-different.html/>
+<link rel=preload href="/fonts/forkawesome-webfont.woff2?v=1.2.0" as=font type=font/woff2 crossorigin>
+<link rel=stylesheet href=/css/coder.min.d9fddbffe6f27e69985dc5fe0471cdb0e57fbf4775714bc3d847accb08f4a1f6.css integrity="sha256-2f3b/+byfmmYXcX+BHHNsOV/v0d1cUvD2Eesywj0ofY=" crossorigin=anonymous media=screen>
+<link rel=stylesheet href=/css/coder-dark.min.aa883b9ce35a8ff4a2a5008619005175e842bb18a8a9f9cc2bbcf44dab2d91fa.css integrity="sha256-qog7nONaj/SipQCGGQBRdehCuxioqfnMK7z0Tastkfo=" crossorigin=anonymous media=screen>
+<link rel=icon type=image/png href=/images/favicon-32x32.png sizes=32x32>
+<link rel=icon type=image/png href=/images/favicon-16x16.png sizes=16x16>
+<link rel=apple-touch-icon href=/images/apple-touch-icon.png>
+<link rel=apple-touch-icon sizes=180x180 href=/images/apple-touch-icon.png>
+<meta name=generator content="Hugo 0.89.4">
+</head>
+<body class="preload-transitions colorscheme-auto">
+<div class=float-container>
+<a id=dark-mode-toggle class=colorscheme-toggle>
+<i class="fa fa-adjust fa-fw" aria-hidden=true></i>
+</a>
+</div>
+<main class=wrapper>
+<nav class=navigation>
+<section class=container>
+<a class=navigation-title href=/>Draconian Overlord</a>
+Oppressing software entropy
+</section>
+</nav>
+<div class=content>
+<section class="container post">
+<article>
+<header>
+<div class=post-title>
+<h1 class=title>
+<a class=title-link href=http://draconianoverlord.com/2018/03/16/are-classes-and-prototypes-that-different.html/>
+Are Classes and Prototypes that Different?
+</a>
+</h1>
+</div>
+<div class=post-meta>
+<div class=date>
+<span class=posted-on>
+<i class="fa fa-calendar" aria-hidden=true></i>
+<time datetime=2018-03-16T00:00:00Z>
+March 16, 2018
+</time>
+</span>
+<span class=reading-time>
+<i class="fa fa-clock-o" aria-hidden=true></i>
+12-minute read
+</span>
+</div>
+<div class=categories>
+<i class="fa fa-folder" aria-hidden=true></i>
+<a href=/categories/typescript/>TypeScript</a>
+<span class=separator>•</span>
+<a href=/categories/languages/>Languages</a></div>
+</div>
+</header>
+<div>
+<p>There is a lot written about class vs. prototypical inheritance, much of it very good, and so I&rsquo;m not sure I have that much to add (I&rsquo;m also ~5-10 years late to meaningfully contribute to the conversation).</p>
+<p>But I do want to mention my knawwing suspicion that I don&rsquo;t think they are as different as people think they are.</p>
+<p>Granted, this is likely my old-school class/OO background rationalizing a new way of thinking, but hear me out.</p>
+<h2 id=class-v-table-based-dispatch>
+Class (v-table) based dispatch
+<a class=heading-link href=#class-v-table-based-dispatch>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h2>
+<p>In &ldquo;static&rdquo; languages, method dispatch (for (virtual) instance methods) is still done at runtime, e.g. if you have the stereotypical example of <code>class Dog extends Animal</code> and <code>class Cat extends Animal</code> and do:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java>  Animal a <span style=color:#f92672>=</span> getMeAnAnimal<span style=color:#f92672>();</span>
+  a<span style=color:#f92672>.</span><span style=color:#a6e22e>walk</span><span style=color:#f92672>();</span>
+</code></pre></div><p>The execution of <code>a.walk()</code> will, at runtime, check if your <code>a</code> variable is a <code>Dog</code>, <code>Cat</code>, or some other <code>Animal</code>, and call the right <code>walk</code> method.</p>
+<p>The fancy word for this is polymorphism: the <code>a.walk()</code> execution can change (&ldquo;morph&rdquo;) into many (&ldquo;poly&rdquo;) implementations: it could be the dog <code>walk</code> method, the cat <code>walk</code> method, etc. (I don&rsquo;t remember if I was more relieved or disappointed that an intimidating word like &ldquo;polymorphism&rdquo; was actually such a simple thing.)</p>
+<p>It does this by, in C++ parlance (which disclaimer I&rsquo;ve never written professionally, so bear with my potential abuse of terminology) using virtual tables (&ldquo;v-tables&rdquo;), which are just look up tables of &ldquo;method <code>walk</code> is opcode <code>XYZ</code>&rdquo;.</p>
+<p>Java works in a similar way, where each class file has a method lookup table baked into it.</p>
+<p>(For simplicity, I&rsquo;m going to avoid the tangent that C++ can have non-virtual methods.)</p>
+<p>So, the runtime method resolution looks like:</p>
+<p>Steps for <code>d1.walk()</code>:</p>
+<ol>
+<li>Since <code>d1</code> is a <code>Dog</code> instance, check the <code>Dog</code> v-table for the <code>walk</code> method, it&rsquo;s found, call it.</li>
+</ol>
+<p>Steps for <code>d1.jump()</code>:</p>
+<ol>
+<li>Since <code>d1</code> is a <code>Dog</code> instance, check the <code>Dog</code> v-table for the <code>jump</code> method, it is not found.</li>
+<li>Since <code>Dog</code> extends <code>Animal</code>, check the <code>Animal</code> v-table for the <code>jump</code> method, it is found, call it.</li>
+</ol>
+<p>Note that we never look at <code>d1</code> at all (other than to determine it is a <code>Dog</code>).</p>
+<h2 id=prototype-map-based-dispatch>
+Prototype (map) based dispatch
+<a class=heading-link href=#prototype-map-based-dispatch>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h2>
+<p>Now let&rsquo;s see how this works with prototype method dispatch, where we have a typical chained of prototypes set up, e.g. <code>Dog.__proto__ = Animal.prototype</code>, etc.</p>
+<p>(I&rsquo;m going to hand wave and assume you know about prototype chaining, e.g. we either did this by hand, or used the ES6/TypeScript <code>class Dog extends Animal</code> syntax to setup the prototype chaining for us implicitly.)</p>
+<p>Now it looks like:</p>
+<p>Steps for <code>d1.walk()</code>:</p>
+<ol>
+<li>Check the <code>d1</code> map for a <code>walk</code> property, it is not found.</li>
+<li>Since the <code>d1.__proto__</code> is <code>Dog</code>, check the <code>Dog.protoype</code> map for <code>walk</code> property, it is found, call it.</li>
+</ol>
+<p>Steps for <code>d1.jump()</code>:</p>
+<ol>
+<li>Check the <code>d1</code> map for a <code>jump</code> property, it is not found.</li>
+<li>Since the <code>d1.__proto__</code> is <code>Dog</code>, check the <code>Dog.protoype</code> map for <code>jump</code> property, it is not found.</li>
+<li>Since the <code>Dog.prototype.__proto__</code> is <code>Animal</code>, check the <code>Animal.prototype</code> map for the <code>jump</code> property, it is found, call it.</li>
+</ol>
+<h2 id=compare-and-contrast>
+Compare and Contrast
+<a class=heading-link href=#compare-and-contrast>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h2>
+<p>To me, these two dispatch methods are actually very similar, at least at method execution time: they both recursively look for method implementations up a tree of boxes.</p>
+<p>Granted, I&rsquo;m using a cherry-picked example that is stereotypical OO, so perhaps of course the prototype execution is going to seem similar/obvious.</p>
+<p>That said, I think it&rsquo;s interesting to examine the differences:</p>
+<ol>
+<li>
+<p>Classes/v-tables are fixed at compile-time, prototypes/map are setup at runtime.</p>
+<p>While the resolution of <code>d1.walk()</code> for both looks similar (&ldquo;just follow some boxes&rdquo;), how/when the &ldquo;boxes&rdquo; themselves (the <code>Dog</code> v-table or <code>Dog</code> prototype) are constructed is different.</p>
+<p>The <code>Dog</code> class is a static lookup table that lives in a C++ binary/Java class file and is created at compile time.</p>
+<p>The <code>Dog</code> prototype is a dynamic map that is populated at runtime (either by your code manually setting <code>Dog.prototype.walk = function() { ... }</code> or by the ES6/TypeScript <code>class Dog</code> syntax sugar).</p>
+<p>If you&rsquo;re using JavaScript and pretending it is Java, there is not much difference here: all of the methods declared in your ES6 <code>class Dog { ... }</code> end up in the prototype map, does it really matter?</p>
+<p>(E.g. as a mental exercise, you can squint and think of the first ~10ms your JavaScript app boots as a &ldquo;mini-compile time&rdquo;, where all of your files are loaded, IIFEs are executed, and your prototype chains setup. After which, I assert in most apps, you generally leave all of the prototypes alone, and they become relatively stable/static.)</p>
+<p>It depends on your point of view.</p>
+<p>If you&rsquo;re using ES6 classes for everything, probably not. (Which I imagine is exactly the point of the <code>class</code> syntax.)</p>
+<p>However, creating prototypes at runtime means you can do very creative things: you can add methods (or values) into the prototype map that were not in the ES6 <code>class Dog { ... }</code> file. Or maybe you&rsquo;re not even using ES6 classes. (The OO programmer in me gasps!)</p>
+<p>This has the effect of methods magically showing up on your instance, e.g.:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-javascript data-lang=javascript><span style=color:#66d9ef>const</span> <span style=color:#a6e22e>d</span> <span style=color:#f92672>=</span> <span style=color:#66d9ef>new</span> <span style=color:#a6e22e>Dog</span>();
+<span style=color:#a6e22e>doSomeMetaProgramming</span>(<span style=color:#a6e22e>d</span>);
+<span style=color:#a6e22e>d</span>.<span style=color:#a6e22e>flyToSpace</span>(); <span style=color:#75715e>// wow, where did that method come from?
+</span></code></pre></div><p>This can be either very fun, or very confusing.</p>
+<p>From the static/Java/TypeScript worldview of &ldquo;I want to know which methods are good and which ones are not, so you can tell me about my stupid typos&rdquo;, it is not that great.</p>
+<p>But, alternatively, from a worldview of &ldquo;I have an abstraction that doesn&rsquo;t neatly fit into single-class inheritance&rdquo;, doing this sort of metaprogramming at runtime is usually an order of magnitude easier than a comparable static-language approach.</p>
+<p>(The main approaches to metaprogramming for class/static languages are compile-time code generation (can be either good or bad), in-language macros (still evolving, not in most mainstream languages yet), or runtime bytecode generation (mostly awful). I think in-language macros have the most promise, but they are still maturing).</p>
+</li>
+<li>
+<p>Prototypes treat methods and values the same.</p>
+<p>In Java/etc., there is a strict distinction of &ldquo;methods go in v-tables&rdquo; (behavior), &ldquo;values go in the instance&rdquo; (state). (Granted, there are static variables, but let&rsquo;s ignore those for now.)</p>
+<p>For prototype dispatch, it doesn&rsquo;t care: if you look for <code>d1.size</code> (a value), and it&rsquo;s not in <code>d1</code>&rsquo;s map, it will gladly go up the prototype chain, trying to find <code>size</code>.</p>
+<p>Whether this is good or bad again depends on your point of view.</p>
+<p>On one hand, declaring &ldquo;all of my cats have the same size&rdquo;, and modeling that as a value on the <code>Cat.prototype</code>, can be handy, as you don&rsquo;t need a <code>size</code> field repeated/wasted in each cat&rsquo;s map.</p>
+<p>(And, without the prototype, e.g. in class-based languages, if you still wanted to model &ldquo;<code>size</code> is a value that is different based on the type&rdquo;, you&rsquo;d have to &ldquo;methodize&rdquo; it, and all callers would have to use a &ldquo;huh, I guess it&rsquo;s a method&rdquo; <code>.size()</code> syntax, even if it&rsquo;s not really a dynamically-computed value.)</p>
+<p>On the other hand, if all of your cats share a litter box (state/a value), and the litter box is set on the <code>Cat</code> prototype, the litter box is going to fill up quickly and likely be a memory leak (there are linter rules against these sort of things in Ember projects, to keep models from accidentally sharing instance state on their prototypes).</p>
+<p>To me personally, I don&rsquo;t think this is a significant different in practice. I can&rsquo;t think of any times where having values &ldquo;shareable via prototypes&rdquo; or &ldquo;absolutely not shareable due to v-tables&rdquo; would make or break an architecture either way.</p>
+</li>
+<li>
+<p>Prototype dispatch adds an extra initial step, where it checks the instance first.</p>
+<p>It the v-table world, all things are forced to be like their kind. If you have a <code>Dog</code>, its <code>walk</code> method has to act like all the other dogs.</p>
+<p>In the prototype world, your specific dog can be given it&rsquo;s own unique snowflake of a <code>walk</code> method, e.g.:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-javascript data-lang=javascript><span style=color:#66d9ef>const</span> <span style=color:#a6e22e>d</span> <span style=color:#f92672>=</span> <span style=color:#66d9ef>new</span> <span style=color:#a6e22e>Dog</span>();
+<span style=color:#a6e22e>d</span>.<span style=color:#a6e22e>walk</span> <span style=color:#f92672>=</span> <span style=color:#66d9ef>function</span>() { ... };
+</code></pre></div><p>Is this good or bad? &mldr;again (sorry), it depends on your point of view.</p>
+<p>Do you want your program to be able to make this granular of decisions? If I&rsquo;m writing code that takes a <code>Dog</code>, and calls <code>dog.walk()</code>, but it does something completely different, is that a good thing?</p>
+<p>On one hand, that&rsquo;s the definition of polymorphism (we&rsquo;ve just added another layer), and polymorphism is good!</p>
+<p>But on the other hand, have I broken my abstractions? Where in my hierarchy of thinking (e.g. if I&rsquo;m classifying behavior/types of animals) does this <code>walk</code> method go? It&rsquo;s just in some random spot in the code. How am I as a programmer going to find that? How is my IDE going to find that?</p>
+<p>(You can tell my biases. :-)</p>
+<p>There is also a performance nuance, in that the extra step of resolution (check the <code>d1</code> instance&rsquo;s map first) adds more work for the runtime. E.g. in Java/etc., the runtime optimizer (JIT) can create super-optimized machine code for each v-table. And then it&rsquo;s more or less done. In JavaScript, adding properties on-the-fly to an object basically gives it its own unique v-table (which can change at any time) and now the runtime has to: a) track when/if that happens, and b) generate unique machine code for that new shape. Which is doable, but this &ldquo;haha, I changed my v-table!&rdquo; complexity is exactly what led the V8 team to build Dart. That said, I think in practice JavaScript runtimes are getting so sophisticated that this is hopefully moot.</p>
+</li>
+</ol>
+<h2 id=prototypes-can-do-more>
+Prototypes Can Do More
+<a class=heading-link href=#prototypes-can-do-more>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h2>
+<p>As I&rsquo;ve read in a few other places, prototype/map-based dispatch is a superset of class-based dispatch, but not the other way around.</p>
+<p>Which makes sense: we can model classes with prototypes, by just pretending our prototype maps (which are super dynamic/do whatever you want) are v-tables (which are static/cannot change).</p>
+<p>This is what ES6 classes do, and many different home-grown &ldquo;add classes to JS&rdquo; libraries have done over the years.</p>
+<p>But you can&rsquo;t go the other way around, as we can&rsquo;t &ldquo;undo&rdquo; the fixed nature of v-tables to make them behave like runtime-modifiable maps.</p>
+<p>So prototypical inheritance is objectively more powerful.</p>
+<p>As an unapologetic fan of static languages, this power (as I&rsquo;m sure you can tell) actually makes me nervous, but nonetheless I like to understand and appreciate it, even if just observing from the safe confines of my Java/Scala/TypeScript bunker.</p>
+<h2 id=typescript-adds-some-nuances>
+TypeScript Adds Some Nuances
+<a class=heading-link href=#typescript-adds-some-nuances>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h2>
+<p>Somewhat tangentially, TypeScript&rsquo;s type system is impressive and is blurring the lines a bit, as with things like intersection types, it can now model &ldquo;mix types A and types B together&rdquo; , e.g.:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-javascript data-lang=javascript><span style=color:#66d9ef>function</span> <span style=color:#a6e22e>makeDogFly</span>(<span style=color:#a6e22e>d</span><span style=color:#f92672>:</span> <span style=color:#a6e22e>Dog</span>)<span style=color:#f92672>:</span> <span style=color:#a6e22e>Dog</span> <span style=color:#f92672>&amp;</span> <span style=color:#a6e22e>Flyable</span> {
+  ...
+}
+
+<span style=color:#a6e22e>makeDogFly</span>(<span style=color:#a6e22e>d1</span>).<span style=color:#a6e22e>flyToSpace</span>();
+</code></pre></div><p>And the <code>flyToSpace</code> method call is now type-safe.</p>
+<p>It can even do:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-javascript data-lang=javascript><span style=color:#66d9ef>function</span> <span style=color:#a6e22e>addRandomThings</span>[<span style=color:#a6e22e>T</span>](<span style=color:#a6e22e>d</span><span style=color:#f92672>:</span> <span style=color:#a6e22e>Dog</span>, <span style=color:#a6e22e>t</span><span style=color:#f92672>:</span> <span style=color:#a6e22e>T</span>)<span style=color:#f92672>:</span> <span style=color:#a6e22e>Dog</span> <span style=color:#f92672>&amp;</span> <span style=color:#a6e22e>T</span> {
+  ....
+}
+
+<span style=color:#a6e22e>addRandomThings</span>(<span style=color:#a6e22e>d1</span>, { <span style=color:#a6e22e>newField</span><span style=color:#f92672>:</span> <span style=color:#ae81ff>1</span> }).<span style=color:#a6e22e>newField</span> <span style=color:#f92672>=</span> <span style=color:#ae81ff>2</span>;
+</code></pre></div><p>And the <code>newField</code> field access is now valid and type-safe. Which is just amazing. (I&rsquo;ve been meaning to write a dedicated blog post on it, but to me TypeScript went from &ldquo;what you choose so you don&rsquo;t have to write JavaScript&rdquo; to &ldquo;what you choose because it&rsquo;s a legitimately impressive/advanced language in its own right&rdquo;.)</p>
+<p>This capability mitigates some of the hyperbolic &ldquo;classes force me to use inheritance as my only abstraction, so prototypes are the one true way!&rdquo; by teaching the compiler about type combination/composition as a first-class notion.</p>
+<p>Which, &ldquo;the compiler caught up&rdquo; echos back to a section of my 2010 post, <a href=/2010/11/24/why-im-a-static-typing-bigot.html>Why I&rsquo;m a Static Typing Bigot</a>, that posits that static languages, which are often cast in the &ldquo;stodgy old solution&rdquo; role, just take longer to evolve/catch up to dynamic languages (in terms of sexy syntax, new abstractions, etc.) because it&rsquo;s demonstrably harder to stop and teach the type system about these new things.</p>
+<p>Another interesting musing is that the flexibility of a prototype-based runtime likely directly contributed to TypeScript&rsquo;s ability to have its novel type system features in the first place (or at least implement it as cleanly/quickly). E.g. on the JVM, which has the &ldquo;classes are fixed v-tables&rdquo; assumption baked into the runtime, it&rsquo;s hard for other languages to map their novel abstractions onto/around this limitation (for either substantially-different languages like Clojure or even incrementally-different languages like Scala).</p>
+<p>The JVM has some next-gen features, e.g. Graal (that admittedly I really don&rsquo;t know much about), that are supposed to fix this disparity, but by an 80%/20% combination of &ldquo;being built into browsers&rdquo; and &ldquo;already having a flexible/lowest-common-denominator runtime&rdquo;, JavaScript thwarted Java/the JVM as the &ldquo;run anywhere&rdquo; runtime de jour.</p>
+<h2 id=but-will-this-change-your-designs>
+But Will This Change Your Designs?
+<a class=heading-link href=#but-will-this-change-your-designs>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h2>
+<p>Anyway, coming back to the main topic, I personally don&rsquo;t think class dispatch and prototype dispatch are that different: they both &ldquo;walk a tree of boxes&rdquo;.</p>
+<p>In prototypes, the &ldquo;boxes&rdquo; are maps (objects), defined at runtime. This is both powerful as well as potentially complicated, as there are many different ways to string boxes together (see the various good/bad/personal style differences of pre-ES6 JavaScript).</p>
+<p>In classes (for static languages, e.g. not Ruby/Python/etc.), the &ldquo;boxes&rdquo; are tables, defined at compile time. This is more tractable (for both programmers and the compiler) but also makes it harder to implement any novel abstractions that the compiler is not already aware of.</p>
+<p>All said, while this is a big difference, I don&rsquo;t think it would fundamentally change how I build systems: when I think of objects, objects are objects.</p>
+<p>E.g. the nouns, names, entities, types, units of single responsibilities, etc., I would use in &ldquo;objects via prototypes&rdquo; designs vs. &ldquo;objects via classes&rdquo; designs would be fairly similar, I think.</p>
+<p>Sure, in class-based systems, &ldquo;fragile base classes&rdquo; can be a problem (and the other litany of anti-patterns/code smells), but wouldn&rsquo;t that translate to &ldquo;fragile base prototypes&rdquo; in a prototype-based system? Or, if it wouldn&rsquo;t and you&rsquo;re just modeling the problem with composition (or some other pattern/design), wouldn&rsquo;t you use the same composition in a class-based system? Objects are objects.</p>
+<p>Given this, I don&rsquo;t think there is a ground-breaking difference between the two (certainly not as much as, say, OO vs. FP), or at least not as much as I think people typically think.</p>
+<p>My suspicion/bias is that the JavaScript community has been slowly figuring this out, likely implicitly/without realizing it (or, who knows, perhaps very explicitly), and this is why things like ES6 classes, TypeScript, etc., are all, as far as I can tell, becoming more popular.</p>
+</div>
+<footer>
+<div id=disqus_thread></div>
+<script type=application/javascript>var disqus_config=function(){};(function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById('disqus_thread').innerHTML='Disqus comments not available by default when the website is previewed locally.';return}var b=document,a=b.createElement('script');a.async=!0,a.src='//shaberman.disqus.com/embed.js',a.setAttribute('data-timestamp',+new Date),(b.head||b.body).appendChild(a)})()</script>
+<noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript>
+<a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a>
+</footer>
+</article>
+</section>
+</div>
+<footer class=footer>
+<section class=container>
+©
+2008 -
+2021
+Stephen Haberman
+·
+Powered by <a href=https://gohugo.io/>Hugo</a> & <a href=https://github.com/luizdepra/hugo-coder/>Coder</a>.
+</section>
+</footer>
+</main>
+<script src=/js/coder.min.03b17769f4f91ae35667e1f2a1ca8c16f50562576cf90ff32b3179926914daa5.js integrity="sha256-A7F3afT5GuNWZ+HyocqMFvUFYlds+Q/zKzF5kmkU2qU="></script>
+</body>
+</html>

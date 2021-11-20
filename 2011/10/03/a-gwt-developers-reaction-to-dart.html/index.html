@@ -1,0 +1,167 @@
+<!doctype html><html lang=en>
+<head>
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width,initial-scale=1">
+<meta http-equiv=content-language content="en">
+<meta name=color-scheme content="light dark">
+<meta name=author content="Stephen Haberman">
+<meta name=description content="The scheduled Dart keynote announcement made the rounds a week ago or so. If you didn&rsquo;t catch it, Google wants to replace JavaScript, with a dual static/dynamic language named Dart.
+This post has more details, but basically Google wants to combine its two primary tool chains, Closure (JavaScript-based) and GWT (Java-based) into a single project. This makes sense, as both tools have (AFAIK) separate teams within Google supporting them, and both share the same goal of making it easier for developer&rsquo;s to build large, complex, browser-based applications.">
+<meta name=keywords content="blog,developer,personal">
+<meta name=twitter:card content="summary">
+<meta name=twitter:title content="A GWT Developer's Reaction to Dart">
+<meta name=twitter:description content="The scheduled Dart keynote announcement made the rounds a week ago or so. If you didn&rsquo;t catch it, Google wants to replace JavaScript, with a dual static/dynamic language named Dart.
+This post has more details, but basically Google wants to combine its two primary tool chains, Closure (JavaScript-based) and GWT (Java-based) into a single project. This makes sense, as both tools have (AFAIK) separate teams within Google supporting them, and both share the same goal of making it easier for developer&rsquo;s to build large, complex, browser-based applications.">
+<meta property="og:title" content="A GWT Developer's Reaction to Dart">
+<meta property="og:description" content="The scheduled Dart keynote announcement made the rounds a week ago or so. If you didn&rsquo;t catch it, Google wants to replace JavaScript, with a dual static/dynamic language named Dart.
+This post has more details, but basically Google wants to combine its two primary tool chains, Closure (JavaScript-based) and GWT (Java-based) into a single project. This makes sense, as both tools have (AFAIK) separate teams within Google supporting them, and both share the same goal of making it easier for developer&rsquo;s to build large, complex, browser-based applications.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="http://draconianoverlord.com/2011/10/03/a-gwt-developers-reaction-to-dart.html/"><meta property="article:section" content="posts">
+<meta property="article:published_time" content="2011-10-03T00:00:00+00:00">
+<meta property="article:modified_time" content="2011-10-03T00:00:00+00:00">
+<title>
+A GWT Developer's Reaction to Dart · Draconian Overlord
+</title>
+<link rel=canonical href=http://draconianoverlord.com/2011/10/03/a-gwt-developers-reaction-to-dart.html/>
+<link rel=preload href="/fonts/forkawesome-webfont.woff2?v=1.2.0" as=font type=font/woff2 crossorigin>
+<link rel=stylesheet href=/css/coder.min.d9fddbffe6f27e69985dc5fe0471cdb0e57fbf4775714bc3d847accb08f4a1f6.css integrity="sha256-2f3b/+byfmmYXcX+BHHNsOV/v0d1cUvD2Eesywj0ofY=" crossorigin=anonymous media=screen>
+<link rel=stylesheet href=/css/coder-dark.min.aa883b9ce35a8ff4a2a5008619005175e842bb18a8a9f9cc2bbcf44dab2d91fa.css integrity="sha256-qog7nONaj/SipQCGGQBRdehCuxioqfnMK7z0Tastkfo=" crossorigin=anonymous media=screen>
+<link rel=icon type=image/png href=/images/favicon-32x32.png sizes=32x32>
+<link rel=icon type=image/png href=/images/favicon-16x16.png sizes=16x16>
+<link rel=apple-touch-icon href=/images/apple-touch-icon.png>
+<link rel=apple-touch-icon sizes=180x180 href=/images/apple-touch-icon.png>
+<meta name=generator content="Hugo 0.89.4">
+</head>
+<body class="preload-transitions colorscheme-auto">
+<div class=float-container>
+<a id=dark-mode-toggle class=colorscheme-toggle>
+<i class="fa fa-adjust fa-fw" aria-hidden=true></i>
+</a>
+</div>
+<main class=wrapper>
+<nav class=navigation>
+<section class=container>
+<a class=navigation-title href=/>Draconian Overlord</a>
+Oppressing software entropy
+</section>
+</nav>
+<div class=content>
+<section class="container post">
+<article>
+<header>
+<div class=post-title>
+<h1 class=title>
+<a class=title-link href=http://draconianoverlord.com/2011/10/03/a-gwt-developers-reaction-to-dart.html/>
+A GWT Developer's Reaction to Dart
+</a>
+</h1>
+</div>
+<div class=post-meta>
+<div class=date>
+<span class=posted-on>
+<i class="fa fa-calendar" aria-hidden=true></i>
+<time datetime=2011-10-03T00:00:00Z>
+October 3, 2011
+</time>
+</span>
+<span class=reading-time>
+<i class="fa fa-clock-o" aria-hidden=true></i>
+5-minute read
+</span>
+</div>
+<div class=categories>
+<i class="fa fa-folder" aria-hidden=true></i>
+<a href=/categories/gwt/>GWT</a></div>
+</div>
+</header>
+<div>
+<p>The scheduled <a href=http://gotocon.com/aarhus-2011/presentation/Opening%20Keynote:%20Dart,%20a%20new%20programming%20language%20for%20structured%20web%20programming>Dart keynote</a> announcement made the rounds a week ago or so. If you didn&rsquo;t catch it, Google wants to replace JavaScript, with a dual static/dynamic language named Dart.</p>
+<p><a href=http://markmail.org/message/uro3jtoitlmq6x7t>This post</a> has more details, but basically Google wants to combine its two primary tool chains, <a href=http://code.google.com/closure/>Closure</a> (JavaScript-based) and <a href=http://code.google.com/webtoolkit/>GWT</a> (Java-based) into a single project. This makes sense, as both tools have (AFAIK) separate teams within Google supporting them, and both share the same goal of making it easier for developer&rsquo;s to build large, complex, browser-based applications.</p>
+<p>While I&rsquo;m not yet a front-end developer extraordinaire, GWT is my tool of choice for rich-client browser applications, and this means it&rsquo;s been effectively deprecated.</p>
+<p>Which, after my initial reaction (&ldquo;What?! GWT rulez!11!!"), I realized, this is actually pretty damn cool. This post is my brief explanation of why.</p>
+<h2 id=typing-and-tools>
+Typing and Tools
+<a class=heading-link href=#typing-and-tools>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h2>
+<p>To explain, here are the four primary reasons why I like GWT in the first place:</p>
+<ol>
+<li>I&rsquo;m a <a href=http://draconianoverlord.com/2010/11/24/why-im-a-static-typing-bigot.html>static typing bigot</a>.</li>
+<li>I&rsquo;m addicted to Eclipse and not ashamed of it (although <a href=http://www.viplugin.com/viplugin/>vi bindings</a> FTW).</li>
+<li>I like GWT&rsquo;s components-based approach to widgets/UI.</li>
+<li>I like GWT&rsquo;s integrated &ldquo;toolkit&rdquo; approach of doing most things you&rsquo;ll need (minification, spriting, i18n, browser tweaks, etc.) out of the box.</li>
+</ol>
+<p>Now, if you cast each of these reasons to apply to Dart:</p>
+<ol>
+<li>Static typing? Eh, optional, but, okay, good enough. Check.</li>
+<li>Eclipse? With static types, JDT-level Eclipse integration should be doable; Google has an Eclipse plugin team, so hopefully they&rsquo;ll have this sooner rather than later. Check.</li>
+<li>Components? UI components aren&rsquo;t, AFAIK, Dart-/language-specific, so I assume GWT&rsquo;s Dart-based successor will follow a similar approach. Check.</li>
+<li>Toolkit? Same thing as 3. Check.</li>
+</ol>
+<p>They all hold up. Dart is still a language I would prefer using over JavaScript, which is primarily why I&rsquo;m in GWT anyway. <em>Plus</em> Dart will be browser-based.</p>
+<h2 id=a-better-devmode>
+A Better DevMode
+<a class=heading-link href=#a-better-devmode>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h2>
+<p>Also, stepping back, I realize that GWT, at some level, is a huge hack. Not because it trans-compiles Java to JavaScript (CoffeeScript does the same sort of thing), but because of its implementation of Developer Mode. (Developer Mode is where you run your webapp locally and can debug it in Eclipse.)</p>
+<p>To do this, GWT performs some browser/extension magic to force your browser to talk back and forth with a running JVM (where your code actually runs as regular Java code, so Eclipse can see/debug it), often times in a very chatty manner.</p>
+<p>Surprisingly, this normally works quite well. However, it also means you are paying an RPC cost for every cross browser/JVM call (anytime your Java code touches the DOM and vice versa), and that can add up to a less-than-fast developer experience.</p>
+<p>If only GWT could run your statically-typed code directly in the browser&mldr;</p>
+<p>&mldr;which is exactly what Dart will do. Nice!</p>
+<h2 id=a-better-gwt>
+A Better GWT
+<a class=heading-link href=#a-better-gwt>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h2>
+<p>So, I&rsquo;m optimistic: <strong>I see Dart as a way of getting an even better GWT</strong>.</p>
+<p>Obviously, I&rsquo;m speculating a lot since the keynote hasn&rsquo;t happened yet, but, in a bit of naive projecting, I would assume the GWT users/developers within Google feel the same way I do. If you can provide a GWT-like experience, with less hacks and cruft, that sounds like a good thing to me.</p>
+<h3 id=disclaimers>
+Disclaimers
+<a class=heading-link href=#disclaimers>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h3>
+<p>That being said, a few thoughts:</p>
+<ul>
+<li>
+<p>Just because it&rsquo;s from Google doesn&rsquo;t mean the language is going to rock; see Go. I&rsquo;d be really surprised if this is the case with Dart, if only because the memo suggests a non-trivial amount of people are working on the project.</p>
+<p>That being said, <a href=http://scalagwt.github.com/>scala-gwt</a> has made some great progress, so perhaps a <code>scala-dart</code> project could be started if the syntax is less-than-ideal.</p>
+</li>
+<li>
+<p><strong>Even if the other browsers don&rsquo;t adopt Dart, I don&rsquo;t care.</strong> If I can use Dart+GWT-next-gen to develop webapps in Chrome with a kick-ass developer experience, and fall back on old-school Developer Mode and JavaScript trans-compiling for the others, I&rsquo;d be perfectly happy with that choice.</p>
+</li>
+<li>
+<p>I&rsquo;m really surprised the Dart VM will be for front-end servers as well; I assumed the JVM was king here and they&rsquo;d stay with it. I&rsquo;m unlikely to give up the JVM on the server-side, given the various libraries and APIs, all JVM-based, it uses to do its thing.</p>
+<p>Which, while in theory the &ldquo;same language on both client/server&rdquo; sounded great, in practice I&rsquo;ve rarely had a significant amount of code that could reused across each. Other than trivial validation, most code makes a surprising amount of assumptions based on the environment it&rsquo;s in.</p>
+</li>
+</ul>
+<p>So, I&rsquo;m looking forward to the Dart keynote. It&rsquo;ll be interesting to see what it looks like, what the current progress is, and if/when real working prototypes will be available. As a GWT developer, it will also be interesting to see if any announcements are made about GWT next-gen, either in the keynote itself or by the GWT team afterwards.</p>
+<p>Given the amount of GWT code Google itself has internally, and the amount of GWT code in other companies, I&rsquo;m not worried about the GWT ecosystem dying on Oct 11th. Instead, depending on the GWT next-gen migration path/timeline, it might be a pretty happening place (well, as an introvert, I have a very loose definition of &ldquo;happening&rdquo;).</p>
+</div>
+<footer>
+<div id=disqus_thread></div>
+<script type=application/javascript>var disqus_config=function(){};(function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById('disqus_thread').innerHTML='Disqus comments not available by default when the website is previewed locally.';return}var b=document,a=b.createElement('script');a.async=!0,a.src='//shaberman.disqus.com/embed.js',a.setAttribute('data-timestamp',+new Date),(b.head||b.body).appendChild(a)})()</script>
+<noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript>
+<a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a>
+</footer>
+</article>
+</section>
+</div>
+<footer class=footer>
+<section class=container>
+©
+2008 -
+2021
+Stephen Haberman
+·
+Powered by <a href=https://gohugo.io/>Hugo</a> & <a href=https://github.com/luizdepra/hugo-coder/>Coder</a>.
+</section>
+</footer>
+</main>
+<script src=/js/coder.min.03b17769f4f91ae35667e1f2a1ca8c16f50562576cf90ff32b3179926914daa5.js integrity="sha256-A7F3afT5GuNWZ+HyocqMFvUFYlds+Q/zKzF5kmkU2qU="></script>
+</body>
+</html>

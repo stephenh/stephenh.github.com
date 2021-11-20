@@ -1,0 +1,200 @@
+<!doctype html><html lang=en>
+<head>
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width,initial-scale=1">
+<meta http-equiv=content-language content="en">
+<meta name=color-scheme content="light dark">
+<meta name=author content="Stephen Haberman">
+<meta name=description content="I reread parts of Growing Object-Oriented Software, Guided by Tests (GOOS) today. The verbose name aside, it&rsquo;s a great book.
+I also like it because they share my opinion that persistence tests must commit to the database to be worthwhile. Yes!
+Abusing Transactions for Resetting Test Data    Ruby on Rails, as nice as it is, seems to have popularized this notion that you can leverage transactions to get relatively quick database tests&ndash;instead of having to delete data after each test, you run the each test in its own transaction, and then roll the transaction back before continuing on to the next test.">
+<meta name=keywords content="blog,developer,personal">
+<meta name=twitter:card content="summary">
+<meta name=twitter:title content="Joist Tip, Fast Database Resets">
+<meta name=twitter:description content="I reread parts of Growing Object-Oriented Software, Guided by Tests (GOOS) today. The verbose name aside, it&rsquo;s a great book.
+I also like it because they share my opinion that persistence tests must commit to the database to be worthwhile. Yes!
+Abusing Transactions for Resetting Test Data    Ruby on Rails, as nice as it is, seems to have popularized this notion that you can leverage transactions to get relatively quick database tests&ndash;instead of having to delete data after each test, you run the each test in its own transaction, and then roll the transaction back before continuing on to the next test.">
+<meta property="og:title" content="Joist Tip, Fast Database Resets">
+<meta property="og:description" content="I reread parts of Growing Object-Oriented Software, Guided by Tests (GOOS) today. The verbose name aside, it&rsquo;s a great book.
+I also like it because they share my opinion that persistence tests must commit to the database to be worthwhile. Yes!
+Abusing Transactions for Resetting Test Data    Ruby on Rails, as nice as it is, seems to have popularized this notion that you can leverage transactions to get relatively quick database tests&ndash;instead of having to delete data after each test, you run the each test in its own transaction, and then roll the transaction back before continuing on to the next test.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="http://draconianoverlord.com/2010/08/22/joist-tip-fast-database-resets.html/"><meta property="article:section" content="posts">
+<meta property="article:published_time" content="2010-08-22T00:00:00+00:00">
+<meta property="article:modified_time" content="2010-08-22T00:00:00+00:00">
+<title>
+Joist Tip, Fast Database Resets · Draconian Overlord
+</title>
+<link rel=canonical href=http://draconianoverlord.com/2010/08/22/joist-tip-fast-database-resets.html/>
+<link rel=preload href="/fonts/forkawesome-webfont.woff2?v=1.2.0" as=font type=font/woff2 crossorigin>
+<link rel=stylesheet href=/css/coder.min.d9fddbffe6f27e69985dc5fe0471cdb0e57fbf4775714bc3d847accb08f4a1f6.css integrity="sha256-2f3b/+byfmmYXcX+BHHNsOV/v0d1cUvD2Eesywj0ofY=" crossorigin=anonymous media=screen>
+<link rel=stylesheet href=/css/coder-dark.min.aa883b9ce35a8ff4a2a5008619005175e842bb18a8a9f9cc2bbcf44dab2d91fa.css integrity="sha256-qog7nONaj/SipQCGGQBRdehCuxioqfnMK7z0Tastkfo=" crossorigin=anonymous media=screen>
+<link rel=icon type=image/png href=/images/favicon-32x32.png sizes=32x32>
+<link rel=icon type=image/png href=/images/favicon-16x16.png sizes=16x16>
+<link rel=apple-touch-icon href=/images/apple-touch-icon.png>
+<link rel=apple-touch-icon sizes=180x180 href=/images/apple-touch-icon.png>
+<meta name=generator content="Hugo 0.89.4">
+</head>
+<body class="preload-transitions colorscheme-auto">
+<div class=float-container>
+<a id=dark-mode-toggle class=colorscheme-toggle>
+<i class="fa fa-adjust fa-fw" aria-hidden=true></i>
+</a>
+</div>
+<main class=wrapper>
+<nav class=navigation>
+<section class=container>
+<a class=navigation-title href=/>Draconian Overlord</a>
+Oppressing software entropy
+</section>
+</nav>
+<div class=content>
+<section class="container post">
+<article>
+<header>
+<div class=post-title>
+<h1 class=title>
+<a class=title-link href=http://draconianoverlord.com/2010/08/22/joist-tip-fast-database-resets.html/>
+Joist Tip, Fast Database Resets
+</a>
+</h1>
+</div>
+<div class=post-meta>
+<div class=date>
+<span class=posted-on>
+<i class="fa fa-calendar" aria-hidden=true></i>
+<time datetime=2010-08-22T00:00:00Z>
+August 22, 2010
+</time>
+</span>
+<span class=reading-time>
+<i class="fa fa-clock-o" aria-hidden=true></i>
+4-minute read
+</span>
+</div>
+<div class=categories>
+<i class="fa fa-folder" aria-hidden=true></i>
+<a href=/categories/joist/>Joist</a></div>
+</div>
+</header>
+<div>
+<p>I reread parts of <a href=http://www.amazon.com/Growing-Object-Oriented-Software-Guided-Tests/dp/0321503627>Growing Object-Oriented Software, Guided by Tests</a> (GOOS) today. The verbose name aside, it&rsquo;s a great book.</p>
+<p>I also like it because they share my opinion that persistence tests must commit to the database to be worthwhile. Yes!</p>
+<h2 id=abusing-transactions-for-resetting-test-data>
+Abusing Transactions for Resetting Test Data
+<a class=heading-link href=#abusing-transactions-for-resetting-test-data>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h2>
+<p>Ruby on Rails, as nice as it is, seems to have popularized this notion that you can leverage transactions to get relatively quick database tests&ndash;instead of having to delete data after each test, you run the each test in its own transaction, and then roll the transaction back before continuing on to the next test.</p>
+<p>This allows each test to have a clean database&ndash;which is very good for test independence and reproducibility. And rolling back uncommitted data is, admittedly, really fast.</p>
+<p>But it also means that any commit-time persistence logic is being skipped&ndash;foreign key constraints, unique constraints, etc. Which, unless you&rsquo;re just testing queries, is kind of the point of the test being a persistence test.</p>
+<p>This approach also assumes that your test is not exercising any code that does its own transaction management. Depending on the feature/architecture, this may/may not be a good assumption&ndash;but it is definitely not always true.</p>
+<p>So we need to find another way to get a clean database, preferably as quickly as possible.</p>
+<h2 id=domain-level-resetting-test-data>
+Domain-Level Resetting Test Data
+<a class=heading-link href=#domain-level-resetting-test-data>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h2>
+<p>What GOOS suggests is a pretty common pattern of allowing each test to commit its data, and then in <code>setUp</code>, iterating over your domain objects to explicitly delete them:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=color:#66d9ef>for</span> <span style=color:#f92672>(</span>Class domainClass <span style=color:#f92672>:</span> someListOfDomainClasses<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
+  persistenceLayer<span style=color:#f92672>.</span><span style=color:#a6e22e>deleteAll</span><span style=color:#f92672>(</span>domainClass<span style=color:#f92672>);</span>
+<span style=color:#f92672>}</span>
+</code></pre></div><p>This can be a little tricky as you don&rsquo;t want to trigger any foreign key constraints if you, say, delete the <code>FooParent</code> rows before the <code>FooChild</code> rows that have foreign keys to them. The usual hack is something like <code>set foreign_key_constraints=0</code> for MySQL or deferred key constraints for PostgreSQL.</p>
+<p>A large system I worked on used this technique, and it works well. However, as the system grew, things started to slow down. With 500+ tables, calling <code>delete * from table</code> for each table, before each test, adds up to a lot of SQL statements going over the wire.</p>
+<h2 id=database-level-resetting-test-data>
+Database-Level Resetting Test Data
+<a class=heading-link href=#database-level-resetting-test-data>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h2>
+<p>To minimize the amount of SQL calls involved in a reset, we can go a level closer to the data and use a stored procedure to do database-level resetting of test data.</p>
+<p>While I&rsquo;m not usually a fan of stored procedures, in this case, it makes sense&ndash;there is 1 SQL call to kick off a slew of database operations:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=color:#75715e>// postgres
+</span><span style=color:#75715e></span>execute<span style=color:#f92672>(</span><span style=color:#e6db74>&#34;select * from flush_test_database()&#34;</span><span style=color:#f92672>);</span>
+
+<span style=color:#75715e>// mysql
+</span><span style=color:#75715e></span>execute<span style=color:#f92672>(</span><span style=color:#e6db74>&#34;call flush_test_database()&#34;</span><span style=color:#f92672>);</span>
+</code></pre></div><p>The stored procedure then executes the 500+ <code>delete</code> calls directly against the database.</p>
+<p>This is pretty easy to setup, especially if you generate the stored procedure an at opportune time in the developer&rsquo;s workflow.</p>
+<p>For example, <a href=http://joist.ws>Joist</a> is an ORM purpose-built for large schemas. It already has a build-time code generator that generates the boilerplate aspects of domain objects by introspecting the database schema. After doing so, it is easy to add a final step that also creates the <code>flush_test_database</code> stored procedure.</p>
+<h2 id=postgres-implementation>
+Postgres Implementation
+<a class=heading-link href=#postgres-implementation>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h2>
+<p>The stored procedure for Postgres looks like:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sql data-lang=sql><span style=color:#66d9ef>CREATE</span> <span style=color:#66d9ef>OR</span> <span style=color:#66d9ef>REPLACE</span> <span style=color:#66d9ef>FUNCTION</span> flush_test_database() <span style=color:#66d9ef>RETURNS</span> integer <span style=color:#66d9ef>AS</span>
+<span style=color:#960050;background-color:#1e0010>$</span>BODY$
+<span style=color:#66d9ef>BEGIN</span>
+<span style=color:#66d9ef>SET</span> <span style=color:#66d9ef>CONSTRAINTS</span> <span style=color:#66d9ef>ALL</span> <span style=color:#66d9ef>DEFERRED</span>;
+<span style=color:#75715e>-- repeated for each domain class
+</span><span style=color:#75715e></span><span style=color:#66d9ef>ALTER</span> SEQUENCE domain_table <span style=color:#66d9ef>RESTART</span> <span style=color:#66d9ef>WITH</span> <span style=color:#ae81ff>1</span> <span style=color:#66d9ef>INCREMENT</span> <span style=color:#66d9ef>BY</span> <span style=color:#ae81ff>1</span>;
+<span style=color:#66d9ef>DELETE</span> <span style=color:#66d9ef>FROM</span> domain_table;
+<span style=color:#66d9ef>RETURN</span> <span style=color:#ae81ff>0</span>;
+<span style=color:#66d9ef>END</span>;
+<span style=color:#960050;background-color:#1e0010>$</span>BODY$
+  <span style=color:#66d9ef>LANGUAGE</span> <span style=color:#e6db74>&#39;plpgsql&#39;</span> <span style=color:#66d9ef>VOLATILE</span>
+  COST <span style=color:#ae81ff>100</span>;
+<span style=color:#66d9ef>ALTER</span> <span style=color:#66d9ef>FUNCTION</span> flush_test_database() <span style=color:#66d9ef>SECURITY</span> <span style=color:#66d9ef>DEFINER</span>;
+</code></pre></div><p>Note that the <code>SECURITY DEFINER</code> part is important as it will allow callers of the stored procedure (e.g. your application&rsquo;s database user) to alter sequences that it does not own (e.g. because they are owned by the root <code>postgres</code> user).</p>
+<p>See <a href=http://github.com/stephenh/joist/blob/master/migrations/src/main/java/joist/codegen/passes/GenerateFlushFunction.java>GenerateFlushFunction.java</a> for the exact code.</p>
+<h2 id=mysql-implementation>
+MySQL Implementation
+<a class=heading-link href=#mysql-implementation>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h2>
+<p>MySQL is even easier as <code>TRUNCATE TABLE</code> resets the auto increment column:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sql data-lang=sql><span style=color:#66d9ef>CREATE</span> <span style=color:#66d9ef>PROCEDURE</span> flush_test_database()
+<span style=color:#66d9ef>BEGIN</span>
+<span style=color:#66d9ef>SET</span> FOREIGN_KEY_CHECKS<span style=color:#f92672>=</span><span style=color:#ae81ff>0</span>;
+<span style=color:#75715e>-- repeated for each domain class
+</span><span style=color:#75715e></span><span style=color:#66d9ef>TRUNCATE</span> <span style=color:#66d9ef>TABLE</span> domain_table;
+<span style=color:#66d9ef>SET</span> FOREIGN_KEY_CHECKS<span style=color:#f92672>=</span><span style=color:#ae81ff>1</span>;
+<span style=color:#66d9ef>SELECT</span> <span style=color:#ae81ff>1</span>;
+<span style=color:#66d9ef>END</span>
+</code></pre></div><p>Again, you can see <a href=http://github.com/stephenh/joist/blob/master/migrations/src/main/java/joist/codegen/passes/GenerateFlushFunction.java>GenerateFlushFunction.java</a> for the exact code.</p>
+<h2 id=time-savings>
+Time Savings
+<a class=heading-link href=#time-savings>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h2>
+<p>On a 500+ table schema, domain-level resetting with 1-call-per-table takes ~200ms.</p>
+<p>Against the same schema, database-level resetting with just 1 call takes ~5ms.</p>
+<p>So we save ~1/5th of a second. This is not a lot&ndash;until you have a huge test suite. If you have 5000 persistence tests, that&rsquo;s ~16 minutes saved off your test suite runtime.</p>
+<h2 id=limited-applicability>
+Limited Applicability
+<a class=heading-link href=#limited-applicability>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h2>
+<p>Thankfully, few projects get big enough to need this level of optimization. And, pessimistically, if they do, shaving 15 minutes off their build time is usually the least of their concerns. :-)</p>
+<p>Nonetheless, <a href=http://joist.ws>Joist</a> tries to get things like this right, to make your next enterprise project that much less painful.</p>
+</div>
+<footer>
+<div id=disqus_thread></div>
+<script type=application/javascript>var disqus_config=function(){};(function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById('disqus_thread').innerHTML='Disqus comments not available by default when the website is previewed locally.';return}var b=document,a=b.createElement('script');a.async=!0,a.src='//shaberman.disqus.com/embed.js',a.setAttribute('data-timestamp',+new Date),(b.head||b.body).appendChild(a)})()</script>
+<noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript>
+<a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a>
+</footer>
+</article>
+</section>
+</div>
+<footer class=footer>
+<section class=container>
+©
+2008 -
+2021
+Stephen Haberman
+·
+Powered by <a href=https://gohugo.io/>Hugo</a> & <a href=https://github.com/luizdepra/hugo-coder/>Coder</a>.
+</section>
+</footer>
+</main>
+<script src=/js/coder.min.03b17769f4f91ae35667e1f2a1ca8c16f50562576cf90ff32b3179926914daa5.js integrity="sha256-A7F3afT5GuNWZ+HyocqMFvUFYlds+Q/zKzF5kmkU2qU="></script>
+</body>
+</html>
