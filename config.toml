@@ -1,4 +1,4 @@
-baseURL = "http://draconianoverlord.com/"
+baseURL = "https://draconianoverlord.com/"
 title = "Draconian Overlord"
 theme = "hugo-coder"
 languageCode = "en-us"
