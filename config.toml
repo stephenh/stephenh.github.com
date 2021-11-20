@@ -1,4 +1,4 @@
-baseURL = "https://draconianoverlord.com/"
+baseURL = "https://www.draconianoverlord.com/"
 title = "Draconian Overlord"
 theme = "hugo-coder"
 languageCode = "en-us"
@@ -52,9 +52,13 @@ url = "https://github.com/stephenh/"
 name = "RSS"
 icon = "fa fa-2x fa-rss"
 weight = 6
-url = "https://draconianoverlord.com/index.xml"
+url = "https://www.draconianoverlord.com/atom.xml"
 rel = "alternate"
 type = "application/rss+xml"
 
 [permalinks]
   posts = '/:year/:month/:day/:title.html'
+
+[outputFormats.RSS]
+mediatype = "application/rss"
+baseName = "atom"
