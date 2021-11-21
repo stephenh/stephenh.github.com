@@ -1,5 +1,5 @@
 ---
-layout: draft
+draft: true
 title: Open vs. Closed systems
 ---
 

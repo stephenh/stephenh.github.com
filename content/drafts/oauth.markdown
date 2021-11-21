@@ -1,5 +1,5 @@
 ---
-layout: draft
+draft: true
 title: Intuitive Understanding of OAuth
 categories:
   - Architecture

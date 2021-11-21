@@ -1,6 +1,6 @@
 ---
-layout: post
 title: Thoughts on GWT and DTOs
+draft: true
 ---
 
 One of the major bottlenecks for developing GWT webapps is mangling data around between the client and the server. Basically, creating/mapping DTOs all the time.

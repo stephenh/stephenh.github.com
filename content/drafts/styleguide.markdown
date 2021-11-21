@@ -1,3 +1,6 @@
+---
+draft: true
+---
 
 1. Avoid Local Variables
 ------------------------

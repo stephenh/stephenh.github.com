@@ -2,6 +2,7 @@
 title: Enterprise Spreadsheets
 categories: 
   - Architecture
+draft: true
 ---
 
 Early in my career, I worked in enterprise consulting. I worked with a good friend, and we wandered around to various clients doing various things.

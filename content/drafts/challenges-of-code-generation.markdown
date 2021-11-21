@@ -1,6 +1,6 @@
 ---
 title: The Two Challenges of Code Generation
-layout: post
+draft: true
 ---
 
 I like code generation. More specifically, I like up-front, writes-`.java`-files code generation. I think that, when done well, it can dramatically affect the quality and productivity of a project.

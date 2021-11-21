@@ -1,5 +1,5 @@
 ---
-layout: post
+draft: true
 title: Refactoring Chord
 ---
 

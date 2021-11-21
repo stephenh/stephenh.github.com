@@ -1,6 +1,6 @@
 ---
 title: Spark Shuffles and Partition Sizing
-layout: draft
+draft: true
 ---
 
 At [Bizo](http://www.bizo.com) we've been enjoying [Spark](http://spark.incubator.apache.org/) for writing map/reduce-style jobs in a nice, test-able Scala API.

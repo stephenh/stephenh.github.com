@@ -1,5 +1,5 @@
 ---
-layout: draft
+draft: true
 title: Why (Type-Safe) Rich UIs Need Lenses
 ---
 

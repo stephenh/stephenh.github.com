@@ -1,6 +1,6 @@
 ---
-layout: default
 title: Gosu has First Class Data Binding
+draft: true
 ---
 
 [Gosu](http://www.gosu-lang.org) 0.8 was recently released, with an incredibly

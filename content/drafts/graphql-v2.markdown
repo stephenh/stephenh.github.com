@@ -1,4 +1,6 @@
-
+---
+draft: true
+---
 
 ### Not null by default
 

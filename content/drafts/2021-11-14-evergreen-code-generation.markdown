@@ -3,6 +3,7 @@ date: "2021-11-14T00:00:00Z"
 categories:
   - Architecture
 title: Evergreen Code Generation
+draft: true
 ---
 
 I am a big fan of code generation when "done well" (...which I've already written about [~10 years ago](/2010/07/15/code-generation-is-not-evil.html), eesh).

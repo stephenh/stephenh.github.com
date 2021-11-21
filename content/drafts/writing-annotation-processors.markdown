@@ -1,5 +1,5 @@
 ---
-layout: post
+draft: true
 title: Writing Annotation Processors (with a GWT sample)
 ---
 

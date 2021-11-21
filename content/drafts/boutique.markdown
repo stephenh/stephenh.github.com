@@ -1,6 +1,6 @@
 ---
 title: Boutique Software Stacks
-layout: draft
+draft: true
 ---
 
 * I prefer to depend on smaller, simpler upstream projects, rather than the most popular.

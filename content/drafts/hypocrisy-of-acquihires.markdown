@@ -1,6 +1,6 @@
 ---
 title: The Hypocrisy of Acquihires
-layout: draft
+draft: true
 ---
 
 There has been a lot of kibitzing about recent acquisitions of startups primarily for their teams ([here](http://news.ycombinator.com/item?id=4274505), [here](http://news.ycombinator.com/item?id=4271376), [here](http://news.ycombinator.com/item?id=4272423), etc.).

@@ -1,3 +1,6 @@
+---
+draft: true
+---
 
 In scala, we generally leave off the parens for methods that are just getters (e.g. they don't do/change anything, they just return an object), so: 
 p1.partnerSettings.get.setMarketingAutomationBecameActiveDate(dec31)
