@@ -1,0 +1,279 @@
+<!doctype html><html lang=en>
+<head>
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width,initial-scale=1">
+<meta http-equiv=content-language content="en">
+<meta name=color-scheme content="light dark">
+<meta name=author content="Stephen Haberman">
+<meta name=description content="When implementing software systems, behavior is often derived from expressions that are based on the domain model&rsquo;s current state.
+For example:
+ Do not show &ldquo;pending&rdquo; accounts in the navbar When an account has more than $100 in it, allow the user to upgrade it  Usually it&rsquo;s tempting to build this logic directly into clients/UIs by directly accessing the underlying data (i.e. the account status, the account balance), i.e. in a React component or JSX:">
+<meta name=keywords content="blog,developer,personal">
+<meta name=twitter:card content="summary">
+<meta name=twitter:title content="Can and Should Instead of Is and Get">
+<meta name=twitter:description content="When implementing software systems, behavior is often derived from expressions that are based on the domain model&rsquo;s current state.
+For example:
+ Do not show &ldquo;pending&rdquo; accounts in the navbar When an account has more than $100 in it, allow the user to upgrade it  Usually it&rsquo;s tempting to build this logic directly into clients/UIs by directly accessing the underlying data (i.e. the account status, the account balance), i.e. in a React component or JSX:">
+<meta property="og:title" content="Can and Should Instead of Is and Get">
+<meta property="og:description" content="When implementing software systems, behavior is often derived from expressions that are based on the domain model&rsquo;s current state.
+For example:
+ Do not show &ldquo;pending&rdquo; accounts in the navbar When an account has more than $100 in it, allow the user to upgrade it  Usually it&rsquo;s tempting to build this logic directly into clients/UIs by directly accessing the underlying data (i.e. the account status, the account balance), i.e. in a React component or JSX:">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://www.draconianoverlord.com/2022/01/17/can-and-should-instead-of-is-and-get.html/"><meta property="article:section" content="posts">
+<meta property="article:published_time" content="2022-01-17T00:00:00+00:00">
+<meta property="article:modified_time" content="2022-01-17T00:00:00+00:00">
+<title>
+Can and Should Instead of Is and Get · Draconian Overlord
+</title>
+<link rel=canonical href=https://www.draconianoverlord.com/2022/01/17/can-and-should-instead-of-is-and-get.html/>
+<link rel=preload href="/fonts/forkawesome-webfont.woff2?v=1.2.0" as=font type=font/woff2 crossorigin>
+<link rel=stylesheet href=/css/coder.min.d9fddbffe6f27e69985dc5fe0471cdb0e57fbf4775714bc3d847accb08f4a1f6.css integrity="sha256-2f3b/+byfmmYXcX+BHHNsOV/v0d1cUvD2Eesywj0ofY=" crossorigin=anonymous media=screen>
+<link rel=stylesheet href=/css/coder-dark.min.aa883b9ce35a8ff4a2a5008619005175e842bb18a8a9f9cc2bbcf44dab2d91fa.css integrity="sha256-qog7nONaj/SipQCGGQBRdehCuxioqfnMK7z0Tastkfo=" crossorigin=anonymous media=screen>
+<link rel=icon type=image/png href=/images/favicon-32x32.png sizes=32x32>
+<link rel=icon type=image/png href=/images/favicon-16x16.png sizes=16x16>
+<link rel=apple-touch-icon href=/images/apple-touch-icon.png>
+<link rel=apple-touch-icon sizes=180x180 href=/images/apple-touch-icon.png>
+<meta name=generator content="Hugo 0.92.0">
+</head>
+<body class="preload-transitions colorscheme-auto">
+<div class=float-container>
+<a id=dark-mode-toggle class=colorscheme-toggle>
+<i class="fa fa-adjust fa-fw" aria-hidden=true></i>
+</a>
+</div>
+<main class=wrapper>
+<nav class=navigation>
+<section class=container>
+<a class=navigation-title href=/>Draconian Overlord</a>
+Oppressing software entropy
+</section>
+</nav>
+<div class=content>
+<section class="container post">
+<article>
+<header>
+<div class=post-title>
+<h1 class=title>
+<a class=title-link href=https://www.draconianoverlord.com/2022/01/17/can-and-should-instead-of-is-and-get.html/>
+Can and Should Instead of Is and Get
+</a>
+</h1>
+</div>
+<div class=post-meta>
+<div class=date>
+<span class=posted-on>
+<i class="fa fa-calendar" aria-hidden=true></i>
+<time datetime=2022-01-17T00:00:00Z>
+January 17, 2022
+</time>
+</span>
+<span class=reading-time>
+<i class="fa fa-clock-o" aria-hidden=true></i>
+9-minute read
+</span>
+</div>
+<div class=categories>
+<i class="fa fa-folder" aria-hidden=true></i>
+<a href=/categories/architecture/>Architecture</a></div>
+</div>
+</header>
+<div>
+<p>When implementing software systems, behavior is often derived from expressions that are based on the domain model&rsquo;s current state.</p>
+<p>For example:</p>
+<ul>
+<li>Do not show &ldquo;pending&rdquo; accounts in the navbar</li>
+<li>When an account has more than $100 in it, allow the user to upgrade it</li>
+</ul>
+<p>Usually it&rsquo;s tempting to build this logic directly into clients/UIs by directly accessing the underlying data (i.e. the account status, the account balance), i.e. in a React component or JSX:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-typescript data-lang=typescript><span style=color:#75715e>// using getState/getStatus directly
+</span><span style=color:#75715e></span><span style=color:#66d9ef>const</span> <span style=color:#a6e22e>navbarAccounts</span> <span style=color:#f92672>=</span> <span style=color:#a6e22e>accounts</span>.<span style=color:#a6e22e>filter</span>(<span style=color:#a6e22e>account</span> <span style=color:#f92672>=&gt;</span> {
+  <span style=color:#66d9ef>return</span> <span style=color:#a6e22e>account</span>.<span style=color:#a6e22e>getStatus</span> <span style=color:#f92672>===</span> <span style=color:#e6db74>&#34;pending&#34;</span>;
+});
+
+<span style=color:#75715e>// using is accessors
+</span><span style=color:#75715e></span><span style=color:#66d9ef>const</span> <span style=color:#a6e22e>navbarAccounts</span> <span style=color:#f92672>=</span> <span style=color:#a6e22e>accounts</span>.<span style=color:#a6e22e>filter</span>(<span style=color:#a6e22e>account</span> <span style=color:#f92672>=&gt;</span> {
+  <span style=color:#66d9ef>return</span> <span style=color:#a6e22e>account</span>.<span style=color:#a6e22e>isPending</span>
+});
+
+<span style=color:#75715e>// allow conditional behavior
+</span><span style=color:#75715e></span><span style=color:#66d9ef>if</span> (<span style=color:#a6e22e>account</span>.<span style=color:#a6e22e>getBalance</span> <span style=color:#f92672>&gt;</span> <span style=color:#ae81ff>100</span>) {
+  <span style=color:#a6e22e>showUpgradeAccountButton</span>();
+}
+</code></pre></div><p>This solves the requirement in the short-term, but these conditions are a form of tech debt, because they spread the business logic for an entity kinda willy/nilly around the application.</p>
+<p>My assertion is that these expressions, which are using <code>get</code>s (<code>getStatus</code>, <code>getBalance</code>, <code>getState</code>) and <code>is</code>s (<code>isPending</code>), should be written as <code>can</code>s and <code>should</code>s that formally define and name the result they are calculating:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-typescript data-lang=typescript><span style=color:#66d9ef>const</span> <span style=color:#a6e22e>navbarAccounts</span> <span style=color:#f92672>=</span> <span style=color:#a6e22e>accounts</span>.<span style=color:#a6e22e>filter</span>(<span style=color:#a6e22e>account</span> <span style=color:#f92672>=&gt;</span> {
+  <span style=color:#66d9ef>return</span> <span style=color:#a6e22e>account</span>.<span style=color:#a6e22e>shouldBeInNavbar</span>;
+});
+
+<span style=color:#66d9ef>if</span> (<span style=color:#a6e22e>account</span>.<span style=color:#a6e22e>canUpgradeAccount</span>) {
+  <span style=color:#a6e22e>showUpgradeAccountButton</span>();
+}
+</code></pre></div><p>Which restricts the client-side logic to only <code>if</code> checks against binary (only <code>true</code> or <code>false</code>) outcomes, and keeps the underlying expressions abstracted/centralized in the domain model.</p>
+<h3 id=rationale-1-dryer-when-you-have-multiple-clients>
+Rationale 1: DRYer When You have Multiple Clients
+<a class=heading-link href=#rationale-1-dryer-when-you-have-multiple-clients>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h3>
+<p>One of the most common places where putting <code>get</code>-based expressions directly into clients becomes messy is with multiple clients, i.e. the prototypical Koltin Android app + Swift iOS app + TypeScript webapp trifecta.</p>
+<p>Granted, our example expressions are small, but repeating each of the above expressions across each client codebase is increasing the potential for bugs and maintenance burden.</p>
+<p>And, more often than not, real-world expressions are much complex, which makes the duplication across clients more unappealing.</p>
+<h3 id=rationale-2-easier-to-add-new-states>
+Rationale 2: Easier to Add New States
+<a class=heading-link href=#rationale-2-easier-to-add-new-states>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h3>
+<p>Particularly for logic that checks <code>getState</code> or <code>getStatus</code> fields, when you add a new status field, it can be tedious and error-prone to manually audit the codebase to find all of the conditions that <em>might</em> need to be updated to include or exclude the new state.</p>
+<p>However with the <code>can</code> or <code>should</code> approach, those conditions are generally in a single spot in the codebase (in the entity&rsquo;s primary file, or its backend-for-frontend API), and so are much easier to find, audit, and update if needed.</p>
+<h4 id=what-about-adts>
+What about ADTs?
+<a class=heading-link href=#what-about-adts>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h4>
+<p>A potential mitigation to the &ldquo;new state&rdquo; problem is to use ADTs which can leverage TypeScript&rsquo;s <a href=https://basarat.gitbook.io/typescript/type-system/discriminated-unions#exhaustive-checks>exhaustiveness checks</a> to cause compile errors when new conditions are added.</p>
+<p>For example, the client-side UI could be written as:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-typescript data-lang=typescript><span style=color:#66d9ef>function</span> <span style=color:#a6e22e>shouldBeInNavbar</span>(<span style=color:#a6e22e>status</span>: <span style=color:#66d9ef>AccountStatus</span>) {
+  <span style=color:#66d9ef>switch</span> (<span style=color:#a6e22e>status</span>) {
+    <span style=color:#66d9ef>case</span> <span style=color:#a6e22e>AccountStatus.OPEN</span>: <span style=color:#66d9ef>return</span> <span style=color:#66d9ef>true</span>;
+    <span style=color:#66d9ef>case</span> <span style=color:#a6e22e>AccountStatus.CLOSED</span>: <span style=color:#66d9ef>return</span> <span style=color:#66d9ef>false</span>;
+    <span style=color:#66d9ef>case</span> <span style=color:#a6e22e>AccountStatus.DRAFT</span>: <span style=color:#66d9ef>return</span> <span style=color:#66d9ef>false</span>;
+    <span style=color:#66d9ef>default</span><span style=color:#f92672>:</span> <span style=color:#a6e22e>assertNever</span>(<span style=color:#a6e22e>status</span>);
+  }
+}
+</code></pre></div><p>Where the <code>assertNever</code> (see <a href=https://github.com/aikoven/assert-never>an example impl</a>) will throw a compile error when we introduce a new <code>AccountStatus.REVIEWING</code> state.</p>
+<p>This is good and an improvement; my hestitation is that:</p>
+<ol>
+<li>
+<p>It is tedious to type out exhaustive checks and really easy for engineers to just slip in an <code>.isDraft</code>, so it&rsquo;s often not done.</p>
+<p>(Granted, this is not a great rationale, b/c the same exhaustive check would ideally be typed out within the domain&rsquo;s <code>should</code> method.)</p>
+</li>
+<li>
+<p>It only handles single-condition checks</p>
+<p>Unfortunately, TypeScript does not have full-fledged pattern matching built-in, so <code>assertNever</code> only works for checking a single condition (i.e. <code>status</code>). If the expression relies on both <code>status</code> as well as <code>balance</code>, then an ADT cannot exhaustively check that.</p>
+<p>(Granted, there are libraries like <a href=https://github.com/gvergnaud/ts-pattern>ts-pattern</a> that address this; unfortunately/admittedly I&rsquo;ve not had a chance to use them yet, and I&rsquo;m unclear how it&rsquo;d handle non-boolean checks, i.e. <code>.getBalance > 100</code> I don&rsquo;t think either TypeScript or <code>ts-pattern</code> will be able to check &ldquo;make sure they also check less than $100&rdquo;.)</p>
+</li>
+<li>
+<p>Doesn&rsquo;t address client-side duplication/implementation considerations</p>
+<p>ADTs are definitely better than inline <code>getState</code> checks, but I think overall not a solution in-and-of themselves to the other pros/cons of putting business logic expressions on the client-side.</p>
+</li>
+</ol>
+<h3 id=rationale-3-faster-client-side-implementation>
+Rationale 3: Faster Client-Side Implementation
+<a class=heading-link href=#rationale-3-faster-client-side-implementation>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h3>
+<p>To my general chagrin, most of the development time, at least in projects I&rsquo;ve been involved in for the last ~5-8 years, is on the frontend. The bar for frontend UX is very high these days, and even with mature frameworks and component libraries like React/et al, it just takes longer to deliver frontend code.</p>
+<p>Given this, allowing the client implemention to be as simple as possible, by leveraging dead-simple boolean conditions (<code>can</code>s and <code>should</code>s), is a small-but-measurable way of speeding up/simplifying the client.</p>
+<p>Especially for testing, with <code>can</code>/<code>should</code> the UI tests have only two binary outcomes of <code>true</code> and <code>false</code> to cover, and then the complexity and nuance of writing test cases to cover the actual calculation of the expression can be written on the backend.</p>
+<h3 id=wrinkle-1-isnt-this-leaking-ui-concerns-into-the-domain>
+Wrinkle 1: Isn&rsquo;t this Leaking UI Concerns into the Domain?
+<a class=heading-link href=#wrinkle-1-isnt-this-leaking-ui-concerns-into-the-domain>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h3>
+<p>Granted, it can seem kind of silly to &ldquo;dirty&rdquo; the domain layer with UI concerns about navbars and which buttons to enable.</p>
+<p>However, I think this can be mitigated two ways:</p>
+<ol>
+<li>
+<p>Choose names that are as domain-driven as possible, i.e. instead of <code>showInNavbar</code> use <code>isPrimaryAccount</code>, or instead of <code>showUpgradeAccountButton</code> use <code>canUpgradeAccount</code>.</p>
+</li>
+<li>
+<p>Add the most extreme &ldquo;just a UI concern&rdquo; expressions to a backend-for-frontend API layer like GraphQL instead of the core domain entities.</p>
+</li>
+</ol>
+<h3 id=wrinkle-2-real-timeoffline-updates>
+Wrinkle 2: Real-time/Offline Updates
+<a class=heading-link href=#wrinkle-2-real-timeoffline-updates>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h3>
+<p>One constraint of &ldquo;keep expressions on the server-side within the domain model&rdquo; is that it requires the server to both initially calculate, as well as update, the expression.</p>
+<p>Most of the time this is fine, but if you have a specific UI screen that needs to <em>immediately</em> react to an expression&rsquo;s new value, you can try to quickly calc/refresh the value from the backend (which hopefully is acceptable most of the time). But, if not, then coding the expression&rsquo;s logic on the frontend, where it can immediately access the latest values, can be the most pragmatic/necessary approach.</p>
+<p>Also, if your client app is offline, the server&rsquo;s non-presence becomes ubiqutious and you almost certainly have to code expressions on the client. Although, you could still apply this pattern by having the <code>can</code> and <code>should</code> implementations not literally &ldquo;on the server&rdquo;, but abstracted within your client-side domain model, instead of having them inlined directly into the UI rendering code.</p>
+<h3 id=wrinkle-3-needs-a-responsive-full-stack-team>
+Wrinkle 3: Needs a Responsive Full Stack Team
+<a class=heading-link href=#wrinkle-3-needs-a-responsive-full-stack-team>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h3>
+<p>One context where this pattern would not work well is very decoupled frontend & backend teams, i.e. where a frontend engineer might end up blocked for days/weeks waiting for a backend engineer to expose the appropriate <code>can</code> or <code>should</code> method they need for the UI.</p>
+<p>Ideally the team is full-stack and can internally prioritize adding the backend <code>can</code>/<code>should</code> method when the frontend engineer needs it.</p>
+<p>Note that a way to move faster here, even for full stack teams, is to first define the contract, i.e. release a backend PR with the <code>can</code> or <code>should</code> method added but it always returns <code>false</code>. This should be very quick to implement, and should unblock the frontend engineer by letting them writes tests and stories against the new API contract, while the backend engineer in parallel actually implements the expression.</p>
+<h3 id=bonus-use-potential-operations-to-say-why-not>
+Bonus: Use Potential Operations to say &ldquo;Why Not&rdquo;
+<a class=heading-link href=#bonus-use-potential-operations-to-say-why-not>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h3>
+<p>Recently the project I&rsquo;m working on has doubled down on <code>can</code> methods creating a type in our GraphQL API called <code>PotentialOperation</code>:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-graphql data-lang=graphql><span style=color:#66d9ef>type</span> <span style=color:#a6e22e>PotentialOperation</span> {
+  allowed: <span style=color:#a6e22e>Boolean</span>!
+  disabledReasons: [<span style=color:#a6e22e>String</span>!]!
+}
+
+<span style=color:#75715e># Used in Account</span>
+<span style=color:#66d9ef>type</span> <span style=color:#a6e22e>Account</span> {
+  canUpgradeAccount: <span style=color:#a6e22e>PotentialOperation</span>!
+}
+</code></pre></div><p>This allows the backend to not only say &ldquo;yes or no&rdquo; on whether an operation is allowed, but &ldquo;why&rdquo; it&rsquo;s not allowed as well.</p>
+<p>For the <code>canUpgradeAccount</code> example, a return value might be:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json>{
+  <span style=color:#f92672>&#34;id&#34;</span>: <span style=color:#e6db74>&#34;account:1&#34;</span>,
+  <span style=color:#f92672>&#34;canUpgradeAccount&#34;</span>: {
+    <span style=color:#f92672>&#34;allowed&#34;</span>: <span style=color:#66d9ef>false</span>,
+    <span style=color:#f92672>&#34;disabledReasons&#34;</span>: [
+      <span style=color:#e6db74>&#34;The account balance is below $100&#34;</span>
+    ]
+  }
+}
+</code></pre></div><p>This allows the client UX to be much more helpful to the user, by providing a reason why/why not an operation can be performed (via a tooltip over the &ldquo;Upgrade&rdquo; button, or other inline text), but still avoids implementing the expression itself on the client-side.</p>
+<h3 id=musing-taking-this-to-an-extreme>
+Musing: Taking This to an Extreme
+<a class=heading-link href=#musing-taking-this-to-an-extreme>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h3>
+<p>As a disclaimer, I&rsquo;ve not actually tried this musing, but one could imagine: what if all domain model getters were inaccessible to any code except for displaying the literal value to the user?</p>
+<p>I.e. for the <code>Account</code> CRUD screen, and the <code>Account</code>s listing screen, it&rsquo;s obvious the frontend would need to be able to call <code>account.getName</code>, <code>account.getBalance</code>, to show those literal values to the user. And also to have setters, like <code>account.setName</code> (or the <code>SaveAuthorInput.name</code> GraphQL equivalent), for the CRUD form to update the name.</p>
+<p>But, outside of those &ldquo;the user is viewing/updating this literal value&rdquo;, what if no other code in the system was allowed access to the <code>Account</code>&rsquo;s data?</p>
+<p>I have a funny feeling that I&rsquo;ve seen this approach before; it reminds me of <a href=/2013/04/12/east-oriented-programming.html/>east-oriented programming</a> and maybe stricter practitioners of Domain Driven Design / CQRS, where all mutations are command pattern-d.</p>
+<p>My hesitancy to the east, CQRS, and other &ldquo;getter-/setter-less&rdquo; approaches I&rsquo;ve historically seen is that, I think realistically the majority of systems' screens and APIs really are &ldquo;just CRUD for the end-user&rdquo;, where it seems like overkill and needless complexity. I want to make CRUD as easy as possible.</p>
+<p>&mldr;but, outside of CRUD, I do generally buy into &ldquo;eschew getters and setters, and use encapsulation&rdquo;.</p>
+<p>I think the main challenge is that I&rsquo;ve not found a way, in a codebase or API or type system, to sufficiently deliniate the &ldquo;just CRUD&rdquo; code paths, which are allowed to use getters and setters, from the &ldquo;deriving / invoking behavior&rdquo; behavior, which ideally would use higher-level abstractions like <code>can</code> and <code>should</code>.</p>
+<p>So, for now I&rsquo;ve just relied on engineers to know about the <code>can</code> and <code>should</code> pattern, and know/choose when to use it on a case-by-case basis.</p>
+<h3 id=disclaimer-use-as-a-rule-of-thumb>
+Disclaimer: Use as a Rule of Thumb
+<a class=heading-link href=#disclaimer-use-as-a-rule-of-thumb>
+<i class="fa fa-link" aria-hidden=true></i>
+</a>
+</h3>
+<p>While we&rsquo;ve had a lot of success with <code>PotentialOperation</code> and <code>can</code>/<code>should</code> methods in our current project, I will be clear/honest that we&rsquo;ve not enforced it for literally every UI condition, from day one.</p>
+<p>Most of this is probably that, when starting, I&rsquo;d just kinda forgot about this pattern (we&rsquo;d used a version of it on a previous team, circa 2015-ish); but also maybe it would actually be overwhelming to do for literally every UI condition, I&rsquo;m not sure.</p>
+<p>So I do think this approach is a great rule of thumb, especially for complex, domain-heavy expressions, but I&rsquo;ve not seen it applied &ldquo;for literally everything&rdquo;.</p>
+</div>
+<footer>
+<div id=disqus_thread></div>
+<script type=application/javascript>var disqus_config=function(){};(function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById('disqus_thread').innerHTML='Disqus comments not available by default when the website is previewed locally.';return}var b=document,a=b.createElement('script');a.async=!0,a.src='//draconianoverlord.disqus.com/embed.js',a.setAttribute('data-timestamp',+new Date),(b.head||b.body).appendChild(a)})()</script>
+<noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript>
+<a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a>
+</footer>
+</article>
+</section>
+</div>
+<footer class=footer>
+<section class=container>
+©
+2008 -
+2022
+Stephen Haberman
+·
+Powered by <a href=https://gohugo.io/>Hugo</a> & <a href=https://github.com/luizdepra/hugo-coder/>Coder</a>.
+</section>
+</footer>
+</main>
+<script src=/js/coder.min.03b17769f4f91ae35667e1f2a1ca8c16f50562576cf90ff32b3179926914daa5.js integrity="sha256-A7F3afT5GuNWZ+HyocqMFvUFYlds+Q/zKzF5kmkU2qU="></script>
+</body>
+</html>
