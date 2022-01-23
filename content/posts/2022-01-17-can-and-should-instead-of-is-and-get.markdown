@@ -64,9 +64,9 @@ However with the `can` or `should` approach, those conditions are generally in a
 
 #### What about ADTs?
 
-A potential mitigation to the "new state" problem is to use ADTs which can leverage TypeScript's [exhaustiveness checks](https://basarat.gitbook.io/typescript/type-system/discriminated-unions#exhaustive-checks) to cause compile errors when new conditions are added.
+A potential mitigation to the "new state" problem is to use [ADT](https://dev.to/mikeskoe/algebraic-data-type-adt-with-typescript-f3p)s which can leverage TypeScript's [exhaustiveness checks](https://basarat.gitbook.io/typescript/type-system/discriminated-unions#exhaustive-checks) to cause compile errors when new conditions are added.
 
-For example, the client-side UI could be written as:
+For example (using just enums, but it would be similar with full-fledged ADTs), the client-side UI could be written as:
 
 ```typescript
 function shouldBeInNavbar(status: AccountStatus) {
