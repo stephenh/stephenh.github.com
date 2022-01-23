@@ -132,8 +132,8 @@ What about ADTs?
 <i class="fa fa-link" aria-hidden=true></i>
 </a>
 </h4>
-<p>A potential mitigation to the &ldquo;new state&rdquo; problem is to use ADTs which can leverage TypeScript&rsquo;s <a href=https://basarat.gitbook.io/typescript/type-system/discriminated-unions#exhaustive-checks>exhaustiveness checks</a> to cause compile errors when new conditions are added.</p>
-<p>For example, the client-side UI could be written as:</p>
+<p>A potential mitigation to the &ldquo;new state&rdquo; problem is to use <a href=https://dev.to/mikeskoe/algebraic-data-type-adt-with-typescript-f3p>ADT</a>s which can leverage TypeScript&rsquo;s <a href=https://basarat.gitbook.io/typescript/type-system/discriminated-unions#exhaustive-checks>exhaustiveness checks</a> to cause compile errors when new conditions are added.</p>
+<p>For example (using just enums, but it would be similar with full-fledged ADTs), the client-side UI could be written as:</p>
 <div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-typescript data-lang=typescript><span style=color:#66d9ef>function</span> <span style=color:#a6e22e>shouldBeInNavbar</span>(<span style=color:#a6e22e>status</span>: <span style=color:#66d9ef>AccountStatus</span>) {
   <span style=color:#66d9ef>switch</span> (<span style=color:#a6e22e>status</span>) {
     <span style=color:#66d9ef>case</span> <span style=color:#a6e22e>AccountStatus.OPEN</span>: <span style=color:#66d9ef>return</span> <span style=color:#66d9ef>true</span>;
