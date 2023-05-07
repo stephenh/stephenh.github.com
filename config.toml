@@ -56,7 +56,7 @@ rel = "alternate"
 type = "application/rss+xml"
 
 [permalinks]
-  posts = '/:year/:month/:day/:title.html'
+  posts = '/:year/:month/:day/:slug.html'
 
 [outputFormats.RSS]
 mediatype = "application/rss"
