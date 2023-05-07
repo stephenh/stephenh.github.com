@@ -1,256 +1,70 @@
-<!doctype html><html lang=en>
-<head>
-<meta charset=utf-8>
-<meta name=viewport content="width=device-width,initial-scale=1">
-<meta http-equiv=content-language content="en">
-<meta name=color-scheme content="light dark">
-<meta name=author content="Stephen Haberman">
-<meta name=description content="I recently read a book on Haskell and it was fun.
+<!doctype html><html lang=en><head><title>Is Haskell's Complexity Artificial? · Draconian Overlord</title><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=color-scheme content="light dark"><meta name=author content="Stephen Haberman"><meta name=description content="I recently read a book on Haskell and it was fun.
 It&rsquo;s been a long time since &ldquo;pick up language X&rdquo; has taken me more than glancing at intros/tutorials, jumping in, and then hitting up Stack Overflow as needed.
 Not because I&rsquo;m a savant programmer, but just because even among all the various flavors of dynamic, static, functional, object-oriented, etc., most mainstream languages just aren&rsquo;t that different these days.
-But Haskell is, for me, a &ldquo;&mldr;yeah, I have to read a few books about this&rdquo; challenge.">
-<meta name=keywords content="blog,developer,personal">
-<meta name=twitter:card content="summary">
-<meta name=twitter:title content="Is Haskell's Complexity Artificial?">
-<meta name=twitter:description content="I recently read a book on Haskell and it was fun.
+But Haskell is, for me, a &ldquo;&mldr;yeah, I have to read a few books about this&rdquo; challenge."><meta name=keywords content="blog,developer,personal"><meta name=twitter:card content="summary"><meta name=twitter:title content="Is Haskell's Complexity Artificial?"><meta name=twitter:description content="I recently read a book on Haskell and it was fun.
 It&rsquo;s been a long time since &ldquo;pick up language X&rdquo; has taken me more than glancing at intros/tutorials, jumping in, and then hitting up Stack Overflow as needed.
 Not because I&rsquo;m a savant programmer, but just because even among all the various flavors of dynamic, static, functional, object-oriented, etc., most mainstream languages just aren&rsquo;t that different these days.
-But Haskell is, for me, a &ldquo;&mldr;yeah, I have to read a few books about this&rdquo; challenge.">
-<meta property="og:title" content="Is Haskell's Complexity Artificial?">
-<meta property="og:description" content="I recently read a book on Haskell and it was fun.
+But Haskell is, for me, a &ldquo;&mldr;yeah, I have to read a few books about this&rdquo; challenge."><meta property="og:title" content="Is Haskell's Complexity Artificial?"><meta property="og:description" content="I recently read a book on Haskell and it was fun.
 It&rsquo;s been a long time since &ldquo;pick up language X&rdquo; has taken me more than glancing at intros/tutorials, jumping in, and then hitting up Stack Overflow as needed.
 Not because I&rsquo;m a savant programmer, but just because even among all the various flavors of dynamic, static, functional, object-oriented, etc., most mainstream languages just aren&rsquo;t that different these days.
-But Haskell is, for me, a &ldquo;&mldr;yeah, I have to read a few books about this&rdquo; challenge.">
-<meta property="og:type" content="article">
-<meta property="og:url" content="https://www.draconianoverlord.com/2018/05/30/is-haskells-complexity-artificial.html/"><meta property="article:section" content="posts">
-<meta property="article:published_time" content="2018-05-30T00:00:00+00:00">
-<meta property="article:modified_time" content="2018-05-30T00:00:00+00:00">
-<title>
-Is Haskell's Complexity Artificial? · Draconian Overlord
-</title>
-<link rel=canonical href=https://www.draconianoverlord.com/2018/05/30/is-haskells-complexity-artificial.html/>
-<link rel=preload href="/fonts/forkawesome-webfont.woff2?v=1.2.0" as=font type=font/woff2 crossorigin>
-<link rel=stylesheet href=/css/coder.min.d9fddbffe6f27e69985dc5fe0471cdb0e57fbf4775714bc3d847accb08f4a1f6.css integrity="sha256-2f3b/+byfmmYXcX+BHHNsOV/v0d1cUvD2Eesywj0ofY=" crossorigin=anonymous media=screen>
-<link rel=stylesheet href=/css/coder-dark.min.aa883b9ce35a8ff4a2a5008619005175e842bb18a8a9f9cc2bbcf44dab2d91fa.css integrity="sha256-qog7nONaj/SipQCGGQBRdehCuxioqfnMK7z0Tastkfo=" crossorigin=anonymous media=screen>
-<link rel=icon type=image/png href=/images/favicon-32x32.png sizes=32x32>
-<link rel=icon type=image/png href=/images/favicon-16x16.png sizes=16x16>
-<link rel=apple-touch-icon href=/images/apple-touch-icon.png>
-<link rel=apple-touch-icon sizes=180x180 href=/images/apple-touch-icon.png>
-<meta name=generator content="Hugo 0.92.0">
-</head>
-<body class="preload-transitions colorscheme-auto">
-<div class=float-container>
-<a id=dark-mode-toggle class=colorscheme-toggle>
-<i class="fa fa-adjust fa-fw" aria-hidden=true></i>
-</a>
-</div>
-<main class=wrapper>
-<nav class=navigation>
-<section class=container>
-<a class=navigation-title href=/>Draconian Overlord</a>
-Oppressing software entropy
-</section>
-</nav>
-<div class=content>
-<section class="container post">
-<article>
-<header>
-<div class=post-title>
-<h1 class=title>
-<a class=title-link href=https://www.draconianoverlord.com/2018/05/30/is-haskells-complexity-artificial.html/>
-Is Haskell's Complexity Artificial?
-</a>
-</h1>
-</div>
-<div class=post-meta>
-<div class=date>
-<span class=posted-on>
-<i class="fa fa-calendar" aria-hidden=true></i>
-<time datetime=2018-05-30T00:00:00Z>
-May 30, 2018
-</time>
-</span>
-<span class=reading-time>
-<i class="fa fa-clock-o" aria-hidden=true></i>
-8-minute read
-</span>
-</div>
-<div class=categories>
-<i class="fa fa-folder" aria-hidden=true></i>
-<a href=/categories/languages/>Languages</a></div>
-</div>
-</header>
-<div>
-<p>I recently read a book on Haskell and it was fun.</p>
-<p>It&rsquo;s been a long time since &ldquo;pick up language X&rdquo; has taken me more than glancing at intros/tutorials, jumping in, and then hitting up Stack Overflow as needed.</p>
-<p>Not because I&rsquo;m a savant programmer, but just because even among all the various flavors of dynamic, static, functional, object-oriented, etc., most mainstream languages just aren&rsquo;t that different these days.</p>
-<p>But Haskell is, for me, a &ldquo;&mldr;yeah, I have to read a few books about this&rdquo; challenge. (Rust would be another, albeit it&rsquo;s very different from Haskell.)</p>
-<p>And it&rsquo;s pretty fun to be dropped back to newbie stage.</p>
-<h2 id=haskells-laziness-actually-seems-intuitive>
-Haskell&rsquo;s Laziness Actually Seems Intuitive?
-<a class=heading-link href=#haskells-laziness-actually-seems-intuitive>
-<i class="fa fa-link" aria-hidden=true></i>
-</a>
-</h2>
-<p>That said, as I got through the book, Haskell&rsquo;s lazy evaluation actually seems relatively simple? Maybe deceptively so?</p>
-<p>Initially I was thinking it would be hard to reason about, given &ldquo;no other language does this!?!&rdquo;, which makes it sound weird and esoteric.</p>
-<p>But it&rsquo;s just call-by-value vs. call-by-name, which are both terms I&rsquo;d been exposed to before.</p>
-<p>My primary exposure was from Scala, which kinda/sorta hacked call-by-name semantics into the JVM. E.g. in Scala you can do:</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-scala data-lang=scala><span style=color:#75715e>// note the &#39;=&gt;&#39; prefix to the Seq[Int] type
-</span><span style=color:#75715e></span><span style=color:#66d9ef>def</span> someMethod<span style=color:#f92672>(</span>arg<span style=color:#66d9ef>:</span> <span style=color:#f92672>=&gt;</span> <span style=color:#a6e22e>Seq</span><span style=color:#f92672>[</span><span style=color:#66d9ef>Int</span><span style=color:#f92672>])</span><span style=color:#66d9ef>:</span> <span style=color:#66d9ef>Unit</span> <span style=color:#f92672>=</span> <span style=color:#f92672>{</span>
-  <span style=color:#75715e>// ...
-</span><span style=color:#75715e></span>  <span style=color:#66d9ef>val</span> a <span style=color:#66d9ef>=</span> arg
-  <span style=color:#75715e>// ...
-</span><span style=color:#75715e></span><span style=color:#f92672>}</span>
-
-someMethod<span style=color:#f92672>(</span><span style=color:#a6e22e>Seq</span><span style=color:#f92672>(</span><span style=color:#ae81ff>1</span><span style=color:#f92672>,</span> <span style=color:#ae81ff>2</span><span style=color:#f92672>,</span> <span style=color:#ae81ff>3</span><span style=color:#f92672>));</span>
-</code></pre></div><p>And, due to the fat arrow in the <code>=> Seq[Int]</code> type declaration, the <code>Seq(1, 2, 3)</code> parameter that is passed to <code>someMethod</code> will be auto-lambda&rsquo;d and the <code>Seq</code> constructor will not actually be called when <code>someMethod</code> is called (i.e. construction of the <code>Seq</code> is now lazy).</p>
-<p>Instead it&rsquo;s only created when the <code>arg</code> parameter is touched, on the <code>val a = arg</code> line. Which is lazy evaluation.</p>
-<p>So, Scala has opt-in call-by-name, where as Haskell has everything call-by-name. Fair enough.</p>
-<p>That doesn&rsquo;t seem too hard.</p>
-<p>(Tangentially, Haskell also memoizes its call-by-name values, which I don&rsquo;t believe Scala does, as Scala&rsquo;s <code>Stream.continually(foo)</code> will lazily call <code>foo</code>, and also repeatedly call <code>foo</code> for each new element of the Stream. So, that is different between the two, but that doesn&rsquo;t seem like a fundamental shift in the mental model.)</p>
-<h2 id=io-seems-fine-too>
-IO Seems Fine Too
-<a class=heading-link href=#io-seems-fine-too>
-<i class="fa fa-link" aria-hidden=true></i>
-</a>
-</h2>
-<p>The next &ldquo;ooh scary&rdquo; aspect of Haskell is that you &ldquo;can&rsquo;t do I/O&rdquo;: all functions are pure (which means they only rely on their input parameters and can&rsquo;t make random calls off to static/global shared functions like <code>System.out.println</code> or &ldquo;block while we read from disk&rdquo;).</p>
-<p>So, instead there is an <code>IO</code> type, which is of course a monad. :-)</p>
-<p>E.g. to read from standard in, Haskell has a library method <code>getChar</code>, and its type is <code>IO -> IO char</code>, which if I Java-ize that in my head is:</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>static</span> World<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>char</span><span style=color:#f92672>&gt;</span> <span style=color:#a6e22e>getChar</span><span style=color:#f92672>(</span>World<span style=color:#f92672>&lt;?&gt;</span> w<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
-  <span style=color:#75715e>// some native implementation
-</span><span style=color:#75715e></span><span style=color:#f92672>}</span>
-</code></pre></div><p>So, now to &ldquo;do I/O&rdquo;, I can&rsquo;t directly touch chars, but I can pretend I do, e.g.:</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-scala data-lang=scala>public <span style=color:#a6e22e>World</span><span style=color:#f92672>&lt;</span>char<span style=color:#f92672>&gt;</span> pretendImHaskell<span style=color:#f92672>(</span><span style=color:#a6e22e>World</span><span style=color:#f92672>&lt;?&gt;</span> w<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
-  <span style=color:#a6e22e>World</span><span style=color:#f92672>&lt;</span>char<span style=color:#f92672>&gt;</span> c1 <span style=color:#66d9ef>=</span> getChar<span style=color:#f92672>(</span>w<span style=color:#f92672>);</span>
-  <span style=color:#a6e22e>World</span><span style=color:#f92672>&lt;</span>char<span style=color:#f92672>&gt;</span> c2 <span style=color:#66d9ef>=</span> getChar<span style=color:#f92672>(</span>w<span style=color:#f92672>);</span>
-  <span style=color:#75715e>// ignore syntax errors
-</span><span style=color:#75715e></span>  <span style=color:#66d9ef>return</span> c1<span style=color:#f92672>.</span>map<span style=color:#f92672>(</span>c1 <span style=color:#f92672>-&gt;</span> c2<span style=color:#f92672>.</span>map<span style=color:#f92672>(</span>c2 <span style=color:#f92672>-&gt;</span> c1 <span style=color:#f92672>+</span> c2<span style=color:#f92672>));</span>
-
-</code></pre></div><p>Basically, instead of directly &ldquo;touching&rdquo; chars, we build an AST, a DAG, of &ldquo;things that <em>will later</em> muck with chars&rdquo;, and then return that &ldquo;unevaluated AST&rdquo; to Haskell.</p>
-<p>This allows our functions to be created purely, and only later will the Haskell runtime handle the dirty work reading/writing I/O while interpreting the &ldquo;AST&rdquo; we handed it.</p>
-<p>(As a disclaimer, I&rsquo;ve never written code that actually used Haskell&rsquo;s <code>IO</code>; I only believe I understand the concept, so I could be wrong on some nuances. I heard <a href=https://wiki.haskell.org/Haskell_IO_for_Imperative_Programmers>this article</a> is good but haven&rsquo;t thoroughly read it yet).</p>
-<p>So, okay, this is different, but also doesn&rsquo;t seem mind-boggling complex.</p>
-<h2 id=so-wheres-the-inherent-complexity>
-So Where&rsquo;s the Inherent Complexity?
-<a class=heading-link href=#so-wheres-the-inherent-complexity>
-<i class="fa fa-link" aria-hidden=true></i>
-</a>
-</h2>
-<p>Checking where we are at:</p>
-<ul>
-<li>Lazy evaluation: check, I think I understand, seems fine</li>
-<li>IO: check, I think I understand, seems fine</li>
-</ul>
-<p>Which is great, but I&rsquo;m left wondering where the infamous Haskell complexity is.</p>
-<p>Most Haskell conversations seem to quickly become academic, e.g. monads, applicatives, category theory, etc.</p>
-<p>In my super-limited exposure so far, I haven&rsquo;t seen why those are necessarily needed.</p>
-<p>Well, that&rsquo;s not quite true: I can see how they are necessary to massage the various shapes of &ldquo;ASTs&rdquo; (I basically think of monads/etc. as passing around AST-like computations of values instead of the values themselves).</p>
-<p>E.g. applicatives, if I have it right, allow to you massage values within boxed/monads like <code>Option</code>, without doing a &ldquo;verbose&rdquo; <code>option.map { i => ... }</code> (again mapping to Scala concepts).</p>
-<p>But I&rsquo;ve done smaller-scale versions of that in Scala, and instead of refactoring everything (or introducing fancier and fancier operators) to get to the point of point-free elegance, we just call <code>flatMap</code> directly, or have a few more characters of what in Haskell would be boilerplate.</p>
-<p>Which makes me wonder, but first a concrete example.</p>
-<h2 id=two-sorting-examples>
-Two Sorting Examples
-<a class=heading-link href=#two-sorting-examples>
-<i class="fa fa-link" aria-hidden=true></i>
-</a>
-</h2>
-<p>I also recently, and rather coincidentally, worked on an interview-style sorting problem.</p>
-<p>You can <a href=https://www.geeksforgeeks.org/nuts-bolts-problem-lock-key-problem/>read the question</a> on Geeks for Geeks.</p>
-<p>Because I&rsquo;d read the Haskell book, and also had seen how simple a naive (fixed pivot) Quicksort is in Haskell, I decided to use Haskell for my solution.</p>
-<p>Here is my first (cleaned up) attempt, which I believe is pretty canonical Haskell (<a href=https://github.com/stephenh/haskell-stutton-book/blob/master/src/boltsort.hs#L43>code here</a>):</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-haskell data-lang=haskell><span style=color:#a6e22e>boltsort2</span> <span style=color:#f92672>::</span> ([<span style=color:#66d9ef>Nut</span>], [<span style=color:#66d9ef>Bolt</span>]) <span style=color:#f92672>-&gt;</span> ([<span style=color:#66d9ef>Nut</span>], [<span style=color:#66d9ef>Bolt</span>])
-<span style=color:#a6e22e>boltsort2</span> (<span style=color:#66d9ef>[]</span>, <span style=color:#66d9ef>[]</span>) <span style=color:#f92672>=</span> (<span style=color:#66d9ef>[]</span>, <span style=color:#66d9ef>[]</span>)
-<span style=color:#a6e22e>boltsort2</span> ((n<span style=color:#66d9ef>:</span>ns), bs) <span style=color:#f92672>=</span> (sn&#39; <span style=color:#f92672>++</span> [n] <span style=color:#f92672>++</span> ln&#39;, sb&#39; <span style=color:#f92672>++</span> [b] <span style=color:#f92672>++</span> lb&#39;) <span style=color:#66d9ef>where</span>
-  (sb, [b], lb) <span style=color:#f92672>=</span> partition (<span style=color:#a6e22e>\</span>b <span style=color:#f92672>-&gt;</span> negate (compareNutBolt n b)) bs
-  (sn, <span style=color:#66d9ef>_</span>, ln) <span style=color:#f92672>=</span> partition (<span style=color:#a6e22e>\</span>n <span style=color:#f92672>-&gt;</span> compareNutBolt n b) ns
-  (sn&#39;, sb&#39;) <span style=color:#f92672>=</span> boltsort2 (sn, sb)
-  (ln&#39;, lb&#39;) <span style=color:#f92672>=</span> boltsort2 (ln, lb)
-</code></pre></div><p>I&rsquo;m using conventions I&rsquo;d read in the Stutton Haskell book, e.g. <code>n:ns</code>, variable names like <code>sn</code> and <code>sn'</code>.</p>
-<p>Granted, I have written zero lines of production Haskell, but again, I am pretty certain this is &ldquo;good Haskell&rdquo;.</p>
-<p>For my second attempt, I took a somewhat different approach, and kept exactly the same structure, but used &ldquo;boring enterprise&rdquo; variable names (<a href=https://github.com/stephenh/haskell-stutton-book/blob/master/src/boltsort-names.hs#L51>code here</a>):</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-haskell data-lang=haskell><span style=color:#75715e>-- this is basically a two-pass quicksort, which:</span>
-<span style=color:#75715e>-- 1) picks a nut as a pivot</span>
-<span style=color:#75715e>-- 2) partitions the bolts using the nut-pivot</span>
-<span style=color:#75715e>-- 3) using the nut pivot to find the matching bolt pivot</span>
-<span style=color:#75715e>-- 4) partitions the nuts using the bolt-pivot</span>
-<span style=color:#75715e>-- 5) recurses/combines</span>
-<span style=color:#a6e22e>boltsort2</span> <span style=color:#f92672>::</span> ([<span style=color:#66d9ef>Nut</span>], [<span style=color:#66d9ef>Bolt</span>]) <span style=color:#f92672>-&gt;</span> ([<span style=color:#66d9ef>Nut</span>], [<span style=color:#66d9ef>Bolt</span>])
-<span style=color:#a6e22e>boltsort2</span> (<span style=color:#66d9ef>[]</span>, <span style=color:#66d9ef>[]</span>) <span style=color:#f92672>=</span> (<span style=color:#66d9ef>[]</span>, <span style=color:#66d9ef>[]</span>)
-<span style=color:#a6e22e>boltsort2</span> ((pivotNut<span style=color:#66d9ef>:</span>nuts), bolts) <span style=color:#f92672>=</span>
-    (sortedSmallerNuts <span style=color:#f92672>++</span> [pivotNut] <span style=color:#f92672>++</span> sortedLargerNuts, sortedSmallerBolts <span style=color:#f92672>++</span> [pivotBolt] <span style=color:#f92672>++</span> sortedLargerBolts)
-  <span style=color:#66d9ef>where</span>
-    (smallerBolts, [pivotBolt], largerBolts) <span style=color:#f92672>=</span> partition (<span style=color:#a6e22e>\</span>b <span style=color:#f92672>-&gt;</span> negate (compareNutBolt pivotNut b)) bolts
-    (smallerNuts, <span style=color:#66d9ef>_</span>, largerNuts) <span style=color:#f92672>=</span> partition (<span style=color:#a6e22e>\</span>n <span style=color:#f92672>-&gt;</span> compareNutBolt n pivotBolt) nuts
-    (sortedSmallerNuts, sortedSmallerBolts) <span style=color:#f92672>=</span> boltsort2 (smallerNuts, smallerBolts)
-    (sortedLargerNuts, sortedLargerBolts) <span style=color:#f92672>=</span> boltsort2 (largerNuts, largerBolts)
-</code></pre></div><p>And I included a verbose, &ldquo;just repeats the code&rdquo; function comment.</p>
-<p>Looking at the two examples, &ldquo;canonical Haskell&rdquo; and &ldquo;enterprise Haskell&rdquo;, my impressions are:</p>
-<ol>
-<li>
-<p>The first example tickles my reptilian programmer brain as being &ldquo;ooh, sexy! So succinct! So graceful!&rdquo;</p>
-</li>
-<li>
-<p>The second example looks comparatively drab and verbose, so many wasted characters, re-typing out long variable names.</p>
-</li>
-</ol>
-<p>However, my conclusion is: the 1st is what I&rsquo;d like to <strong>write</strong> for an interview assignment to show off&ndash;the 2nd is what I&rsquo;d like <strong>read</strong> 6 months later when doing maintenance or fixing a critical production bug.</p>
-<p>(Granted, all I changed here is variable naming, and nothing about how the data is shaped.)</p>
-<h2 id=how-much-of-haskells-complexity-is-accidental>
-How Much of Haskell&rsquo;s Complexity is Accidental
-<a class=heading-link href=#how-much-of-haskells-complexity-is-accidental>
-<i class="fa fa-link" aria-hidden=true></i>
-</a>
-</h2>
-<p>This basically gets me to the thrust of this post: does Haskell really have to be as complex as most people (myself included) think it is?</p>
-<p>I don&rsquo;t think I&rsquo;m off base in asserting Haskell is the generally realm of academics with esoteric terms and symbol-heavy programs.</p>
-<p>However, my nagging feeling is that it does not have to be that way.</p>
-<p>Part of what makes me suspect this is Scala. I did enough Scala to exposed to a spectrum of styles:</p>
-<ol>
-<li>Scala that is just &ldquo;better Java&rdquo;</li>
-<li>Scala that is a judicious blend of OO+FP</li>
-<li>Scala that is &ldquo;wanna be Haskell&rdquo;, i.e. <a href=https://github.com/scalaz/scalaz>scalaz</a></li>
-</ol>
-<p>Where, for me, the &ldquo;judicious blend of OO+FF&rdquo; is a sweet spot of readability + cuteness that is demonstrably more succinct than just the &ldquo;better Java&rdquo; level, but also stops short of the &ldquo;nuclear code golf&rdquo; level where it exceeds the readability/reasonability of the typical programmer.</p>
-<p>So, that is my question: are the functors, applicatives, and another terms I don&rsquo;t even know of, <em>required</em> to write elegant Haskell?</p>
-<p>Or, could a person write &ldquo;judicious Haskell&rdquo;, which would be a compromising style that was purposefully more-verbose, likely more LoC, but, in theory, dramatically easier to read and reason about?</p>
-<p>Or, could the complexity of Haskell be necessary within the realm of the core library writers and language implementers, to build a theoretically solid foundation, but then kept more behind-the-scenes for the every-day programmer? (Which, to me, is what Scala has pulled off: Martin Odersky thinks in <a href=https://github.com/lampepfl/dotty>Dotty</a> so that I don&rsquo;t have to.)</p>
-<h2 id=writing-for-the-everyday-programmer-which-is-me>
-Writing for the Everyday Programmer (which is me)
-<a class=heading-link href=#writing-for-the-everyday-programmer-which-is-me>
-<i class="fa fa-link" aria-hidden=true></i>
-</a>
-</h2>
-<p>I also wonder if Haskell&rsquo;s elegance attracts people that are basically too smart.</p>
-<p>I&rsquo;ve seen this in the past, where programmers who are extremely intelligent ironically end up writing harder to maintain code, because <em>they</em> have the intellectual prowess to reason about their code (at least when they write it), but no one else does.</p>
-<p>To that end, I think one of my strengths is that I do have a limit on the complexity I can hold in my head, so I push for simplicity as a trump card, even at times sacrificing sacred cows like DRY.</p>
-<p>So, that makes me curious, if &ldquo;everyday Haskell&rdquo;, or &ldquo;judicious Haskell&rdquo;, would be a viable style.</p>
-<p>I&rsquo;ve never written production Haskell code (and likely never will, not out of prejudice, but just realistically), so I personally don&rsquo;t know.</p>
-<p>Or maybe such a &ldquo;judicious Haskell&rdquo; style exists already, and I&rsquo;m not aware of it.</p>
-<p>Or, as a final disclaimer, I am still very much on the Haskell-newbie spectrum, so perhaps once a few weeks/months of everyday-coding acclimation goes by, all of this becomes second nature, and I&rsquo;m making much to do about nothing.</p>
-<p>My suspicion is that that is not the case, but it could be.</p>
-</div>
-<footer>
-<div id=disqus_thread></div>
-<script type=application/javascript>var disqus_config=function(){};(function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById('disqus_thread').innerHTML='Disqus comments not available by default when the website is previewed locally.';return}var b=document,a=b.createElement('script');a.async=!0,a.src='//draconianoverlord.disqus.com/embed.js',a.setAttribute('data-timestamp',+new Date),(b.head||b.body).appendChild(a)})()</script>
-<noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript>
-<a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a>
-</footer>
-</article>
-</section>
-</div>
-<footer class=footer>
-<section class=container>
-©
+But Haskell is, for me, a &ldquo;&mldr;yeah, I have to read a few books about this&rdquo; challenge."><meta property="og:type" content="article"><meta property="og:url" content="https://www.draconianoverlord.com/2018/05/30/is-haskells-complexity-artificial.html/"><meta property="article:section" content="posts"><meta property="article:published_time" content="2018-05-30T00:00:00+00:00"><meta property="article:modified_time" content="2018-05-30T00:00:00+00:00"><link rel=canonical href=https://www.draconianoverlord.com/2018/05/30/is-haskells-complexity-artificial.html/><link rel=preload href="/fonts/forkawesome-webfont.woff2?v=1.2.0" as=font type=font/woff2 crossorigin><link rel=stylesheet href=/css/coder.min.65236a6d834b26194eed04a2a3b45e44d9194ef9e620253705d4bef03bd7ef81.css integrity="sha256-ZSNqbYNLJhlO7QSio7ReRNkZTvnmICU3BdS+8DvX74E=" crossorigin=anonymous media=screen><link rel=stylesheet href=/css/coder-dark.min.f6534b0b446b75d9b6ad77a97d43ede2ddaeff1b6e2361fb7198d6f8fcb7f83f.css integrity="sha256-9lNLC0Rrddm2rXepfUPt4t2u/xtuI2H7cZjW+Py3+D8=" crossorigin=anonymous media=screen><link rel=icon type=image/png href=/images/favicon-32x32.png sizes=32x32><link rel=icon type=image/png href=/images/favicon-16x16.png sizes=16x16><link rel=apple-touch-icon href=/images/apple-touch-icon.png><link rel=apple-touch-icon sizes=180x180 href=/images/apple-touch-icon.png><link rel=manifest href=/site.webmanifest><link rel=mask-icon href=/images/safari-pinned-tab.svg color=#5bbad5></head><body class="preload-transitions colorscheme-auto"><div class=float-container><a id=dark-mode-toggle class=colorscheme-toggle><i class="fa fa-adjust fa-fw" aria-hidden=true></i></a></div><main class=wrapper><nav class=navigation><section class=container><a class=navigation-title href=/>Draconian Overlord</a>
+Oppressing software entropy</section></nav><div class=content><section class="container post"><article><header><div class=post-title><h1 class=title><a class=title-link href=https://www.draconianoverlord.com/2018/05/30/is-haskells-complexity-artificial.html/>Is Haskell's Complexity Artificial?</a></h1></div><div class=post-meta><div class=date><span class=posted-on><i class="fa fa-calendar" aria-hidden=true></i>
+<time datetime=2018-05-30T00:00:00Z>May 30, 2018</time></span>
+<span class=reading-time><i class="fa fa-clock-o" aria-hidden=true></i>
+8-minute read</span></div><div class=categories><i class="fa fa-folder" aria-hidden=true></i>
+<a href=/categories/languages/>Languages</a></div></div></header><div class=post-content><p>I recently read a book on Haskell and it was fun.</p><p>It&rsquo;s been a long time since &ldquo;pick up language X&rdquo; has taken me more than glancing at intros/tutorials, jumping in, and then hitting up Stack Overflow as needed.</p><p>Not because I&rsquo;m a savant programmer, but just because even among all the various flavors of dynamic, static, functional, object-oriented, etc., most mainstream languages just aren&rsquo;t that different these days.</p><p>But Haskell is, for me, a &ldquo;&mldr;yeah, I have to read a few books about this&rdquo; challenge. (Rust would be another, albeit it&rsquo;s very different from Haskell.)</p><p>And it&rsquo;s pretty fun to be dropped back to newbie stage.</p><h2 id=haskells-laziness-actually-seems-intuitive>Haskell&rsquo;s Laziness Actually Seems Intuitive?
+<a class=heading-link href=#haskells-laziness-actually-seems-intuitive><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h2><p>That said, as I got through the book, Haskell&rsquo;s lazy evaluation actually seems relatively simple? Maybe deceptively so?</p><p>Initially I was thinking it would be hard to reason about, given &ldquo;no other language does this!?!&rdquo;, which makes it sound weird and esoteric.</p><p>But it&rsquo;s just call-by-value vs. call-by-name, which are both terms I&rsquo;d been exposed to before.</p><p>My primary exposure was from Scala, which kinda/sorta hacked call-by-name semantics into the JVM. E.g. in Scala you can do:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-scala data-lang=scala><span style=display:flex><span><span style=color:#75715e>// note the &#39;=&gt;&#39; prefix to the Seq[Int] type
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span><span style=color:#66d9ef>def</span> someMethod<span style=color:#f92672>(</span>arg<span style=color:#66d9ef>:</span> <span style=color:#f92672>=&gt;</span> <span style=color:#a6e22e>Seq</span><span style=color:#f92672>[</span><span style=color:#66d9ef>Int</span><span style=color:#f92672>])</span><span style=color:#66d9ef>:</span> <span style=color:#66d9ef>Unit</span> <span style=color:#f92672>=</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>  <span style=color:#75715e>// ...
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>  <span style=color:#66d9ef>val</span> a <span style=color:#66d9ef>=</span> arg
+</span></span><span style=display:flex><span>  <span style=color:#75715e>// ...
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span><span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>someMethod<span style=color:#f92672>(</span><span style=color:#a6e22e>Seq</span><span style=color:#f92672>(</span><span style=color:#ae81ff>1</span><span style=color:#f92672>,</span> <span style=color:#ae81ff>2</span><span style=color:#f92672>,</span> <span style=color:#ae81ff>3</span><span style=color:#f92672>));</span>
+</span></span></code></pre></div><p>And, due to the fat arrow in the <code>=> Seq[Int]</code> type declaration, the <code>Seq(1, 2, 3)</code> parameter that is passed to <code>someMethod</code> will be auto-lambda&rsquo;d and the <code>Seq</code> constructor will not actually be called when <code>someMethod</code> is called (i.e. construction of the <code>Seq</code> is now lazy).</p><p>Instead it&rsquo;s only created when the <code>arg</code> parameter is touched, on the <code>val a = arg</code> line. Which is lazy evaluation.</p><p>So, Scala has opt-in call-by-name, where as Haskell has everything call-by-name. Fair enough.</p><p>That doesn&rsquo;t seem too hard.</p><p>(Tangentially, Haskell also memoizes its call-by-name values, which I don&rsquo;t believe Scala does, as Scala&rsquo;s <code>Stream.continually(foo)</code> will lazily call <code>foo</code>, and also repeatedly call <code>foo</code> for each new element of the Stream. So, that is different between the two, but that doesn&rsquo;t seem like a fundamental shift in the mental model.)</p><h2 id=io-seems-fine-too>IO Seems Fine Too
+<a class=heading-link href=#io-seems-fine-too><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h2><p>The next &ldquo;ooh scary&rdquo; aspect of Haskell is that you &ldquo;can&rsquo;t do I/O&rdquo;: all functions are pure (which means they only rely on their input parameters and can&rsquo;t make random calls off to static/global shared functions like <code>System.out.println</code> or &ldquo;block while we read from disk&rdquo;).</p><p>So, instead there is an <code>IO</code> type, which is of course a monad. :-)</p><p>E.g. to read from standard in, Haskell has a library method <code>getChar</code>, and its type is <code>IO -> IO char</code>, which if I Java-ize that in my head is:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=display:flex><span><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>static</span> World<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>char</span><span style=color:#f92672>&gt;</span> <span style=color:#a6e22e>getChar</span><span style=color:#f92672>(</span>World<span style=color:#f92672>&lt;?&gt;</span> w<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>  <span style=color:#75715e>// some native implementation
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span><span style=color:#f92672>}</span>
+</span></span></code></pre></div><p>So, now to &ldquo;do I/O&rdquo;, I can&rsquo;t directly touch chars, but I can pretend I do, e.g.:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-scala data-lang=scala><span style=display:flex><span>public <span style=color:#a6e22e>World</span><span style=color:#f92672>&lt;</span>char<span style=color:#f92672>&gt;</span> pretendImHaskell<span style=color:#f92672>(</span><span style=color:#a6e22e>World</span><span style=color:#f92672>&lt;?&gt;</span> w<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>  <span style=color:#a6e22e>World</span><span style=color:#f92672>&lt;</span>char<span style=color:#f92672>&gt;</span> c1 <span style=color:#66d9ef>=</span> getChar<span style=color:#f92672>(</span>w<span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>  <span style=color:#a6e22e>World</span><span style=color:#f92672>&lt;</span>char<span style=color:#f92672>&gt;</span> c2 <span style=color:#66d9ef>=</span> getChar<span style=color:#f92672>(</span>w<span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>  <span style=color:#75715e>// ignore syntax errors
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>  <span style=color:#66d9ef>return</span> c1<span style=color:#f92672>.</span>map<span style=color:#f92672>(</span>c1 <span style=color:#f92672>-&gt;</span> c2<span style=color:#f92672>.</span>map<span style=color:#f92672>(</span>c2 <span style=color:#f92672>-&gt;</span> c1 <span style=color:#f92672>+</span> c2<span style=color:#f92672>));</span>
+</span></span></code></pre></div><p>Basically, instead of directly &ldquo;touching&rdquo; chars, we build an AST, a DAG, of &ldquo;things that <em>will later</em> muck with chars&rdquo;, and then return that &ldquo;unevaluated AST&rdquo; to Haskell.</p><p>This allows our functions to be created purely, and only later will the Haskell runtime handle the dirty work reading/writing I/O while interpreting the &ldquo;AST&rdquo; we handed it.</p><p>(As a disclaimer, I&rsquo;ve never written code that actually used Haskell&rsquo;s <code>IO</code>; I only believe I understand the concept, so I could be wrong on some nuances. I heard <a href=https://wiki.haskell.org/Haskell_IO_for_Imperative_Programmers class=external-link target=_blank rel=noopener>this article</a> is good but haven&rsquo;t thoroughly read it yet).</p><p>So, okay, this is different, but also doesn&rsquo;t seem mind-boggling complex.</p><h2 id=so-wheres-the-inherent-complexity>So Where&rsquo;s the Inherent Complexity?
+<a class=heading-link href=#so-wheres-the-inherent-complexity><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h2><p>Checking where we are at:</p><ul><li>Lazy evaluation: check, I think I understand, seems fine</li><li>IO: check, I think I understand, seems fine</li></ul><p>Which is great, but I&rsquo;m left wondering where the infamous Haskell complexity is.</p><p>Most Haskell conversations seem to quickly become academic, e.g. monads, applicatives, category theory, etc.</p><p>In my super-limited exposure so far, I haven&rsquo;t seen why those are necessarily needed.</p><p>Well, that&rsquo;s not quite true: I can see how they are necessary to massage the various shapes of &ldquo;ASTs&rdquo; (I basically think of monads/etc. as passing around AST-like computations of values instead of the values themselves).</p><p>E.g. applicatives, if I have it right, allow to you massage values within boxed/monads like <code>Option</code>, without doing a &ldquo;verbose&rdquo; <code>option.map { i => ... }</code> (again mapping to Scala concepts).</p><p>But I&rsquo;ve done smaller-scale versions of that in Scala, and instead of refactoring everything (or introducing fancier and fancier operators) to get to the point of point-free elegance, we just call <code>flatMap</code> directly, or have a few more characters of what in Haskell would be boilerplate.</p><p>Which makes me wonder, but first a concrete example.</p><h2 id=two-sorting-examples>Two Sorting Examples
+<a class=heading-link href=#two-sorting-examples><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h2><p>I also recently, and rather coincidentally, worked on an interview-style sorting problem.</p><p>You can <a href=https://www.geeksforgeeks.org/nuts-bolts-problem-lock-key-problem/ class=external-link target=_blank rel=noopener>read the question</a> on Geeks for Geeks.</p><p>Because I&rsquo;d read the Haskell book, and also had seen how simple a naive (fixed pivot) Quicksort is in Haskell, I decided to use Haskell for my solution.</p><p>Here is my first (cleaned up) attempt, which I believe is pretty canonical Haskell (<a href=https://github.com/stephenh/haskell-stutton-book/blob/master/src/boltsort.hs#L43 class=external-link target=_blank rel=noopener>code here</a>):</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-haskell data-lang=haskell><span style=display:flex><span><span style=color:#a6e22e>boltsort2</span> <span style=color:#f92672>::</span> ([<span style=color:#66d9ef>Nut</span>], [<span style=color:#66d9ef>Bolt</span>]) <span style=color:#f92672>-&gt;</span> ([<span style=color:#66d9ef>Nut</span>], [<span style=color:#66d9ef>Bolt</span>])
+</span></span><span style=display:flex><span><span style=color:#a6e22e>boltsort2</span> (<span style=color:#66d9ef>[]</span>, <span style=color:#66d9ef>[]</span>) <span style=color:#f92672>=</span> (<span style=color:#66d9ef>[]</span>, <span style=color:#66d9ef>[]</span>)
+</span></span><span style=display:flex><span><span style=color:#a6e22e>boltsort2</span> ((n<span style=color:#66d9ef>:</span>ns), bs) <span style=color:#f92672>=</span> (sn&#39; <span style=color:#f92672>++</span> [n] <span style=color:#f92672>++</span> ln&#39;, sb&#39; <span style=color:#f92672>++</span> [b] <span style=color:#f92672>++</span> lb&#39;) <span style=color:#66d9ef>where</span>
+</span></span><span style=display:flex><span>  (sb, [b], lb) <span style=color:#f92672>=</span> partition (<span style=color:#a6e22e>\</span>b <span style=color:#f92672>-&gt;</span> negate (compareNutBolt n b)) bs
+</span></span><span style=display:flex><span>  (sn, <span style=color:#66d9ef>_</span>, ln) <span style=color:#f92672>=</span> partition (<span style=color:#a6e22e>\</span>n <span style=color:#f92672>-&gt;</span> compareNutBolt n b) ns
+</span></span><span style=display:flex><span>  (sn&#39;, sb&#39;) <span style=color:#f92672>=</span> boltsort2 (sn, sb)
+</span></span><span style=display:flex><span>  (ln&#39;, lb&#39;) <span style=color:#f92672>=</span> boltsort2 (ln, lb)
+</span></span></code></pre></div><p>I&rsquo;m using conventions I&rsquo;d read in the Stutton Haskell book, e.g. <code>n:ns</code>, variable names like <code>sn</code> and <code>sn'</code>.</p><p>Granted, I have written zero lines of production Haskell, but again, I am pretty certain this is &ldquo;good Haskell&rdquo;.</p><p>For my second attempt, I took a somewhat different approach, and kept exactly the same structure, but used &ldquo;boring enterprise&rdquo; variable names (<a href=https://github.com/stephenh/haskell-stutton-book/blob/master/src/boltsort-names.hs#L51 class=external-link target=_blank rel=noopener>code here</a>):</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-haskell data-lang=haskell><span style=display:flex><span><span style=color:#75715e>-- this is basically a two-pass quicksort, which:</span>
+</span></span><span style=display:flex><span><span style=color:#75715e>-- 1) picks a nut as a pivot</span>
+</span></span><span style=display:flex><span><span style=color:#75715e>-- 2) partitions the bolts using the nut-pivot</span>
+</span></span><span style=display:flex><span><span style=color:#75715e>-- 3) using the nut pivot to find the matching bolt pivot</span>
+</span></span><span style=display:flex><span><span style=color:#75715e>-- 4) partitions the nuts using the bolt-pivot</span>
+</span></span><span style=display:flex><span><span style=color:#75715e>-- 5) recurses/combines</span>
+</span></span><span style=display:flex><span><span style=color:#a6e22e>boltsort2</span> <span style=color:#f92672>::</span> ([<span style=color:#66d9ef>Nut</span>], [<span style=color:#66d9ef>Bolt</span>]) <span style=color:#f92672>-&gt;</span> ([<span style=color:#66d9ef>Nut</span>], [<span style=color:#66d9ef>Bolt</span>])
+</span></span><span style=display:flex><span><span style=color:#a6e22e>boltsort2</span> (<span style=color:#66d9ef>[]</span>, <span style=color:#66d9ef>[]</span>) <span style=color:#f92672>=</span> (<span style=color:#66d9ef>[]</span>, <span style=color:#66d9ef>[]</span>)
+</span></span><span style=display:flex><span><span style=color:#a6e22e>boltsort2</span> ((pivotNut<span style=color:#66d9ef>:</span>nuts), bolts) <span style=color:#f92672>=</span>
+</span></span><span style=display:flex><span>    (sortedSmallerNuts <span style=color:#f92672>++</span> [pivotNut] <span style=color:#f92672>++</span> sortedLargerNuts, sortedSmallerBolts <span style=color:#f92672>++</span> [pivotBolt] <span style=color:#f92672>++</span> sortedLargerBolts)
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>where</span>
+</span></span><span style=display:flex><span>    (smallerBolts, [pivotBolt], largerBolts) <span style=color:#f92672>=</span> partition (<span style=color:#a6e22e>\</span>b <span style=color:#f92672>-&gt;</span> negate (compareNutBolt pivotNut b)) bolts
+</span></span><span style=display:flex><span>    (smallerNuts, <span style=color:#66d9ef>_</span>, largerNuts) <span style=color:#f92672>=</span> partition (<span style=color:#a6e22e>\</span>n <span style=color:#f92672>-&gt;</span> compareNutBolt n pivotBolt) nuts
+</span></span><span style=display:flex><span>    (sortedSmallerNuts, sortedSmallerBolts) <span style=color:#f92672>=</span> boltsort2 (smallerNuts, smallerBolts)
+</span></span><span style=display:flex><span>    (sortedLargerNuts, sortedLargerBolts) <span style=color:#f92672>=</span> boltsort2 (largerNuts, largerBolts)
+</span></span></code></pre></div><p>And I included a verbose, &ldquo;just repeats the code&rdquo; function comment.</p><p>Looking at the two examples, &ldquo;canonical Haskell&rdquo; and &ldquo;enterprise Haskell&rdquo;, my impressions are:</p><ol><li><p>The first example tickles my reptilian programmer brain as being &ldquo;ooh, sexy! So succinct! So graceful!&rdquo;</p></li><li><p>The second example looks comparatively drab and verbose, so many wasted characters, re-typing out long variable names.</p></li></ol><p>However, my conclusion is: the 1st is what I&rsquo;d like to <strong>write</strong> for an interview assignment to show off&ndash;the 2nd is what I&rsquo;d like <strong>read</strong> 6 months later when doing maintenance or fixing a critical production bug.</p><p>(Granted, all I changed here is variable naming, and nothing about how the data is shaped.)</p><h2 id=how-much-of-haskells-complexity-is-accidental>How Much of Haskell&rsquo;s Complexity is Accidental
+<a class=heading-link href=#how-much-of-haskells-complexity-is-accidental><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h2><p>This basically gets me to the thrust of this post: does Haskell really have to be as complex as most people (myself included) think it is?</p><p>I don&rsquo;t think I&rsquo;m off base in asserting Haskell is the generally realm of academics with esoteric terms and symbol-heavy programs.</p><p>However, my nagging feeling is that it does not have to be that way.</p><p>Part of what makes me suspect this is Scala. I did enough Scala to exposed to a spectrum of styles:</p><ol><li>Scala that is just &ldquo;better Java&rdquo;</li><li>Scala that is a judicious blend of OO+FP</li><li>Scala that is &ldquo;wanna be Haskell&rdquo;, i.e. <a href=https://github.com/scalaz/scalaz class=external-link target=_blank rel=noopener>scalaz</a></li></ol><p>Where, for me, the &ldquo;judicious blend of OO+FF&rdquo; is a sweet spot of readability + cuteness that is demonstrably more succinct than just the &ldquo;better Java&rdquo; level, but also stops short of the &ldquo;nuclear code golf&rdquo; level where it exceeds the readability/reasonability of the typical programmer.</p><p>So, that is my question: are the functors, applicatives, and another terms I don&rsquo;t even know of, <em>required</em> to write elegant Haskell?</p><p>Or, could a person write &ldquo;judicious Haskell&rdquo;, which would be a compromising style that was purposefully more-verbose, likely more LoC, but, in theory, dramatically easier to read and reason about?</p><p>Or, could the complexity of Haskell be necessary within the realm of the core library writers and language implementers, to build a theoretically solid foundation, but then kept more behind-the-scenes for the every-day programmer? (Which, to me, is what Scala has pulled off: Martin Odersky thinks in <a href=https://github.com/lampepfl/dotty class=external-link target=_blank rel=noopener>Dotty</a> so that I don&rsquo;t have to.)</p><h2 id=writing-for-the-everyday-programmer-which-is-me>Writing for the Everyday Programmer (which is me)
+<a class=heading-link href=#writing-for-the-everyday-programmer-which-is-me><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h2><p>I also wonder if Haskell&rsquo;s elegance attracts people that are basically too smart.</p><p>I&rsquo;ve seen this in the past, where programmers who are extremely intelligent ironically end up writing harder to maintain code, because <em>they</em> have the intellectual prowess to reason about their code (at least when they write it), but no one else does.</p><p>To that end, I think one of my strengths is that I do have a limit on the complexity I can hold in my head, so I push for simplicity as a trump card, even at times sacrificing sacred cows like DRY.</p><p>So, that makes me curious, if &ldquo;everyday Haskell&rdquo;, or &ldquo;judicious Haskell&rdquo;, would be a viable style.</p><p>I&rsquo;ve never written production Haskell code (and likely never will, not out of prejudice, but just realistically), so I personally don&rsquo;t know.</p><p>Or maybe such a &ldquo;judicious Haskell&rdquo; style exists already, and I&rsquo;m not aware of it.</p><p>Or, as a final disclaimer, I am still very much on the Haskell-newbie spectrum, so perhaps once a few weeks/months of everyday-coding acclimation goes by, all of this becomes second nature, and I&rsquo;m making much to do about nothing.</p><p>My suspicion is that that is not the case, but it could be.</p></div><footer><div id=disqus_thread></div><script>window.disqus_config=function(){},function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById("disqus_thread").innerHTML="Disqus comments not available by default when the website is previewed locally.";return}var t=document,e=t.createElement("script");e.async=!0,e.src="//draconianoverlord.disqus.com/embed.js",e.setAttribute("data-timestamp",+new Date),(t.head||t.body).appendChild(e)}(),document.addEventListener("themeChanged",function(){document.readyState=="complete"&&DISQUS.reset({reload:!0,config:disqus_config})})</script></footer></article></section></div><footer class=footer><section class=container>©
 2008 -
-2022
+2023
 Stephen Haberman
 ·
-Powered by <a href=https://gohugo.io/>Hugo</a> & <a href=https://github.com/luizdepra/hugo-coder/>Coder</a>.
-</section>
-</footer>
-</main>
-<script src=/js/coder.min.03b17769f4f91ae35667e1f2a1ca8c16f50562576cf90ff32b3179926914daa5.js integrity="sha256-A7F3afT5GuNWZ+HyocqMFvUFYlds+Q/zKzF5kmkU2qU="></script>
-</body>
-</html>
+Powered by <a href=https://gohugo.io/ target=_blank rel=noopener>Hugo</a> & <a href=https://github.com/luizdepra/hugo-coder/ target=_blank rel=noopener>Coder</a>.</section></footer></main><script src=/js/coder.min.6ae284be93d2d19dad1f02b0039508d9aab3180a12a06dcc71b0b0ef7825a317.js integrity="sha256-auKEvpPS0Z2tHwKwA5UI2aqzGAoSoG3McbCw73gloxc="></script></body></html>

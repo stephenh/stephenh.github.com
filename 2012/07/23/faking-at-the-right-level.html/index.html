@@ -1,275 +1,119 @@
-<!doctype html><html lang=en>
-<head>
-<meta charset=utf-8>
-<meta name=viewport content="width=device-width,initial-scale=1">
-<meta http-equiv=content-language content="en">
-<meta name=color-scheme content="light dark">
-<meta name=author content="Stephen Haberman">
-<meta name=description content="It&rsquo;s common to use fakes (either mocks or stubs) to test specific layers of your code without incurring the complexity and expense of also exercising all of the upstream layers (e.g. testing your UI layer without having to test/touch your database layer).
-Fakes generally occur naturally at system boundaries, which are obvious places to add decoupling, but I wanted to more generally talk about them. I see these general types:">
-<meta name=keywords content="blog,developer,personal">
-<meta name=twitter:card content="summary">
-<meta name=twitter:title content="Faking at the Right Level">
-<meta name=twitter:description content="It&rsquo;s common to use fakes (either mocks or stubs) to test specific layers of your code without incurring the complexity and expense of also exercising all of the upstream layers (e.g. testing your UI layer without having to test/touch your database layer).
-Fakes generally occur naturally at system boundaries, which are obvious places to add decoupling, but I wanted to more generally talk about them. I see these general types:">
-<meta property="og:title" content="Faking at the Right Level">
-<meta property="og:description" content="It&rsquo;s common to use fakes (either mocks or stubs) to test specific layers of your code without incurring the complexity and expense of also exercising all of the upstream layers (e.g. testing your UI layer without having to test/touch your database layer).
-Fakes generally occur naturally at system boundaries, which are obvious places to add decoupling, but I wanted to more generally talk about them. I see these general types:">
-<meta property="og:type" content="article">
-<meta property="og:url" content="https://www.draconianoverlord.com/2012/07/23/faking-at-the-right-level.html/"><meta property="article:section" content="posts">
-<meta property="article:published_time" content="2012-07-23T00:00:00+00:00">
-<meta property="article:modified_time" content="2012-07-23T00:00:00+00:00">
-<title>
-Faking at the Right Level · Draconian Overlord
-</title>
-<link rel=canonical href=https://www.draconianoverlord.com/2012/07/23/faking-at-the-right-level.html/>
-<link rel=preload href="/fonts/forkawesome-webfont.woff2?v=1.2.0" as=font type=font/woff2 crossorigin>
-<link rel=stylesheet href=/css/coder.min.d9fddbffe6f27e69985dc5fe0471cdb0e57fbf4775714bc3d847accb08f4a1f6.css integrity="sha256-2f3b/+byfmmYXcX+BHHNsOV/v0d1cUvD2Eesywj0ofY=" crossorigin=anonymous media=screen>
-<link rel=stylesheet href=/css/coder-dark.min.aa883b9ce35a8ff4a2a5008619005175e842bb18a8a9f9cc2bbcf44dab2d91fa.css integrity="sha256-qog7nONaj/SipQCGGQBRdehCuxioqfnMK7z0Tastkfo=" crossorigin=anonymous media=screen>
-<link rel=icon type=image/png href=/images/favicon-32x32.png sizes=32x32>
-<link rel=icon type=image/png href=/images/favicon-16x16.png sizes=16x16>
-<link rel=apple-touch-icon href=/images/apple-touch-icon.png>
-<link rel=apple-touch-icon sizes=180x180 href=/images/apple-touch-icon.png>
-<meta name=generator content="Hugo 0.92.0">
-</head>
-<body class="preload-transitions colorscheme-auto">
-<div class=float-container>
-<a id=dark-mode-toggle class=colorscheme-toggle>
-<i class="fa fa-adjust fa-fw" aria-hidden=true></i>
-</a>
-</div>
-<main class=wrapper>
-<nav class=navigation>
-<section class=container>
-<a class=navigation-title href=/>Draconian Overlord</a>
-Oppressing software entropy
-</section>
-</nav>
-<div class=content>
-<section class="container post">
-<article>
-<header>
-<div class=post-title>
-<h1 class=title>
-<a class=title-link href=https://www.draconianoverlord.com/2012/07/23/faking-at-the-right-level.html/>
-Faking at the Right Level
-</a>
-</h1>
-</div>
-<div class=post-meta>
-<div class=date>
-<span class=posted-on>
-<i class="fa fa-calendar" aria-hidden=true></i>
-<time datetime=2012-07-23T00:00:00Z>
-July 23, 2012
-</time>
-</span>
-<span class=reading-time>
-<i class="fa fa-clock-o" aria-hidden=true></i>
-7-minute read
-</span>
-</div>
-<div class=categories>
-<i class="fa fa-folder" aria-hidden=true></i>
-<a href=/categories/testing/>Testing</a></div>
-</div>
-</header>
-<div>
-<p>It&rsquo;s common to use fakes (either mocks or stubs) to test specific layers of your code without incurring the complexity and expense of also exercising all of the upstream layers (e.g. testing your UI layer without having to test/touch your database layer).</p>
-<p>Fakes generally occur naturally at system boundaries, which are obvious places to add decoupling, but I wanted to more generally talk about them. I see these general types:</p>
-<ul>
-<li>Good In-Project Abstractions</li>
-<li>Bad In-Project Abstractions</li>
-<li>Reusing Cross-Project Abstractions</li>
-</ul>
-<h2 id=good-in-project-abstractions>
-Good In-Project Abstractions
-<a class=heading-link href=#good-in-project-abstractions>
-<i class="fa fa-link" aria-hidden=true></i>
-</a>
-</h2>
-<p>&ldquo;Good&rdquo; is obviously subjective, but to me the good, in-project abstractions are those that avoid I/O.</p>
-<p>For example, if you&rsquo;re writing an <code>ApiClient</code> that talks over HTTP, to me it makes sense to add an <code>Http</code> abstraction that <code>ApiClient</code> uses instead of directly calling a (typically complex, verbose) HTTP library implementation like <code>commons-http</code> (or, worse, actual wire calls).</p>
-<p>Admittedly, this example is not even really in-project, because the HTTP wire/and <code>commons-http</code> libraries are external projects.</p>
-<p>You might start out with something simple:</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-scala data-lang=scala><span style=color:#75715e>// interface you&#39;re exposing to clients
-</span><span style=color:#75715e></span><span style=color:#66d9ef>trait</span> <span style=color:#a6e22e>ApiClient</span> <span style=color:#f92672>{</span>
-  <span style=color:#66d9ef>def</span> getFoo<span style=color:#f92672>(</span>id<span style=color:#66d9ef>:</span> <span style=color:#66d9ef>Int</span><span style=color:#f92672>)</span>
-  <span style=color:#66d9ef>def</span> sendFoo<span style=color:#f92672>(</span>foo<span style=color:#66d9ef>:</span> <span style=color:#66d9ef>Foo</span><span style=color:#f92672>)</span>
-<span style=color:#f92672>}</span>
-
-<span style=color:#75715e>// your real implementation for clients
-</span><span style=color:#75715e></span><span style=color:#66d9ef>class</span> <span style=color:#a6e22e>ApiClientImpl</span><span style=color:#f92672>(</span>http<span style=color:#66d9ef>:</span> <span style=color:#66d9ef>Http</span><span style=color:#f92672>)</span> <span style=color:#66d9ef>extends</span> <span style=color:#a6e22e>ApiClient</span> <span style=color:#f92672>{</span>
-  <span style=color:#66d9ef>override</span> <span style=color:#66d9ef>def</span> getFoo<span style=color:#f92672>(</span>id<span style=color:#66d9ef>:</span> <span style=color:#66d9ef>Int</span><span style=color:#f92672>)</span> <span style=color:#66d9ef>=</span> <span style=color:#f92672>{</span>
-    <span style=color:#75715e>// use http.get here
-</span><span style=color:#75715e></span>  <span style=color:#f92672>}</span>
-
-  <span style=color:#66d9ef>override</span> <span style=color:#66d9ef>def</span> sendFoo<span style=color:#f92672>(</span>foo<span style=color:#66d9ef>:</span> <span style=color:#66d9ef>Foo</span><span style=color:#f92672>)</span> <span style=color:#66d9ef>=</span> <span style=color:#f92672>{</span>
-    <span style=color:#75715e>// use http.post here
-</span><span style=color:#75715e></span>  <span style=color:#f92672>}</span>
-<span style=color:#f92672>}</span>
-
-<span style=color:#75715e>// http abstraction for testing ApiClientImpl
-</span><span style=color:#75715e></span><span style=color:#66d9ef>trait</span> <span style=color:#a6e22e>Http</span> <span style=color:#f92672>{</span>
-  <span style=color:#66d9ef>def</span> get<span style=color:#f92672>(</span>path<span style=color:#66d9ef>:</span> <span style=color:#66d9ef>String</span><span style=color:#f92672>)</span><span style=color:#66d9ef>:</span> <span style=color:#66d9ef>String</span>
-  <span style=color:#66d9ef>def</span> post<span style=color:#f92672>(</span>path<span style=color:#66d9ef>:</span> <span style=color:#66d9ef>String</span><span style=color:#f92672>,</span> body<span style=color:#66d9ef>:</span> <span style=color:#66d9ef>String</span><span style=color:#f92672>)</span><span style=color:#66d9ef>:</span> <span style=color:#66d9ef>Unit</span>
-<span style=color:#f92672>}</span>
-
-<span style=color:#75715e>// http implementation for real usage
-</span><span style=color:#75715e></span><span style=color:#66d9ef>class</span> <span style=color:#a6e22e>HttpImpl</span> <span style=color:#66d9ef>extends</span> <span style=color:#a6e22e>Http</span> <span style=color:#f92672>{</span>
-  <span style=color:#66d9ef>override</span> <span style=color:#66d9ef>def</span> get<span style=color:#f92672>(</span>path<span style=color:#66d9ef>:</span> <span style=color:#66d9ef>String</span><span style=color:#f92672>)</span> <span style=color:#66d9ef>=</span> <span style=color:#f92672>{</span>
-    <span style=color:#75715e>// use commons-http
-</span><span style=color:#75715e></span>  <span style=color:#f92672>}</span>
-
-  <span style=color:#66d9ef>override</span> <span style=color:#66d9ef>def</span> post<span style=color:#f92672>(</span>path<span style=color:#66d9ef>:</span> <span style=color:#66d9ef>String</span><span style=color:#f92672>,</span> body<span style=color:#66d9ef>:</span> <span style=color:#66d9ef>String</span><span style=color:#f92672>)</span> <span style=color:#66d9ef>=</span> <span style=color:#f92672>{</span>
-    <span style=color:#75715e>// use commons-http
-</span><span style=color:#75715e></span>  <span style=color:#f92672>}</span>
-<span style=color:#f92672>}</span>
-</code></pre></div><p>Note that this <code>Http</code> interface is purposefully extremely simple: you can have as small and clean of an API as your <code>ApiClient</code> needs, as then your <code>ApiClient</code> and it&rsquo;s tests are really clean, and then only add more complexity to the <code>Http</code> interface as needed (e.g. methods, headers, return codes, etc.)</p>
-<p>This approach is fairly standard, encapsulating your code from both dependencies and I/O. It simplifies your code, by providing the bulk of your codebase (which is <code>ApiClientImpl</code> in our example) with a simple/idealized HTTP API that then in just one class you adapt to a specific underlying concrete implementation.</p>
-<p>Also, with the <code>Http</code> abstraction, now in your tests for <code>ApiClientImpl</code>, you can fake out the HTTP layer:</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-scala data-lang=scala><span style=color:#66d9ef>val</span> stubHttp <span style=color:#66d9ef>=</span> <span style=color:#66d9ef>new</span> <span style=color:#a6e22e>StubHttp</span><span style=color:#f92672>()</span>
-stubHttp<span style=color:#f92672>.</span>when<span style=color:#f92672>(</span><span style=color:#e6db74>&#34;GET /foo&#34;</span><span style=color:#f92672>).</span>thenRespond<span style=color:#f92672>(</span>
-  <span style=color:#e6db74>&#34;{ foo: { id: 1 } }&#34;</span><span style=color:#f92672>)</span>
-
-<span style=color:#66d9ef>val</span> api <span style=color:#66d9ef>=</span> <span style=color:#66d9ef>new</span> <span style=color:#a6e22e>ApiClientImpl</span><span style=color:#f92672>(</span>stubHttp<span style=color:#f92672>)</span>
-<span style=color:#75715e>// hits the in-memory stub
-</span><span style=color:#75715e></span><span style=color:#66d9ef>val</span> foo <span style=color:#66d9ef>=</span> api<span style=color:#f92672>.</span>getFoo<span style=color:#f92672>()</span>
-assertThat<span style=color:#f92672>(</span>foo<span style=color:#f92672>.</span>getId<span style=color:#f92672>(),</span> is<span style=color:#f92672>(</span><span style=color:#ae81ff>1</span><span style=color:#f92672>));</span>
-
-api<span style=color:#f92672>.</span>sendFoo<span style=color:#f92672>(</span><span style=color:#66d9ef>new</span> <span style=color:#a6e22e>Foo</span><span style=color:#f92672>(</span><span style=color:#ae81ff>2</span><span style=color:#f92672>));</span>
-stubHttp<span style=color:#f92672>.</span>assertHas<span style=color:#f92672>(</span>
-  <span style=color:#e6db74>&#34;POST /foo&#34;</span><span style=color:#f92672>,</span>
-  <span style=color:#e6db74>&#34;{ foo: { id: 2 } }&#34;</span><span style=color:#f92672>)</span>
-</code></pre></div><p>Which is still pretty standard stuff.</p>
-<p>I frequently start out with mocks, but eventually end up with stubs, as I think their state/abstraction scales better than pure mocks (see <a href=/2010/07/09/why-i-dont-like-mocks.html>Why I Like Stubs</a> for a longer tangent on that).</p>
-<h2 id=bad-in-project-abstractions>
-Bad In-Project Abstractions
-<a class=heading-link href=#bad-in-project-abstractions>
-<i class="fa fa-link" aria-hidden=true></i>
-</a>
-</h2>
-<p>Again, &ldquo;bad&rdquo; is subjective, but abstractions I typically think are overdone are when interfaces are used to draw arbitrary lines between components that merely call each other in memory.</p>
-<p>The stereotypical example from mid-2000s Java projects are a <code>HomeController</code> calling a <code>HomeService</code> calling a <code>HomeDAO</code> which finally made database calls.</p>
-<p>Okay, I get you want your <code>HomeDAO</code> to be an abstraction, so you can avoid I/O, but typically the <code>HomeService</code> was also an interface that had to be implemented and injected into the <code>HomeController</code>.</p>
-<p>If we&rsquo;re not drawing lines between systems (e.g. a vendor or a sister team) or lines in-front of I/O (expensive disk/wire calls), I really question whether the overhead of these abstractions are worth it.</p>
-<p>From what I&rsquo;ve seen, it can degenerate into testing that is solely behavior-based, e.g.:</p>
-<pre tabindex=0><code>def testHomeController() {
+<!doctype html><html lang=en><head><title>Faking at the Right Level · Draconian Overlord</title><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=color-scheme content="light dark"><meta name=author content="Stephen Haberman"><meta name=description content="It&rsquo;s common to use fakes (either mocks or stubs) to test specific layers of your code without incurring the complexity and expense of also exercising all of the upstream layers (e.g. testing your UI layer without having to test/touch your database layer).
+Fakes generally occur naturally at system boundaries, which are obvious places to add decoupling, but I wanted to more generally talk about them. I see these general types:"><meta name=keywords content="blog,developer,personal"><meta name=twitter:card content="summary"><meta name=twitter:title content="Faking at the Right Level"><meta name=twitter:description content="It&rsquo;s common to use fakes (either mocks or stubs) to test specific layers of your code without incurring the complexity and expense of also exercising all of the upstream layers (e.g. testing your UI layer without having to test/touch your database layer).
+Fakes generally occur naturally at system boundaries, which are obvious places to add decoupling, but I wanted to more generally talk about them. I see these general types:"><meta property="og:title" content="Faking at the Right Level"><meta property="og:description" content="It&rsquo;s common to use fakes (either mocks or stubs) to test specific layers of your code without incurring the complexity and expense of also exercising all of the upstream layers (e.g. testing your UI layer without having to test/touch your database layer).
+Fakes generally occur naturally at system boundaries, which are obvious places to add decoupling, but I wanted to more generally talk about them. I see these general types:"><meta property="og:type" content="article"><meta property="og:url" content="https://www.draconianoverlord.com/2012/07/23/faking-at-the-right-level.html/"><meta property="article:section" content="posts"><meta property="article:published_time" content="2012-07-23T00:00:00+00:00"><meta property="article:modified_time" content="2012-07-23T00:00:00+00:00"><link rel=canonical href=https://www.draconianoverlord.com/2012/07/23/faking-at-the-right-level.html/><link rel=preload href="/fonts/forkawesome-webfont.woff2?v=1.2.0" as=font type=font/woff2 crossorigin><link rel=stylesheet href=/css/coder.min.65236a6d834b26194eed04a2a3b45e44d9194ef9e620253705d4bef03bd7ef81.css integrity="sha256-ZSNqbYNLJhlO7QSio7ReRNkZTvnmICU3BdS+8DvX74E=" crossorigin=anonymous media=screen><link rel=stylesheet href=/css/coder-dark.min.f6534b0b446b75d9b6ad77a97d43ede2ddaeff1b6e2361fb7198d6f8fcb7f83f.css integrity="sha256-9lNLC0Rrddm2rXepfUPt4t2u/xtuI2H7cZjW+Py3+D8=" crossorigin=anonymous media=screen><link rel=icon type=image/png href=/images/favicon-32x32.png sizes=32x32><link rel=icon type=image/png href=/images/favicon-16x16.png sizes=16x16><link rel=apple-touch-icon href=/images/apple-touch-icon.png><link rel=apple-touch-icon sizes=180x180 href=/images/apple-touch-icon.png><link rel=manifest href=/site.webmanifest><link rel=mask-icon href=/images/safari-pinned-tab.svg color=#5bbad5></head><body class="preload-transitions colorscheme-auto"><div class=float-container><a id=dark-mode-toggle class=colorscheme-toggle><i class="fa fa-adjust fa-fw" aria-hidden=true></i></a></div><main class=wrapper><nav class=navigation><section class=container><a class=navigation-title href=/>Draconian Overlord</a>
+Oppressing software entropy</section></nav><div class=content><section class="container post"><article><header><div class=post-title><h1 class=title><a class=title-link href=https://www.draconianoverlord.com/2012/07/23/faking-at-the-right-level.html/>Faking at the Right Level</a></h1></div><div class=post-meta><div class=date><span class=posted-on><i class="fa fa-calendar" aria-hidden=true></i>
+<time datetime=2012-07-23T00:00:00Z>July 23, 2012</time></span>
+<span class=reading-time><i class="fa fa-clock-o" aria-hidden=true></i>
+7-minute read</span></div><div class=categories><i class="fa fa-folder" aria-hidden=true></i>
+<a href=/categories/testing/>Testing</a></div></div></header><div class=post-content><p>It&rsquo;s common to use fakes (either mocks or stubs) to test specific layers of your code without incurring the complexity and expense of also exercising all of the upstream layers (e.g. testing your UI layer without having to test/touch your database layer).</p><p>Fakes generally occur naturally at system boundaries, which are obvious places to add decoupling, but I wanted to more generally talk about them. I see these general types:</p><ul><li>Good In-Project Abstractions</li><li>Bad In-Project Abstractions</li><li>Reusing Cross-Project Abstractions</li></ul><h2 id=good-in-project-abstractions>Good In-Project Abstractions
+<a class=heading-link href=#good-in-project-abstractions><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h2><p>&ldquo;Good&rdquo; is obviously subjective, but to me the good, in-project abstractions are those that avoid I/O.</p><p>For example, if you&rsquo;re writing an <code>ApiClient</code> that talks over HTTP, to me it makes sense to add an <code>Http</code> abstraction that <code>ApiClient</code> uses instead of directly calling a (typically complex, verbose) HTTP library implementation like <code>commons-http</code> (or, worse, actual wire calls).</p><p>Admittedly, this example is not even really in-project, because the HTTP wire/and <code>commons-http</code> libraries are external projects.</p><p>You might start out with something simple:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-scala data-lang=scala><span style=display:flex><span><span style=color:#75715e>// interface you&#39;re exposing to clients
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span><span style=color:#66d9ef>trait</span> <span style=color:#a6e22e>ApiClient</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>def</span> getFoo<span style=color:#f92672>(</span>id<span style=color:#66d9ef>:</span> <span style=color:#66d9ef>Int</span><span style=color:#f92672>)</span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>def</span> sendFoo<span style=color:#f92672>(</span>foo<span style=color:#66d9ef>:</span> <span style=color:#66d9ef>Foo</span><span style=color:#f92672>)</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#75715e>// your real implementation for clients
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span><span style=color:#66d9ef>class</span> <span style=color:#a6e22e>ApiClientImpl</span><span style=color:#f92672>(</span>http<span style=color:#66d9ef>:</span> <span style=color:#66d9ef>Http</span><span style=color:#f92672>)</span> <span style=color:#66d9ef>extends</span> <span style=color:#a6e22e>ApiClient</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>override</span> <span style=color:#66d9ef>def</span> getFoo<span style=color:#f92672>(</span>id<span style=color:#66d9ef>:</span> <span style=color:#66d9ef>Int</span><span style=color:#f92672>)</span> <span style=color:#66d9ef>=</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>    <span style=color:#75715e>// use http.get here
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>  <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>override</span> <span style=color:#66d9ef>def</span> sendFoo<span style=color:#f92672>(</span>foo<span style=color:#66d9ef>:</span> <span style=color:#66d9ef>Foo</span><span style=color:#f92672>)</span> <span style=color:#66d9ef>=</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>    <span style=color:#75715e>// use http.post here
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>  <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#75715e>// http abstraction for testing ApiClientImpl
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span><span style=color:#66d9ef>trait</span> <span style=color:#a6e22e>Http</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>def</span> get<span style=color:#f92672>(</span>path<span style=color:#66d9ef>:</span> <span style=color:#66d9ef>String</span><span style=color:#f92672>)</span><span style=color:#66d9ef>:</span> <span style=color:#66d9ef>String</span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>def</span> post<span style=color:#f92672>(</span>path<span style=color:#66d9ef>:</span> <span style=color:#66d9ef>String</span><span style=color:#f92672>,</span> body<span style=color:#66d9ef>:</span> <span style=color:#66d9ef>String</span><span style=color:#f92672>)</span><span style=color:#66d9ef>:</span> <span style=color:#66d9ef>Unit</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#75715e>// http implementation for real usage
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span><span style=color:#66d9ef>class</span> <span style=color:#a6e22e>HttpImpl</span> <span style=color:#66d9ef>extends</span> <span style=color:#a6e22e>Http</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>override</span> <span style=color:#66d9ef>def</span> get<span style=color:#f92672>(</span>path<span style=color:#66d9ef>:</span> <span style=color:#66d9ef>String</span><span style=color:#f92672>)</span> <span style=color:#66d9ef>=</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>    <span style=color:#75715e>// use commons-http
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>  <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>override</span> <span style=color:#66d9ef>def</span> post<span style=color:#f92672>(</span>path<span style=color:#66d9ef>:</span> <span style=color:#66d9ef>String</span><span style=color:#f92672>,</span> body<span style=color:#66d9ef>:</span> <span style=color:#66d9ef>String</span><span style=color:#f92672>)</span> <span style=color:#66d9ef>=</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>    <span style=color:#75715e>// use commons-http
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>  <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>}</span>
+</span></span></code></pre></div><p>Note that this <code>Http</code> interface is purposefully extremely simple: you can have as small and clean of an API as your <code>ApiClient</code> needs, as then your <code>ApiClient</code> and it&rsquo;s tests are really clean, and then only add more complexity to the <code>Http</code> interface as needed (e.g. methods, headers, return codes, etc.)</p><p>This approach is fairly standard, encapsulating your code from both dependencies and I/O. It simplifies your code, by providing the bulk of your codebase (which is <code>ApiClientImpl</code> in our example) with a simple/idealized HTTP API that then in just one class you adapt to a specific underlying concrete implementation.</p><p>Also, with the <code>Http</code> abstraction, now in your tests for <code>ApiClientImpl</code>, you can fake out the HTTP layer:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-scala data-lang=scala><span style=display:flex><span><span style=color:#66d9ef>val</span> stubHttp <span style=color:#66d9ef>=</span> <span style=color:#66d9ef>new</span> <span style=color:#a6e22e>StubHttp</span><span style=color:#f92672>()</span>
+</span></span><span style=display:flex><span>stubHttp<span style=color:#f92672>.</span>when<span style=color:#f92672>(</span><span style=color:#e6db74>&#34;GET /foo&#34;</span><span style=color:#f92672>).</span>thenRespond<span style=color:#f92672>(</span>
+</span></span><span style=display:flex><span>  <span style=color:#e6db74>&#34;{ foo: { id: 1 } }&#34;</span><span style=color:#f92672>)</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>val</span> api <span style=color:#66d9ef>=</span> <span style=color:#66d9ef>new</span> <span style=color:#a6e22e>ApiClientImpl</span><span style=color:#f92672>(</span>stubHttp<span style=color:#f92672>)</span>
+</span></span><span style=display:flex><span><span style=color:#75715e>// hits the in-memory stub
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span><span style=color:#66d9ef>val</span> foo <span style=color:#66d9ef>=</span> api<span style=color:#f92672>.</span>getFoo<span style=color:#f92672>()</span>
+</span></span><span style=display:flex><span>assertThat<span style=color:#f92672>(</span>foo<span style=color:#f92672>.</span>getId<span style=color:#f92672>(),</span> is<span style=color:#f92672>(</span><span style=color:#ae81ff>1</span><span style=color:#f92672>));</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>api<span style=color:#f92672>.</span>sendFoo<span style=color:#f92672>(</span><span style=color:#66d9ef>new</span> <span style=color:#a6e22e>Foo</span><span style=color:#f92672>(</span><span style=color:#ae81ff>2</span><span style=color:#f92672>));</span>
+</span></span><span style=display:flex><span>stubHttp<span style=color:#f92672>.</span>assertHas<span style=color:#f92672>(</span>
+</span></span><span style=display:flex><span>  <span style=color:#e6db74>&#34;POST /foo&#34;</span><span style=color:#f92672>,</span>
+</span></span><span style=display:flex><span>  <span style=color:#e6db74>&#34;{ foo: { id: 2 } }&#34;</span><span style=color:#f92672>)</span>
+</span></span></code></pre></div><p>Which is still pretty standard stuff.</p><p>I frequently start out with mocks, but eventually end up with stubs, as I think their state/abstraction scales better than pure mocks (see <a href=/2010/07/09/why-i-dont-like-mocks.html>Why I Like Stubs</a> for a longer tangent on that).</p><h2 id=bad-in-project-abstractions>Bad In-Project Abstractions
+<a class=heading-link href=#bad-in-project-abstractions><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h2><p>Again, &ldquo;bad&rdquo; is subjective, but abstractions I typically think are overdone are when interfaces are used to draw arbitrary lines between components that merely call each other in memory.</p><p>The stereotypical example from mid-2000s Java projects are a <code>HomeController</code> calling a <code>HomeService</code> calling a <code>HomeDAO</code> which finally made database calls.</p><p>Okay, I get you want your <code>HomeDAO</code> to be an abstraction, so you can avoid I/O, but typically the <code>HomeService</code> was also an interface that had to be implemented and injected into the <code>HomeController</code>.</p><p>If we&rsquo;re not drawing lines between systems (e.g. a vendor or a sister team) or lines in-front of I/O (expensive disk/wire calls), I really question whether the overhead of these abstractions are worth it.</p><p>From what I&rsquo;ve seen, it can degenerate into testing that is solely behavior-based, e.g.:</p><pre tabindex=0><code>def testHomeController() {
   // given the user calls /home
   val home = new HomeController(mockHomeService)
   home.visit()
   // then we call the service
   verify(mockHomeService).whateverMethod();
 }
-</code></pre><p>Have we really tested anything here? Does the user really care the <code>whateverMethod</code> was called?</p>
-<p>No, they don&rsquo;t.</p>
-<p>For me, I prefer to have state-based assertions (this ties into my preference for stubs) that show the state of the world changed, which I believe are much more resilient to internal refactoring and less coupled to implementation details.</p>
-<p>So, basically if we&rsquo;re not using the <code>HomeService</code> interface/abstraction for testing (because the tests its allows are brittle and weak), then <code>HomeService</code> might still be a fine class to fine, but I would not have it be an abstraction, and instead I&rsquo;d have it just be a concrete class that gets called as boring, old-school method calls from <code>HomeController</code> when we&rsquo;re testing it.</p>
-<h2 id=reusing-cross-project-abstractions>
-Reusing Cross-Project Abstractions
-<a class=heading-link href=#reusing-cross-project-abstractions>
-<i class="fa fa-link" aria-hidden=true></i>
-</a>
-</h2>
-<p>So, those cases are within project; for cross-project abstractions, there can be some nuance.</p>
-<p>Let&rsquo;s pretend you shipped our <code>ApiClient</code> project example above, and I&rsquo;m now consuming it in my <code>AwesomeWebapp</code>.</p>
-<p>I now want to test my <code>AwesomeWebapp</code>, which uses your <code>ApiClient</code>, but I of course don&rsquo;t want to make real HTTP calls.</p>
-<p>I have three choices:</p>
-<ol>
-<li>Reuse your <code>Http</code>/<code>StubHttp</code> abstraction for my own tests</li>
-<li>Make my own in-project <code>ApiClient</code> abstraction (e.g. create a new, minimal interface)</li>
-<li>Use the <code>ApiClient</code> interface as is</li>
-</ol>
-<p>For the 1st option, reusing an upstream project&rsquo;s abstraction, I have done this before and it is generally a mistake. The reason is that your tests end up being both more verbose and coupled to the upstream (<code>ApiClient</code>) implementation details.</p>
-<p>For example, my code might look like:</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-scala data-lang=scala><span style=color:#66d9ef>def</span> testAwesomeWebapp<span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
-  <span style=color:#75715e>// pull in StubHttp from the ApiClient project
-</span><span style=color:#75715e></span>  <span style=color:#66d9ef>val</span> stubHttp <span style=color:#66d9ef>=</span> <span style=color:#66d9ef>new</span> <span style=color:#a6e22e>StubHttp</span><span style=color:#f92672>()</span>
-  <span style=color:#75715e>// use it to make a &#34;real&#34; ApiClientImpl
-</span><span style=color:#75715e></span>  <span style=color:#66d9ef>val</span> apiClient <span style=color:#66d9ef>=</span> <span style=color:#66d9ef>new</span> <span style=color:#a6e22e>ApiClientImpl</span><span style=color:#f92672>(</span>stubHttp<span style=color:#f92672>)</span>
-  <span style=color:#75715e>// now make my webapp that I want to test
-</span><span style=color:#75715e></span>  <span style=color:#66d9ef>val</span> webapp <span style=color:#66d9ef>=</span> <span style=color:#66d9ef>new</span> <span style=color:#a6e22e>AwesomeWebapp</span><span style=color:#f92672>(</span>apiClient<span style=color:#f92672>)</span>
-
-  <span style=color:#75715e>// now, i want to test a request happening
-</span><span style=color:#75715e></span>  sync<span style=color:#f92672>.</span>gotARequest<span style=color:#f92672>()</span>
-
-  <span style=color:#75715e>// note here my assertion is coupled to the low-level
-</span><span style=color:#75715e></span>  <span style=color:#75715e>// HTTP details of what ApiClientImpl did.
-</span><span style=color:#75715e></span>  stubHttp<span style=color:#f92672>.</span>assertHas<span style=color:#f92672>(</span>
-    <span style=color:#e6db74>&#34;POST /foo&#34;</span><span style=color:#f92672>,</span>
-    <span style=color:#e6db74>&#34;{ foo: id: 2 } }&#34;</span><span style=color:#f92672>)</span>
-<span style=color:#f92672>}</span>
-</code></pre></div><p>So, I tested <code>AwesomeWebapp</code> not by observing state changes/method calls on its direct dependencies, but in the dependency of it&rsquo;s dependency.</p>
-<p>This may seem harmless at first, but it quickly becomes tedious making the <code>AwesomeWebapp</code> fake out such a low-level implementation detail like HTTP just to test it&rsquo;s high level operation (finding <code>Foo</code>s and sending them to the <code>ApiClient</code>).</p>
-<p>For the second option, creating another abstraction solely for <code>ApiClient</code>, I generally find this is overkill.</p>
-<p>Given this is &ldquo;cross-project&rdquo; abstractions, e.g. both of these projects exist in house, as long as we can keep <code>ApiClient</code> from making wire calls, I don&rsquo;t think it&rsquo;s worth the overhead of on our internal abstraction.</p>
-<p>Instead, the 3rd option is generally best, assuming the <code>ApiClient</code> ships its own interface, and that is to mock/fake against that interface.</p>
-<p><strong>Update May 2018:</strong> Note that technically my <a href=/2018/01/21/microserving-testing-at-scale.html>micro-serving testing at-scale</a> posts proposes doing exactly the opposite of this, and using <code>ApiClientImpl</code> with magical, org-wide <code>Http</code> stubs, but that is somewhat of a special case, e.g. more fake-integration style testing than unit tests.</p>
-<h2 id=use-project-specific-abstractions>
-Use Project-Specific Abstractions
-<a class=heading-link href=#use-project-specific-abstractions>
-<i class="fa fa-link" aria-hidden=true></i>
-</a>
-</h2>
-<p>Instead, as is perhaps obvious, it is a lot cleaner to test <code>SyncService</code> by faking out it&rsquo;s dependencies directly, e.g.:</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-scala data-lang=scala><span style=color:#66d9ef>def</span> testSyncService<span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
-  <span style=color:#66d9ef>val</span> mockClient <span style=color:#66d9ef>=</span> <span style=color:#66d9ef>new</span> <span style=color:#a6e22e>MockClient</span><span style=color:#f92672>()</span>
-  <span style=color:#66d9ef>val</span> sync <span style=color:#66d9ef>=</span> <span style=color:#66d9ef>new</span> <span style=color:#a6e22e>SyncService</span><span style=color:#f92672>(</span>mockClient<span style=color:#f92672>)</span>
-
-  sync<span style=color:#f92672>.</span>run<span style=color:#f92672>()</span>
-
-  verify<span style=color:#f92672>(</span>mockClient<span style=color:#f92672>).</span>sendFoo<span style=color:#f92672>(...)</span>
-<span style=color:#f92672>}</span>
-</code></pre></div><p>Where this becomes really helpful is when you stub at this project-specific level, as you can start applying state and dummy behavior to cut down on the mock tedious.</p>
-<p>For example, a stub <code>ApiClient</code> might look like:</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-scala data-lang=scala><span style=color:#66d9ef>class</span> <span style=color:#a6e22e>StubApiClient</span> <span style=color:#66d9ef>extends</span> <span style=color:#a6e22e>ApiClient</span> <span style=color:#f92672>{</span>
-  <span style=color:#66d9ef>private</span> <span style=color:#66d9ef>val</span> instances <span style=color:#66d9ef>=</span> <span style=color:#a6e22e>List</span><span style=color:#f92672>[</span><span style=color:#66d9ef>Foo</span><span style=color:#f92672>]()</span>
-
-  <span style=color:#66d9ef>override</span> <span style=color:#66d9ef>def</span> getFoo<span style=color:#f92672>(</span>id<span style=color:#66d9ef>:</span> <span style=color:#66d9ef>Int</span><span style=color:#f92672>)</span> <span style=color:#66d9ef>=</span> <span style=color:#f92672>{</span>
-    instances<span style=color:#f92672>.</span>find<span style=color:#f92672>(</span><span style=color:#66d9ef>_</span><span style=color:#f92672>.</span>id <span style=color:#f92672>==</span> id<span style=color:#f92672>).</span>get
-  <span style=color:#f92672>}</span>
-
-  <span style=color:#66d9ef>override</span> <span style=color:#66d9ef>def</span> sendFoo<span style=color:#f92672>(</span>foo<span style=color:#66d9ef>:</span> <span style=color:#66d9ef>Foo</span><span style=color:#f92672>)</span> <span style=color:#66d9ef>=</span> <span style=color:#f92672>{</span>
-    <span style=color:#66d9ef>if</span> <span style=color:#f92672>(</span>foo<span style=color:#f92672>.</span>getId <span style=color:#f92672>==</span> <span style=color:#66d9ef>null</span><span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
-      sys<span style=color:#f92672>.</span>error<span style=color:#f92672>(</span><span style=color:#e6db74>&#34;foo id is required&#34;</span><span style=color:#f92672>)</span>
-    <span style=color:#f92672>}</span>
-    <span style=color:#66d9ef>if</span> <span style=color:#f92672>(</span>instances<span style=color:#f92672>.</span>find<span style=color:#f92672>(</span><span style=color:#66d9ef>_</span><span style=color:#f92672>.</span>id <span style=color:#f92672>==</span> id<span style=color:#f92672>))</span> <span style=color:#f92672>{</span>
-      sys<span style=color:#f92672>.</span>error<span style=color:#f92672>(</span><span style=color:#e6db74>&#34;foo id already exists&#34;</span><span style=color:#f92672>)</span>
-    <span style=color:#f92672>}</span>
-    instances <span style=color:#f92672>+=</span> foo
-  <span style=color:#f92672>}</span>
-<span style=color:#f92672>}</span>
-</code></pre></div><p>With this dummy behavior, you can now put parts of <code>SyncService</code> under test that need to get/send <code>Foo</code>s and have both the <code>SyncService</code> implementation and your test method get the behavior for free (no setting up mocks with <code>when sendFoo</code> for every little <code>sendFoo</code> call).</p>
-<h2 id=reuse-stubs-across-projects>
-Reuse Stubs Across Projects
-<a class=heading-link href=#reuse-stubs-across-projects>
-<i class="fa fa-link" aria-hidden=true></i>
-</a>
-</h2>
-<p>Once your <code>ApiClient</code> is used as a dependency by multiple downstream projects, it makes a lot of sense to reuse the <code>StubApiClient</code> for all the downstream project&rsquo;s tests.</p>
-<p>This is so helpful that I&rsquo;ve begun packaging the <code>StubApiClient</code> directly in the same jar as the <code>ApiClientImpl</code>. Not because it&rsquo;s used in production, but because any project that uses <code>ApiClientImpl</code> almost always uses the <code>StubApiClient</code> for its tests.</p>
-<p>This allows any downstream project to get a fast, in-memory &ldquo;smart&rdquo; (e.g. can handle generic behavior like adding a <code>Foo</code> and then returning the same <code>Foo</code> later, without constantly respecifying the behavior in the tests) stub client almost (after you initially create it) for free to use in their tests.</p>
-</div>
-<footer>
-<div id=disqus_thread></div>
-<script type=application/javascript>var disqus_config=function(){};(function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById('disqus_thread').innerHTML='Disqus comments not available by default when the website is previewed locally.';return}var b=document,a=b.createElement('script');a.async=!0,a.src='//draconianoverlord.disqus.com/embed.js',a.setAttribute('data-timestamp',+new Date),(b.head||b.body).appendChild(a)})()</script>
-<noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript>
-<a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a>
-</footer>
-</article>
-</section>
-</div>
-<footer class=footer>
-<section class=container>
-©
+</code></pre><p>Have we really tested anything here? Does the user really care the <code>whateverMethod</code> was called?</p><p>No, they don&rsquo;t.</p><p>For me, I prefer to have state-based assertions (this ties into my preference for stubs) that show the state of the world changed, which I believe are much more resilient to internal refactoring and less coupled to implementation details.</p><p>So, basically if we&rsquo;re not using the <code>HomeService</code> interface/abstraction for testing (because the tests its allows are brittle and weak), then <code>HomeService</code> might still be a fine class to fine, but I would not have it be an abstraction, and instead I&rsquo;d have it just be a concrete class that gets called as boring, old-school method calls from <code>HomeController</code> when we&rsquo;re testing it.</p><h2 id=reusing-cross-project-abstractions>Reusing Cross-Project Abstractions
+<a class=heading-link href=#reusing-cross-project-abstractions><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h2><p>So, those cases are within project; for cross-project abstractions, there can be some nuance.</p><p>Let&rsquo;s pretend you shipped our <code>ApiClient</code> project example above, and I&rsquo;m now consuming it in my <code>AwesomeWebapp</code>.</p><p>I now want to test my <code>AwesomeWebapp</code>, which uses your <code>ApiClient</code>, but I of course don&rsquo;t want to make real HTTP calls.</p><p>I have three choices:</p><ol><li>Reuse your <code>Http</code>/<code>StubHttp</code> abstraction for my own tests</li><li>Make my own in-project <code>ApiClient</code> abstraction (e.g. create a new, minimal interface)</li><li>Use the <code>ApiClient</code> interface as is</li></ol><p>For the 1st option, reusing an upstream project&rsquo;s abstraction, I have done this before and it is generally a mistake. The reason is that your tests end up being both more verbose and coupled to the upstream (<code>ApiClient</code>) implementation details.</p><p>For example, my code might look like:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-scala data-lang=scala><span style=display:flex><span><span style=color:#66d9ef>def</span> testAwesomeWebapp<span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>  <span style=color:#75715e>// pull in StubHttp from the ApiClient project
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>  <span style=color:#66d9ef>val</span> stubHttp <span style=color:#66d9ef>=</span> <span style=color:#66d9ef>new</span> <span style=color:#a6e22e>StubHttp</span><span style=color:#f92672>()</span>
+</span></span><span style=display:flex><span>  <span style=color:#75715e>// use it to make a &#34;real&#34; ApiClientImpl
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>  <span style=color:#66d9ef>val</span> apiClient <span style=color:#66d9ef>=</span> <span style=color:#66d9ef>new</span> <span style=color:#a6e22e>ApiClientImpl</span><span style=color:#f92672>(</span>stubHttp<span style=color:#f92672>)</span>
+</span></span><span style=display:flex><span>  <span style=color:#75715e>// now make my webapp that I want to test
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>  <span style=color:#66d9ef>val</span> webapp <span style=color:#66d9ef>=</span> <span style=color:#66d9ef>new</span> <span style=color:#a6e22e>AwesomeWebapp</span><span style=color:#f92672>(</span>apiClient<span style=color:#f92672>)</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#75715e>// now, i want to test a request happening
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>  sync<span style=color:#f92672>.</span>gotARequest<span style=color:#f92672>()</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#75715e>// note here my assertion is coupled to the low-level
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>  <span style=color:#75715e>// HTTP details of what ApiClientImpl did.
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>  stubHttp<span style=color:#f92672>.</span>assertHas<span style=color:#f92672>(</span>
+</span></span><span style=display:flex><span>    <span style=color:#e6db74>&#34;POST /foo&#34;</span><span style=color:#f92672>,</span>
+</span></span><span style=display:flex><span>    <span style=color:#e6db74>&#34;{ foo: id: 2 } }&#34;</span><span style=color:#f92672>)</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>}</span>
+</span></span></code></pre></div><p>So, I tested <code>AwesomeWebapp</code> not by observing state changes/method calls on its direct dependencies, but in the dependency of it&rsquo;s dependency.</p><p>This may seem harmless at first, but it quickly becomes tedious making the <code>AwesomeWebapp</code> fake out such a low-level implementation detail like HTTP just to test it&rsquo;s high level operation (finding <code>Foo</code>s and sending them to the <code>ApiClient</code>).</p><p>For the second option, creating another abstraction solely for <code>ApiClient</code>, I generally find this is overkill.</p><p>Given this is &ldquo;cross-project&rdquo; abstractions, e.g. both of these projects exist in house, as long as we can keep <code>ApiClient</code> from making wire calls, I don&rsquo;t think it&rsquo;s worth the overhead of on our internal abstraction.</p><p>Instead, the 3rd option is generally best, assuming the <code>ApiClient</code> ships its own interface, and that is to mock/fake against that interface.</p><p><strong>Update May 2018:</strong> Note that technically my <a href=/2018/01/21/microserving-testing-at-scale.html>micro-serving testing at-scale</a> posts proposes doing exactly the opposite of this, and using <code>ApiClientImpl</code> with magical, org-wide <code>Http</code> stubs, but that is somewhat of a special case, e.g. more fake-integration style testing than unit tests.</p><h2 id=use-project-specific-abstractions>Use Project-Specific Abstractions
+<a class=heading-link href=#use-project-specific-abstractions><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h2><p>Instead, as is perhaps obvious, it is a lot cleaner to test <code>SyncService</code> by faking out it&rsquo;s dependencies directly, e.g.:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-scala data-lang=scala><span style=display:flex><span><span style=color:#66d9ef>def</span> testSyncService<span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>val</span> mockClient <span style=color:#66d9ef>=</span> <span style=color:#66d9ef>new</span> <span style=color:#a6e22e>MockClient</span><span style=color:#f92672>()</span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>val</span> sync <span style=color:#66d9ef>=</span> <span style=color:#66d9ef>new</span> <span style=color:#a6e22e>SyncService</span><span style=color:#f92672>(</span>mockClient<span style=color:#f92672>)</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  sync<span style=color:#f92672>.</span>run<span style=color:#f92672>()</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  verify<span style=color:#f92672>(</span>mockClient<span style=color:#f92672>).</span>sendFoo<span style=color:#f92672>(...)</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>}</span>
+</span></span></code></pre></div><p>Where this becomes really helpful is when you stub at this project-specific level, as you can start applying state and dummy behavior to cut down on the mock tedious.</p><p>For example, a stub <code>ApiClient</code> might look like:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-scala data-lang=scala><span style=display:flex><span><span style=color:#66d9ef>class</span> <span style=color:#a6e22e>StubApiClient</span> <span style=color:#66d9ef>extends</span> <span style=color:#a6e22e>ApiClient</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>private</span> <span style=color:#66d9ef>val</span> instances <span style=color:#66d9ef>=</span> <span style=color:#a6e22e>List</span><span style=color:#f92672>[</span><span style=color:#66d9ef>Foo</span><span style=color:#f92672>]()</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>override</span> <span style=color:#66d9ef>def</span> getFoo<span style=color:#f92672>(</span>id<span style=color:#66d9ef>:</span> <span style=color:#66d9ef>Int</span><span style=color:#f92672>)</span> <span style=color:#66d9ef>=</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>    instances<span style=color:#f92672>.</span>find<span style=color:#f92672>(</span><span style=color:#66d9ef>_</span><span style=color:#f92672>.</span>id <span style=color:#f92672>==</span> id<span style=color:#f92672>).</span>get
+</span></span><span style=display:flex><span>  <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>override</span> <span style=color:#66d9ef>def</span> sendFoo<span style=color:#f92672>(</span>foo<span style=color:#66d9ef>:</span> <span style=color:#66d9ef>Foo</span><span style=color:#f92672>)</span> <span style=color:#66d9ef>=</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>if</span> <span style=color:#f92672>(</span>foo<span style=color:#f92672>.</span>getId <span style=color:#f92672>==</span> <span style=color:#66d9ef>null</span><span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>      sys<span style=color:#f92672>.</span>error<span style=color:#f92672>(</span><span style=color:#e6db74>&#34;foo id is required&#34;</span><span style=color:#f92672>)</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>if</span> <span style=color:#f92672>(</span>instances<span style=color:#f92672>.</span>find<span style=color:#f92672>(</span><span style=color:#66d9ef>_</span><span style=color:#f92672>.</span>id <span style=color:#f92672>==</span> id<span style=color:#f92672>))</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>      sys<span style=color:#f92672>.</span>error<span style=color:#f92672>(</span><span style=color:#e6db74>&#34;foo id already exists&#34;</span><span style=color:#f92672>)</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>    instances <span style=color:#f92672>+=</span> foo
+</span></span><span style=display:flex><span>  <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>}</span>
+</span></span></code></pre></div><p>With this dummy behavior, you can now put parts of <code>SyncService</code> under test that need to get/send <code>Foo</code>s and have both the <code>SyncService</code> implementation and your test method get the behavior for free (no setting up mocks with <code>when sendFoo</code> for every little <code>sendFoo</code> call).</p><h2 id=reuse-stubs-across-projects>Reuse Stubs Across Projects
+<a class=heading-link href=#reuse-stubs-across-projects><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h2><p>Once your <code>ApiClient</code> is used as a dependency by multiple downstream projects, it makes a lot of sense to reuse the <code>StubApiClient</code> for all the downstream project&rsquo;s tests.</p><p>This is so helpful that I&rsquo;ve begun packaging the <code>StubApiClient</code> directly in the same jar as the <code>ApiClientImpl</code>. Not because it&rsquo;s used in production, but because any project that uses <code>ApiClientImpl</code> almost always uses the <code>StubApiClient</code> for its tests.</p><p>This allows any downstream project to get a fast, in-memory &ldquo;smart&rdquo; (e.g. can handle generic behavior like adding a <code>Foo</code> and then returning the same <code>Foo</code> later, without constantly respecifying the behavior in the tests) stub client almost (after you initially create it) for free to use in their tests.</p></div><footer><div id=disqus_thread></div><script>window.disqus_config=function(){},function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById("disqus_thread").innerHTML="Disqus comments not available by default when the website is previewed locally.";return}var t=document,e=t.createElement("script");e.async=!0,e.src="//draconianoverlord.disqus.com/embed.js",e.setAttribute("data-timestamp",+new Date),(t.head||t.body).appendChild(e)}(),document.addEventListener("themeChanged",function(){document.readyState=="complete"&&DISQUS.reset({reload:!0,config:disqus_config})})</script></footer></article></section></div><footer class=footer><section class=container>©
 2008 -
-2022
+2023
 Stephen Haberman
 ·
-Powered by <a href=https://gohugo.io/>Hugo</a> & <a href=https://github.com/luizdepra/hugo-coder/>Coder</a>.
-</section>
-</footer>
-</main>
-<script src=/js/coder.min.03b17769f4f91ae35667e1f2a1ca8c16f50562576cf90ff32b3179926914daa5.js integrity="sha256-A7F3afT5GuNWZ+HyocqMFvUFYlds+Q/zKzF5kmkU2qU="></script>
-</body>
-</html>
+Powered by <a href=https://gohugo.io/ target=_blank rel=noopener>Hugo</a> & <a href=https://github.com/luizdepra/hugo-coder/ target=_blank rel=noopener>Coder</a>.</section></footer></main><script src=/js/coder.min.6ae284be93d2d19dad1f02b0039508d9aab3180a12a06dcc71b0b0ef7825a317.js integrity="sha256-auKEvpPS0Z2tHwKwA5UI2aqzGAoSoG3McbCw73gloxc="></script></body></html>

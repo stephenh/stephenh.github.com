@@ -1,237 +1,27 @@
-<!doctype html><html lang=en>
-<head>
-<meta charset=utf-8>
-<meta name=viewport content="width=device-width,initial-scale=1">
-<meta http-equiv=content-language content="en">
-<meta name=color-scheme content="light dark">
-<meta name=author content="Stephen Haberman">
-<meta name=description content="I feel &ldquo;integration test&rdquo; as a term has become less useful (which is admittedly somewhat harsh and clickbait-y, I could also say fuzzy) because it means different things to different people.
+<!doctype html><html lang=en><head><title>Integration Test is a Useless Term · Draconian Overlord</title><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=color-scheme content="light dark"><meta name=author content="Stephen Haberman"><meta name=description content="I feel &ldquo;integration test&rdquo; as a term has become less useful (which is admittedly somewhat harsh and clickbait-y, I could also say fuzzy) because it means different things to different people.
 Meaning different things to different people is basically the opposite of shared language / Domain Driven Design&rsquo;s Ubiquitous Language and leads to miss-communications and unclear thought when using the term.
-Similarly, &ldquo;unit test&rdquo; can also mean different things to different people, albeit to a lesser extent than &ldquo;integration test&rdquo;.">
-<meta name=keywords content="blog,developer,personal">
-<meta name=twitter:card content="summary">
-<meta name=twitter:title content="Integration Test is a Useless Term">
-<meta name=twitter:description content="I feel &ldquo;integration test&rdquo; as a term has become less useful (which is admittedly somewhat harsh and clickbait-y, I could also say fuzzy) because it means different things to different people.
+Similarly, &ldquo;unit test&rdquo; can also mean different things to different people, albeit to a lesser extent than &ldquo;integration test&rdquo;."><meta name=keywords content="blog,developer,personal"><meta name=twitter:card content="summary"><meta name=twitter:title content="Integration Test is a Useless Term"><meta name=twitter:description content="I feel &ldquo;integration test&rdquo; as a term has become less useful (which is admittedly somewhat harsh and clickbait-y, I could also say fuzzy) because it means different things to different people.
 Meaning different things to different people is basically the opposite of shared language / Domain Driven Design&rsquo;s Ubiquitous Language and leads to miss-communications and unclear thought when using the term.
-Similarly, &ldquo;unit test&rdquo; can also mean different things to different people, albeit to a lesser extent than &ldquo;integration test&rdquo;.">
-<meta property="og:title" content="Integration Test is a Useless Term">
-<meta property="og:description" content="I feel &ldquo;integration test&rdquo; as a term has become less useful (which is admittedly somewhat harsh and clickbait-y, I could also say fuzzy) because it means different things to different people.
+Similarly, &ldquo;unit test&rdquo; can also mean different things to different people, albeit to a lesser extent than &ldquo;integration test&rdquo;."><meta property="og:title" content="Integration Test is a Useless Term"><meta property="og:description" content="I feel &ldquo;integration test&rdquo; as a term has become less useful (which is admittedly somewhat harsh and clickbait-y, I could also say fuzzy) because it means different things to different people.
 Meaning different things to different people is basically the opposite of shared language / Domain Driven Design&rsquo;s Ubiquitous Language and leads to miss-communications and unclear thought when using the term.
-Similarly, &ldquo;unit test&rdquo; can also mean different things to different people, albeit to a lesser extent than &ldquo;integration test&rdquo;.">
-<meta property="og:type" content="article">
-<meta property="og:url" content="https://www.draconianoverlord.com/2018/08/07/integration-test-is-a-useless-term.html/"><meta property="article:section" content="posts">
-<meta property="article:published_time" content="2018-08-07T00:00:00+00:00">
-<meta property="article:modified_time" content="2018-08-07T00:00:00+00:00">
-<title>
-Integration Test is a Useless Term · Draconian Overlord
-</title>
-<link rel=canonical href=https://www.draconianoverlord.com/2018/08/07/integration-test-is-a-useless-term.html/>
-<link rel=preload href="/fonts/forkawesome-webfont.woff2?v=1.2.0" as=font type=font/woff2 crossorigin>
-<link rel=stylesheet href=/css/coder.min.d9fddbffe6f27e69985dc5fe0471cdb0e57fbf4775714bc3d847accb08f4a1f6.css integrity="sha256-2f3b/+byfmmYXcX+BHHNsOV/v0d1cUvD2Eesywj0ofY=" crossorigin=anonymous media=screen>
-<link rel=stylesheet href=/css/coder-dark.min.aa883b9ce35a8ff4a2a5008619005175e842bb18a8a9f9cc2bbcf44dab2d91fa.css integrity="sha256-qog7nONaj/SipQCGGQBRdehCuxioqfnMK7z0Tastkfo=" crossorigin=anonymous media=screen>
-<link rel=icon type=image/png href=/images/favicon-32x32.png sizes=32x32>
-<link rel=icon type=image/png href=/images/favicon-16x16.png sizes=16x16>
-<link rel=apple-touch-icon href=/images/apple-touch-icon.png>
-<link rel=apple-touch-icon sizes=180x180 href=/images/apple-touch-icon.png>
-<meta name=generator content="Hugo 0.92.0">
-</head>
-<body class="preload-transitions colorscheme-auto">
-<div class=float-container>
-<a id=dark-mode-toggle class=colorscheme-toggle>
-<i class="fa fa-adjust fa-fw" aria-hidden=true></i>
-</a>
-</div>
-<main class=wrapper>
-<nav class=navigation>
-<section class=container>
-<a class=navigation-title href=/>Draconian Overlord</a>
-Oppressing software entropy
-</section>
-</nav>
-<div class=content>
-<section class="container post">
-<article>
-<header>
-<div class=post-title>
-<h1 class=title>
-<a class=title-link href=https://www.draconianoverlord.com/2018/08/07/integration-test-is-a-useless-term.html/>
-Integration Test is a Useless Term
-</a>
-</h1>
-</div>
-<div class=post-meta>
-<div class=date>
-<span class=posted-on>
-<i class="fa fa-calendar" aria-hidden=true></i>
-<time datetime=2018-08-07T00:00:00Z>
-August 7, 2018
-</time>
-</span>
-<span class=reading-time>
-<i class="fa fa-clock-o" aria-hidden=true></i>
-7-minute read
-</span>
-</div>
-<div class=categories>
-<i class="fa fa-folder" aria-hidden=true></i>
-<a href=/categories/testing/>Testing</a></div>
-</div>
-</header>
-<div>
-<p>I feel &ldquo;integration test&rdquo; as a term has become less useful (which is admittedly somewhat harsh and clickbait-y, I could also say fuzzy) because it means different things to different people.</p>
-<p>Meaning different things to different people is basically the opposite of shared language / Domain Driven Design&rsquo;s <a href=https://www.martinfowler.com/bliki/UbiquitousLanguage.html>Ubiquitous Language</a> and leads to miss-communications and unclear thought when using the term.</p>
-<p>Similarly, &ldquo;unit test&rdquo; can also mean different things to different people, albeit to a lesser extent than &ldquo;integration test&rdquo;.</p>
-<p>Within previous teams, we would generally/organically come to loose agreement on what those terms meant to us, but obviously then we have to start over when talking to new people, and it wasn&rsquo;t that formalized. So I thought I&rsquo;d take a shot.</p>
-<h2 id=starting-over-fast-vs-slow>
-Starting Over: Fast vs. Slow
-<a class=heading-link href=#starting-over-fast-vs-slow>
-<i class="fa fa-link" aria-hidden=true></i>
-</a>
-</h2>
-<p>Instead of first describing what is wrong with &ldquo;integration test&rdquo; as a term, i.e. its multiple meanings, I thought I&rsquo;d first start from scratch with the <a href=https://www.caseinterview.com/mece>MECE</a> scaffolding that I have in my head.</p>
-<p>The primary distinction I make is &ldquo;fast tests&rdquo; vs. &ldquo;slow tests&rdquo;.</p>
-<p>Specifically:</p>
-<ul>
-<li>
-<p>Fast tests are RAM-only and no I/O.</p>
-<p>Since they touch no HDDs or SSDs or sockets, they are very fast.</p>
-</li>
-<li>
-<p>Slow tests use I/O.</p>
-<p>Since they touch files on the file system or more likely a database connection or a REST API, they are slow (this can be mitigated by local-only I/O, but I&rsquo;ll punt on that for now).</p>
-</li>
-</ul>
-<p>Admittedly, there are multiple ways to articulate this dimension (&ldquo;fast vs. slow&rdquo;, &ldquo;I/O vs. no I/O&rdquo;, &ldquo;RAM vs. disk&rdquo;, etc.), and I don&rsquo;t have an obvious favorite, but they&rsquo;re all essentially the same.</p>
-<p>(Pedantically, since RAM tests can be slow (e.g. if you have many loops/iterations) and I/O tests can be fast (e.g. if you use local resources), the terms &ldquo;fast&rdquo; and &ldquo;slow&rdquo; are potentially misnomers, but I don&rsquo;t really like &ldquo;I/O vs. no I/O&rdquo; or &ldquo;RAM vs. I/O&rdquo; in terms of rolling off the tongue, so I&rsquo;ll stay with &ldquo;fast vs slow&rdquo; for now.)</p>
-<h2 id=next-dimension-controlling-input>
-Next dimension: Controlling Input
-<a class=heading-link href=#next-dimension-controlling-input>
-<i class="fa fa-link" aria-hidden=true></i>
-</a>
-</h2>
-<p>The next dimension I think about for tests is &ldquo;can you control the input?&rdquo;, which is pretty simple:</p>
-<ul>
-<li>
-<p>Controlled input means you can run the system-under-test against exactly the state you want.</p>
-<p>Ideally this state is very small and very deterministic; both of these properties lead to easy comprehension, code reivew, and maintainability.</p>
-</li>
-<li>
-<p>Uncontrolled input means you have to run the system-under-test against state you cannot control.</p>
-<p>This means the tests must be either coded defensively to handle the input changing, or make typically-verbose copies of the input (e.g. record/reply tests).</p>
-</li>
-</ul>
-<p>What&rsquo;s interesting is this dimension already maps fairly close to the previous dimension of &ldquo;fast/RAM&rdquo; vs. &ldquo;slow/I/O&rdquo;, but with a few wrinkles. So let&rsquo;s combine these two characteristics (fast/slow and controlled/uncontrolled) into a quadrant (someone give me an MBA):</p>
-<ul>
-<li>Fast/controlled: you setup data structures in RAM, no problem</li>
-<li>Fast/uncontrolled: &mldr;what?</li>
-<li>Slow/controlled: you setup isolated I/O on disk/database/network</li>
-<li>Slow/uncontrolled: you use shared I/O on disk/database/network</li>
-</ul>
-<p>What falls out is the &ldquo;fast/uncontrolled&rdquo; option. <strong>It&rsquo;s basically impossible to write fast/RAM tests that are uncontrolled</strong> (&mldr;okay, aside from testing concurrency, and assuming good testing habits). By definition the process needs your test, and your test only, to define the input that is passed to the system-under-test.</p>
-<p>However, the slow/controlled and slow/uncontrolled distinctions are quite important, and we&rsquo;ll talk about those more later.</p>
-<h2 id=next-dimension-number-of-layers>
-Next dimension: Number of layers
-<a class=heading-link href=#next-dimension-number-of-layers>
-<i class="fa fa-link" aria-hidden=true></i>
-</a>
-</h2>
-<p>There is one more dimension that is useful: how many layers are covered by the test.</p>
-<p>For simplification, I&rsquo;ll use just &ldquo;single-layer&rdquo; vs. &ldquo;multi-layer&rdquo;, although it is really <code>N</code> layers for whatever your given <code>N</code> is.</p>
-<p>This increases our matrix to 8 permutations, however not all of them are valid, e.g.:</p>
-<ul>
-<li>Fast/controlled/single-layer: valid</li>
-<li>Fast/controlled/multi-layer: valid</li>
-<li>Fast/uncontrolled/single-layer: ignore because fast/RAM rams are inherently controlled</li>
-<li>Fast/uncontrolled/multi-layer: ignore for same</li>
-<li>Slow/controlled/single-layer: ignore because slow/I/O tests are inherently multi-layer</li>
-<li>Slow/controlled/multi-layer: valid</li>
-<li>Slow/uncontrolled/single-layer: ignore for same</li>
-<li>Slow/uncontrolled/multi-layer: valid</li>
-</ul>
-<p>So, after dropping the ones that don&rsquo;t make sense (e.g. assume all slow/I/O tests are multi-layer), we&rsquo;re left with four primary combinations:</p>
-<ul>
-<li>Fast/controlled/single-layer</li>
-<li>Fast/controlled/multi-layer</li>
-<li>Slow/controlled/multi-layer</li>
-<li>Slow/uncontrolled/multi-layer</li>
-</ul>
-<h2 id=finally-what-are-integration-tests>
-Finally: What Are &ldquo;Integration Tests&rdquo;
-<a class=heading-link href=#finally-what-are-integration-tests>
-<i class="fa fa-link" aria-hidden=true></i>
-</a>
-</h2>
-<p>So, the rub with &ldquo;integration test&rdquo; as a term is that it can legitimately describe 3 of the 4 options, specifically any of the &ldquo;multi-layer&rdquo; options:</p>
-<ul>
-<li>
-<p>Fast/controlled/multi-layer &ldquo;integration tests&rdquo; can be cross-unit/cross-layer but still RAM-only tests within a single project. E.g. maybe testing your view layer with your presenter layer (but no physical device/browser), or your controller layer with your repository layer (but no I/O to the database).</p>
-<p>(FWIW, I think this category is actually misuse of the term &ldquo;integration test&rdquo;, but it exists in public usage, e.g. Ember&rsquo;s &ldquo;integration tests&rdquo; are really cross-layer RAM tests.)</p>
-</li>
-<li>
-<p>Slow/controlled/multi-layer &ldquo;integration tests&rdquo; are I/O tests that use the project&rsquo;s &ldquo;owned&rdquo; I/O source(s). E.g. like typical database-driven tests (Rails ActiveRecord or Spring JPA/Hibernate) that use the project&rsquo;s local MySQL/Postgres database and can create/destroy data for each test.</p>
-</li>
-<li>
-<p>Slow/uncontrolled/multi-layer &ldquo;integration tests&rdquo; are I/O tests that use &ldquo;unowned&rdquo; I/O sources. E.g. calling microservices that are ran by another team or vendor, which almost always means our local/CI testing environment cannot automatically create/destroy test data.</p>
-</li>
-</ul>
-<p>All three of these &ldquo;integration tests&rdquo; definitions have very different characteristics:</p>
-<ul>
-<li>Fast/controlled/multi-layer tests are great: they&rsquo;re fast! The more layers, the better.</li>
-<li>Slow/controlled/multi-layer tests are okay: they&rsquo;re slow but at least deterministic.</li>
-<li>Slow/uncontrolled/multi-layer tests are terrible: they&rsquo;re slow and <strong>always flaky</strong>.</li>
-</ul>
-<p>And so the problem is, when I say &ldquo;integration test&rdquo;, what do I mean?</p>
-<p>Note that I&rsquo;ve heard &ldquo;end-to-end&rdquo; used as a potential discriminator, but it also fails: for some projects &ldquo;end-to-end&rdquo; can be controlled I/O all the way through (typically monoliths), but others, &ldquo;end-to-end&rdquo; is almost by definition uncontrolled I/O (typically microservices).</p>
-<h2 id=my-proposedwip-terminology>
-My Proposed/WIP Terminology
-<a class=heading-link href=#my-proposedwip-terminology>
-<i class="fa fa-link" aria-hidden=true></i>
-</a>
-</h2>
-<p>Given this potential ambiguity, what I&rsquo;ve personally been using (&mldr;or will start, see disclaimer) using for terminology is:</p>
-<ul>
-<li>
-<p>&ldquo;Unit test&rdquo; is anything that is fast/RAM-only, e.g both fast/single-layer and fast/multi-layer. Granted, having subset terms, e.g. &ldquo;widget unit tests&rdquo; or &ldquo;validation unit tests&rdquo; or &ldquo;component unit tests&rdquo; is useful (this is what Ember was trying to do when they appropriated &ldquo;integration test&rdquo;), but I&rsquo;d still roll them all up into &ldquo;unit tests&rdquo;. This is somewhat imprecise, but I think matches common usage.</p>
-</li>
-<li>
-<p>&ldquo;Internal system test&rdquo; means slow/I/O that we control (slow/controlled/multi-layer). Previously I&rsquo;d called this &ldquo;intra-system integration tests&rdquo;, but that was a mouthful and continued to use the ambigious &ldquo;integration&rdquo; test term, just with an extra modifier. Granted, &ldquo;internal&rdquo; is a modifier to &ldquo;system&rdquo; (where &ldquo;system&rdquo; == &ldquo;I/O&rdquo;), but it is more succint and seems cute.</p>
-</li>
-<li>
-<p>&ldquo;Cross system test&rdquo; means slow/I/O that we don&rsquo;t control (slow/uncontrolled/multi-layer). As I mentioned before, this is probably what &ldquo;end to end integration tests&rdquo; means to most people, but that doesn&rsquo;t specifically capture controlled-ness, and for me that distinction is too important to ignore. Previously I&rsquo;d called this &ldquo;cross-system integration tests&rdquo; (e.g. how <a href=/2017/08/23/futility-of-cross-system-integration-testing.html>they suck</a>), but that was also a bit too long.</p>
-<p>(I considered calling this &ldquo;external system test&rdquo;, as &ldquo;external&rdquo; is the opposite to &ldquo;internal&rdquo;, but &ldquo;external&rdquo; can trick people into thinking &ldquo;external systems are only those outside my company, so within the company we should have a giant end-to-end suite&rdquo;, when really in microservice orgs &ldquo;external to your system&rdquo; can actually include &ldquo;teams you sit right next to&rdquo;.)</p>
-<p>(I am also setting up &ldquo;unit&rdquo; == &ldquo;fast/RAM&rdquo; and &ldquo;system&rdquo; == &ldquo;slow/I/O&rdquo; as orthogonal terms. I think previously &ldquo;integration&rdquo; might have meant &ldquo;I/O&rdquo; but, per previously, it can be taken to be mean &ldquo;integration of units in RAM&rdquo;.)</p>
-</li>
-</ul>
-<p>As the ironic disclaimer, I&rsquo;ve actively refined these terms while writing this post; previously I&rsquo;d been using longer/more annoying terms, but writing them up as-is highlighted their awkwardness. So I refined them a bit. Which I think is exactly the point of writing things up: it clarifies your thinking.</p>
-<p>As a huge disclaimer, I&rsquo;m sure &ldquo;system test&rdquo; has been used for years, so I&rsquo;m not proposing anything new/unique; but within the circles I converse anyway, &ldquo;system test&rdquo; seems unused enough that I&rsquo;m going to co-opt it to mean what I want it to mean (I/O) (which perhaps it already meant for other people; hopefully it does not mean other things for other people, or if so hopefully it&rsquo;s a small minority that won&rsquo;t mind too much).</p>
-<p>I also have more thoughts on the fast/single-layer and fast/multi-layer dichotomy, but I&rsquo;ll save that for another post.</p>
-<p>If you like this topic, I&rsquo;ve written several other posts about integration tests (mostly that they suck), albeit with my prior terminology:</p>
-<ul>
-<li><a href=/2017/08/23/futility-of-cross-system-integration-testing.html>The Futility of Cross-System Integration Testing</a> is how slow/uncontrolled/multi-layer tests should be avoided at all costs (with perhaps very slight exception for less than 10 smoke tests).</li>
-<li><a href=/2018/06/20/skepticism-about-record-replay-tests.html>Skepticism About Record/Replay Tests</a> is my raised-eyebrow around trying to paper over the uncontrolled aspect of slow/uncontrolled tests by recording results.</li>
-<li><a href=/2018/01/21/microserving-testing-at-scale.html>Microservice Testing At Scale</a> is armchair musing about clawing the traditional slow/uncontrolled microservice testing mess within a large engineering org (e.g. that is large enough to need/afford/build the bespoke tooling) into the slow/controlled cell by replacing or stubbing I/O higher up the stack.</li>
-</ul>
-</div>
-<footer>
-<div id=disqus_thread></div>
-<script type=application/javascript>var disqus_config=function(){};(function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById('disqus_thread').innerHTML='Disqus comments not available by default when the website is previewed locally.';return}var b=document,a=b.createElement('script');a.async=!0,a.src='//draconianoverlord.disqus.com/embed.js',a.setAttribute('data-timestamp',+new Date),(b.head||b.body).appendChild(a)})()</script>
-<noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript>
-<a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a>
-</footer>
-</article>
-</section>
-</div>
-<footer class=footer>
-<section class=container>
-©
+Similarly, &ldquo;unit test&rdquo; can also mean different things to different people, albeit to a lesser extent than &ldquo;integration test&rdquo;."><meta property="og:type" content="article"><meta property="og:url" content="https://www.draconianoverlord.com/2018/08/07/integration-test-is-a-useless-term.html/"><meta property="article:section" content="posts"><meta property="article:published_time" content="2018-08-07T00:00:00+00:00"><meta property="article:modified_time" content="2018-08-07T00:00:00+00:00"><link rel=canonical href=https://www.draconianoverlord.com/2018/08/07/integration-test-is-a-useless-term.html/><link rel=preload href="/fonts/forkawesome-webfont.woff2?v=1.2.0" as=font type=font/woff2 crossorigin><link rel=stylesheet href=/css/coder.min.65236a6d834b26194eed04a2a3b45e44d9194ef9e620253705d4bef03bd7ef81.css integrity="sha256-ZSNqbYNLJhlO7QSio7ReRNkZTvnmICU3BdS+8DvX74E=" crossorigin=anonymous media=screen><link rel=stylesheet href=/css/coder-dark.min.f6534b0b446b75d9b6ad77a97d43ede2ddaeff1b6e2361fb7198d6f8fcb7f83f.css integrity="sha256-9lNLC0Rrddm2rXepfUPt4t2u/xtuI2H7cZjW+Py3+D8=" crossorigin=anonymous media=screen><link rel=icon type=image/png href=/images/favicon-32x32.png sizes=32x32><link rel=icon type=image/png href=/images/favicon-16x16.png sizes=16x16><link rel=apple-touch-icon href=/images/apple-touch-icon.png><link rel=apple-touch-icon sizes=180x180 href=/images/apple-touch-icon.png><link rel=manifest href=/site.webmanifest><link rel=mask-icon href=/images/safari-pinned-tab.svg color=#5bbad5></head><body class="preload-transitions colorscheme-auto"><div class=float-container><a id=dark-mode-toggle class=colorscheme-toggle><i class="fa fa-adjust fa-fw" aria-hidden=true></i></a></div><main class=wrapper><nav class=navigation><section class=container><a class=navigation-title href=/>Draconian Overlord</a>
+Oppressing software entropy</section></nav><div class=content><section class="container post"><article><header><div class=post-title><h1 class=title><a class=title-link href=https://www.draconianoverlord.com/2018/08/07/integration-test-is-a-useless-term.html/>Integration Test is a Useless Term</a></h1></div><div class=post-meta><div class=date><span class=posted-on><i class="fa fa-calendar" aria-hidden=true></i>
+<time datetime=2018-08-07T00:00:00Z>August 7, 2018</time></span>
+<span class=reading-time><i class="fa fa-clock-o" aria-hidden=true></i>
+8-minute read</span></div><div class=categories><i class="fa fa-folder" aria-hidden=true></i>
+<a href=/categories/testing/>Testing</a></div></div></header><div class=post-content><p>I feel &ldquo;integration test&rdquo; as a term has become less useful (which is admittedly somewhat harsh and clickbait-y, I could also say fuzzy) because it means different things to different people.</p><p>Meaning different things to different people is basically the opposite of shared language / Domain Driven Design&rsquo;s <a href=https://www.martinfowler.com/bliki/UbiquitousLanguage.html class=external-link target=_blank rel=noopener>Ubiquitous Language</a> and leads to miss-communications and unclear thought when using the term.</p><p>Similarly, &ldquo;unit test&rdquo; can also mean different things to different people, albeit to a lesser extent than &ldquo;integration test&rdquo;.</p><p>Within previous teams, we would generally/organically come to loose agreement on what those terms meant to us, but obviously then we have to start over when talking to new people, and it wasn&rsquo;t that formalized. So I thought I&rsquo;d take a shot.</p><h2 id=starting-over-fast-vs-slow>Starting Over: Fast vs. Slow
+<a class=heading-link href=#starting-over-fast-vs-slow><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h2><p>Instead of first describing what is wrong with &ldquo;integration test&rdquo; as a term, i.e. its multiple meanings, I thought I&rsquo;d first start from scratch with the <a href=https://www.caseinterview.com/mece class=external-link target=_blank rel=noopener>MECE</a> scaffolding that I have in my head.</p><p>The primary distinction I make is &ldquo;fast tests&rdquo; vs. &ldquo;slow tests&rdquo;.</p><p>Specifically:</p><ul><li><p>Fast tests are RAM-only and no I/O.</p><p>Since they touch no HDDs or SSDs or sockets, they are very fast.</p></li><li><p>Slow tests use I/O.</p><p>Since they touch files on the file system or more likely a database connection or a REST API, they are slow (this can be mitigated by local-only I/O, but I&rsquo;ll punt on that for now).</p></li></ul><p>Admittedly, there are multiple ways to articulate this dimension (&ldquo;fast vs. slow&rdquo;, &ldquo;I/O vs. no I/O&rdquo;, &ldquo;RAM vs. disk&rdquo;, etc.), and I don&rsquo;t have an obvious favorite, but they&rsquo;re all essentially the same.</p><p>(Pedantically, since RAM tests can be slow (e.g. if you have many loops/iterations) and I/O tests can be fast (e.g. if you use local resources), the terms &ldquo;fast&rdquo; and &ldquo;slow&rdquo; are potentially misnomers, but I don&rsquo;t really like &ldquo;I/O vs. no I/O&rdquo; or &ldquo;RAM vs. I/O&rdquo; in terms of rolling off the tongue, so I&rsquo;ll stay with &ldquo;fast vs slow&rdquo; for now.)</p><h2 id=next-dimension-controlling-input>Next dimension: Controlling Input
+<a class=heading-link href=#next-dimension-controlling-input><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h2><p>The next dimension I think about for tests is &ldquo;can you control the input?&rdquo;, which is pretty simple:</p><ul><li><p>Controlled input means you can run the system-under-test against exactly the state you want.</p><p>Ideally this state is very small and very deterministic; both of these properties lead to easy comprehension, code reivew, and maintainability.</p></li><li><p>Uncontrolled input means you have to run the system-under-test against state you cannot control.</p><p>This means the tests must be either coded defensively to handle the input changing, or make typically-verbose copies of the input (e.g. record/reply tests).</p></li></ul><p>What&rsquo;s interesting is this dimension already maps fairly close to the previous dimension of &ldquo;fast/RAM&rdquo; vs. &ldquo;slow/I/O&rdquo;, but with a few wrinkles. So let&rsquo;s combine these two characteristics (fast/slow and controlled/uncontrolled) into a quadrant (someone give me an MBA):</p><ul><li>Fast/controlled: you setup data structures in RAM, no problem</li><li>Fast/uncontrolled: &mldr;what?</li><li>Slow/controlled: you setup isolated I/O on disk/database/network</li><li>Slow/uncontrolled: you use shared I/O on disk/database/network</li></ul><p>What falls out is the &ldquo;fast/uncontrolled&rdquo; option. <strong>It&rsquo;s basically impossible to write fast/RAM tests that are uncontrolled</strong> (&mldr;okay, aside from testing concurrency, and assuming good testing habits). By definition the process needs your test, and your test only, to define the input that is passed to the system-under-test.</p><p>However, the slow/controlled and slow/uncontrolled distinctions are quite important, and we&rsquo;ll talk about those more later.</p><h2 id=next-dimension-number-of-layers>Next dimension: Number of layers
+<a class=heading-link href=#next-dimension-number-of-layers><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h2><p>There is one more dimension that is useful: how many layers are covered by the test.</p><p>For simplification, I&rsquo;ll use just &ldquo;single-layer&rdquo; vs. &ldquo;multi-layer&rdquo;, although it is really <code>N</code> layers for whatever your given <code>N</code> is.</p><p>This increases our matrix to 8 permutations, however not all of them are valid, e.g.:</p><ul><li>Fast/controlled/single-layer: valid</li><li>Fast/controlled/multi-layer: valid</li><li>Fast/uncontrolled/single-layer: ignore because fast/RAM rams are inherently controlled</li><li>Fast/uncontrolled/multi-layer: ignore for same</li><li>Slow/controlled/single-layer: ignore because slow/I/O tests are inherently multi-layer</li><li>Slow/controlled/multi-layer: valid</li><li>Slow/uncontrolled/single-layer: ignore for same</li><li>Slow/uncontrolled/multi-layer: valid</li></ul><p>So, after dropping the ones that don&rsquo;t make sense (e.g. assume all slow/I/O tests are multi-layer), we&rsquo;re left with four primary combinations:</p><ul><li>Fast/controlled/single-layer</li><li>Fast/controlled/multi-layer</li><li>Slow/controlled/multi-layer</li><li>Slow/uncontrolled/multi-layer</li></ul><h2 id=finally-what-are-integration-tests>Finally: What Are &ldquo;Integration Tests&rdquo;
+<a class=heading-link href=#finally-what-are-integration-tests><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h2><p>So, the rub with &ldquo;integration test&rdquo; as a term is that it can legitimately describe 3 of the 4 options, specifically any of the &ldquo;multi-layer&rdquo; options:</p><ul><li><p>Fast/controlled/multi-layer &ldquo;integration tests&rdquo; can be cross-unit/cross-layer but still RAM-only tests within a single project. E.g. maybe testing your view layer with your presenter layer (but no physical device/browser), or your controller layer with your repository layer (but no I/O to the database).</p><p>(FWIW, I think this category is actually misuse of the term &ldquo;integration test&rdquo;, but it exists in public usage, e.g. Ember&rsquo;s &ldquo;integration tests&rdquo; are really cross-layer RAM tests.)</p></li><li><p>Slow/controlled/multi-layer &ldquo;integration tests&rdquo; are I/O tests that use the project&rsquo;s &ldquo;owned&rdquo; I/O source(s). E.g. like typical database-driven tests (Rails ActiveRecord or Spring JPA/Hibernate) that use the project&rsquo;s local MySQL/Postgres database and can create/destroy data for each test.</p></li><li><p>Slow/uncontrolled/multi-layer &ldquo;integration tests&rdquo; are I/O tests that use &ldquo;unowned&rdquo; I/O sources. E.g. calling microservices that are ran by another team or vendor, which almost always means our local/CI testing environment cannot automatically create/destroy test data.</p></li></ul><p>All three of these &ldquo;integration tests&rdquo; definitions have very different characteristics:</p><ul><li>Fast/controlled/multi-layer tests are great: they&rsquo;re fast! The more layers, the better.</li><li>Slow/controlled/multi-layer tests are okay: they&rsquo;re slow but at least deterministic.</li><li>Slow/uncontrolled/multi-layer tests are terrible: they&rsquo;re slow and <strong>always flaky</strong>.</li></ul><p>And so the problem is, when I say &ldquo;integration test&rdquo;, what do I mean?</p><p>Note that I&rsquo;ve heard &ldquo;end-to-end&rdquo; used as a potential discriminator, but it also fails: for some projects &ldquo;end-to-end&rdquo; can be controlled I/O all the way through (typically monoliths), but others, &ldquo;end-to-end&rdquo; is almost by definition uncontrolled I/O (typically microservices).</p><h2 id=my-proposedwip-terminology>My Proposed/WIP Terminology
+<a class=heading-link href=#my-proposedwip-terminology><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h2><p>Given this potential ambiguity, what I&rsquo;ve personally been using (&mldr;or will start, see disclaimer) using for terminology is:</p><ul><li><p>&ldquo;Unit test&rdquo; is anything that is fast/RAM-only, e.g both fast/single-layer and fast/multi-layer. Granted, having subset terms, e.g. &ldquo;widget unit tests&rdquo; or &ldquo;validation unit tests&rdquo; or &ldquo;component unit tests&rdquo; is useful (this is what Ember was trying to do when they appropriated &ldquo;integration test&rdquo;), but I&rsquo;d still roll them all up into &ldquo;unit tests&rdquo;. This is somewhat imprecise, but I think matches common usage.</p></li><li><p>&ldquo;Internal system test&rdquo; means slow/I/O that we control (slow/controlled/multi-layer). Previously I&rsquo;d called this &ldquo;intra-system integration tests&rdquo;, but that was a mouthful and continued to use the ambigious &ldquo;integration&rdquo; test term, just with an extra modifier. Granted, &ldquo;internal&rdquo; is a modifier to &ldquo;system&rdquo; (where &ldquo;system&rdquo; == &ldquo;I/O&rdquo;), but it is more succint and seems cute.</p></li><li><p>&ldquo;Cross system test&rdquo; means slow/I/O that we don&rsquo;t control (slow/uncontrolled/multi-layer). As I mentioned before, this is probably what &ldquo;end to end integration tests&rdquo; means to most people, but that doesn&rsquo;t specifically capture controlled-ness, and for me that distinction is too important to ignore. Previously I&rsquo;d called this &ldquo;cross-system integration tests&rdquo; (e.g. how <a href=/2017/08/23/futility-of-cross-system-integration-testing.html>they suck</a>), but that was also a bit too long.</p><p>(I considered calling this &ldquo;external system test&rdquo;, as &ldquo;external&rdquo; is the opposite to &ldquo;internal&rdquo;, but &ldquo;external&rdquo; can trick people into thinking &ldquo;external systems are only those outside my company, so within the company we should have a giant end-to-end suite&rdquo;, when really in microservice orgs &ldquo;external to your system&rdquo; can actually include &ldquo;teams you sit right next to&rdquo;.)</p><p>(I am also setting up &ldquo;unit&rdquo; == &ldquo;fast/RAM&rdquo; and &ldquo;system&rdquo; == &ldquo;slow/I/O&rdquo; as orthogonal terms. I think previously &ldquo;integration&rdquo; might have meant &ldquo;I/O&rdquo; but, per previously, it can be taken to be mean &ldquo;integration of units in RAM&rdquo;.)</p></li></ul><p>As the ironic disclaimer, I&rsquo;ve actively refined these terms while writing this post; previously I&rsquo;d been using longer/more annoying terms, but writing them up as-is highlighted their awkwardness. So I refined them a bit. Which I think is exactly the point of writing things up: it clarifies your thinking.</p><p>As a huge disclaimer, I&rsquo;m sure &ldquo;system test&rdquo; has been used for years, so I&rsquo;m not proposing anything new/unique; but within the circles I converse anyway, &ldquo;system test&rdquo; seems unused enough that I&rsquo;m going to co-opt it to mean what I want it to mean (I/O) (which perhaps it already meant for other people; hopefully it does not mean other things for other people, or if so hopefully it&rsquo;s a small minority that won&rsquo;t mind too much).</p><p>I also have more thoughts on the fast/single-layer and fast/multi-layer dichotomy, but I&rsquo;ll save that for another post.</p><p>If you like this topic, I&rsquo;ve written several other posts about integration tests (mostly that they suck), albeit with my prior terminology:</p><ul><li><a href=/2017/08/23/futility-of-cross-system-integration-testing.html>The Futility of Cross-System Integration Testing</a> is how slow/uncontrolled/multi-layer tests should be avoided at all costs (with perhaps very slight exception for less than 10 smoke tests).</li><li><a href=/2018/06/20/skepticism-about-record-replay-tests.html>Skepticism About Record/Replay Tests</a> is my raised-eyebrow around trying to paper over the uncontrolled aspect of slow/uncontrolled tests by recording results.</li><li><a href=/2018/01/21/microserving-testing-at-scale.html>Microservice Testing At Scale</a> is armchair musing about clawing the traditional slow/uncontrolled microservice testing mess within a large engineering org (e.g. that is large enough to need/afford/build the bespoke tooling) into the slow/controlled cell by replacing or stubbing I/O higher up the stack.</li></ul></div><footer><div id=disqus_thread></div><script>window.disqus_config=function(){},function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById("disqus_thread").innerHTML="Disqus comments not available by default when the website is previewed locally.";return}var t=document,e=t.createElement("script");e.async=!0,e.src="//draconianoverlord.disqus.com/embed.js",e.setAttribute("data-timestamp",+new Date),(t.head||t.body).appendChild(e)}(),document.addEventListener("themeChanged",function(){document.readyState=="complete"&&DISQUS.reset({reload:!0,config:disqus_config})})</script></footer></article></section></div><footer class=footer><section class=container>©
 2008 -
-2022
+2023
 Stephen Haberman
 ·
-Powered by <a href=https://gohugo.io/>Hugo</a> & <a href=https://github.com/luizdepra/hugo-coder/>Coder</a>.
-</section>
-</footer>
-</main>
-<script src=/js/coder.min.03b17769f4f91ae35667e1f2a1ca8c16f50562576cf90ff32b3179926914daa5.js integrity="sha256-A7F3afT5GuNWZ+HyocqMFvUFYlds+Q/zKzF5kmkU2qU="></script>
-</body>
-</html>
+Powered by <a href=https://gohugo.io/ target=_blank rel=noopener>Hugo</a> & <a href=https://github.com/luizdepra/hugo-coder/ target=_blank rel=noopener>Coder</a>.</section></footer></main><script src=/js/coder.min.6ae284be93d2d19dad1f02b0039508d9aab3180a12a06dcc71b0b0ef7825a317.js integrity="sha256-auKEvpPS0Z2tHwKwA5UI2aqzGAoSoG3McbCw73gloxc="></script></body></html>

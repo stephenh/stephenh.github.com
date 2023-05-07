@@ -1,322 +1,149 @@
-<!doctype html><html lang=en>
-<head>
-<meta charset=utf-8>
-<meta name=viewport content="width=device-width,initial-scale=1">
-<meta http-equiv=content-language content="en">
-<meta name=color-scheme content="light dark">
-<meta name=author content="Stephen Haberman">
-<meta name=description content="While working in a GraphQL codebase over the last year or so (specifically using Apollo Server in TypeScript), I semi-discovered a pattern for building more maintainable resolvers that I have not seen widely discussed/written about it (although both the graphqlgen and graphql code generator projects use them, so the pattern is more common that I&rsquo;d initially realized).
-I&rsquo;ll generally assume knowledge how of the object/field resolvers work in Apollo (see their docs), but as a starting point, let&rsquo;s assume we have a schema like:">
-<meta name=keywords content="blog,developer,personal">
-<meta name=twitter:card content="summary">
-<meta name=twitter:title content="GraphQL Typed Root Pattern">
-<meta name=twitter:description content="While working in a GraphQL codebase over the last year or so (specifically using Apollo Server in TypeScript), I semi-discovered a pattern for building more maintainable resolvers that I have not seen widely discussed/written about it (although both the graphqlgen and graphql code generator projects use them, so the pattern is more common that I&rsquo;d initially realized).
-I&rsquo;ll generally assume knowledge how of the object/field resolvers work in Apollo (see their docs), but as a starting point, let&rsquo;s assume we have a schema like:">
-<meta property="og:title" content="GraphQL Typed Root Pattern">
-<meta property="og:description" content="While working in a GraphQL codebase over the last year or so (specifically using Apollo Server in TypeScript), I semi-discovered a pattern for building more maintainable resolvers that I have not seen widely discussed/written about it (although both the graphqlgen and graphql code generator projects use them, so the pattern is more common that I&rsquo;d initially realized).
-I&rsquo;ll generally assume knowledge how of the object/field resolvers work in Apollo (see their docs), but as a starting point, let&rsquo;s assume we have a schema like:">
-<meta property="og:type" content="article">
-<meta property="og:url" content="https://www.draconianoverlord.com/2019/08/25/graphql-typed-root-pattern.html/"><meta property="article:section" content="posts">
-<meta property="article:published_time" content="2019-08-25T00:00:00+00:00">
-<meta property="article:modified_time" content="2019-08-25T00:00:00+00:00">
-<title>
-GraphQL Typed Root Pattern · Draconian Overlord
-</title>
-<link rel=canonical href=https://www.draconianoverlord.com/2019/08/25/graphql-typed-root-pattern.html/>
-<link rel=preload href="/fonts/forkawesome-webfont.woff2?v=1.2.0" as=font type=font/woff2 crossorigin>
-<link rel=stylesheet href=/css/coder.min.d9fddbffe6f27e69985dc5fe0471cdb0e57fbf4775714bc3d847accb08f4a1f6.css integrity="sha256-2f3b/+byfmmYXcX+BHHNsOV/v0d1cUvD2Eesywj0ofY=" crossorigin=anonymous media=screen>
-<link rel=stylesheet href=/css/coder-dark.min.aa883b9ce35a8ff4a2a5008619005175e842bb18a8a9f9cc2bbcf44dab2d91fa.css integrity="sha256-qog7nONaj/SipQCGGQBRdehCuxioqfnMK7z0Tastkfo=" crossorigin=anonymous media=screen>
-<link rel=icon type=image/png href=/images/favicon-32x32.png sizes=32x32>
-<link rel=icon type=image/png href=/images/favicon-16x16.png sizes=16x16>
-<link rel=apple-touch-icon href=/images/apple-touch-icon.png>
-<link rel=apple-touch-icon sizes=180x180 href=/images/apple-touch-icon.png>
-<meta name=generator content="Hugo 0.92.0">
-</head>
-<body class="preload-transitions colorscheme-auto">
-<div class=float-container>
-<a id=dark-mode-toggle class=colorscheme-toggle>
-<i class="fa fa-adjust fa-fw" aria-hidden=true></i>
-</a>
-</div>
-<main class=wrapper>
-<nav class=navigation>
-<section class=container>
-<a class=navigation-title href=/>Draconian Overlord</a>
-Oppressing software entropy
-</section>
-</nav>
-<div class=content>
-<section class="container post">
-<article>
-<header>
-<div class=post-title>
-<h1 class=title>
-<a class=title-link href=https://www.draconianoverlord.com/2019/08/25/graphql-typed-root-pattern.html/>
-GraphQL Typed Root Pattern
-</a>
-</h1>
-</div>
-<div class=post-meta>
-<div class=date>
-<span class=posted-on>
-<i class="fa fa-calendar" aria-hidden=true></i>
-<time datetime=2019-08-25T00:00:00Z>
-August 25, 2019
-</time>
-</span>
-<span class=reading-time>
-<i class="fa fa-clock-o" aria-hidden=true></i>
-7-minute read
-</span>
-</div>
-<div class=categories>
-<i class="fa fa-folder" aria-hidden=true></i>
-<a href=/categories/favorites/>Favorites</a></div>
-</div>
-</header>
-<div>
-<p>While working in a GraphQL codebase over the last year or so (specifically using Apollo Server in TypeScript), I semi-discovered a pattern for building more maintainable resolvers that I have not seen widely discussed/written about it (although both the <a href=https://github.com/prisma/graphqlgen>graphqlgen</a> and <a href=https://graphql-code-generator.com>graphql code generator</a> projects use them, so the pattern is more common that I&rsquo;d initially realized).</p>
-<p>I&rsquo;ll generally assume knowledge how of the object/field resolvers work in Apollo (<a href=https://www.apollographql.com/docs/graphql-tools/resolvers/>see their docs</a>), but as a starting point, let&rsquo;s assume we have a schema like:</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-graphql data-lang=graphql><span style=color:#66d9ef>type</span> <span style=color:#a6e22e>Employer</span> {
-  id: <span style=color:#a6e22e>string</span>
-  employees: [<span style=color:#a6e22e>Employee</span>!]!
-}
-
-<span style=color:#66d9ef>type</span> <span style=color:#a6e22e>Employee</span> {
-  addresses: [<span style=color:#a6e22e>EmployeeAddess</span>!]!
-  name: <span style=color:#a6e22e>String</span>!
-}
-
-<span style=color:#66d9ef>type</span> <span style=color:#a6e22e>EmployeeAddress</span> {
-  employee: <span style=color:#a6e22e>Employee</span>!
-}
-
-<span style=color:#66d9ef>type</span> <span style=color:#a6e22e>Query</span> {
-  employer(id: <span style=color:#a6e22e>string</span>): <span style=color:#a6e22e>Employer</span>
-}
-</code></pre></div><p>I.e. a pretty basic model with relations: <code>Employer</code> has many <code>Employee</code>s, the <code>Employee</code> has <code>EmployeeAddress</code>s, etc.</p>
-<p>So, again assuming some general pre-existing GraphQL knowledge, we end up needing to write a field resolver for the <code>Employee.name</code> field, with a signature like:</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-typescript data-lang=typescript><span style=color:#66d9ef>const</span> <span style=color:#a6e22e>resolvers</span> <span style=color:#f92672>=</span> {
-  <span style=color:#a6e22e>Employee</span><span style=color:#f92672>:</span> {
-    <span style=color:#a6e22e>name</span>(<span style=color:#a6e22e>root</span>, <span style=color:#a6e22e>args</span>, <span style=color:#a6e22e>context</span>, <span style=color:#a6e22e>info</span>) {
-      <span style=color:#66d9ef>return</span> <span style=color:#e6db74>&#34;the name&#34;</span>;
-    }
-  }
-}
-</code></pre></div><p>Simple enough.</p>
-<p>So, the focus of this pattern is: <strong>what should the type of <code>root</code> be</strong>?</p>
-<h3 id=lets-not-use-any>
-Let&rsquo;s Not Use <code>any</code>
-<a class=heading-link href=#lets-not-use-any>
-<i class="fa fa-link" aria-hidden=true></i>
-</a>
-</h3>
-<p>In the codebase that I inherited, the type of <code>root</code> was always <code>any</code>.</p>
-<p>Which is very JavaScripty, and makes sense given the JavaScript origins of the Apollo project.</p>
-<p>But, given we&rsquo;d already decided &ldquo;types are a good thing&rdquo;, and were using TypeScript, the <code>any</code> leaves a lot to be desired.</p>
-<p>I.e. a naive implementation might look like:</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-typescript data-lang=typescript><span style=color:#66d9ef>const</span> <span style=color:#a6e22e>resolvers</span><span style=color:#f92672>:</span> {
-  <span style=color:#a6e22e>Employee</span><span style=color:#f92672>:</span> {
-    <span style=color:#a6e22e>name</span>(<span style=color:#a6e22e>root</span>: <span style=color:#66d9ef>any</span>) {
-      <span style=color:#66d9ef>return</span> <span style=color:#a6e22e>root</span>.<span style=color:#a6e22e>name</span>;
-    }
-  }
-}
-</code></pre></div><p>But now anytime we refactor the upstream/downstream resolvers that interact with the <code>Employee</code> resolver (which we&rsquo;ll cover in a bit), there is a high risk of the <code>name</code> resolver breaking.</p>
-<h3 id=first-attempt-use-a-concrete-type>
-First attempt, use a concrete type
-<a class=heading-link href=#first-attempt-use-a-concrete-type>
-<i class="fa fa-link" aria-hidden=true></i>
-</a>
-</h3>
-<p>So, we don&rsquo;t want that; let&rsquo;s take a first stab at a type: a <code>EmployeeDto</code> that we somehow get from a database/RPC call.</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-typescript data-lang=typescript><span style=color:#75715e>// Somewhere in our ORM/RPC layer
-</span><span style=color:#75715e></span><span style=color:#66d9ef>interface</span> <span style=color:#a6e22e>EmployeeDto</span> {
-  <span style=color:#a6e22e>id</span>: <span style=color:#66d9ef>number</span>;
-  <span style=color:#a6e22e>name</span>: <span style=color:#66d9ef>string</span>;
-}
-
-<span style=color:#66d9ef>const</span> <span style=color:#a6e22e>resolvers</span><span style=color:#f92672>:</span> {
-  <span style=color:#a6e22e>Employee</span><span style=color:#f92672>:</span> {
-    <span style=color:#a6e22e>name</span>(<span style=color:#a6e22e>root</span>: <span style=color:#66d9ef>EmployeeDto</span>)<span style=color:#f92672>:</span> <span style=color:#66d9ef>string</span> {
-      <span style=color:#66d9ef>return</span> <span style=color:#a6e22e>root</span>.<span style=color:#a6e22e>name</span>;
-    }
-  }
-}
-</code></pre></div><p>Great, this 1st step is much better (granted, simple field mappings like this don&rsquo;t need field resolvers, but pretend this logic is not a straight 1-to-1 mapping).</p>
-<p>We&rsquo;ve typed <code>name</code> field resolver, but we have to think of two other field resolvers: the <code>Employer.employees</code> and the <code>EmployeeAddress.employee</code> field resolvers.</p>
-<p>With this first <code>EmployeeDto</code> typing approach, the full set of resolvers would look like:</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-typescript data-lang=typescript><span style=color:#66d9ef>const</span> <span style=color:#a6e22e>resolvers</span><span style=color:#f92672>:</span> {
-  <span style=color:#a6e22e>Employer</span><span style=color:#f92672>:</span> {
-    <span style=color:#66d9ef>async</span> <span style=color:#a6e22e>employees</span>(<span style=color:#a6e22e>root</span>: <span style=color:#66d9ef>EmployerDto</span>)<span style=color:#f92672>:</span> <span style=color:#a6e22e>Promise</span>&lt;<span style=color:#f92672>EmployeeDto</span><span style=color:#960050;background-color:#1e0010>[]</span>&gt; {
-      <span style=color:#66d9ef>const</span> <span style=color:#a6e22e>employeeDtos</span> <span style=color:#f92672>=</span> <span style=color:#66d9ef>await</span> <span style=color:#a6e22e>dbCallForEmployees</span>(<span style=color:#a6e22e>root</span>.<span style=color:#a6e22e>id</span>);
-      <span style=color:#66d9ef>return</span> <span style=color:#a6e22e>employeeDtos</span>;
-    }
-  },
-      
-  <span style=color:#a6e22e>Employee</span><span style=color:#f92672>:</span> {
-    <span style=color:#a6e22e>name</span>(<span style=color:#a6e22e>root</span>: <span style=color:#66d9ef>EmployeeDto</span>)<span style=color:#f92672>:</span> <span style=color:#66d9ef>string</span> {
-      <span style=color:#66d9ef>return</span> <span style=color:#a6e22e>root</span>.<span style=color:#a6e22e>name</span>;
-    }
-  },
-
-  <span style=color:#a6e22e>EmployeeAddress</span><span style=color:#f92672>:</span> {
-    <span style=color:#66d9ef>async</span> <span style=color:#a6e22e>employee</span>(<span style=color:#a6e22e>root</span>: <span style=color:#66d9ef>AddressDto</span>)<span style=color:#f92672>:</span> <span style=color:#a6e22e>Promise</span>&lt;<span style=color:#f92672>EmployeeDto</span>&gt; {
-      <span style=color:#66d9ef>const</span> <span style=color:#a6e22e>dto</span> <span style=color:#f92672>=</span> <span style=color:#66d9ef>await</span> <span style=color:#a6e22e>dbCallForEmployee</span>(<span style=color:#a6e22e>root</span>.<span style=color:#a6e22e>employeeId</span>);
-      <span style=color:#66d9ef>return</span> <span style=color:#a6e22e>dot</span>;
-    }
-  },
-}
-</code></pre></div><p>The key observation is that all of:</p>
-<ul>
-<li><code>Employer.employees</code> return type,</li>
-<li><code>Employee.name</code> parameter <code>root</code>&rsquo;s type, and</li>
-<li><code>EmployeeAddress.employee</code> return type</li>
-</ul>
-<p>Must match.</p>
-<p>If you&rsquo;re in a large, complicated graph with multiple entries points to <code>Employee.name</code> like this, this can be very difficult to do and not break without realizing it.</p>
-<p>However, now we&rsquo;ve at least got a single type, <code>EmployeeDto</code>, to help us out.</p>
-<p>That said, it&rsquo;s not entirely ideal because we&rsquo;ve forced all of our callers to provide full <code>EmployeeDto</code>, regardless of whether: a) they have it loaded already, or b) it&rsquo;s required for the query.</p>
-<p>I.e. for the <code>Employer.employees</code> resolver, with relational databases where the &ldquo;many&rdquo; side of a relationship is stored in the row, it probably already has the <code>EmployeeDto</code> rows pulled back from the database as a side-effect of issuing the <code>SELECT * FROM employee WHERE employerId = ...</code> query.</p>
-<p>However, for the <code>EmployeeAddress.employee</code> resolver, it probably only has the <code>employeeId</code>, and is now coupled to knowing how to turn that into the <code>EmployeeDto</code>.</p>
-<p>Or, for a query like <code>query / employeeAddress(...) / employee / id</code>, the client only wanted the id, which we had, but we did a throw-away lookup for the <code>EmployeeDto</code> merely to satisfy our resolver typing.</p>
-<p>Or, for a query like <code>query / employeeAddress(...) / employee / fieldFromAnotherDb</code>, where <code>fieldFromAnotherDb</code> requires a RPC call to a separate micro-service/storage system (that is not <code>Employee</code>&rsquo;s primary data store), we may have not even needed the <code>EmployeeDto</code> to fulfill the query, so again have done a throw-away lookup.</p>
-<h3 id=second-attempt-a-type-alias>
-Second attempt, a type alias
-<a class=heading-link href=#second-attempt-a-type-alias>
-<i class="fa fa-link" aria-hidden=true></i>
-</a>
-</h3>
-<p>Instead of directly coupling to the <code>EmployeeDto</code>, it would be handy to have an <strong>abstraction to specifically represent the contract</strong> between our external resolvers (<code>Employer.employees</code> and <code>EmployeeAddress.employee</code>) and our internal field resolvers (<code>Employee.name</code>).</p>
-<p>A type alias is a good way to represent this, i.e.:</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-typescript data-lang=typescript><span style=color:#66d9ef>type</span> <span style=color:#a6e22e>EmployeeRoot</span> <span style=color:#f92672>=</span> <span style=color:#a6e22e>EmployeeDto</span>;
-
-<span style=color:#66d9ef>const</span> <span style=color:#a6e22e>resolvers</span><span style=color:#f92672>:</span> {
-  <span style=color:#a6e22e>Employer</span><span style=color:#f92672>:</span> {
-    <span style=color:#66d9ef>async</span> <span style=color:#a6e22e>employees</span>(<span style=color:#a6e22e>root</span>: <span style=color:#66d9ef>EmployerRoot</span>)<span style=color:#f92672>:</span> <span style=color:#a6e22e>Promise</span>&lt;<span style=color:#f92672>EmployeeRoot</span><span style=color:#960050;background-color:#1e0010>[]</span>&gt; {
-      <span style=color:#66d9ef>const</span> <span style=color:#a6e22e>employeeDtos</span> <span style=color:#f92672>=</span> <span style=color:#66d9ef>await</span> <span style=color:#a6e22e>dbCallForEmployees</span>(<span style=color:#a6e22e>root</span>.<span style=color:#a6e22e>id</span>);
-      <span style=color:#66d9ef>return</span> <span style=color:#a6e22e>employeeDtos</span>;
-    }
-  },
-      
-  <span style=color:#a6e22e>Employee</span><span style=color:#f92672>:</span> {
-    <span style=color:#a6e22e>name</span>(<span style=color:#a6e22e>root</span>: <span style=color:#66d9ef>EmployeeRoot</span>)<span style=color:#f92672>:</span> <span style=color:#66d9ef>string</span> {
-      <span style=color:#66d9ef>return</span> <span style=color:#a6e22e>root</span>.<span style=color:#a6e22e>name</span>;
-    }
-  },
-
-  <span style=color:#a6e22e>EmployeeAddress</span><span style=color:#f92672>:</span> {
-    <span style=color:#66d9ef>async</span> <span style=color:#a6e22e>employee</span>(<span style=color:#a6e22e>root</span>: <span style=color:#66d9ef>AddressRoot</span>)<span style=color:#f92672>:</span> <span style=color:#a6e22e>Promise</span>&lt;<span style=color:#f92672>EmployeeRoot</span>&gt; {
-      <span style=color:#66d9ef>const</span> <span style=color:#a6e22e>dto</span> <span style=color:#f92672>=</span> <span style=color:#66d9ef>await</span> <span style=color:#a6e22e>dbCallForEmployee</span>(<span style=color:#a6e22e>root</span>.<span style=color:#a6e22e>employeeId</span>);
-      <span style=color:#66d9ef>return</span> <span style=color:#a6e22e>dot</span>;
-    }
-  },
-}
-</code></pre></div><p>In this incremental step, we&rsquo;ve not really changed the semantics, but have setup the &ldquo;typed root&rdquo; alias that drives the name of this pattern.</p>
-<h3 id=first-option-a-type-union>
-First option, a type union
-<a class=heading-link href=#first-option-a-type-union>
-<i class="fa fa-link" aria-hidden=true></i>
-</a>
-</h3>
-<p>Now with the abstraction away from the concrete type, we can provide more flexibility to our callers, i.e.:</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-typescript data-lang=typescript><span style=color:#66d9ef>type</span> <span style=color:#a6e22e>EmployeeRoot</span> <span style=color:#f92672>=</span> <span style=color:#a6e22e>EmployeeDto</span> <span style=color:#f92672>|</span> <span style=color:#66d9ef>number</span>;
-</code></pre></div><p>Which means our <code>EmployeeAddress</code> resolver can be more agnostic about our implementation details:</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-typescript data-lang=typescript><span style=color:#66d9ef>const</span> <span style=color:#a6e22e>resolvers</span><span style=color:#f92672>:</span> { 
-  <span style=color:#a6e22e>EmployeeAddress</span><span style=color:#f92672>:</span> {
-    <span style=color:#66d9ef>async</span> <span style=color:#a6e22e>employee</span>(<span style=color:#a6e22e>root</span>: <span style=color:#66d9ef>AddressRoot</span>)<span style=color:#f92672>:</span> <span style=color:#a6e22e>Promise</span>&lt;<span style=color:#f92672>EmployeeRoot</span>&gt; {
-      <span style=color:#66d9ef>return</span> <span style=color:#a6e22e>root</span>.<span style=color:#a6e22e>employeeId</span>;
-    }
-  },
-
-</code></pre></div><p>While the <code>Employer.employees</code> resolver can continue returning us the <code>EmployeeDto</code>s that it&rsquo;d already happened to have.</p>
-<p>Granted, this makes our own implementation detail more complex, because we have to check the types:</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-typescript data-lang=typescript><span style=color:#a6e22e>Employee</span><span style=color:#f92672>:</span> {
-  <span style=color:#66d9ef>async</span> <span style=color:#a6e22e>name</span>(<span style=color:#a6e22e>root</span>: <span style=color:#66d9ef>EmployeeRoot</span>)<span style=color:#f92672>:</span> <span style=color:#a6e22e>Promise</span>&lt;<span style=color:#f92672>string</span>&gt; {
-    <span style=color:#66d9ef>if</span> (<span style=color:#a6e22e>root</span> <span style=color:#66d9ef>instanceof</span> <span style=color:#a6e22e>EmployeeDto</span>) {
-      <span style=color:#66d9ef>return</span> <span style=color:#a6e22e>root</span>.<span style=color:#a6e22e>name</span>;
-    } <span style=color:#66d9ef>else</span> {
-      <span style=color:#66d9ef>const</span> <span style=color:#a6e22e>row</span> <span style=color:#f92672>=</span> <span style=color:#66d9ef>await</span> <span style=color:#a6e22e>dbCallForEmployee</span>(<span style=color:#a6e22e>root</span>);
-      <span style=color:#66d9ef>return</span> <span style=color:#a6e22e>row</span>.<span style=color:#a6e22e>name</span>;
-    }
-  }
-},
-</code></pre></div><p>Which for a lot of fields will becoming annoying, so we can introduce a helper method for the <code>if</code> check:</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-typescript data-lang=typescript><span style=color:#a6e22e>Employee</span><span style=color:#f92672>:</span> {
-  <span style=color:#66d9ef>async</span> <span style=color:#a6e22e>name</span>(<span style=color:#a6e22e>root</span>: <span style=color:#66d9ef>EmployeeRoot</span>)<span style=color:#f92672>:</span> <span style=color:#a6e22e>Promise</span>&lt;<span style=color:#f92672>string</span>&gt; {
-    <span style=color:#66d9ef>const</span> <span style=color:#a6e22e>row</span> <span style=color:#f92672>=</span> <span style=color:#66d9ef>await</span> <span style=color:#a6e22e>loadIfNeeded</span>(<span style=color:#a6e22e>root</span>);
-    <span style=color:#66d9ef>return</span> <span style=color:#a6e22e>row</span>.<span style=color:#a6e22e>name</span>;
-  }
-},
-
-<span style=color:#66d9ef>async</span> <span style=color:#66d9ef>function</span> <span style=color:#a6e22e>loadIfNeeded</span>(<span style=color:#a6e22e>root</span>: <span style=color:#66d9ef>EmployeeRoot</span>)<span style=color:#f92672>:</span> <span style=color:#a6e22e>Promise</span>&lt;<span style=color:#f92672>EmployeeDto</span>&gt; {
-  <span style=color:#66d9ef>if</span> (<span style=color:#a6e22e>root</span> <span style=color:#66d9ef>instanceof</span> <span style=color:#a6e22e>EmployeeDto</span>) {
-    <span style=color:#66d9ef>return</span> <span style=color:#a6e22e>dto</span>;
-  }
-  <span style=color:#66d9ef>return</span> <span style=color:#a6e22e>dbCallForEmployee</span>(<span style=color:#a6e22e>root</span>);
-}
-
-</code></pre></div><h3 id=second-option-an-adt>
-Second option, an ADT
-<a class=heading-link href=#second-option-an-adt>
-<i class="fa fa-link" aria-hidden=true></i>
-</a>
-</h3>
-<p>A natural extention of the type union is to make it tagged so our <code>if</code> checks are cleaner:</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-typescript data-lang=typescript><span style=color:#66d9ef>type</span> <span style=color:#a6e22e>EmployeeRoot</span> <span style=color:#f92672>=</span>
-  <span style=color:#f92672>|</span> { <span style=color:#a6e22e>kind</span><span style=color:#f92672>:</span> <span style=color:#e6db74>&#39;dto&#39;</span>, <span style=color:#a6e22e>value</span>: <span style=color:#66d9ef>EmployeeDto</span> }
-  <span style=color:#f92672>|</span> { <span style=color:#a6e22e>kind</span><span style=color:#f92672>:</span> <span style=color:#e6db74>&#39;id&#39;</span>, <span style=color:#a6e22e>value</span>: <span style=color:#66d9ef>number</span> };
-</code></pre></div><p>Which is a fairly standard convention in TypeScript.</p>
-<h3 id=wont-tests-cover-this>
-Won&rsquo;t tests cover this?
-<a class=heading-link href=#wont-tests-cover-this>
-<i class="fa fa-link" aria-hidden=true></i>
-</a>
-</h3>
-<p>As always, I don&rsquo;t consider static types as a replacement for test coverage.</p>
-<p>That said, I&rsquo;ve found the hand-off between resolvers to be especially brittle in GraphQL codebases b/c the tendenacy is to test each resolver in isolation.</p>
-<p>For example, if we use our 1st approach of having the <code>EmployeeDto</code> be the type root, we&rsquo;d write tests for:</p>
-<ul>
-<li>Ensure <code>Employer.employees</code> returns <code>EmployeeDto</code>s</li>
-<li>Ensure <code>Employee.name</code> works with a <code>EmployeeDto</code></li>
-<li>Ensure <code>EmployeeAddress.name</code> returns an <code>EmployeeDto</code></li>
-</ul>
-<p>Which is good for that point in time.</p>
-<p>However, later let&rsquo;s say we need to refactor <code>Employee.name</code> to no longer take an <code>EmployeeDto</code>, i.e. because we&rsquo;re changing the source/micro-service it&rsquo;s coming from.</p>
-<p>Without static types, it&rsquo;s hard to even realize that <code>Employer.employees</code> and <code>EmployeeAddress.name</code> needs additional test coverage: you basically need to audit your GraphQL schema and reason in your head about all of the entry points to your object type (<code>Employee</code>).</p>
-<p>(Or else you would need to have a test that navigates <code>query / employeeAddress(...) / employee / name</code> to ensure the <code>EmployeeAddress.name</code> return type was grokked by the <code>name</code> field resolver; but are you going to do that for every field in <code>Employee</code>, for every entry point like <code>EmployeeAddress.employee</code> and <code>Employer.employees</code>? I suppose you could add an <code>assertValidEmployeeRoot(...)</code> method, which all of the tests used, but at that point you&rsquo;re effectively doing type checking in code.)</p>
-<p>With the <code>EmployeeRoot</code> pattern, once we change the type alias, specifically in a breaking change way, we&rsquo;ll immediately be pointed to the field resolvers that: a) need to be fixed, and b) need new (or updated) unit tests which, without this compile error, probably would have kept passing by &ldquo;yep, I return an <code>EmployeeDto</code>, np!&rdquo;.</p>
-<h3 id=wont-all-these-adts-be-annoying>
-Won&rsquo;t all these ADTs be Annoying?
-<a class=heading-link href=#wont-all-these-adts-be-annoying>
-<i class="fa fa-link" aria-hidden=true></i>
-</a>
-</h3>
-<p>If all of your entities use an ADT as their type root, then yes that will probably be tedious (especially if all of your field resolvers have ~5-10 line <code>switch</code>/ADT pattern matching statements in them).</p>
-<p>That said, I would anticipate that ~80% of the type roots in a project could/should be simple aliases, i.e. <code>type EmployeeRoot = EmployeeDto</code> or <code>type EmployeeRoot = EmployeeDto | number</code> and call that good.</p>
-<p>The point is not to needlessly complicate your field resolver implementations for no reason (i.e. &ldquo;they must <em>all</em> be ADTs, <code>switch</code>es everywhere!").</p>
-<p>However, by using the typed root pattern up front, from day one, you&rsquo;ll have the flexibility to change their definitions for service migrations or other infrastructure work that, without these types, can otherwise be extremely complicated and tedious to ensure all of the cross-resolver inputs/outputs still line up.</p>
-</div>
-<footer>
-<div id=disqus_thread></div>
-<script type=application/javascript>var disqus_config=function(){};(function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById('disqus_thread').innerHTML='Disqus comments not available by default when the website is previewed locally.';return}var b=document,a=b.createElement('script');a.async=!0,a.src='//draconianoverlord.disqus.com/embed.js',a.setAttribute('data-timestamp',+new Date),(b.head||b.body).appendChild(a)})()</script>
-<noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript>
-<a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a>
-</footer>
-</article>
-</section>
-</div>
-<footer class=footer>
-<section class=container>
-©
+<!doctype html><html lang=en><head><title>GraphQL Typed Root Pattern · Draconian Overlord</title><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=color-scheme content="light dark"><meta name=author content="Stephen Haberman"><meta name=description content="While working in a GraphQL codebase over the last year or so (specifically using Apollo Server in TypeScript), I semi-discovered a pattern for building more maintainable resolvers that I have not seen widely discussed/written about it (although both the graphqlgen and graphql code generator projects use them, so the pattern is more common that I&rsquo;d initially realized).
+I&rsquo;ll generally assume knowledge how of the object/field resolvers work in Apollo (see their docs), but as a starting point, let&rsquo;s assume we have a schema like:"><meta name=keywords content="blog,developer,personal"><meta name=twitter:card content="summary"><meta name=twitter:title content="GraphQL Typed Root Pattern"><meta name=twitter:description content="While working in a GraphQL codebase over the last year or so (specifically using Apollo Server in TypeScript), I semi-discovered a pattern for building more maintainable resolvers that I have not seen widely discussed/written about it (although both the graphqlgen and graphql code generator projects use them, so the pattern is more common that I&rsquo;d initially realized).
+I&rsquo;ll generally assume knowledge how of the object/field resolvers work in Apollo (see their docs), but as a starting point, let&rsquo;s assume we have a schema like:"><meta property="og:title" content="GraphQL Typed Root Pattern"><meta property="og:description" content="While working in a GraphQL codebase over the last year or so (specifically using Apollo Server in TypeScript), I semi-discovered a pattern for building more maintainable resolvers that I have not seen widely discussed/written about it (although both the graphqlgen and graphql code generator projects use them, so the pattern is more common that I&rsquo;d initially realized).
+I&rsquo;ll generally assume knowledge how of the object/field resolvers work in Apollo (see their docs), but as a starting point, let&rsquo;s assume we have a schema like:"><meta property="og:type" content="article"><meta property="og:url" content="https://www.draconianoverlord.com/2019/08/25/graphql-typed-root-pattern.html/"><meta property="article:section" content="posts"><meta property="article:published_time" content="2019-08-25T00:00:00+00:00"><meta property="article:modified_time" content="2019-08-25T00:00:00+00:00"><link rel=canonical href=https://www.draconianoverlord.com/2019/08/25/graphql-typed-root-pattern.html/><link rel=preload href="/fonts/forkawesome-webfont.woff2?v=1.2.0" as=font type=font/woff2 crossorigin><link rel=stylesheet href=/css/coder.min.65236a6d834b26194eed04a2a3b45e44d9194ef9e620253705d4bef03bd7ef81.css integrity="sha256-ZSNqbYNLJhlO7QSio7ReRNkZTvnmICU3BdS+8DvX74E=" crossorigin=anonymous media=screen><link rel=stylesheet href=/css/coder-dark.min.f6534b0b446b75d9b6ad77a97d43ede2ddaeff1b6e2361fb7198d6f8fcb7f83f.css integrity="sha256-9lNLC0Rrddm2rXepfUPt4t2u/xtuI2H7cZjW+Py3+D8=" crossorigin=anonymous media=screen><link rel=icon type=image/png href=/images/favicon-32x32.png sizes=32x32><link rel=icon type=image/png href=/images/favicon-16x16.png sizes=16x16><link rel=apple-touch-icon href=/images/apple-touch-icon.png><link rel=apple-touch-icon sizes=180x180 href=/images/apple-touch-icon.png><link rel=manifest href=/site.webmanifest><link rel=mask-icon href=/images/safari-pinned-tab.svg color=#5bbad5></head><body class="preload-transitions colorscheme-auto"><div class=float-container><a id=dark-mode-toggle class=colorscheme-toggle><i class="fa fa-adjust fa-fw" aria-hidden=true></i></a></div><main class=wrapper><nav class=navigation><section class=container><a class=navigation-title href=/>Draconian Overlord</a>
+Oppressing software entropy</section></nav><div class=content><section class="container post"><article><header><div class=post-title><h1 class=title><a class=title-link href=https://www.draconianoverlord.com/2019/08/25/graphql-typed-root-pattern.html/>GraphQL Typed Root Pattern</a></h1></div><div class=post-meta><div class=date><span class=posted-on><i class="fa fa-calendar" aria-hidden=true></i>
+<time datetime=2019-08-25T00:00:00Z>August 25, 2019</time></span>
+<span class=reading-time><i class="fa fa-clock-o" aria-hidden=true></i>
+8-minute read</span></div><div class=categories><i class="fa fa-folder" aria-hidden=true></i>
+<a href=/categories/favorites/>Favorites</a></div></div></header><div class=post-content><p>While working in a GraphQL codebase over the last year or so (specifically using Apollo Server in TypeScript), I semi-discovered a pattern for building more maintainable resolvers that I have not seen widely discussed/written about it (although both the <a href=https://github.com/prisma/graphqlgen class=external-link target=_blank rel=noopener>graphqlgen</a> and <a href=https://graphql-code-generator.com class=external-link target=_blank rel=noopener>graphql code generator</a> projects use them, so the pattern is more common that I&rsquo;d initially realized).</p><p>I&rsquo;ll generally assume knowledge how of the object/field resolvers work in Apollo (<a href=https://www.apollographql.com/docs/graphql-tools/resolvers/ class=external-link target=_blank rel=noopener>see their docs</a>), but as a starting point, let&rsquo;s assume we have a schema like:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-graphql data-lang=graphql><span style=display:flex><span><span style=color:#66d9ef>type</span> <span style=color:#a6e22e>Employer</span> {
+</span></span><span style=display:flex><span>  id: <span style=color:#a6e22e>string</span>
+</span></span><span style=display:flex><span>  employees: [<span style=color:#a6e22e>Employee</span>!]!
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>type</span> <span style=color:#a6e22e>Employee</span> {
+</span></span><span style=display:flex><span>  addresses: [<span style=color:#a6e22e>EmployeeAddess</span>!]!
+</span></span><span style=display:flex><span>  name: <span style=color:#a6e22e>String</span>!
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>type</span> <span style=color:#a6e22e>EmployeeAddress</span> {
+</span></span><span style=display:flex><span>  employee: <span style=color:#a6e22e>Employee</span>!
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>type</span> <span style=color:#a6e22e>Query</span> {
+</span></span><span style=display:flex><span>  employer(id: <span style=color:#a6e22e>string</span>): <span style=color:#a6e22e>Employer</span>
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>I.e. a pretty basic model with relations: <code>Employer</code> has many <code>Employee</code>s, the <code>Employee</code> has <code>EmployeeAddress</code>s, etc.</p><p>So, again assuming some general pre-existing GraphQL knowledge, we end up needing to write a field resolver for the <code>Employee.name</code> field, with a signature like:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-typescript data-lang=typescript><span style=display:flex><span><span style=color:#66d9ef>const</span> <span style=color:#a6e22e>resolvers</span> <span style=color:#f92672>=</span> {
+</span></span><span style=display:flex><span>  <span style=color:#a6e22e>Employee</span><span style=color:#f92672>:</span> {
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>name</span>(<span style=color:#a6e22e>root</span>, <span style=color:#a6e22e>args</span>, <span style=color:#a6e22e>context</span>, <span style=color:#a6e22e>info</span>) {
+</span></span><span style=display:flex><span>      <span style=color:#66d9ef>return</span> <span style=color:#e6db74>&#34;the name&#34;</span>;
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>  }
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>Simple enough.</p><p>So, the focus of this pattern is: <strong>what should the type of <code>root</code> be</strong>?</p><h3 id=lets-not-use-any>Let&rsquo;s Not Use <code>any</code>
+<a class=heading-link href=#lets-not-use-any><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h3><p>In the codebase that I inherited, the type of <code>root</code> was always <code>any</code>.</p><p>Which is very JavaScripty, and makes sense given the JavaScript origins of the Apollo project.</p><p>But, given we&rsquo;d already decided &ldquo;types are a good thing&rdquo;, and were using TypeScript, the <code>any</code> leaves a lot to be desired.</p><p>I.e. a naive implementation might look like:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-typescript data-lang=typescript><span style=display:flex><span><span style=color:#66d9ef>const</span> <span style=color:#a6e22e>resolvers</span><span style=color:#f92672>:</span> {
+</span></span><span style=display:flex><span>  <span style=color:#a6e22e>Employee</span><span style=color:#f92672>:</span> {
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>name</span>(<span style=color:#a6e22e>root</span>: <span style=color:#66d9ef>any</span>) {
+</span></span><span style=display:flex><span>      <span style=color:#66d9ef>return</span> <span style=color:#a6e22e>root</span>.<span style=color:#a6e22e>name</span>;
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>  }
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>But now anytime we refactor the upstream/downstream resolvers that interact with the <code>Employee</code> resolver (which we&rsquo;ll cover in a bit), there is a high risk of the <code>name</code> resolver breaking.</p><h3 id=first-attempt-use-a-concrete-type>First attempt, use a concrete type
+<a class=heading-link href=#first-attempt-use-a-concrete-type><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h3><p>So, we don&rsquo;t want that; let&rsquo;s take a first stab at a type: a <code>EmployeeDto</code> that we somehow get from a database/RPC call.</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-typescript data-lang=typescript><span style=display:flex><span><span style=color:#75715e>// Somewhere in our ORM/RPC layer
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span><span style=color:#66d9ef>interface</span> <span style=color:#a6e22e>EmployeeDto</span> {
+</span></span><span style=display:flex><span>  <span style=color:#a6e22e>id</span>: <span style=color:#66d9ef>number</span>;
+</span></span><span style=display:flex><span>  <span style=color:#a6e22e>name</span>: <span style=color:#66d9ef>string</span>;
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>const</span> <span style=color:#a6e22e>resolvers</span><span style=color:#f92672>:</span> {
+</span></span><span style=display:flex><span>  <span style=color:#a6e22e>Employee</span><span style=color:#f92672>:</span> {
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>name</span>(<span style=color:#a6e22e>root</span>: <span style=color:#66d9ef>EmployeeDto</span>)<span style=color:#f92672>:</span> <span style=color:#66d9ef>string</span> {
+</span></span><span style=display:flex><span>      <span style=color:#66d9ef>return</span> <span style=color:#a6e22e>root</span>.<span style=color:#a6e22e>name</span>;
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>  }
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>Great, this 1st step is much better (granted, simple field mappings like this don&rsquo;t need field resolvers, but pretend this logic is not a straight 1-to-1 mapping).</p><p>We&rsquo;ve typed <code>name</code> field resolver, but we have to think of two other field resolvers: the <code>Employer.employees</code> and the <code>EmployeeAddress.employee</code> field resolvers.</p><p>With this first <code>EmployeeDto</code> typing approach, the full set of resolvers would look like:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-typescript data-lang=typescript><span style=display:flex><span><span style=color:#66d9ef>const</span> <span style=color:#a6e22e>resolvers</span><span style=color:#f92672>:</span> {
+</span></span><span style=display:flex><span>  <span style=color:#a6e22e>Employer</span><span style=color:#f92672>:</span> {
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>async</span> <span style=color:#a6e22e>employees</span>(<span style=color:#a6e22e>root</span>: <span style=color:#66d9ef>EmployerDto</span>)<span style=color:#f92672>:</span> <span style=color:#a6e22e>Promise</span>&lt;<span style=color:#f92672>EmployeeDto</span><span style=color:#960050;background-color:#1e0010>[]</span>&gt; {
+</span></span><span style=display:flex><span>      <span style=color:#66d9ef>const</span> <span style=color:#a6e22e>employeeDtos</span> <span style=color:#f92672>=</span> <span style=color:#66d9ef>await</span> <span style=color:#a6e22e>dbCallForEmployees</span>(<span style=color:#a6e22e>root</span>.<span style=color:#a6e22e>id</span>);
+</span></span><span style=display:flex><span>      <span style=color:#66d9ef>return</span> <span style=color:#a6e22e>employeeDtos</span>;
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>  },
+</span></span><span style=display:flex><span>      
+</span></span><span style=display:flex><span>  <span style=color:#a6e22e>Employee</span><span style=color:#f92672>:</span> {
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>name</span>(<span style=color:#a6e22e>root</span>: <span style=color:#66d9ef>EmployeeDto</span>)<span style=color:#f92672>:</span> <span style=color:#66d9ef>string</span> {
+</span></span><span style=display:flex><span>      <span style=color:#66d9ef>return</span> <span style=color:#a6e22e>root</span>.<span style=color:#a6e22e>name</span>;
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>  },
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#a6e22e>EmployeeAddress</span><span style=color:#f92672>:</span> {
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>async</span> <span style=color:#a6e22e>employee</span>(<span style=color:#a6e22e>root</span>: <span style=color:#66d9ef>AddressDto</span>)<span style=color:#f92672>:</span> <span style=color:#a6e22e>Promise</span>&lt;<span style=color:#f92672>EmployeeDto</span>&gt; {
+</span></span><span style=display:flex><span>      <span style=color:#66d9ef>const</span> <span style=color:#a6e22e>dto</span> <span style=color:#f92672>=</span> <span style=color:#66d9ef>await</span> <span style=color:#a6e22e>dbCallForEmployee</span>(<span style=color:#a6e22e>root</span>.<span style=color:#a6e22e>employeeId</span>);
+</span></span><span style=display:flex><span>      <span style=color:#66d9ef>return</span> <span style=color:#a6e22e>dot</span>;
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>  },
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>The key observation is that all of:</p><ul><li><code>Employer.employees</code> return type,</li><li><code>Employee.name</code> parameter <code>root</code>&rsquo;s type, and</li><li><code>EmployeeAddress.employee</code> return type</li></ul><p>Must match.</p><p>If you&rsquo;re in a large, complicated graph with multiple entries points to <code>Employee.name</code> like this, this can be very difficult to do and not break without realizing it.</p><p>However, now we&rsquo;ve at least got a single type, <code>EmployeeDto</code>, to help us out.</p><p>That said, it&rsquo;s not entirely ideal because we&rsquo;ve forced all of our callers to provide full <code>EmployeeDto</code>, regardless of whether: a) they have it loaded already, or b) it&rsquo;s required for the query.</p><p>I.e. for the <code>Employer.employees</code> resolver, with relational databases where the &ldquo;many&rdquo; side of a relationship is stored in the row, it probably already has the <code>EmployeeDto</code> rows pulled back from the database as a side-effect of issuing the <code>SELECT * FROM employee WHERE employerId = ...</code> query.</p><p>However, for the <code>EmployeeAddress.employee</code> resolver, it probably only has the <code>employeeId</code>, and is now coupled to knowing how to turn that into the <code>EmployeeDto</code>.</p><p>Or, for a query like <code>query / employeeAddress(...) / employee / id</code>, the client only wanted the id, which we had, but we did a throw-away lookup for the <code>EmployeeDto</code> merely to satisfy our resolver typing.</p><p>Or, for a query like <code>query / employeeAddress(...) / employee / fieldFromAnotherDb</code>, where <code>fieldFromAnotherDb</code> requires a RPC call to a separate micro-service/storage system (that is not <code>Employee</code>&rsquo;s primary data store), we may have not even needed the <code>EmployeeDto</code> to fulfill the query, so again have done a throw-away lookup.</p><h3 id=second-attempt-a-type-alias>Second attempt, a type alias
+<a class=heading-link href=#second-attempt-a-type-alias><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h3><p>Instead of directly coupling to the <code>EmployeeDto</code>, it would be handy to have an <strong>abstraction to specifically represent the contract</strong> between our external resolvers (<code>Employer.employees</code> and <code>EmployeeAddress.employee</code>) and our internal field resolvers (<code>Employee.name</code>).</p><p>A type alias is a good way to represent this, i.e.:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-typescript data-lang=typescript><span style=display:flex><span><span style=color:#66d9ef>type</span> <span style=color:#a6e22e>EmployeeRoot</span> <span style=color:#f92672>=</span> <span style=color:#a6e22e>EmployeeDto</span>;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>const</span> <span style=color:#a6e22e>resolvers</span><span style=color:#f92672>:</span> {
+</span></span><span style=display:flex><span>  <span style=color:#a6e22e>Employer</span><span style=color:#f92672>:</span> {
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>async</span> <span style=color:#a6e22e>employees</span>(<span style=color:#a6e22e>root</span>: <span style=color:#66d9ef>EmployerRoot</span>)<span style=color:#f92672>:</span> <span style=color:#a6e22e>Promise</span>&lt;<span style=color:#f92672>EmployeeRoot</span><span style=color:#960050;background-color:#1e0010>[]</span>&gt; {
+</span></span><span style=display:flex><span>      <span style=color:#66d9ef>const</span> <span style=color:#a6e22e>employeeDtos</span> <span style=color:#f92672>=</span> <span style=color:#66d9ef>await</span> <span style=color:#a6e22e>dbCallForEmployees</span>(<span style=color:#a6e22e>root</span>.<span style=color:#a6e22e>id</span>);
+</span></span><span style=display:flex><span>      <span style=color:#66d9ef>return</span> <span style=color:#a6e22e>employeeDtos</span>;
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>  },
+</span></span><span style=display:flex><span>      
+</span></span><span style=display:flex><span>  <span style=color:#a6e22e>Employee</span><span style=color:#f92672>:</span> {
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>name</span>(<span style=color:#a6e22e>root</span>: <span style=color:#66d9ef>EmployeeRoot</span>)<span style=color:#f92672>:</span> <span style=color:#66d9ef>string</span> {
+</span></span><span style=display:flex><span>      <span style=color:#66d9ef>return</span> <span style=color:#a6e22e>root</span>.<span style=color:#a6e22e>name</span>;
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>  },
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#a6e22e>EmployeeAddress</span><span style=color:#f92672>:</span> {
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>async</span> <span style=color:#a6e22e>employee</span>(<span style=color:#a6e22e>root</span>: <span style=color:#66d9ef>AddressRoot</span>)<span style=color:#f92672>:</span> <span style=color:#a6e22e>Promise</span>&lt;<span style=color:#f92672>EmployeeRoot</span>&gt; {
+</span></span><span style=display:flex><span>      <span style=color:#66d9ef>const</span> <span style=color:#a6e22e>dto</span> <span style=color:#f92672>=</span> <span style=color:#66d9ef>await</span> <span style=color:#a6e22e>dbCallForEmployee</span>(<span style=color:#a6e22e>root</span>.<span style=color:#a6e22e>employeeId</span>);
+</span></span><span style=display:flex><span>      <span style=color:#66d9ef>return</span> <span style=color:#a6e22e>dot</span>;
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>  },
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>In this incremental step, we&rsquo;ve not really changed the semantics, but have setup the &ldquo;typed root&rdquo; alias that drives the name of this pattern.</p><h3 id=first-option-a-type-union>First option, a type union
+<a class=heading-link href=#first-option-a-type-union><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h3><p>Now with the abstraction away from the concrete type, we can provide more flexibility to our callers, i.e.:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-typescript data-lang=typescript><span style=display:flex><span><span style=color:#66d9ef>type</span> <span style=color:#a6e22e>EmployeeRoot</span> <span style=color:#f92672>=</span> <span style=color:#a6e22e>EmployeeDto</span> <span style=color:#f92672>|</span> <span style=color:#66d9ef>number</span>;
+</span></span></code></pre></div><p>Which means our <code>EmployeeAddress</code> resolver can be more agnostic about our implementation details:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-typescript data-lang=typescript><span style=display:flex><span><span style=color:#66d9ef>const</span> <span style=color:#a6e22e>resolvers</span><span style=color:#f92672>:</span> { 
+</span></span><span style=display:flex><span>  <span style=color:#a6e22e>EmployeeAddress</span><span style=color:#f92672>:</span> {
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>async</span> <span style=color:#a6e22e>employee</span>(<span style=color:#a6e22e>root</span>: <span style=color:#66d9ef>AddressRoot</span>)<span style=color:#f92672>:</span> <span style=color:#a6e22e>Promise</span>&lt;<span style=color:#f92672>EmployeeRoot</span>&gt; {
+</span></span><span style=display:flex><span>      <span style=color:#66d9ef>return</span> <span style=color:#a6e22e>root</span>.<span style=color:#a6e22e>employeeId</span>;
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>  },
+</span></span></code></pre></div><p>While the <code>Employer.employees</code> resolver can continue returning us the <code>EmployeeDto</code>s that it&rsquo;d already happened to have.</p><p>Granted, this makes our own implementation detail more complex, because we have to check the types:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-typescript data-lang=typescript><span style=display:flex><span><span style=color:#a6e22e>Employee</span><span style=color:#f92672>:</span> {
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>async</span> <span style=color:#a6e22e>name</span>(<span style=color:#a6e22e>root</span>: <span style=color:#66d9ef>EmployeeRoot</span>)<span style=color:#f92672>:</span> <span style=color:#a6e22e>Promise</span>&lt;<span style=color:#f92672>string</span>&gt; {
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>if</span> (<span style=color:#a6e22e>root</span> <span style=color:#66d9ef>instanceof</span> <span style=color:#a6e22e>EmployeeDto</span>) {
+</span></span><span style=display:flex><span>      <span style=color:#66d9ef>return</span> <span style=color:#a6e22e>root</span>.<span style=color:#a6e22e>name</span>;
+</span></span><span style=display:flex><span>    } <span style=color:#66d9ef>else</span> {
+</span></span><span style=display:flex><span>      <span style=color:#66d9ef>const</span> <span style=color:#a6e22e>row</span> <span style=color:#f92672>=</span> <span style=color:#66d9ef>await</span> <span style=color:#a6e22e>dbCallForEmployee</span>(<span style=color:#a6e22e>root</span>);
+</span></span><span style=display:flex><span>      <span style=color:#66d9ef>return</span> <span style=color:#a6e22e>row</span>.<span style=color:#a6e22e>name</span>;
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>  }
+</span></span><span style=display:flex><span>},
+</span></span></code></pre></div><p>Which for a lot of fields will becoming annoying, so we can introduce a helper method for the <code>if</code> check:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-typescript data-lang=typescript><span style=display:flex><span><span style=color:#a6e22e>Employee</span><span style=color:#f92672>:</span> {
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>async</span> <span style=color:#a6e22e>name</span>(<span style=color:#a6e22e>root</span>: <span style=color:#66d9ef>EmployeeRoot</span>)<span style=color:#f92672>:</span> <span style=color:#a6e22e>Promise</span>&lt;<span style=color:#f92672>string</span>&gt; {
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>const</span> <span style=color:#a6e22e>row</span> <span style=color:#f92672>=</span> <span style=color:#66d9ef>await</span> <span style=color:#a6e22e>loadIfNeeded</span>(<span style=color:#a6e22e>root</span>);
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>return</span> <span style=color:#a6e22e>row</span>.<span style=color:#a6e22e>name</span>;
+</span></span><span style=display:flex><span>  }
+</span></span><span style=display:flex><span>},
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>async</span> <span style=color:#66d9ef>function</span> <span style=color:#a6e22e>loadIfNeeded</span>(<span style=color:#a6e22e>root</span>: <span style=color:#66d9ef>EmployeeRoot</span>)<span style=color:#f92672>:</span> <span style=color:#a6e22e>Promise</span>&lt;<span style=color:#f92672>EmployeeDto</span>&gt; {
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>if</span> (<span style=color:#a6e22e>root</span> <span style=color:#66d9ef>instanceof</span> <span style=color:#a6e22e>EmployeeDto</span>) {
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>return</span> <span style=color:#a6e22e>dto</span>;
+</span></span><span style=display:flex><span>  }
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>return</span> <span style=color:#a6e22e>dbCallForEmployee</span>(<span style=color:#a6e22e>root</span>);
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><h3 id=second-option-an-adt>Second option, an ADT
+<a class=heading-link href=#second-option-an-adt><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h3><p>A natural extention of the type union is to make it tagged so our <code>if</code> checks are cleaner:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-typescript data-lang=typescript><span style=display:flex><span><span style=color:#66d9ef>type</span> <span style=color:#a6e22e>EmployeeRoot</span> <span style=color:#f92672>=</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>|</span> { <span style=color:#a6e22e>kind</span><span style=color:#f92672>:</span> <span style=color:#e6db74>&#39;dto&#39;</span>, <span style=color:#a6e22e>value</span>: <span style=color:#66d9ef>EmployeeDto</span> }
+</span></span><span style=display:flex><span>  <span style=color:#f92672>|</span> { <span style=color:#a6e22e>kind</span><span style=color:#f92672>:</span> <span style=color:#e6db74>&#39;id&#39;</span>, <span style=color:#a6e22e>value</span>: <span style=color:#66d9ef>number</span> };
+</span></span></code></pre></div><p>Which is a fairly standard convention in TypeScript.</p><h3 id=wont-tests-cover-this>Won&rsquo;t tests cover this?
+<a class=heading-link href=#wont-tests-cover-this><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h3><p>As always, I don&rsquo;t consider static types as a replacement for test coverage.</p><p>That said, I&rsquo;ve found the hand-off between resolvers to be especially brittle in GraphQL codebases b/c the tendenacy is to test each resolver in isolation.</p><p>For example, if we use our 1st approach of having the <code>EmployeeDto</code> be the type root, we&rsquo;d write tests for:</p><ul><li>Ensure <code>Employer.employees</code> returns <code>EmployeeDto</code>s</li><li>Ensure <code>Employee.name</code> works with a <code>EmployeeDto</code></li><li>Ensure <code>EmployeeAddress.name</code> returns an <code>EmployeeDto</code></li></ul><p>Which is good for that point in time.</p><p>However, later let&rsquo;s say we need to refactor <code>Employee.name</code> to no longer take an <code>EmployeeDto</code>, i.e. because we&rsquo;re changing the source/micro-service it&rsquo;s coming from.</p><p>Without static types, it&rsquo;s hard to even realize that <code>Employer.employees</code> and <code>EmployeeAddress.name</code> needs additional test coverage: you basically need to audit your GraphQL schema and reason in your head about all of the entry points to your object type (<code>Employee</code>).</p><p>(Or else you would need to have a test that navigates <code>query / employeeAddress(...) / employee / name</code> to ensure the <code>EmployeeAddress.name</code> return type was grokked by the <code>name</code> field resolver; but are you going to do that for every field in <code>Employee</code>, for every entry point like <code>EmployeeAddress.employee</code> and <code>Employer.employees</code>? I suppose you could add an <code>assertValidEmployeeRoot(...)</code> method, which all of the tests used, but at that point you&rsquo;re effectively doing type checking in code.)</p><p>With the <code>EmployeeRoot</code> pattern, once we change the type alias, specifically in a breaking change way, we&rsquo;ll immediately be pointed to the field resolvers that: a) need to be fixed, and b) need new (or updated) unit tests which, without this compile error, probably would have kept passing by &ldquo;yep, I return an <code>EmployeeDto</code>, np!&rdquo;.</p><h3 id=wont-all-these-adts-be-annoying>Won&rsquo;t all these ADTs be Annoying?
+<a class=heading-link href=#wont-all-these-adts-be-annoying><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h3><p>If all of your entities use an ADT as their type root, then yes that will probably be tedious (especially if all of your field resolvers have ~5-10 line <code>switch</code>/ADT pattern matching statements in them).</p><p>That said, I would anticipate that ~80% of the type roots in a project could/should be simple aliases, i.e. <code>type EmployeeRoot = EmployeeDto</code> or <code>type EmployeeRoot = EmployeeDto | number</code> and call that good.</p><p>The point is not to needlessly complicate your field resolver implementations for no reason (i.e. &ldquo;they must <em>all</em> be ADTs, <code>switch</code>es everywhere!&rdquo;).</p><p>However, by using the typed root pattern up front, from day one, you&rsquo;ll have the flexibility to change their definitions for service migrations or other infrastructure work that, without these types, can otherwise be extremely complicated and tedious to ensure all of the cross-resolver inputs/outputs still line up.</p></div><footer><div id=disqus_thread></div><script>window.disqus_config=function(){},function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById("disqus_thread").innerHTML="Disqus comments not available by default when the website is previewed locally.";return}var t=document,e=t.createElement("script");e.async=!0,e.src="//draconianoverlord.disqus.com/embed.js",e.setAttribute("data-timestamp",+new Date),(t.head||t.body).appendChild(e)}(),document.addEventListener("themeChanged",function(){document.readyState=="complete"&&DISQUS.reset({reload:!0,config:disqus_config})})</script></footer></article></section></div><footer class=footer><section class=container>©
 2008 -
-2022
+2023
 Stephen Haberman
 ·
-Powered by <a href=https://gohugo.io/>Hugo</a> & <a href=https://github.com/luizdepra/hugo-coder/>Coder</a>.
-</section>
-</footer>
-</main>
-<script src=/js/coder.min.03b17769f4f91ae35667e1f2a1ca8c16f50562576cf90ff32b3179926914daa5.js integrity="sha256-A7F3afT5GuNWZ+HyocqMFvUFYlds+Q/zKzF5kmkU2qU="></script>
-</body>
-</html>
+Powered by <a href=https://gohugo.io/ target=_blank rel=noopener>Hugo</a> & <a href=https://github.com/luizdepra/hugo-coder/ target=_blank rel=noopener>Coder</a>.</section></footer></main><script src=/js/coder.min.6ae284be93d2d19dad1f02b0039508d9aab3180a12a06dcc71b0b0ef7825a317.js integrity="sha256-auKEvpPS0Z2tHwKwA5UI2aqzGAoSoG3McbCw73gloxc="></script></body></html>

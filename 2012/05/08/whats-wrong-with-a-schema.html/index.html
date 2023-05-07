@@ -1,187 +1,31 @@
-<!doctype html><html lang=en>
-<head>
-<meta charset=utf-8>
-<meta name=viewport content="width=device-width,initial-scale=1">
-<meta http-equiv=content-language content="en">
-<meta name=color-scheme content="light dark">
-<meta name=author content="Stephen Haberman">
-<meta name=description content="Lately I&rsquo;ve been wondering why schema-less databases are so popular lately.
+<!doctype html><html lang=en><head><title>What's Wrong with a Schema? · Draconian Overlord</title><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=color-scheme content="light dark"><meta name=author content="Stephen Haberman"><meta name=description content="Lately I&rsquo;ve been wondering why schema-less databases are so popular lately.
 Most any NoSQL store is schema-less. And while perhaps schema-less-ness is an integral part of NoSQL (e.g. most NoSQL databases are just opaque key/value stores), I would assert it&rsquo;s an orthogonal concern, and that document-oriented databases, e.g. MongoDB, could arguably have a schema.
-However, MongoDB doesn&rsquo;t just say it&rsquo;s schema-less for technical reasons related to being a NoSQL store, it actually touts its lack of a schema as a benefit, claiming it is &ldquo;agile&rdquo; and offers &ldquo;simplicity and power&rdquo;.">
-<meta name=keywords content="blog,developer,personal">
-<meta name=twitter:card content="summary">
-<meta name=twitter:title content="What's Wrong with a Schema?">
-<meta name=twitter:description content="Lately I&rsquo;ve been wondering why schema-less databases are so popular lately.
+However, MongoDB doesn&rsquo;t just say it&rsquo;s schema-less for technical reasons related to being a NoSQL store, it actually touts its lack of a schema as a benefit, claiming it is &ldquo;agile&rdquo; and offers &ldquo;simplicity and power&rdquo;."><meta name=keywords content="blog,developer,personal"><meta name=twitter:card content="summary"><meta name=twitter:title content="What's Wrong with a Schema?"><meta name=twitter:description content="Lately I&rsquo;ve been wondering why schema-less databases are so popular lately.
 Most any NoSQL store is schema-less. And while perhaps schema-less-ness is an integral part of NoSQL (e.g. most NoSQL databases are just opaque key/value stores), I would assert it&rsquo;s an orthogonal concern, and that document-oriented databases, e.g. MongoDB, could arguably have a schema.
-However, MongoDB doesn&rsquo;t just say it&rsquo;s schema-less for technical reasons related to being a NoSQL store, it actually touts its lack of a schema as a benefit, claiming it is &ldquo;agile&rdquo; and offers &ldquo;simplicity and power&rdquo;.">
-<meta property="og:title" content="What's Wrong with a Schema?">
-<meta property="og:description" content="Lately I&rsquo;ve been wondering why schema-less databases are so popular lately.
+However, MongoDB doesn&rsquo;t just say it&rsquo;s schema-less for technical reasons related to being a NoSQL store, it actually touts its lack of a schema as a benefit, claiming it is &ldquo;agile&rdquo; and offers &ldquo;simplicity and power&rdquo;."><meta property="og:title" content="What's Wrong with a Schema?"><meta property="og:description" content="Lately I&rsquo;ve been wondering why schema-less databases are so popular lately.
 Most any NoSQL store is schema-less. And while perhaps schema-less-ness is an integral part of NoSQL (e.g. most NoSQL databases are just opaque key/value stores), I would assert it&rsquo;s an orthogonal concern, and that document-oriented databases, e.g. MongoDB, could arguably have a schema.
-However, MongoDB doesn&rsquo;t just say it&rsquo;s schema-less for technical reasons related to being a NoSQL store, it actually touts its lack of a schema as a benefit, claiming it is &ldquo;agile&rdquo; and offers &ldquo;simplicity and power&rdquo;.">
-<meta property="og:type" content="article">
-<meta property="og:url" content="https://www.draconianoverlord.com/2012/05/08/whats-wrong-with-a-schema.html/"><meta property="article:section" content="posts">
-<meta property="article:published_time" content="2012-05-08T00:00:00+00:00">
-<meta property="article:modified_time" content="2012-05-08T00:00:00+00:00">
-<title>
-What's Wrong with a Schema? · Draconian Overlord
-</title>
-<link rel=canonical href=https://www.draconianoverlord.com/2012/05/08/whats-wrong-with-a-schema.html/>
-<link rel=preload href="/fonts/forkawesome-webfont.woff2?v=1.2.0" as=font type=font/woff2 crossorigin>
-<link rel=stylesheet href=/css/coder.min.d9fddbffe6f27e69985dc5fe0471cdb0e57fbf4775714bc3d847accb08f4a1f6.css integrity="sha256-2f3b/+byfmmYXcX+BHHNsOV/v0d1cUvD2Eesywj0ofY=" crossorigin=anonymous media=screen>
-<link rel=stylesheet href=/css/coder-dark.min.aa883b9ce35a8ff4a2a5008619005175e842bb18a8a9f9cc2bbcf44dab2d91fa.css integrity="sha256-qog7nONaj/SipQCGGQBRdehCuxioqfnMK7z0Tastkfo=" crossorigin=anonymous media=screen>
-<link rel=icon type=image/png href=/images/favicon-32x32.png sizes=32x32>
-<link rel=icon type=image/png href=/images/favicon-16x16.png sizes=16x16>
-<link rel=apple-touch-icon href=/images/apple-touch-icon.png>
-<link rel=apple-touch-icon sizes=180x180 href=/images/apple-touch-icon.png>
-<meta name=generator content="Hugo 0.92.0">
-</head>
-<body class="preload-transitions colorscheme-auto">
-<div class=float-container>
-<a id=dark-mode-toggle class=colorscheme-toggle>
-<i class="fa fa-adjust fa-fw" aria-hidden=true></i>
-</a>
-</div>
-<main class=wrapper>
-<nav class=navigation>
-<section class=container>
-<a class=navigation-title href=/>Draconian Overlord</a>
-Oppressing software entropy
-</section>
-</nav>
-<div class=content>
-<section class="container post">
-<article>
-<header>
-<div class=post-title>
-<h1 class=title>
-<a class=title-link href=https://www.draconianoverlord.com/2012/05/08/whats-wrong-with-a-schema.html/>
-What's Wrong with a Schema?
-</a>
-</h1>
-</div>
-<div class=post-meta>
-<div class=date>
-<span class=posted-on>
-<i class="fa fa-calendar" aria-hidden=true></i>
-<time datetime=2012-05-08T00:00:00Z>
-May 8, 2012
-</time>
-</span>
-<span class=reading-time>
-<i class="fa fa-clock-o" aria-hidden=true></i>
-8-minute read
-</span>
-</div>
-<div class=categories>
-<i class="fa fa-folder" aria-hidden=true></i>
-<a href=/categories/architecture/>Architecture</a></div>
-</div>
-</header>
-<div>
-<p>Lately I&rsquo;ve been wondering why schema-less databases are so popular lately.</p>
-<p>Most any NoSQL store is schema-less. And while perhaps schema-less-ness is an integral part of NoSQL (e.g. most NoSQL databases are just opaque key/value stores), I would assert it&rsquo;s an orthogonal concern, and that document-oriented databases, e.g. <a href=http://www.mongodb.org/>MongoDB</a>, could arguably have a schema.</p>
-<p>However, MongoDB doesn&rsquo;t just say it&rsquo;s schema-less for technical reasons related to being a NoSQL store, it actually touts its lack of a schema as a benefit, claiming it is &ldquo;agile&rdquo; and offers &ldquo;simplicity and power&rdquo;.</p>
-<p>I find all of this confusing, as I actually <em>want</em> a schema.</p>
-<p>I think the database enforcing a basic level of data consistency is a good thing. Granted, there will always invariants that the database cannot enforce, sans stored procedures. So, at some point you have to rely on most/all non-trivial database writes coming via your domain objects/business logic.</p>
-<p>Nonetheless, for basic constraints (column length, not null, unique, foreign keys, etc.), it seems like a generally good idea for the database to do these checks for you.</p>
-<p>This post is a general outline of my thoughts on the issue.</p>
-<h2 id=coordinating-migrations-sucks-but-thats-good>
-Coordinating Migrations Sucks, But That&rsquo;s Good
-<a class=heading-link href=#coordinating-migrations-sucks-but-thats-good>
-<i class="fa fa-link" aria-hidden=true></i>
-</a>
-</h2>
-<p>I think one primary aspect of schemas that people find annoying is having to coordinate releases of multiple applications around when the database will have a new schema version applied.</p>
-<p>I agree; this is annoying. However, I think it&rsquo;s misguided to blame the schema for this. It&rsquo;s not the core issue. The core issue is multiple applications sharing a database. The schema just makes this contract explicit.</p>
-<p>In that regard, I think it is naive to think a schema-less database &ldquo;solves&rdquo; this issue for you. It does not make the coordination problem go away, it just makes it less visible. Now it is each application&rsquo;s responsibility to work sanely with both new and old versions of documents. Which means it&rsquo;s the responsibility of the programmer. Which means it won&rsquo;t happen.</p>
-<p>Perhaps I&rsquo;m overly pessimistic, but how many programmers version their schema-less documents? Or really remember which fields are new/renamed/changed and so, even if present for 95% of the documents, might not be there for some small subset?</p>
-<p>To really do this right, I think you&rsquo;d basically need to build in-application migrations that promote each document from v1 to v2 to v3, and then ensure all of your clients use the latest migrations when accessing the database. Well, and hope than any clients assuming an older schema aren&rsquo;t going to mess up the data written by newer clients.</p>
-<p>Perhaps this is what people do, but I haven&rsquo;t read of it, so I&rsquo;m skeptical.</p>
-<p>Granted, even if you&rsquo;re lacking this sort of in-application versioning diligence, obviously not every application deployment that uses a schema-less database is going to lead to disaster; I&rsquo;m sure most of them go quite fine.</p>
-<p>However, I still think forcing coordination of multiple deployed applications around a schema change is a <em>good</em> aspect of schemas. It is making their coupling to each other (via the database and a shared contract of what type of data goes in it, e.g. the schema) explicit.</p>
-<p>I want to know all my applications are now being forced to use the new, same schema. Then I know they&rsquo;ll (generally) play nicely with each other and have at least a basic agreement on what the data should look like.</p>
-<h2 id=accepting-downtime-for-migrations>
-Accepting Downtime for Migrations
-<a class=heading-link href=#accepting-downtime-for-migrations>
-<i class="fa fa-link" aria-hidden=true></i>
-</a>
-</h2>
-<p>Sometimes, you&rsquo;ll be lucky enough to have a database accessed by only a single application, so the above issue of coordinating migrations across multiple applications isn&rsquo;t an issue. Great!</p>
-<p>However, usually it still means taking the old version of the application down, applying the schema changes, and then bringing a new version up. So, downtime. And, yeah, downtime sucks.</p>
-<p>But really I think this is a variation of the prior point&ndash;but instead of two different applications sharing a database, it&rsquo;s two different versions (pre-/post-upgrade) sharing the same database. Which I think has all the same potential problems as the previous case of separate applications sharing a database, in terms disagreeing what the data should look like.</p>
-<p>So, while migrations introduce a deployment complexity, I think the trade-off (that I&rsquo;m usually quite willing to accept) is simplicity in your application code by not having to deal with multiple older schemas that just no longer make sense in the latest version of the application.</p>
-<p>Particularly in a long-lived application, where the maintenance phase is longer than the initial development phase (as it should be in all successful projects), it seems like constantly having to think with &ldquo;what might the data from last month, six months, 12 months ago look like?&rdquo; would get tiresome.</p>
-<p>Musing further, and thinking specifically of MongoDB&rsquo;s assertion of &ldquo;schema-less == simplicity&rdquo;. I&rsquo;m sure this applies during the initial development phase&ndash;when there is no production data around, and you as a developer want to put 10 rows of whatever test data you want in your local database, sure, it&rsquo;s simple to not have a schema.</p>
-<p>My assertion is that this initial simplicity will not bear itself out throughout the life cycle of an application, and in the long-term will actually become a burden.</p>
-<h2 id=of-course-sometimes-schema-less-is-better>
-Of Course, Sometimes Schema-less is Better
-<a class=heading-link href=#of-course-sometimes-schema-less-is-better>
-<i class="fa fa-link" aria-hidden=true></i>
-</a>
-</h2>
-<p>Despite my general skepticism, I&rsquo;m sure scenarios exist where a schema really doesn&rsquo;t work. I don&rsquo;t have a predetermined list, but things like beyond-huge databases, etc. In those cases, I have nothing wrong with being pragmatic about it.</p>
-<p>However, it seems like these scenarios would be in the minority, and that most applications would be fine with, and benefit from, a schema.</p>
-<p>I think this is similar to the CAP theorem&ndash;there are definitely instances of extremely high-volume, high-availability services (Amazon shopping cart, etc.) where they must choose &ldquo;AP&rdquo;.</p>
-<p>However, that doesn&rsquo;t mean that for every system &ldquo;AP&rdquo; is now the best fit&ndash;&ldquo;C&rdquo; has some very nice properties to it that, if it fits your application&rsquo;s constraints (which it generally does for most, IMO), then you should by all means keep &ldquo;C&rdquo; and the simplicity that comes with it.</p>
-<p>Same thing with schemas&ndash;if you really can&rsquo;t use one, I understand; I just question that stance being a default position.</p>
-<h2 id=schemas-dont-have-to-be-relational>
-Schemas Don&rsquo;t Have to be Relational
-<a class=heading-link href=#schemas-dont-have-to-be-relational>
-<i class="fa fa-link" aria-hidden=true></i>
-</a>
-</h2>
-<p>I think people, myself included, usually associate database store schemas with relational databases. Which is an understandable association given the long, successful history of relational databases and how they all intrinsically have the notion of a schema.</p>
-<p>But other forms of schemas exist (XmlSchema, <a href=http://jschema.org/>jschema</a>, etc.), and I don&rsquo;t see anything wrong with a non-relational database that still had some sort of defined/enforced schema for what the data within it must look like.</p>
-<p>If anything, this could be quite nice, because even though relational schemas are ubiquitous, they are very much based on the underlying storage technology (tables/columns), and so don&rsquo;t map directly from higher-/domain-model-level abstractions like entities and parent/child/group relationships.</p>
-<p>Granted, relational-to-OO conventions have generally been established, so I don&rsquo;t think the object/relational impedance mismatch is quite the problem it used to, or is made out to, be. But I could see schemas with a slightly higher level of abstraction being useful.</p>
-<h2 id=a-schema-facilitates-metaprogramming>
-A Schema Facilitates Metaprogramming
-<a class=heading-link href=#a-schema-facilitates-metaprogramming>
-<i class="fa fa-link" aria-hidden=true></i>
-</a>
-</h2>
-<p>Although slightly tangential, having a schema that can be parsed by other tools is a great way for providing metadata about your system for use in code generation. See projects like <a href=http://www.joist.ws>Joist</a> that derive the entire domain layer (sans custom business logic) from the relational schema.</p>
-<p>Granted, a project&rsquo;s &ldquo;schema of record&rdquo; doesn&rsquo;t necessarily have to be relational, or the same schema as your database. E.g. I could see using a custom JSON schema to define your entities/relationships, and then going from there to a relational schema or some domain objects.</p>
-<p>This approach would let you express richer abstractions, but might also involve some duplication, as you have to maintain both this new master-schema and, even if you derive the database schema, you&rsquo;ll likely have to maintain migrations to intelligently update the database&rsquo;s existing data into the new schema.</p>
-<p>Anyway, I have had considerable success leveraging the metadata available in schemas, especially as systems grow to be more than a handful of entities, and would be disappointed to give that capability up.</p>
-<h2 id=its-all-about-types>
-It&rsquo;s All About Types
-<a class=heading-link href=#its-all-about-types>
-<i class="fa fa-link" aria-hidden=true></i>
-</a>
-</h2>
-<p>Really, my desire for a schema is an extension of my <a href=/2010/11/24/why-im-a-static-typing-bigot.html>static typing bigotry</a>.</p>
-<p>Just like how I think type contracts are a good idea for software programs (they provide intrinsic documentation and help programmers avoid mistakes), I think schemas are a great contract to have for databases. They provide the same benefits as types: documentation and helping programmers avoid mistakes.</p>
-<p>If anything, database contracts are even more important than type contracts because data is persistent. If your application blows up with <code>method_missing</code>, eh, the caller can try again; but if a client writes a row/document with invalid contents, your application(s) will forever have to handle/skip that invalid data until it can be identified and fixed.</p>
-<h2 id=disclaimer>
-Disclaimer
-<a class=heading-link href=#disclaimer>
-<i class="fa fa-link" aria-hidden=true></i>
-</a>
-</h2>
-<p>And, just as I must qualify my static typing position, I must qualify my pro-schema position that obviously many successful systems are being built with schema-less databases. And a lot of good things have been said about them. So it&rsquo;s of course impossible for me to pontificate that all schema-less systems are doomed to fail.</p>
-<p>But I nonetheless have a personal preference that I assert is supported by the trade-offs I&rsquo;ve tried to outline here. If your system can accept the trade-offs, I think schemas are generally worth their trouble in the long run.</p>
-</div>
-<footer>
-<div id=disqus_thread></div>
-<script type=application/javascript>var disqus_config=function(){};(function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById('disqus_thread').innerHTML='Disqus comments not available by default when the website is previewed locally.';return}var b=document,a=b.createElement('script');a.async=!0,a.src='//draconianoverlord.disqus.com/embed.js',a.setAttribute('data-timestamp',+new Date),(b.head||b.body).appendChild(a)})()</script>
-<noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript>
-<a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a>
-</footer>
-</article>
-</section>
-</div>
-<footer class=footer>
-<section class=container>
-©
+However, MongoDB doesn&rsquo;t just say it&rsquo;s schema-less for technical reasons related to being a NoSQL store, it actually touts its lack of a schema as a benefit, claiming it is &ldquo;agile&rdquo; and offers &ldquo;simplicity and power&rdquo;."><meta property="og:type" content="article"><meta property="og:url" content="https://www.draconianoverlord.com/2012/05/08/whats-wrong-with-a-schema.html/"><meta property="article:section" content="posts"><meta property="article:published_time" content="2012-05-08T00:00:00+00:00"><meta property="article:modified_time" content="2012-05-08T00:00:00+00:00"><link rel=canonical href=https://www.draconianoverlord.com/2012/05/08/whats-wrong-with-a-schema.html/><link rel=preload href="/fonts/forkawesome-webfont.woff2?v=1.2.0" as=font type=font/woff2 crossorigin><link rel=stylesheet href=/css/coder.min.65236a6d834b26194eed04a2a3b45e44d9194ef9e620253705d4bef03bd7ef81.css integrity="sha256-ZSNqbYNLJhlO7QSio7ReRNkZTvnmICU3BdS+8DvX74E=" crossorigin=anonymous media=screen><link rel=stylesheet href=/css/coder-dark.min.f6534b0b446b75d9b6ad77a97d43ede2ddaeff1b6e2361fb7198d6f8fcb7f83f.css integrity="sha256-9lNLC0Rrddm2rXepfUPt4t2u/xtuI2H7cZjW+Py3+D8=" crossorigin=anonymous media=screen><link rel=icon type=image/png href=/images/favicon-32x32.png sizes=32x32><link rel=icon type=image/png href=/images/favicon-16x16.png sizes=16x16><link rel=apple-touch-icon href=/images/apple-touch-icon.png><link rel=apple-touch-icon sizes=180x180 href=/images/apple-touch-icon.png><link rel=manifest href=/site.webmanifest><link rel=mask-icon href=/images/safari-pinned-tab.svg color=#5bbad5></head><body class="preload-transitions colorscheme-auto"><div class=float-container><a id=dark-mode-toggle class=colorscheme-toggle><i class="fa fa-adjust fa-fw" aria-hidden=true></i></a></div><main class=wrapper><nav class=navigation><section class=container><a class=navigation-title href=/>Draconian Overlord</a>
+Oppressing software entropy</section></nav><div class=content><section class="container post"><article><header><div class=post-title><h1 class=title><a class=title-link href=https://www.draconianoverlord.com/2012/05/08/whats-wrong-with-a-schema.html/>What's Wrong with a Schema?</a></h1></div><div class=post-meta><div class=date><span class=posted-on><i class="fa fa-calendar" aria-hidden=true></i>
+<time datetime=2012-05-08T00:00:00Z>May 8, 2012</time></span>
+<span class=reading-time><i class="fa fa-clock-o" aria-hidden=true></i>
+8-minute read</span></div><div class=categories><i class="fa fa-folder" aria-hidden=true></i>
+<a href=/categories/architecture/>Architecture</a></div></div></header><div class=post-content><p>Lately I&rsquo;ve been wondering why schema-less databases are so popular lately.</p><p>Most any NoSQL store is schema-less. And while perhaps schema-less-ness is an integral part of NoSQL (e.g. most NoSQL databases are just opaque key/value stores), I would assert it&rsquo;s an orthogonal concern, and that document-oriented databases, e.g. <a href=http://www.mongodb.org/ class=external-link target=_blank rel=noopener>MongoDB</a>, could arguably have a schema.</p><p>However, MongoDB doesn&rsquo;t just say it&rsquo;s schema-less for technical reasons related to being a NoSQL store, it actually touts its lack of a schema as a benefit, claiming it is &ldquo;agile&rdquo; and offers &ldquo;simplicity and power&rdquo;.</p><p>I find all of this confusing, as I actually <em>want</em> a schema.</p><p>I think the database enforcing a basic level of data consistency is a good thing. Granted, there will always invariants that the database cannot enforce, sans stored procedures. So, at some point you have to rely on most/all non-trivial database writes coming via your domain objects/business logic.</p><p>Nonetheless, for basic constraints (column length, not null, unique, foreign keys, etc.), it seems like a generally good idea for the database to do these checks for you.</p><p>This post is a general outline of my thoughts on the issue.</p><h2 id=coordinating-migrations-sucks-but-thats-good>Coordinating Migrations Sucks, But That&rsquo;s Good
+<a class=heading-link href=#coordinating-migrations-sucks-but-thats-good><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h2><p>I think one primary aspect of schemas that people find annoying is having to coordinate releases of multiple applications around when the database will have a new schema version applied.</p><p>I agree; this is annoying. However, I think it&rsquo;s misguided to blame the schema for this. It&rsquo;s not the core issue. The core issue is multiple applications sharing a database. The schema just makes this contract explicit.</p><p>In that regard, I think it is naive to think a schema-less database &ldquo;solves&rdquo; this issue for you. It does not make the coordination problem go away, it just makes it less visible. Now it is each application&rsquo;s responsibility to work sanely with both new and old versions of documents. Which means it&rsquo;s the responsibility of the programmer. Which means it won&rsquo;t happen.</p><p>Perhaps I&rsquo;m overly pessimistic, but how many programmers version their schema-less documents? Or really remember which fields are new/renamed/changed and so, even if present for 95% of the documents, might not be there for some small subset?</p><p>To really do this right, I think you&rsquo;d basically need to build in-application migrations that promote each document from v1 to v2 to v3, and then ensure all of your clients use the latest migrations when accessing the database. Well, and hope than any clients assuming an older schema aren&rsquo;t going to mess up the data written by newer clients.</p><p>Perhaps this is what people do, but I haven&rsquo;t read of it, so I&rsquo;m skeptical.</p><p>Granted, even if you&rsquo;re lacking this sort of in-application versioning diligence, obviously not every application deployment that uses a schema-less database is going to lead to disaster; I&rsquo;m sure most of them go quite fine.</p><p>However, I still think forcing coordination of multiple deployed applications around a schema change is a <em>good</em> aspect of schemas. It is making their coupling to each other (via the database and a shared contract of what type of data goes in it, e.g. the schema) explicit.</p><p>I want to know all my applications are now being forced to use the new, same schema. Then I know they&rsquo;ll (generally) play nicely with each other and have at least a basic agreement on what the data should look like.</p><h2 id=accepting-downtime-for-migrations>Accepting Downtime for Migrations
+<a class=heading-link href=#accepting-downtime-for-migrations><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h2><p>Sometimes, you&rsquo;ll be lucky enough to have a database accessed by only a single application, so the above issue of coordinating migrations across multiple applications isn&rsquo;t an issue. Great!</p><p>However, usually it still means taking the old version of the application down, applying the schema changes, and then bringing a new version up. So, downtime. And, yeah, downtime sucks.</p><p>But really I think this is a variation of the prior point&ndash;but instead of two different applications sharing a database, it&rsquo;s two different versions (pre-/post-upgrade) sharing the same database. Which I think has all the same potential problems as the previous case of separate applications sharing a database, in terms disagreeing what the data should look like.</p><p>So, while migrations introduce a deployment complexity, I think the trade-off (that I&rsquo;m usually quite willing to accept) is simplicity in your application code by not having to deal with multiple older schemas that just no longer make sense in the latest version of the application.</p><p>Particularly in a long-lived application, where the maintenance phase is longer than the initial development phase (as it should be in all successful projects), it seems like constantly having to think with &ldquo;what might the data from last month, six months, 12 months ago look like?&rdquo; would get tiresome.</p><p>Musing further, and thinking specifically of MongoDB&rsquo;s assertion of &ldquo;schema-less == simplicity&rdquo;. I&rsquo;m sure this applies during the initial development phase&ndash;when there is no production data around, and you as a developer want to put 10 rows of whatever test data you want in your local database, sure, it&rsquo;s simple to not have a schema.</p><p>My assertion is that this initial simplicity will not bear itself out throughout the life cycle of an application, and in the long-term will actually become a burden.</p><h2 id=of-course-sometimes-schema-less-is-better>Of Course, Sometimes Schema-less is Better
+<a class=heading-link href=#of-course-sometimes-schema-less-is-better><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h2><p>Despite my general skepticism, I&rsquo;m sure scenarios exist where a schema really doesn&rsquo;t work. I don&rsquo;t have a predetermined list, but things like beyond-huge databases, etc. In those cases, I have nothing wrong with being pragmatic about it.</p><p>However, it seems like these scenarios would be in the minority, and that most applications would be fine with, and benefit from, a schema.</p><p>I think this is similar to the CAP theorem&ndash;there are definitely instances of extremely high-volume, high-availability services (Amazon shopping cart, etc.) where they must choose &ldquo;AP&rdquo;.</p><p>However, that doesn&rsquo;t mean that for every system &ldquo;AP&rdquo; is now the best fit&ndash;&ldquo;C&rdquo; has some very nice properties to it that, if it fits your application&rsquo;s constraints (which it generally does for most, IMO), then you should by all means keep &ldquo;C&rdquo; and the simplicity that comes with it.</p><p>Same thing with schemas&ndash;if you really can&rsquo;t use one, I understand; I just question that stance being a default position.</p><h2 id=schemas-dont-have-to-be-relational>Schemas Don&rsquo;t Have to be Relational
+<a class=heading-link href=#schemas-dont-have-to-be-relational><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h2><p>I think people, myself included, usually associate database store schemas with relational databases. Which is an understandable association given the long, successful history of relational databases and how they all intrinsically have the notion of a schema.</p><p>But other forms of schemas exist (XmlSchema, <a href=http://jschema.org/ class=external-link target=_blank rel=noopener>jschema</a>, etc.), and I don&rsquo;t see anything wrong with a non-relational database that still had some sort of defined/enforced schema for what the data within it must look like.</p><p>If anything, this could be quite nice, because even though relational schemas are ubiquitous, they are very much based on the underlying storage technology (tables/columns), and so don&rsquo;t map directly from higher-/domain-model-level abstractions like entities and parent/child/group relationships.</p><p>Granted, relational-to-OO conventions have generally been established, so I don&rsquo;t think the object/relational impedance mismatch is quite the problem it used to, or is made out to, be. But I could see schemas with a slightly higher level of abstraction being useful.</p><h2 id=a-schema-facilitates-metaprogramming>A Schema Facilitates Metaprogramming
+<a class=heading-link href=#a-schema-facilitates-metaprogramming><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h2><p>Although slightly tangential, having a schema that can be parsed by other tools is a great way for providing metadata about your system for use in code generation. See projects like <a href=http://www.joist.ws class=external-link target=_blank rel=noopener>Joist</a> that derive the entire domain layer (sans custom business logic) from the relational schema.</p><p>Granted, a project&rsquo;s &ldquo;schema of record&rdquo; doesn&rsquo;t necessarily have to be relational, or the same schema as your database. E.g. I could see using a custom JSON schema to define your entities/relationships, and then going from there to a relational schema or some domain objects.</p><p>This approach would let you express richer abstractions, but might also involve some duplication, as you have to maintain both this new master-schema and, even if you derive the database schema, you&rsquo;ll likely have to maintain migrations to intelligently update the database&rsquo;s existing data into the new schema.</p><p>Anyway, I have had considerable success leveraging the metadata available in schemas, especially as systems grow to be more than a handful of entities, and would be disappointed to give that capability up.</p><h2 id=its-all-about-types>It&rsquo;s All About Types
+<a class=heading-link href=#its-all-about-types><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h2><p>Really, my desire for a schema is an extension of my <a href=/2010/11/24/why-im-a-static-typing-bigot.html>static typing bigotry</a>.</p><p>Just like how I think type contracts are a good idea for software programs (they provide intrinsic documentation and help programmers avoid mistakes), I think schemas are a great contract to have for databases. They provide the same benefits as types: documentation and helping programmers avoid mistakes.</p><p>If anything, database contracts are even more important than type contracts because data is persistent. If your application blows up with <code>method_missing</code>, eh, the caller can try again; but if a client writes a row/document with invalid contents, your application(s) will forever have to handle/skip that invalid data until it can be identified and fixed.</p><h2 id=disclaimer>Disclaimer
+<a class=heading-link href=#disclaimer><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h2><p>And, just as I must qualify my static typing position, I must qualify my pro-schema position that obviously many successful systems are being built with schema-less databases. And a lot of good things have been said about them. So it&rsquo;s of course impossible for me to pontificate that all schema-less systems are doomed to fail.</p><p>But I nonetheless have a personal preference that I assert is supported by the trade-offs I&rsquo;ve tried to outline here. If your system can accept the trade-offs, I think schemas are generally worth their trouble in the long run.</p></div><footer><div id=disqus_thread></div><script>window.disqus_config=function(){},function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById("disqus_thread").innerHTML="Disqus comments not available by default when the website is previewed locally.";return}var t=document,e=t.createElement("script");e.async=!0,e.src="//draconianoverlord.disqus.com/embed.js",e.setAttribute("data-timestamp",+new Date),(t.head||t.body).appendChild(e)}(),document.addEventListener("themeChanged",function(){document.readyState=="complete"&&DISQUS.reset({reload:!0,config:disqus_config})})</script></footer></article></section></div><footer class=footer><section class=container>©
 2008 -
-2022
+2023
 Stephen Haberman
 ·
-Powered by <a href=https://gohugo.io/>Hugo</a> & <a href=https://github.com/luizdepra/hugo-coder/>Coder</a>.
-</section>
-</footer>
-</main>
-<script src=/js/coder.min.03b17769f4f91ae35667e1f2a1ca8c16f50562576cf90ff32b3179926914daa5.js integrity="sha256-A7F3afT5GuNWZ+HyocqMFvUFYlds+Q/zKzF5kmkU2qU="></script>
-</body>
-</html>
+Powered by <a href=https://gohugo.io/ target=_blank rel=noopener>Hugo</a> & <a href=https://github.com/luizdepra/hugo-coder/ target=_blank rel=noopener>Coder</a>.</section></footer></main><script src=/js/coder.min.6ae284be93d2d19dad1f02b0039508d9aab3180a12a06dcc71b0b0ef7825a317.js integrity="sha256-auKEvpPS0Z2tHwKwA5UI2aqzGAoSoG3McbCw73gloxc="></script></body></html>

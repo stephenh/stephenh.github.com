@@ -1,321 +1,125 @@
-<!doctype html><html lang=en>
-<head>
-<meta charset=utf-8>
-<meta name=viewport content="width=device-width,initial-scale=1">
-<meta http-equiv=content-language content="en">
-<meta name=color-scheme content="light dark">
-<meta name=author content="Stephen Haberman">
-<meta name=description content="Update May 2018: This post basically describes reactive programming, from the context of circa 2012 GWT apps (which were typically extremely imperative, as were many JavaScript/jquery webapps at the time) and highlights Tessell, which was a data-binding framework I wrote while at Bizo. Today this would be called reactive programming, very similar to Mobx, albiet I&rsquo;m sure Mobx is more robust and optimized.
-I&rsquo;ve been meaning to write a &ldquo;lessons learned&rdquo; or &ldquo;best practice&rdquo; sort of post on how I think rich UI applications can be made simpler and less buggy by changing your mindset from an imperative one to a declarative one.">
-<meta name=keywords content="blog,developer,personal">
-<meta name=twitter:card content="summary">
-<meta name=twitter:title content="Building Sane Rich User Interfaces">
-<meta name=twitter:description content="Update May 2018: This post basically describes reactive programming, from the context of circa 2012 GWT apps (which were typically extremely imperative, as were many JavaScript/jquery webapps at the time) and highlights Tessell, which was a data-binding framework I wrote while at Bizo. Today this would be called reactive programming, very similar to Mobx, albiet I&rsquo;m sure Mobx is more robust and optimized.
-I&rsquo;ve been meaning to write a &ldquo;lessons learned&rdquo; or &ldquo;best practice&rdquo; sort of post on how I think rich UI applications can be made simpler and less buggy by changing your mindset from an imperative one to a declarative one.">
-<meta property="og:title" content="Building Sane Rich User Interfaces">
-<meta property="og:description" content="Update May 2018: This post basically describes reactive programming, from the context of circa 2012 GWT apps (which were typically extremely imperative, as were many JavaScript/jquery webapps at the time) and highlights Tessell, which was a data-binding framework I wrote while at Bizo. Today this would be called reactive programming, very similar to Mobx, albiet I&rsquo;m sure Mobx is more robust and optimized.
-I&rsquo;ve been meaning to write a &ldquo;lessons learned&rdquo; or &ldquo;best practice&rdquo; sort of post on how I think rich UI applications can be made simpler and less buggy by changing your mindset from an imperative one to a declarative one.">
-<meta property="og:type" content="article">
-<meta property="og:url" content="https://www.draconianoverlord.com/2012/09/15/building-sane-rich-user-interfaces.html/"><meta property="article:section" content="posts">
-<meta property="article:published_time" content="2012-09-15T00:00:00+00:00">
-<meta property="article:modified_time" content="2012-09-15T00:00:00+00:00">
-<title>
-Building Sane Rich User Interfaces · Draconian Overlord
-</title>
-<link rel=canonical href=https://www.draconianoverlord.com/2012/09/15/building-sane-rich-user-interfaces.html/>
-<link rel=preload href="/fonts/forkawesome-webfont.woff2?v=1.2.0" as=font type=font/woff2 crossorigin>
-<link rel=stylesheet href=/css/coder.min.d9fddbffe6f27e69985dc5fe0471cdb0e57fbf4775714bc3d847accb08f4a1f6.css integrity="sha256-2f3b/+byfmmYXcX+BHHNsOV/v0d1cUvD2Eesywj0ofY=" crossorigin=anonymous media=screen>
-<link rel=stylesheet href=/css/coder-dark.min.aa883b9ce35a8ff4a2a5008619005175e842bb18a8a9f9cc2bbcf44dab2d91fa.css integrity="sha256-qog7nONaj/SipQCGGQBRdehCuxioqfnMK7z0Tastkfo=" crossorigin=anonymous media=screen>
-<link rel=icon type=image/png href=/images/favicon-32x32.png sizes=32x32>
-<link rel=icon type=image/png href=/images/favicon-16x16.png sizes=16x16>
-<link rel=apple-touch-icon href=/images/apple-touch-icon.png>
-<link rel=apple-touch-icon sizes=180x180 href=/images/apple-touch-icon.png>
-<meta name=generator content="Hugo 0.92.0">
-</head>
-<body class="preload-transitions colorscheme-auto">
-<div class=float-container>
-<a id=dark-mode-toggle class=colorscheme-toggle>
-<i class="fa fa-adjust fa-fw" aria-hidden=true></i>
-</a>
-</div>
-<main class=wrapper>
-<nav class=navigation>
-<section class=container>
-<a class=navigation-title href=/>Draconian Overlord</a>
-Oppressing software entropy
-</section>
-</nav>
-<div class=content>
-<section class="container post">
-<article>
-<header>
-<div class=post-title>
-<h1 class=title>
-<a class=title-link href=https://www.draconianoverlord.com/2012/09/15/building-sane-rich-user-interfaces.html/>
-Building Sane Rich User Interfaces
-</a>
-</h1>
-</div>
-<div class=post-meta>
-<div class=date>
-<span class=posted-on>
-<i class="fa fa-calendar" aria-hidden=true></i>
-<time datetime=2012-09-15T00:00:00Z>
-September 15, 2012
-</time>
-</span>
-<span class=reading-time>
-<i class="fa fa-clock-o" aria-hidden=true></i>
-9-minute read
-</span>
-</div>
-<div class=categories>
-<i class="fa fa-folder" aria-hidden=true></i>
-<a href=/categories/favorites/>Favorites</a></div>
-</div>
-</header>
-<div>
-<p><strong>Update May 2018:</strong> This post basically describes reactive programming, from the context of circa 2012 GWT apps (which were typically extremely imperative, as were many JavaScript/jquery webapps at the time) and highlights <a href=http://www.tessell.org/>Tessell</a>, which was a data-binding framework I wrote while at Bizo. Today this would be called reactive programming, very similar to <a href=https://mobx.js.org/>Mobx</a>, albiet I&rsquo;m sure Mobx is more robust and optimized.</p>
-<p>I&rsquo;ve been meaning to write a &ldquo;lessons learned&rdquo; or &ldquo;best practice&rdquo; sort of post on how I think rich UI applications can be made simpler and less buggy by changing your mindset from an imperative one to a declarative one.</p>
-<p>But, until I do that, I thought it might be better to start with a concrete example. Sometimes its easier to think about something small and concrete before abstracting into the theoretical.</p>
-<p>So, do that, I thought I&rsquo;d show an example refactoring of changing some UI code from an imperative approach to a declarative approach.</p>
-<h1 id=the-example-problem>
-The Example Problem
-<a class=heading-link href=#the-example-problem>
-<i class="fa fa-link" aria-hidden=true></i>
-</a>
-</h1>
-<p>We&rsquo;ll use a relatively small problem that I think is still a good illustration: managing a list of tabs.</p>
-<p>E.g. the tabs might be &ldquo;Tab A&rdquo;, &ldquo;Tab B&rdquo;, and &ldquo;Tab C&rdquo;, and clicking on each tab hides the previous tab&rsquo;s content and shows the new tab&rsquo;s content.</p>
-<p>Instead of just building this functionality into a larger page, we&rsquo;ll break it out into a separate component, <code>Tabs</code>.</p>
-<h1 id=the-imperative-approach>
-The Imperative Approach
-<a class=heading-link href=#the-imperative-approach>
-<i class="fa fa-link" aria-hidden=true></i>
-</a>
-</h1>
-<p>Jumping straight to the code, this is a slightly simplified version of an imperative approach to building the tabs:</p>
-<p>(<strong>Update May 2018:</strong> This is old-school GWT code, but for those reading it today, just squint and pretend it&rsquo;s using JavaScript to wire together DOM-ish widgets. Languages/frameworks aside, the overall problem is still the same.)</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>Tabs</span> <span style=color:#66d9ef>extends</span> CompositeIsWidget <span style=color:#f92672>{</span>
-
-  <span style=color:#66d9ef>private</span> IsTabsView view <span style=color:#f92672>=</span> newTabsView<span style=color:#f92672>();</span>
-  <span style=color:#66d9ef>private</span> ArrayList<span style=color:#f92672>&lt;</span>IsWidget<span style=color:#f92672>&gt;</span> panels <span style=color:#f92672>=</span> <span style=color:#66d9ef>new</span> ArrayList<span style=color:#f92672>&lt;</span>IsWidget<span style=color:#f92672>&gt;();</span>
-
-  <span style=color:#66d9ef>public</span> <span style=color:#a6e22e>Tabs</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
-    setWidget<span style=color:#f92672>(</span>view<span style=color:#f92672>);</span>
-  <span style=color:#f92672>}</span>
-
-  <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>addTab</span><span style=color:#f92672>(</span>String tabName<span style=color:#f92672>,</span> IsWidget panel<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
-    IsTabView itemView <span style=color:#f92672>=</span> newTabView<span style=color:#f92672>();</span>
-    panels<span style=color:#f92672>.</span><span style=color:#a6e22e>add</span><span style=color:#f92672>(</span>panel<span style=color:#f92672>);</span>
-    <span style=color:#66d9ef>if</span> <span style=color:#f92672>(</span>panels<span style=color:#f92672>.</span><span style=color:#a6e22e>size</span><span style=color:#f92672>()</span> <span style=color:#f92672>==</span> 1<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
-      itemView<span style=color:#f92672>.</span><span style=color:#a6e22e>listItem</span><span style=color:#f92672>().</span><span style=color:#a6e22e>addStyleName</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;active&#34;</span><span style=color:#f92672>);</span>
-      show<span style=color:#f92672>(</span>panel<span style=color:#f92672>);</span>
-    <span style=color:#f92672>}</span> <span style=color:#66d9ef>else</span> <span style=color:#f92672>{</span>
-      hide<span style=color:#f92672>(</span>panel<span style=color:#f92672>);</span>
-    <span style=color:#f92672>}</span>
-    itemView<span style=color:#f92672>.</span><span style=color:#a6e22e>anchor</span><span style=color:#f92672>().</span><span style=color:#a6e22e>setText</span><span style=color:#f92672>(</span>tabName<span style=color:#f92672>);</span>
-    itemView<span style=color:#f92672>.</span><span style=color:#a6e22e>anchor</span><span style=color:#f92672>().</span><span style=color:#a6e22e>addClickHandler</span><span style=color:#f92672>(</span><span style=color:#66d9ef>new</span> ClickHandler<span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
-      <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>onClick</span><span style=color:#f92672>(</span>ClickEvent event<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
-        <span style=color:#66d9ef>for</span> <span style=color:#f92672>(</span>IsWidget p <span style=color:#f92672>:</span> panels<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
-          hide<span style=color:#f92672>(</span>p<span style=color:#f92672>);</span>
-        <span style=color:#f92672>}</span>
-        <span style=color:#66d9ef>for</span> <span style=color:#f92672>(</span><span style=color:#66d9ef>int</span> i <span style=color:#f92672>=</span> 0<span style=color:#f92672>;</span> i <span style=color:#f92672>&lt;</span> view<span style=color:#f92672>.</span><span style=color:#a6e22e>list</span><span style=color:#f92672>().</span><span style=color:#a6e22e>getWidgetCount</span><span style=color:#f92672>();</span> i<span style=color:#f92672>++)</span> <span style=color:#f92672>{</span>
-          view<span style=color:#f92672>.</span><span style=color:#a6e22e>list</span><span style=color:#f92672>().</span><span style=color:#a6e22e>getIsWidget</span><span style=color:#f92672>(</span>i<span style=color:#f92672>).</span><span style=color:#a6e22e>removeStyleName</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;active&#34;</span><span style=color:#f92672>);</span>
-        <span style=color:#f92672>}</span>
-        show<span style=color:#f92672>(</span>panel<span style=color:#f92672>);</span>
-        itemView<span style=color:#f92672>.</span><span style=color:#a6e22e>listItem</span><span style=color:#f92672>().</span><span style=color:#a6e22e>addStyleName</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;active&#34;</span><span style=color:#f92672>);</span>
-      <span style=color:#f92672>}</span>
-    <span style=color:#f92672>});</span>
-    view<span style=color:#f92672>.</span><span style=color:#a6e22e>list</span><span style=color:#f92672>().</span><span style=color:#a6e22e>add</span><span style=color:#f92672>(</span>itemView<span style=color:#f92672>);</span>
-  <span style=color:#f92672>}</span>
-<span style=color:#f92672>}</span>
-</code></pre></div><p>This code might be a little foreign if you&rsquo;re not used to GWT/Tessell development, but I think in general it&rsquo;s pretty easy to follow.</p>
-<p>The <code>newXxxView</code> calls are instantiating templates from GWT&rsquo;s <code>ui.xml</code> UiBinder files, so <code>newTabsView()</code> returns a styled <code>ul</code> tag, and <code>newTabView()</code> returns a styled <code>li</code> tag for each tab.</p>
-<p>In general, I don&rsquo;t think there is anything terribly wrong with this code; the variable names are good, the methods aren&rsquo;t egregiously long, and it&rsquo;s bug free.</p>
-<p>However, it is very imperative, in that it&rsquo;s reactive to user behavior instead of being proactive. For example, what makes it seem imperative is code like:</p>
-<ul>
-<li>Whether a panel is hidden or shown is done reactively in 4 places (show+hide on initial add, show+hide on each click).</li>
-<li>The <code>active</code> CSS class is added in two places, and removed in one place.</li>
-<li>We have an event callback that does multiple things in response to a click</li>
-</ul>
-<p>The result is actually not that bad in this case, but I think the approach, when used in larger components and applications, eventually leads to spaghetti code.</p>
-<p>You end up with lots of &ldquo;oh, remember to do this here and there and there&rdquo; lines in each place that responds to user input or logic changes. It becomes easy to miss places where updates need to happen, or not make the updates consistent, and results in bugs.</p>
-<h1 id=the-declarative-approach>
-The Declarative Approach
-<a class=heading-link href=#the-declarative-approach>
-<i class="fa fa-link" aria-hidden=true></i>
-</a>
-</h1>
-<p>So, now let&rsquo;s try and refactor this code to being more declarative.</p>
-<p>In taking on a declarative mindset, we want to think, without reacting to user input (e.g. event callbacks), how can we declare that some behavior of our UI should just happen?</p>
-<p>For example, let&rsquo;s think of the behaviors of our tabs:</p>
-<ul>
-<li>When I am the current tab, show my panel</li>
-<li>When I am the current tab, set <code>active</code> on my <code>li</code> tag</li>
-<li>When I am clicked, make myself the current tab</li>
-</ul>
-<p>Looking at these behaviors, the notion of a &ldquo;current tab&rdquo; is pretty apparent. Really all of our behaviors are based around which tab is the current tab.</p>
-<p>So, let&rsquo;s pull out that notion into an abstraction; let&rsquo;s make a <code>Tab</code> and a <code>currentTab</code>:</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>Tabs</span> <span style=color:#66d9ef>extends</span> CompositeIsWidget <span style=color:#f92672>{</span>
-
-  <span style=color:#66d9ef>private</span> IsTabsView view <span style=color:#f92672>=</span> newTabsView<span style=color:#f92672>();</span>
-  <span style=color:#66d9ef>private</span> Tab currentTab<span style=color:#f92672>;</span>
-
-  <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>addTab</span><span style=color:#f92672>(</span>String tabName<span style=color:#f92672>,</span> IsWidget panel<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
-    Tab tab <span style=color:#f92672>=</span> <span style=color:#66d9ef>new</span> Tab<span style=color:#f92672>(</span>tabName<span style=color:#f92672>,</span> panel<span style=color:#f92672>);</span>
-    <span style=color:#66d9ef>if</span> <span style=color:#f92672>(</span>currentTab <span style=color:#f92672>==</span> <span style=color:#66d9ef>null</span><span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
-      setCurrentTab<span style=color:#f92672>(</span>tab<span style=color:#f92672>);</span>
-    <span style=color:#f92672>}</span>
-    view<span style=color:#f92672>.</span><span style=color:#a6e22e>list</span><span style=color:#f92672>().</span><span style=color:#a6e22e>add</span><span style=color:#f92672>(</span>tab<span style=color:#f92672>.</span><span style=color:#a6e22e>view</span><span style=color:#f92672>);</span>
-  <span style=color:#f92672>}</span>
-
-  <span style=color:#66d9ef>private</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>setCurrentTab</span><span style=color:#f92672>(</span>Tab tab<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
-    <span style=color:#66d9ef>if</span> <span style=color:#f92672>(</span>currentTab <span style=color:#f92672>!=</span> <span style=color:#66d9ef>null</span><span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
-      <span style=color:#75715e>// unstyle old active tab;
-</span><span style=color:#75715e></span>    <span style=color:#f92672>}</span>
-    <span style=color:#75715e>// style new tab
-</span><span style=color:#75715e></span>    currentTab <span style=color:#f92672>=</span> tab<span style=color:#f92672>;</span>
-  <span style=color:#f92672>}</span>
-
-  <span style=color:#66d9ef>private</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>Tab</span> <span style=color:#f92672>{</span>
-    <span style=color:#66d9ef>private</span> IsTabView view <span style=color:#f92672>=</span> newTabView<span style=color:#f92672>();</span>
-    <span style=color:#66d9ef>private</span> <span style=color:#a6e22e>Tab</span><span style=color:#f92672>(</span>String tabName<span style=color:#f92672>,</span> IsWidget panel<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
-      view<span style=color:#f92672>.</span><span style=color:#a6e22e>addClickHandler</span><span style=color:#f92672>(</span><span style=color:#66d9ef>new</span> ClickHandler<span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
-        <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>onClick</span><span style=color:#f92672>(</span>ClickEvent e<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
-          setCurrentTab<span style=color:#f92672>(</span>Tab<span style=color:#f92672>.</span><span style=color:#a6e22e>this</span><span style=color:#f92672>);</span>
-        <span style=color:#f92672>}</span>
-      <span style=color:#f92672>});</span>
-    <span style=color:#f92672>}</span>
-  <span style=color:#f92672>}</span>
-</code></pre></div><p>This is better. We&rsquo;ve moved the styling updates into one place, <code>setCurrentTab</code>, so things are not as spread out.</p>
-<p>However, we&rsquo;re still stuck in the reactive model; we&rsquo;re having to remember to call <code>setCurrentTab</code> in all the right places. (Which, granted, in this small example is only two places).</p>
-<p>The stumbling block is that <code>currentTab</code> is just a field&ndash;we can&rsquo;t react to its changes unless we manually add code before/after our own setting of the field.</p>
-<p>Rich UI frameworks, Tessell included, solve this by promoting simple fields into stateful properties, which can watch their current value, and call observers when it is changed. The property is the foundation for models in traditional MVC.</p>
-<p>So, let&rsquo;s change <code>currentTab</code> to a property:</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=color:#66d9ef>private</span> BasicProperty<span style=color:#f92672>&lt;</span>Tab<span style=color:#f92672>&gt;</span> currentTab <span style=color:#f92672>=</span>
-  basicProperty<span style=color:#f92672>(</span><span style=color:#e6db74>&#34;currentTab&#34;</span><span style=color:#f92672>);</span>
-</code></pre></div><p>Since we have an abstraction around the value instead of just the value, we can now setup declarations around the abstraction, the property, and not just the value itself.</p>
-<p>To see how well this works out, we can re-examine our 3 behaviors, and see how they can be translated into declarations. (We&rsquo;ll use Tessell&rsquo;s DSL, but the same abstractions could be done in any MVC framework.)</p>
-<ul>
-<li>
-<p>&ldquo;When I am the current tab, show my panel&rdquo; can look like:</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java>binder<span style=color:#f92672>.</span><span style=color:#a6e22e>when</span><span style=color:#f92672>(</span>currentTab<span style=color:#f92672>).</span><span style=color:#a6e22e>is</span><span style=color:#f92672>(</span><span style=color:#66d9ef>this</span><span style=color:#f92672>).</span><span style=color:#a6e22e>show</span><span style=color:#f92672>(</span>panel<span style=color:#f92672>);</span>
-</code></pre></div></li>
-<li>
-<p>&ldquo;When I am the current tab, set <code>active</code> on my <code>li</code> tag&rdquo; can look like:</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java>binder<span style=color:#f92672>.</span><span style=color:#a6e22e>when</span><span style=color:#f92672>(</span>currentTab<span style=color:#f92672>).</span><span style=color:#a6e22e>is</span><span style=color:#f92672>(</span><span style=color:#66d9ef>this</span><span style=color:#f92672>).</span><span style=color:#a6e22e>set</span><span style=color:#f92672>(</span>active<span style=color:#f92672>).</span><span style=color:#a6e22e>on</span><span style=color:#f92672>(</span>view<span style=color:#f92672>.</span><span style=color:#a6e22e>li</span><span style=color:#f92672>());</span>
-</code></pre></div></li>
-<li>
-<p>&ldquo;When I am clicked, make myself the current tab&rdquo; can look like:</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java>binder<span style=color:#f92672>.</span><span style=color:#a6e22e>onClick</span><span style=color:#f92672>(</span>view<span style=color:#f92672>.</span><span style=color:#a6e22e>anchor</span><span style=color:#f92672>()).</span><span style=color:#a6e22e>set</span><span style=color:#f92672>(</span>currentTab<span style=color:#f92672>).</span><span style=color:#a6e22e>to</span><span style=color:#f92672>(</span><span style=color:#66d9ef>this</span><span style=color:#f92672>);</span>
-</code></pre></div></li>
-</ul>
-<p>And that&rsquo;s it.</p>
-<p>With a property-based DSL, like in Tessell, we have a 1-to-1 mapping between a behavior and 1 line of code.</p>
-<p>This behavior should then &ldquo;just work&rdquo; as the program runs. Whether in response to user input, or other business logic code changing the model, we don&rsquo;t care; our behavior should implicitly stay correctly applied.</p>
-<h1 id=the-final-code>
-The Final Code
-<a class=heading-link href=#the-final-code>
-<i class="fa fa-link" aria-hidden=true></i>
-</a>
-</h1>
-<p>So, here&rsquo;s the full refactored code example:</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>Tabs</span> <span style=color:#66d9ef>extends</span> CompositeIsWidget <span style=color:#f92672>{</span>
-
-  <span style=color:#66d9ef>private</span> IsTabsView view <span style=color:#f92672>=</span> newTabsView<span style=color:#f92672>();</span>
-  <span style=color:#66d9ef>private</span> Binder binder <span style=color:#f92672>=</span> <span style=color:#66d9ef>new</span> Binder<span style=color:#f92672>();</span>
-  <span style=color:#66d9ef>private</span> BasicProperty<span style=color:#f92672>&lt;</span>Tab<span style=color:#f92672>&gt;</span> currentTab <span style=color:#f92672>=</span> basicProperty<span style=color:#f92672>(</span><span style=color:#e6db74>&#34;currentTab&#34;</span><span style=color:#f92672>);</span>
-
-  <span style=color:#66d9ef>public</span> <span style=color:#a6e22e>Tabs</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
-    setWidget<span style=color:#f92672>(</span>view<span style=color:#f92672>);</span>
-  <span style=color:#f92672>}</span>
-
-  <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>addTab</span><span style=color:#f92672>(</span>String tabName<span style=color:#f92672>,</span> IsWidget panel<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
-    Tab tab <span style=color:#f92672>=</span> <span style=color:#66d9ef>new</span> Tab<span style=color:#f92672>(</span>tabName<span style=color:#f92672>,</span> panel<span style=color:#f92672>);</span>
-    currentTab<span style=color:#f92672>.</span><span style=color:#a6e22e>setIfNull</span><span style=color:#f92672>(</span>tab<span style=color:#f92672>);</span>
-    view<span style=color:#f92672>.</span><span style=color:#a6e22e>list</span><span style=color:#f92672>().</span><span style=color:#a6e22e>add</span><span style=color:#f92672>(</span>tab<span style=color:#f92672>.</span><span style=color:#a6e22e>view</span><span style=color:#f92672>);</span>
-  <span style=color:#f92672>}</span>
-
-  <span style=color:#66d9ef>private</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>Tab</span> <span style=color:#f92672>{</span>
-    <span style=color:#66d9ef>private</span> IsTabView view <span style=color:#f92672>=</span> newTabView<span style=color:#f92672>();</span>
-
-    <span style=color:#66d9ef>private</span> <span style=color:#a6e22e>Tab</span><span style=color:#f92672>(</span>String tabName<span style=color:#f92672>,</span> IsWidget panel<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
-      view<span style=color:#f92672>.</span><span style=color:#a6e22e>anchor</span><span style=color:#f92672>().</span><span style=color:#a6e22e>setText</span><span style=color:#f92672>(</span>tabName<span style=color:#f92672>);</span>
-      binder<span style=color:#f92672>.</span><span style=color:#a6e22e>when</span><span style=color:#f92672>(</span>currentTab<span style=color:#f92672>).</span><span style=color:#a6e22e>is</span><span style=color:#f92672>(</span><span style=color:#66d9ef>this</span><span style=color:#f92672>).</span><span style=color:#a6e22e>show</span><span style=color:#f92672>(</span>panel<span style=color:#f92672>);</span>
-      binder<span style=color:#f92672>.</span><span style=color:#a6e22e>when</span><span style=color:#f92672>(</span>currentTab<span style=color:#f92672>).</span><span style=color:#a6e22e>is</span><span style=color:#f92672>(</span><span style=color:#66d9ef>this</span><span style=color:#f92672>).</span><span style=color:#a6e22e>set</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;active&#34;</span><span style=color:#f92672>).</span><span style=color:#a6e22e>on</span><span style=color:#f92672>(</span>view<span style=color:#f92672>.</span><span style=color:#a6e22e>listItem</span><span style=color:#f92672>());</span>
-      binder<span style=color:#f92672>.</span><span style=color:#a6e22e>onClick</span><span style=color:#f92672>(</span>view<span style=color:#f92672>.</span><span style=color:#a6e22e>anchor</span><span style=color:#f92672>()).</span><span style=color:#a6e22e>set</span><span style=color:#f92672>(</span>currentTab<span style=color:#f92672>).</span><span style=color:#a6e22e>to</span><span style=color:#f92672>(</span><span style=color:#66d9ef>this</span><span style=color:#f92672>);</span>
-    <span style=color:#f92672>}</span>
-  <span style=color:#f92672>}</span>
-<span style=color:#f92672>}</span>
-</code></pre></div><p>Note that:</p>
-<ul>
-<li>Every dynamic behavior is specified declaratively, in a single place.</li>
-<li>We have zero callbacks (that are explicitly coded, obviously the DSL is setting some up behidn the scenes)</li>
-</ul>
-<p>To me, these are both signs of a well-designed UI library, whether in old-school GWT or (updated in 2018) new-kid React.</p>
-<p>Granted, callbacks and imperative code will always be necessary for edge cases, but they should be the exception to the rule.</p>
-<h1 id=when-this-works>
-When This Works
-<a class=heading-link href=#when-this-works>
-<i class="fa fa-link" aria-hidden=true></i>
-</a>
-</h1>
-<p>Obviously the success of this approach depends on the robustness of the binding DSL, as the DSL has to support the various behaviors you want to perform in a generic way.</p>
-<p>Specifically for Tessell, I won&rsquo;t assert that Tessell&rsquo;s DSL is as refined as something like Hamcrest, which I think is the prototypical DSL in the Java world. But it supports a pretty wide array of behaviors, and is getting more when they are added as needed.</p>
-<p>Besides the DSL, you also have to represent your problem domain as these stateful properties, basically models, to allow them to be passed declaratively into the DSL and for the DSL to be able to register observers and react to them.</p>
-<p>I don&rsquo;t think either of these are large stumbling blocks, but they do require massaging your codebase to fit the MVC/property/DSL approach, instead of just using raw DTOs.</p>
-<h1 id=rules-of-thumb>
-Rules of Thumb
-<a class=heading-link href=#rules-of-thumb>
-<i class="fa fa-link" aria-hidden=true></i>
-</a>
-</h1>
-<p>I have a few rules of thumb for thinking declaratively:</p>
-<ul>
-<li>
-<p>If you find yourself both <em>doing</em> a behavior and later <em>undoing</em> that behavior (like applying then unapplying a style), this is a smell there there&rsquo;s some higher level abstraction that you could setup declaratively instead of performing it imperatively in multiple places.</p>
-</li>
-<li>
-<p>Manual event listeners (e.g. anonymous inner classes for <code>addClickListener</code> in GWT, or anonymous functions for <code>element.onclick</code> in JavaScript) should be used sparingly, and, if really needed, be as tiny as possible.</p>
-<p>Anonymous inner classes (or callback functions in JavaScript) are a smell that you&rsquo;re doing something reactively, e.g. responding to specific UI input and events, that you&rsquo;ll probably have to react to elsewhere in a different way, and so there might be an abstraction you could pull out.</p>
-<p>(Tangentially, I think this minimizes the downside of using the Java language, which lacks closures, for rich UI development. Even if you had closures for reacting to user input, it&rsquo;s still a reactive model, and so will lead to the same spaghetti code, albeit with less anonymous inner class boilerplate.)</p>
-</li>
-<li>
-<p>Try and think &ldquo;1 behavior == 1 line of code&rdquo;, and then extend your DSL as necessary to fit that.</p>
-<p>Even if your behavior is not terribly generic, I think having it in your DSL and out of your controller/presenter code is a better separation of concerns anyway.</p>
-</li>
-</ul>
-<h1 id=conclusion>
-Conclusion
-<a class=heading-link href=#conclusion>
-<i class="fa fa-link" aria-hidden=true></i>
-</a>
-</h1>
-<p>So, those are my thoughts on building a rich UI in a sane way.</p>
-<p>I don&rsquo;t think this is terribly novel, as MVC is old-hat 1980s/90s stuff, albeit reinvented in Web 2.0 apps, and I think everyone generally acknowledges that declarative programming can be, for the right problems, much more succinct than imperative programming.</p>
-<p>But I think, even if its not novel, its easy for developers to stay in an imperative mindset if you&rsquo;re not consciously thinking of looking for abstractions and pulling out declarations as they become apparent.</p>
-</div>
-<footer>
-<div id=disqus_thread></div>
-<script type=application/javascript>var disqus_config=function(){};(function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById('disqus_thread').innerHTML='Disqus comments not available by default when the website is previewed locally.';return}var b=document,a=b.createElement('script');a.async=!0,a.src='//draconianoverlord.disqus.com/embed.js',a.setAttribute('data-timestamp',+new Date),(b.head||b.body).appendChild(a)})()</script>
-<noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript>
-<a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a>
-</footer>
-</article>
-</section>
-</div>
-<footer class=footer>
-<section class=container>
-©
+<!doctype html><html lang=en><head><title>Building Sane Rich User Interfaces · Draconian Overlord</title><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=color-scheme content="light dark"><meta name=author content="Stephen Haberman"><meta name=description content="Update May 2018: This post basically describes reactive programming, from the context of circa 2012 GWT apps (which were typically extremely imperative, as were many JavaScript/jquery webapps at the time) and highlights Tessell, which was a data-binding framework I wrote while at Bizo. Today this would be called reactive programming, very similar to Mobx, albiet I&rsquo;m sure Mobx is more robust and optimized.
+I&rsquo;ve been meaning to write a &ldquo;lessons learned&rdquo; or &ldquo;best practice&rdquo; sort of post on how I think rich UI applications can be made simpler and less buggy by changing your mindset from an imperative one to a declarative one."><meta name=keywords content="blog,developer,personal"><meta name=twitter:card content="summary"><meta name=twitter:title content="Building Sane Rich User Interfaces"><meta name=twitter:description content="Update May 2018: This post basically describes reactive programming, from the context of circa 2012 GWT apps (which were typically extremely imperative, as were many JavaScript/jquery webapps at the time) and highlights Tessell, which was a data-binding framework I wrote while at Bizo. Today this would be called reactive programming, very similar to Mobx, albiet I&rsquo;m sure Mobx is more robust and optimized.
+I&rsquo;ve been meaning to write a &ldquo;lessons learned&rdquo; or &ldquo;best practice&rdquo; sort of post on how I think rich UI applications can be made simpler and less buggy by changing your mindset from an imperative one to a declarative one."><meta property="og:title" content="Building Sane Rich User Interfaces"><meta property="og:description" content="Update May 2018: This post basically describes reactive programming, from the context of circa 2012 GWT apps (which were typically extremely imperative, as were many JavaScript/jquery webapps at the time) and highlights Tessell, which was a data-binding framework I wrote while at Bizo. Today this would be called reactive programming, very similar to Mobx, albiet I&rsquo;m sure Mobx is more robust and optimized.
+I&rsquo;ve been meaning to write a &ldquo;lessons learned&rdquo; or &ldquo;best practice&rdquo; sort of post on how I think rich UI applications can be made simpler and less buggy by changing your mindset from an imperative one to a declarative one."><meta property="og:type" content="article"><meta property="og:url" content="https://www.draconianoverlord.com/2012/09/15/building-sane-rich-user-interfaces.html/"><meta property="article:section" content="posts"><meta property="article:published_time" content="2012-09-15T00:00:00+00:00"><meta property="article:modified_time" content="2012-09-15T00:00:00+00:00"><link rel=canonical href=https://www.draconianoverlord.com/2012/09/15/building-sane-rich-user-interfaces.html/><link rel=preload href="/fonts/forkawesome-webfont.woff2?v=1.2.0" as=font type=font/woff2 crossorigin><link rel=stylesheet href=/css/coder.min.65236a6d834b26194eed04a2a3b45e44d9194ef9e620253705d4bef03bd7ef81.css integrity="sha256-ZSNqbYNLJhlO7QSio7ReRNkZTvnmICU3BdS+8DvX74E=" crossorigin=anonymous media=screen><link rel=stylesheet href=/css/coder-dark.min.f6534b0b446b75d9b6ad77a97d43ede2ddaeff1b6e2361fb7198d6f8fcb7f83f.css integrity="sha256-9lNLC0Rrddm2rXepfUPt4t2u/xtuI2H7cZjW+Py3+D8=" crossorigin=anonymous media=screen><link rel=icon type=image/png href=/images/favicon-32x32.png sizes=32x32><link rel=icon type=image/png href=/images/favicon-16x16.png sizes=16x16><link rel=apple-touch-icon href=/images/apple-touch-icon.png><link rel=apple-touch-icon sizes=180x180 href=/images/apple-touch-icon.png><link rel=manifest href=/site.webmanifest><link rel=mask-icon href=/images/safari-pinned-tab.svg color=#5bbad5></head><body class="preload-transitions colorscheme-auto"><div class=float-container><a id=dark-mode-toggle class=colorscheme-toggle><i class="fa fa-adjust fa-fw" aria-hidden=true></i></a></div><main class=wrapper><nav class=navigation><section class=container><a class=navigation-title href=/>Draconian Overlord</a>
+Oppressing software entropy</section></nav><div class=content><section class="container post"><article><header><div class=post-title><h1 class=title><a class=title-link href=https://www.draconianoverlord.com/2012/09/15/building-sane-rich-user-interfaces.html/>Building Sane Rich User Interfaces</a></h1></div><div class=post-meta><div class=date><span class=posted-on><i class="fa fa-calendar" aria-hidden=true></i>
+<time datetime=2012-09-15T00:00:00Z>September 15, 2012</time></span>
+<span class=reading-time><i class="fa fa-clock-o" aria-hidden=true></i>
+9-minute read</span></div><div class=categories><i class="fa fa-folder" aria-hidden=true></i>
+<a href=/categories/favorites/>Favorites</a></div></div></header><div class=post-content><p><strong>Update May 2018:</strong> This post basically describes reactive programming, from the context of circa 2012 GWT apps (which were typically extremely imperative, as were many JavaScript/jquery webapps at the time) and highlights <a href=http://www.tessell.org/ class=external-link target=_blank rel=noopener>Tessell</a>, which was a data-binding framework I wrote while at Bizo. Today this would be called reactive programming, very similar to <a href=https://mobx.js.org/ class=external-link target=_blank rel=noopener>Mobx</a>, albiet I&rsquo;m sure Mobx is more robust and optimized.</p><p>I&rsquo;ve been meaning to write a &ldquo;lessons learned&rdquo; or &ldquo;best practice&rdquo; sort of post on how I think rich UI applications can be made simpler and less buggy by changing your mindset from an imperative one to a declarative one.</p><p>But, until I do that, I thought it might be better to start with a concrete example. Sometimes its easier to think about something small and concrete before abstracting into the theoretical.</p><p>So, do that, I thought I&rsquo;d show an example refactoring of changing some UI code from an imperative approach to a declarative approach.</p><h1 id=the-example-problem>The Example Problem
+<a class=heading-link href=#the-example-problem><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h1><p>We&rsquo;ll use a relatively small problem that I think is still a good illustration: managing a list of tabs.</p><p>E.g. the tabs might be &ldquo;Tab A&rdquo;, &ldquo;Tab B&rdquo;, and &ldquo;Tab C&rdquo;, and clicking on each tab hides the previous tab&rsquo;s content and shows the new tab&rsquo;s content.</p><p>Instead of just building this functionality into a larger page, we&rsquo;ll break it out into a separate component, <code>Tabs</code>.</p><h1 id=the-imperative-approach>The Imperative Approach
+<a class=heading-link href=#the-imperative-approach><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h1><p>Jumping straight to the code, this is a slightly simplified version of an imperative approach to building the tabs:</p><p>(<strong>Update May 2018:</strong> This is old-school GWT code, but for those reading it today, just squint and pretend it&rsquo;s using JavaScript to wire together DOM-ish widgets. Languages/frameworks aside, the overall problem is still the same.)</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=display:flex><span><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>Tabs</span> <span style=color:#66d9ef>extends</span> CompositeIsWidget <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>private</span> IsTabsView view <span style=color:#f92672>=</span> newTabsView<span style=color:#f92672>();</span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>private</span> ArrayList<span style=color:#f92672>&lt;</span>IsWidget<span style=color:#f92672>&gt;</span> panels <span style=color:#f92672>=</span> <span style=color:#66d9ef>new</span> ArrayList<span style=color:#f92672>&lt;</span>IsWidget<span style=color:#f92672>&gt;();</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>public</span> <span style=color:#a6e22e>Tabs</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>    setWidget<span style=color:#f92672>(</span>view<span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>addTab</span><span style=color:#f92672>(</span>String tabName<span style=color:#f92672>,</span> IsWidget panel<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>    IsTabView itemView <span style=color:#f92672>=</span> newTabView<span style=color:#f92672>();</span>
+</span></span><span style=display:flex><span>    panels<span style=color:#f92672>.</span><span style=color:#a6e22e>add</span><span style=color:#f92672>(</span>panel<span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>if</span> <span style=color:#f92672>(</span>panels<span style=color:#f92672>.</span><span style=color:#a6e22e>size</span><span style=color:#f92672>()</span> <span style=color:#f92672>==</span> <span style=color:#ae81ff>1</span><span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>      itemView<span style=color:#f92672>.</span><span style=color:#a6e22e>listItem</span><span style=color:#f92672>().</span><span style=color:#a6e22e>addStyleName</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;active&#34;</span><span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>      show<span style=color:#f92672>(</span>panel<span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>}</span> <span style=color:#66d9ef>else</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>      hide<span style=color:#f92672>(</span>panel<span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>    itemView<span style=color:#f92672>.</span><span style=color:#a6e22e>anchor</span><span style=color:#f92672>().</span><span style=color:#a6e22e>setText</span><span style=color:#f92672>(</span>tabName<span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>    itemView<span style=color:#f92672>.</span><span style=color:#a6e22e>anchor</span><span style=color:#f92672>().</span><span style=color:#a6e22e>addClickHandler</span><span style=color:#f92672>(</span><span style=color:#66d9ef>new</span> ClickHandler<span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>      <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>onClick</span><span style=color:#f92672>(</span>ClickEvent event<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>for</span> <span style=color:#f92672>(</span>IsWidget p <span style=color:#f92672>:</span> panels<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>          hide<span style=color:#f92672>(</span>p<span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>        <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>for</span> <span style=color:#f92672>(</span><span style=color:#66d9ef>int</span> i <span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span><span style=color:#f92672>;</span> i <span style=color:#f92672>&lt;</span> view<span style=color:#f92672>.</span><span style=color:#a6e22e>list</span><span style=color:#f92672>().</span><span style=color:#a6e22e>getWidgetCount</span><span style=color:#f92672>();</span> i<span style=color:#f92672>++)</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>          view<span style=color:#f92672>.</span><span style=color:#a6e22e>list</span><span style=color:#f92672>().</span><span style=color:#a6e22e>getIsWidget</span><span style=color:#f92672>(</span>i<span style=color:#f92672>).</span><span style=color:#a6e22e>removeStyleName</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;active&#34;</span><span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>        <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>        show<span style=color:#f92672>(</span>panel<span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>        itemView<span style=color:#f92672>.</span><span style=color:#a6e22e>listItem</span><span style=color:#f92672>().</span><span style=color:#a6e22e>addStyleName</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;active&#34;</span><span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>      <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>});</span>
+</span></span><span style=display:flex><span>    view<span style=color:#f92672>.</span><span style=color:#a6e22e>list</span><span style=color:#f92672>().</span><span style=color:#a6e22e>add</span><span style=color:#f92672>(</span>itemView<span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>}</span>
+</span></span></code></pre></div><p>This code might be a little foreign if you&rsquo;re not used to GWT/Tessell development, but I think in general it&rsquo;s pretty easy to follow.</p><p>The <code>newXxxView</code> calls are instantiating templates from GWT&rsquo;s <code>ui.xml</code> UiBinder files, so <code>newTabsView()</code> returns a styled <code>ul</code> tag, and <code>newTabView()</code> returns a styled <code>li</code> tag for each tab.</p><p>In general, I don&rsquo;t think there is anything terribly wrong with this code; the variable names are good, the methods aren&rsquo;t egregiously long, and it&rsquo;s bug free.</p><p>However, it is very imperative, in that it&rsquo;s reactive to user behavior instead of being proactive. For example, what makes it seem imperative is code like:</p><ul><li>Whether a panel is hidden or shown is done reactively in 4 places (show+hide on initial add, show+hide on each click).</li><li>The <code>active</code> CSS class is added in two places, and removed in one place.</li><li>We have an event callback that does multiple things in response to a click</li></ul><p>The result is actually not that bad in this case, but I think the approach, when used in larger components and applications, eventually leads to spaghetti code.</p><p>You end up with lots of &ldquo;oh, remember to do this here and there and there&rdquo; lines in each place that responds to user input or logic changes. It becomes easy to miss places where updates need to happen, or not make the updates consistent, and results in bugs.</p><h1 id=the-declarative-approach>The Declarative Approach
+<a class=heading-link href=#the-declarative-approach><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h1><p>So, now let&rsquo;s try and refactor this code to being more declarative.</p><p>In taking on a declarative mindset, we want to think, without reacting to user input (e.g. event callbacks), how can we declare that some behavior of our UI should just happen?</p><p>For example, let&rsquo;s think of the behaviors of our tabs:</p><ul><li>When I am the current tab, show my panel</li><li>When I am the current tab, set <code>active</code> on my <code>li</code> tag</li><li>When I am clicked, make myself the current tab</li></ul><p>Looking at these behaviors, the notion of a &ldquo;current tab&rdquo; is pretty apparent. Really all of our behaviors are based around which tab is the current tab.</p><p>So, let&rsquo;s pull out that notion into an abstraction; let&rsquo;s make a <code>Tab</code> and a <code>currentTab</code>:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=display:flex><span><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>Tabs</span> <span style=color:#66d9ef>extends</span> CompositeIsWidget <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>private</span> IsTabsView view <span style=color:#f92672>=</span> newTabsView<span style=color:#f92672>();</span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>private</span> Tab currentTab<span style=color:#f92672>;</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>addTab</span><span style=color:#f92672>(</span>String tabName<span style=color:#f92672>,</span> IsWidget panel<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>    Tab tab <span style=color:#f92672>=</span> <span style=color:#66d9ef>new</span> Tab<span style=color:#f92672>(</span>tabName<span style=color:#f92672>,</span> panel<span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>if</span> <span style=color:#f92672>(</span>currentTab <span style=color:#f92672>==</span> <span style=color:#66d9ef>null</span><span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>      setCurrentTab<span style=color:#f92672>(</span>tab<span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>    view<span style=color:#f92672>.</span><span style=color:#a6e22e>list</span><span style=color:#f92672>().</span><span style=color:#a6e22e>add</span><span style=color:#f92672>(</span>tab<span style=color:#f92672>.</span><span style=color:#a6e22e>view</span><span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>private</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>setCurrentTab</span><span style=color:#f92672>(</span>Tab tab<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>if</span> <span style=color:#f92672>(</span>currentTab <span style=color:#f92672>!=</span> <span style=color:#66d9ef>null</span><span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>      <span style=color:#75715e>// unstyle old active tab;
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>    <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>    <span style=color:#75715e>// style new tab
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>    currentTab <span style=color:#f92672>=</span> tab<span style=color:#f92672>;</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>private</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>Tab</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>private</span> IsTabView view <span style=color:#f92672>=</span> newTabView<span style=color:#f92672>();</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>private</span> <span style=color:#a6e22e>Tab</span><span style=color:#f92672>(</span>String tabName<span style=color:#f92672>,</span> IsWidget panel<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>      view<span style=color:#f92672>.</span><span style=color:#a6e22e>addClickHandler</span><span style=color:#f92672>(</span><span style=color:#66d9ef>new</span> ClickHandler<span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>onClick</span><span style=color:#f92672>(</span>ClickEvent e<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>          setCurrentTab<span style=color:#f92672>(</span>Tab<span style=color:#f92672>.</span><span style=color:#a6e22e>this</span><span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>        <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>      <span style=color:#f92672>});</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>}</span>
+</span></span></code></pre></div><p>This is better. We&rsquo;ve moved the styling updates into one place, <code>setCurrentTab</code>, so things are not as spread out.</p><p>However, we&rsquo;re still stuck in the reactive model; we&rsquo;re having to remember to call <code>setCurrentTab</code> in all the right places. (Which, granted, in this small example is only two places).</p><p>The stumbling block is that <code>currentTab</code> is just a field&ndash;we can&rsquo;t react to its changes unless we manually add code before/after our own setting of the field.</p><p>Rich UI frameworks, Tessell included, solve this by promoting simple fields into stateful properties, which can watch their current value, and call observers when it is changed. The property is the foundation for models in traditional MVC.</p><p>So, let&rsquo;s change <code>currentTab</code> to a property:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=display:flex><span><span style=color:#66d9ef>private</span> BasicProperty<span style=color:#f92672>&lt;</span>Tab<span style=color:#f92672>&gt;</span> currentTab <span style=color:#f92672>=</span>
+</span></span><span style=display:flex><span>  basicProperty<span style=color:#f92672>(</span><span style=color:#e6db74>&#34;currentTab&#34;</span><span style=color:#f92672>);</span>
+</span></span></code></pre></div><p>Since we have an abstraction around the value instead of just the value, we can now setup declarations around the abstraction, the property, and not just the value itself.</p><p>To see how well this works out, we can re-examine our 3 behaviors, and see how they can be translated into declarations. (We&rsquo;ll use Tessell&rsquo;s DSL, but the same abstractions could be done in any MVC framework.)</p><ul><li><p>&ldquo;When I am the current tab, show my panel&rdquo; can look like:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=display:flex><span>binder<span style=color:#f92672>.</span><span style=color:#a6e22e>when</span><span style=color:#f92672>(</span>currentTab<span style=color:#f92672>).</span><span style=color:#a6e22e>is</span><span style=color:#f92672>(</span><span style=color:#66d9ef>this</span><span style=color:#f92672>).</span><span style=color:#a6e22e>show</span><span style=color:#f92672>(</span>panel<span style=color:#f92672>);</span>
+</span></span></code></pre></div></li><li><p>&ldquo;When I am the current tab, set <code>active</code> on my <code>li</code> tag&rdquo; can look like:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=display:flex><span>binder<span style=color:#f92672>.</span><span style=color:#a6e22e>when</span><span style=color:#f92672>(</span>currentTab<span style=color:#f92672>).</span><span style=color:#a6e22e>is</span><span style=color:#f92672>(</span><span style=color:#66d9ef>this</span><span style=color:#f92672>).</span><span style=color:#a6e22e>set</span><span style=color:#f92672>(</span>active<span style=color:#f92672>).</span><span style=color:#a6e22e>on</span><span style=color:#f92672>(</span>view<span style=color:#f92672>.</span><span style=color:#a6e22e>li</span><span style=color:#f92672>());</span>
+</span></span></code></pre></div></li><li><p>&ldquo;When I am clicked, make myself the current tab&rdquo; can look like:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=display:flex><span>binder<span style=color:#f92672>.</span><span style=color:#a6e22e>onClick</span><span style=color:#f92672>(</span>view<span style=color:#f92672>.</span><span style=color:#a6e22e>anchor</span><span style=color:#f92672>()).</span><span style=color:#a6e22e>set</span><span style=color:#f92672>(</span>currentTab<span style=color:#f92672>).</span><span style=color:#a6e22e>to</span><span style=color:#f92672>(</span><span style=color:#66d9ef>this</span><span style=color:#f92672>);</span>
+</span></span></code></pre></div></li></ul><p>And that&rsquo;s it.</p><p>With a property-based DSL, like in Tessell, we have a 1-to-1 mapping between a behavior and 1 line of code.</p><p>This behavior should then &ldquo;just work&rdquo; as the program runs. Whether in response to user input, or other business logic code changing the model, we don&rsquo;t care; our behavior should implicitly stay correctly applied.</p><h1 id=the-final-code>The Final Code
+<a class=heading-link href=#the-final-code><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h1><p>So, here&rsquo;s the full refactored code example:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=display:flex><span><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>Tabs</span> <span style=color:#66d9ef>extends</span> CompositeIsWidget <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>private</span> IsTabsView view <span style=color:#f92672>=</span> newTabsView<span style=color:#f92672>();</span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>private</span> Binder binder <span style=color:#f92672>=</span> <span style=color:#66d9ef>new</span> Binder<span style=color:#f92672>();</span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>private</span> BasicProperty<span style=color:#f92672>&lt;</span>Tab<span style=color:#f92672>&gt;</span> currentTab <span style=color:#f92672>=</span> basicProperty<span style=color:#f92672>(</span><span style=color:#e6db74>&#34;currentTab&#34;</span><span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>public</span> <span style=color:#a6e22e>Tabs</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>    setWidget<span style=color:#f92672>(</span>view<span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>addTab</span><span style=color:#f92672>(</span>String tabName<span style=color:#f92672>,</span> IsWidget panel<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>    Tab tab <span style=color:#f92672>=</span> <span style=color:#66d9ef>new</span> Tab<span style=color:#f92672>(</span>tabName<span style=color:#f92672>,</span> panel<span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>    currentTab<span style=color:#f92672>.</span><span style=color:#a6e22e>setIfNull</span><span style=color:#f92672>(</span>tab<span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>    view<span style=color:#f92672>.</span><span style=color:#a6e22e>list</span><span style=color:#f92672>().</span><span style=color:#a6e22e>add</span><span style=color:#f92672>(</span>tab<span style=color:#f92672>.</span><span style=color:#a6e22e>view</span><span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>private</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>Tab</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>private</span> IsTabView view <span style=color:#f92672>=</span> newTabView<span style=color:#f92672>();</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>private</span> <span style=color:#a6e22e>Tab</span><span style=color:#f92672>(</span>String tabName<span style=color:#f92672>,</span> IsWidget panel<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>      view<span style=color:#f92672>.</span><span style=color:#a6e22e>anchor</span><span style=color:#f92672>().</span><span style=color:#a6e22e>setText</span><span style=color:#f92672>(</span>tabName<span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>      binder<span style=color:#f92672>.</span><span style=color:#a6e22e>when</span><span style=color:#f92672>(</span>currentTab<span style=color:#f92672>).</span><span style=color:#a6e22e>is</span><span style=color:#f92672>(</span><span style=color:#66d9ef>this</span><span style=color:#f92672>).</span><span style=color:#a6e22e>show</span><span style=color:#f92672>(</span>panel<span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>      binder<span style=color:#f92672>.</span><span style=color:#a6e22e>when</span><span style=color:#f92672>(</span>currentTab<span style=color:#f92672>).</span><span style=color:#a6e22e>is</span><span style=color:#f92672>(</span><span style=color:#66d9ef>this</span><span style=color:#f92672>).</span><span style=color:#a6e22e>set</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;active&#34;</span><span style=color:#f92672>).</span><span style=color:#a6e22e>on</span><span style=color:#f92672>(</span>view<span style=color:#f92672>.</span><span style=color:#a6e22e>listItem</span><span style=color:#f92672>());</span>
+</span></span><span style=display:flex><span>      binder<span style=color:#f92672>.</span><span style=color:#a6e22e>onClick</span><span style=color:#f92672>(</span>view<span style=color:#f92672>.</span><span style=color:#a6e22e>anchor</span><span style=color:#f92672>()).</span><span style=color:#a6e22e>set</span><span style=color:#f92672>(</span>currentTab<span style=color:#f92672>).</span><span style=color:#a6e22e>to</span><span style=color:#f92672>(</span><span style=color:#66d9ef>this</span><span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>}</span>
+</span></span></code></pre></div><p>Note that:</p><ul><li>Every dynamic behavior is specified declaratively, in a single place.</li><li>We have zero callbacks (that are explicitly coded, obviously the DSL is setting some up behidn the scenes)</li></ul><p>To me, these are both signs of a well-designed UI library, whether in old-school GWT or (updated in 2018) new-kid React.</p><p>Granted, callbacks and imperative code will always be necessary for edge cases, but they should be the exception to the rule.</p><h1 id=when-this-works>When This Works
+<a class=heading-link href=#when-this-works><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h1><p>Obviously the success of this approach depends on the robustness of the binding DSL, as the DSL has to support the various behaviors you want to perform in a generic way.</p><p>Specifically for Tessell, I won&rsquo;t assert that Tessell&rsquo;s DSL is as refined as something like Hamcrest, which I think is the prototypical DSL in the Java world. But it supports a pretty wide array of behaviors, and is getting more when they are added as needed.</p><p>Besides the DSL, you also have to represent your problem domain as these stateful properties, basically models, to allow them to be passed declaratively into the DSL and for the DSL to be able to register observers and react to them.</p><p>I don&rsquo;t think either of these are large stumbling blocks, but they do require massaging your codebase to fit the MVC/property/DSL approach, instead of just using raw DTOs.</p><h1 id=rules-of-thumb>Rules of Thumb
+<a class=heading-link href=#rules-of-thumb><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h1><p>I have a few rules of thumb for thinking declaratively:</p><ul><li><p>If you find yourself both <em>doing</em> a behavior and later <em>undoing</em> that behavior (like applying then unapplying a style), this is a smell there there&rsquo;s some higher level abstraction that you could setup declaratively instead of performing it imperatively in multiple places.</p></li><li><p>Manual event listeners (e.g. anonymous inner classes for <code>addClickListener</code> in GWT, or anonymous functions for <code>element.onclick</code> in JavaScript) should be used sparingly, and, if really needed, be as tiny as possible.</p><p>Anonymous inner classes (or callback functions in JavaScript) are a smell that you&rsquo;re doing something reactively, e.g. responding to specific UI input and events, that you&rsquo;ll probably have to react to elsewhere in a different way, and so there might be an abstraction you could pull out.</p><p>(Tangentially, I think this minimizes the downside of using the Java language, which lacks closures, for rich UI development. Even if you had closures for reacting to user input, it&rsquo;s still a reactive model, and so will lead to the same spaghetti code, albeit with less anonymous inner class boilerplate.)</p></li><li><p>Try and think &ldquo;1 behavior == 1 line of code&rdquo;, and then extend your DSL as necessary to fit that.</p><p>Even if your behavior is not terribly generic, I think having it in your DSL and out of your controller/presenter code is a better separation of concerns anyway.</p></li></ul><h1 id=conclusion>Conclusion
+<a class=heading-link href=#conclusion><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h1><p>So, those are my thoughts on building a rich UI in a sane way.</p><p>I don&rsquo;t think this is terribly novel, as MVC is old-hat 1980s/90s stuff, albeit reinvented in Web 2.0 apps, and I think everyone generally acknowledges that declarative programming can be, for the right problems, much more succinct than imperative programming.</p><p>But I think, even if its not novel, its easy for developers to stay in an imperative mindset if you&rsquo;re not consciously thinking of looking for abstractions and pulling out declarations as they become apparent.</p></div><footer><div id=disqus_thread></div><script>window.disqus_config=function(){},function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById("disqus_thread").innerHTML="Disqus comments not available by default when the website is previewed locally.";return}var t=document,e=t.createElement("script");e.async=!0,e.src="//draconianoverlord.disqus.com/embed.js",e.setAttribute("data-timestamp",+new Date),(t.head||t.body).appendChild(e)}(),document.addEventListener("themeChanged",function(){document.readyState=="complete"&&DISQUS.reset({reload:!0,config:disqus_config})})</script></footer></article></section></div><footer class=footer><section class=container>©
 2008 -
-2022
+2023
 Stephen Haberman
 ·
-Powered by <a href=https://gohugo.io/>Hugo</a> & <a href=https://github.com/luizdepra/hugo-coder/>Coder</a>.
-</section>
-</footer>
-</main>
-<script src=/js/coder.min.03b17769f4f91ae35667e1f2a1ca8c16f50562576cf90ff32b3179926914daa5.js integrity="sha256-A7F3afT5GuNWZ+HyocqMFvUFYlds+Q/zKzF5kmkU2qU="></script>
-</body>
-</html>
+Powered by <a href=https://gohugo.io/ target=_blank rel=noopener>Hugo</a> & <a href=https://github.com/luizdepra/hugo-coder/ target=_blank rel=noopener>Coder</a>.</section></footer></main><script src=/js/coder.min.6ae284be93d2d19dad1f02b0039508d9aab3180a12a06dcc71b0b0ef7825a317.js integrity="sha256-auKEvpPS0Z2tHwKwA5UI2aqzGAoSoG3McbCw73gloxc="></script></body></html>

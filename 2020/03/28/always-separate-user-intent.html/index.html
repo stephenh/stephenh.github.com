@@ -1,153 +1,24 @@
-<!doctype html><html lang=en>
-<head>
-<meta charset=utf-8>
-<meta name=viewport content="width=device-width,initial-scale=1">
-<meta http-equiv=content-language content="en">
-<meta name=color-scheme content="light dark">
-<meta name=author content="Stephen Haberman">
-<meta name=description content="I&rsquo;ve had a rule of thumb for data modeling that unfortunately I forget on a regular basis, so I thought I&rsquo;d write it down to maybe help myself actually use it more.
+<!doctype html><html lang=en><head><title>Always Separate User Intent · Draconian Overlord</title><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=color-scheme content="light dark"><meta name=author content="Stephen Haberman"><meta name=description content="I&rsquo;ve had a rule of thumb for data modeling that unfortunately I forget on a regular basis, so I thought I&rsquo;d write it down to maybe help myself actually use it more.
 The rule of thumb is &ldquo;always separate user intent from derived behavior/business logic&rdquo;.
 This rule is particularly applicable to things like state or status fields, which have a way of becoming &ldquo;half-user controlled&rdquo; and &ldquo;half-system controlled&rdquo;.
-As the most recent example where I&rsquo;ve run across this, consider a system of tasks for a stereotypical &ldquo;tasks have predecessors/successor in a project plan&rdquo;:">
-<meta name=keywords content="blog,developer,personal">
-<meta name=twitter:card content="summary">
-<meta name=twitter:title content="Always Separate User Intent">
-<meta name=twitter:description content="I&rsquo;ve had a rule of thumb for data modeling that unfortunately I forget on a regular basis, so I thought I&rsquo;d write it down to maybe help myself actually use it more.
+As the most recent example where I&rsquo;ve run across this, consider a system of tasks for a stereotypical &ldquo;tasks have predecessors/successor in a project plan&rdquo;:"><meta name=keywords content="blog,developer,personal"><meta name=twitter:card content="summary"><meta name=twitter:title content="Always Separate User Intent"><meta name=twitter:description content="I&rsquo;ve had a rule of thumb for data modeling that unfortunately I forget on a regular basis, so I thought I&rsquo;d write it down to maybe help myself actually use it more.
 The rule of thumb is &ldquo;always separate user intent from derived behavior/business logic&rdquo;.
 This rule is particularly applicable to things like state or status fields, which have a way of becoming &ldquo;half-user controlled&rdquo; and &ldquo;half-system controlled&rdquo;.
-As the most recent example where I&rsquo;ve run across this, consider a system of tasks for a stereotypical &ldquo;tasks have predecessors/successor in a project plan&rdquo;:">
-<meta property="og:title" content="Always Separate User Intent">
-<meta property="og:description" content="I&rsquo;ve had a rule of thumb for data modeling that unfortunately I forget on a regular basis, so I thought I&rsquo;d write it down to maybe help myself actually use it more.
+As the most recent example where I&rsquo;ve run across this, consider a system of tasks for a stereotypical &ldquo;tasks have predecessors/successor in a project plan&rdquo;:"><meta property="og:title" content="Always Separate User Intent"><meta property="og:description" content="I&rsquo;ve had a rule of thumb for data modeling that unfortunately I forget on a regular basis, so I thought I&rsquo;d write it down to maybe help myself actually use it more.
 The rule of thumb is &ldquo;always separate user intent from derived behavior/business logic&rdquo;.
 This rule is particularly applicable to things like state or status fields, which have a way of becoming &ldquo;half-user controlled&rdquo; and &ldquo;half-system controlled&rdquo;.
-As the most recent example where I&rsquo;ve run across this, consider a system of tasks for a stereotypical &ldquo;tasks have predecessors/successor in a project plan&rdquo;:">
-<meta property="og:type" content="article">
-<meta property="og:url" content="https://www.draconianoverlord.com/2020/03/28/always-separate-user-intent.html/"><meta property="article:section" content="posts">
-<meta property="article:published_time" content="2020-03-28T00:00:00+00:00">
-<meta property="article:modified_time" content="2020-03-28T00:00:00+00:00">
-<title>
-Always Separate User Intent · Draconian Overlord
-</title>
-<link rel=canonical href=https://www.draconianoverlord.com/2020/03/28/always-separate-user-intent.html/>
-<link rel=preload href="/fonts/forkawesome-webfont.woff2?v=1.2.0" as=font type=font/woff2 crossorigin>
-<link rel=stylesheet href=/css/coder.min.d9fddbffe6f27e69985dc5fe0471cdb0e57fbf4775714bc3d847accb08f4a1f6.css integrity="sha256-2f3b/+byfmmYXcX+BHHNsOV/v0d1cUvD2Eesywj0ofY=" crossorigin=anonymous media=screen>
-<link rel=stylesheet href=/css/coder-dark.min.aa883b9ce35a8ff4a2a5008619005175e842bb18a8a9f9cc2bbcf44dab2d91fa.css integrity="sha256-qog7nONaj/SipQCGGQBRdehCuxioqfnMK7z0Tastkfo=" crossorigin=anonymous media=screen>
-<link rel=icon type=image/png href=/images/favicon-32x32.png sizes=32x32>
-<link rel=icon type=image/png href=/images/favicon-16x16.png sizes=16x16>
-<link rel=apple-touch-icon href=/images/apple-touch-icon.png>
-<link rel=apple-touch-icon sizes=180x180 href=/images/apple-touch-icon.png>
-<meta name=generator content="Hugo 0.92.0">
-</head>
-<body class="preload-transitions colorscheme-auto">
-<div class=float-container>
-<a id=dark-mode-toggle class=colorscheme-toggle>
-<i class="fa fa-adjust fa-fw" aria-hidden=true></i>
-</a>
-</div>
-<main class=wrapper>
-<nav class=navigation>
-<section class=container>
-<a class=navigation-title href=/>Draconian Overlord</a>
-Oppressing software entropy
-</section>
-</nav>
-<div class=content>
-<section class="container post">
-<article>
-<header>
-<div class=post-title>
-<h1 class=title>
-<a class=title-link href=https://www.draconianoverlord.com/2020/03/28/always-separate-user-intent.html/>
-Always Separate User Intent
-</a>
-</h1>
-</div>
-<div class=post-meta>
-<div class=date>
-<span class=posted-on>
-<i class="fa fa-calendar" aria-hidden=true></i>
-<time datetime=2020-03-28T00:00:00Z>
-March 28, 2020
-</time>
-</span>
-<span class=reading-time>
-<i class="fa fa-clock-o" aria-hidden=true></i>
-3-minute read
-</span>
-</div>
-<div class=categories>
-<i class="fa fa-folder" aria-hidden=true></i>
-<a href=/categories/architecture/>Architecture</a></div>
-</div>
-</header>
-<div>
-<p>I&rsquo;ve had a rule of thumb for data modeling that unfortunately I forget on a regular basis, so I thought I&rsquo;d write it down to maybe help myself actually use it more.</p>
-<p>The rule of thumb is &ldquo;always separate user intent from derived behavior/business logic&rdquo;.</p>
-<p>This rule is particularly applicable to things like <code>state</code> or <code>status</code> fields, which have a way of becoming &ldquo;half-user controlled&rdquo; and &ldquo;half-system controlled&rdquo;.</p>
-<p>As the most recent example where I&rsquo;ve run across this, consider a system of tasks for a stereotypical &ldquo;tasks have predecessors/successor in a project plan&rdquo;:</p>
-<p>In terms of data model, we&rsquo;ll focus on just a few things:</p>
-<ul>
-<li>There is a task <code>status</code> field that has three potential values: <code>NotStarted</code>, <code>InProgress</code>, and <code>Complete</code></li>
-<li>The requirements state that the system handles all <code>NotStarted &lt;-> InProgress</code> transitions, i.e. it &ldquo;auto-starts&rdquo; tasks once preceeding tasks are <code>Complete</code>.</li>
-<li>However only the user can say &ldquo;this task is actually done (or not done)&rdquo;.</li>
-</ul>
-<h2 id=an-okay-way>
-An Okay Way
-<a class=heading-link href=#an-okay-way>
-<i class="fa fa-link" aria-hidden=true></i>
-</a>
-</h2>
-<p>An initial attempt at modeling this is a single <code>Task.status</code> field that is an enum of <code>NotStarted</code>, <code>InProgress</code>, and <code>Complete</code>.</p>
-<p>Then we use business logic to do &ldquo;not rocket science but still somewhat nuanced&rdquo; things like:</p>
-<ul>
-<li>Anytime a predecessor task changes <em>maybe</em> change the successor Task&rsquo;s <code>status</code>, but only if it&rsquo;s not <code>Complete</code></li>
-<li>In the UI, treat <code>status = Complete</code> as &ldquo;you checked complete&rdquo; but <code>status = NotStarted | InProgress</code> as &ldquo;you didn&rsquo;t check complete&rdquo;</li>
-</ul>
-<p>This is all fine and not that bad, but we end up with a &ldquo;sometimes the field is written by X and sometimes it is written by Y&rdquo;:</p>
-<p>Which is not terrible, but generally more of a &ldquo;business logic is hidden in susceptible-to-being-spaghetti &lsquo;push&rsquo; code&rdquo;.</p>
-<p>I.e. it&rsquo;s pretty common in this setup for, if the user <em>unchecks</em> &ldquo;task is complete&rdquo;, to forget to re-run the &ldquo;ah right, set it back to the &lsquo;based on predecessors&rsquo; value&rdquo; logic.</p>
-<h2 id=a-better-way>
-A Better Way
-<a class=heading-link href=#a-better-way>
-<i class="fa fa-link" aria-hidden=true></i>
-</a>
-</h2>
-<p>Generally a cleaner way of modeling things is to strictly delineate user intent from derived behavior, i.e.:</p>
-<ul>
-<li>The user intent of &ldquo;this is complete yes/no&rdquo; is it&rsquo;s own &ldquo;thing&rdquo; (database field)</li>
-<li>The calculated &ldquo;potential status based on predecessors&rdquo; logic is it&rsquo;s own thing (derived field)</li>
-<li>The calculated combination of &ldquo;status based on user intent or potential status based on predecessors&rdquo; is it&rsquo;s own thing (another derived field)</li>
-</ul>
-<p>I.e. our data model would move from having a single <code>status</code> field to:</p>
-<ul>
-<li><code>Task.is_complete</code> is a boolean that is directly/always controlled by the user intent to mark &ldquo;yes, this is/is not done&rdquo;</li>
-<li><code>Task.status_based_on_predecessors</code> (probably not stored/persisted, so not a real column-in-the-db) does the calc of &ldquo;this task should be <code>InProgress</code> if all predecessors are <code>Complete</code>, otherwise <code>NotStarted</code>&rdquo;</li>
-<li><code>Task.status</code> still exists, but is now derived (although likely still persisted for simplicity of reads) by the calculation &ldquo;if <code>is_complete</code> then <code>Complete</code> else <code>status_based_on_predecessors</code>&rdquo; i.e. <code>InProgress</code> or <code>NotStarted</code></li>
-</ul>
-<p>This moves the model to be more like a DAG of inputs with nodes of calculated values:</p>
-<p>Which makes the application logic more functional, more reactive, rather than <code>if</code> statements sprinkled in various places.</p>
-<p>Granted, a separate but tempting tangent is that reactive / data flow paradigms have not generally taken hold on the server-side yet, especially at a &ldquo;more than just lifecycle hooks within a single micro-service/monolith/ORM codebase&rdquo; scale, so you still have to generally nudge/wire these derived values together, but I think the end result is still cleaner than the original &ldquo;fuzzy ownership of a single field&rdquo; approach.</p>
-</div>
-<footer>
-<div id=disqus_thread></div>
-<script type=application/javascript>var disqus_config=function(){};(function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById('disqus_thread').innerHTML='Disqus comments not available by default when the website is previewed locally.';return}var b=document,a=b.createElement('script');a.async=!0,a.src='//draconianoverlord.disqus.com/embed.js',a.setAttribute('data-timestamp',+new Date),(b.head||b.body).appendChild(a)})()</script>
-<noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript>
-<a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a>
-</footer>
-</article>
-</section>
-</div>
-<footer class=footer>
-<section class=container>
-©
+As the most recent example where I&rsquo;ve run across this, consider a system of tasks for a stereotypical &ldquo;tasks have predecessors/successor in a project plan&rdquo;:"><meta property="og:type" content="article"><meta property="og:url" content="https://www.draconianoverlord.com/2020/03/28/always-separate-user-intent.html/"><meta property="article:section" content="posts"><meta property="article:published_time" content="2020-03-28T00:00:00+00:00"><meta property="article:modified_time" content="2020-03-28T00:00:00+00:00"><link rel=canonical href=https://www.draconianoverlord.com/2020/03/28/always-separate-user-intent.html/><link rel=preload href="/fonts/forkawesome-webfont.woff2?v=1.2.0" as=font type=font/woff2 crossorigin><link rel=stylesheet href=/css/coder.min.65236a6d834b26194eed04a2a3b45e44d9194ef9e620253705d4bef03bd7ef81.css integrity="sha256-ZSNqbYNLJhlO7QSio7ReRNkZTvnmICU3BdS+8DvX74E=" crossorigin=anonymous media=screen><link rel=stylesheet href=/css/coder-dark.min.f6534b0b446b75d9b6ad77a97d43ede2ddaeff1b6e2361fb7198d6f8fcb7f83f.css integrity="sha256-9lNLC0Rrddm2rXepfUPt4t2u/xtuI2H7cZjW+Py3+D8=" crossorigin=anonymous media=screen><link rel=icon type=image/png href=/images/favicon-32x32.png sizes=32x32><link rel=icon type=image/png href=/images/favicon-16x16.png sizes=16x16><link rel=apple-touch-icon href=/images/apple-touch-icon.png><link rel=apple-touch-icon sizes=180x180 href=/images/apple-touch-icon.png><link rel=manifest href=/site.webmanifest><link rel=mask-icon href=/images/safari-pinned-tab.svg color=#5bbad5></head><body class="preload-transitions colorscheme-auto"><div class=float-container><a id=dark-mode-toggle class=colorscheme-toggle><i class="fa fa-adjust fa-fw" aria-hidden=true></i></a></div><main class=wrapper><nav class=navigation><section class=container><a class=navigation-title href=/>Draconian Overlord</a>
+Oppressing software entropy</section></nav><div class=content><section class="container post"><article><header><div class=post-title><h1 class=title><a class=title-link href=https://www.draconianoverlord.com/2020/03/28/always-separate-user-intent.html/>Always Separate User Intent</a></h1></div><div class=post-meta><div class=date><span class=posted-on><i class="fa fa-calendar" aria-hidden=true></i>
+<time datetime=2020-03-28T00:00:00Z>March 28, 2020</time></span>
+<span class=reading-time><i class="fa fa-clock-o" aria-hidden=true></i>
+3-minute read</span></div><div class=categories><i class="fa fa-folder" aria-hidden=true></i>
+<a href=/categories/architecture/>Architecture</a></div></div></header><div class=post-content><p>I&rsquo;ve had a rule of thumb for data modeling that unfortunately I forget on a regular basis, so I thought I&rsquo;d write it down to maybe help myself actually use it more.</p><p>The rule of thumb is &ldquo;always separate user intent from derived behavior/business logic&rdquo;.</p><p>This rule is particularly applicable to things like <code>state</code> or <code>status</code> fields, which have a way of becoming &ldquo;half-user controlled&rdquo; and &ldquo;half-system controlled&rdquo;.</p><p>As the most recent example where I&rsquo;ve run across this, consider a system of tasks for a stereotypical &ldquo;tasks have predecessors/successor in a project plan&rdquo;:</p><p>In terms of data model, we&rsquo;ll focus on just a few things:</p><ul><li>There is a task <code>status</code> field that has three potential values: <code>NotStarted</code>, <code>InProgress</code>, and <code>Complete</code></li><li>The requirements state that the system handles all <code>NotStarted &lt;-> InProgress</code> transitions, i.e. it &ldquo;auto-starts&rdquo; tasks once preceeding tasks are <code>Complete</code>.</li><li>However only the user can say &ldquo;this task is actually done (or not done)&rdquo;.</li></ul><h2 id=an-okay-way>An Okay Way
+<a class=heading-link href=#an-okay-way><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h2><p>An initial attempt at modeling this is a single <code>Task.status</code> field that is an enum of <code>NotStarted</code>, <code>InProgress</code>, and <code>Complete</code>.</p><p>Then we use business logic to do &ldquo;not rocket science but still somewhat nuanced&rdquo; things like:</p><ul><li>Anytime a predecessor task changes <em>maybe</em> change the successor Task&rsquo;s <code>status</code>, but only if it&rsquo;s not <code>Complete</code></li><li>In the UI, treat <code>status = Complete</code> as &ldquo;you checked complete&rdquo; but <code>status = NotStarted | InProgress</code> as &ldquo;you didn&rsquo;t check complete&rdquo;</li></ul><p>This is all fine and not that bad, but we end up with a &ldquo;sometimes the field is written by X and sometimes it is written by Y&rdquo;:</p><p>Which is not terrible, but generally more of a &ldquo;business logic is hidden in susceptible-to-being-spaghetti &lsquo;push&rsquo; code&rdquo;.</p><p>I.e. it&rsquo;s pretty common in this setup for, if the user <em>unchecks</em> &ldquo;task is complete&rdquo;, to forget to re-run the &ldquo;ah right, set it back to the &lsquo;based on predecessors&rsquo; value&rdquo; logic.</p><h2 id=a-better-way>A Better Way
+<a class=heading-link href=#a-better-way><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h2><p>Generally a cleaner way of modeling things is to strictly delineate user intent from derived behavior, i.e.:</p><ul><li>The user intent of &ldquo;this is complete yes/no&rdquo; is it&rsquo;s own &ldquo;thing&rdquo; (database field)</li><li>The calculated &ldquo;potential status based on predecessors&rdquo; logic is it&rsquo;s own thing (derived field)</li><li>The calculated combination of &ldquo;status based on user intent or potential status based on predecessors&rdquo; is it&rsquo;s own thing (another derived field)</li></ul><p>I.e. our data model would move from having a single <code>status</code> field to:</p><ul><li><code>Task.is_complete</code> is a boolean that is directly/always controlled by the user intent to mark &ldquo;yes, this is/is not done&rdquo;</li><li><code>Task.status_based_on_predecessors</code> (probably not stored/persisted, so not a real column-in-the-db) does the calc of &ldquo;this task should be <code>InProgress</code> if all predecessors are <code>Complete</code>, otherwise <code>NotStarted</code>&rdquo;</li><li><code>Task.status</code> still exists, but is now derived (although likely still persisted for simplicity of reads) by the calculation &ldquo;if <code>is_complete</code> then <code>Complete</code> else <code>status_based_on_predecessors</code>&rdquo; i.e. <code>InProgress</code> or <code>NotStarted</code></li></ul><p>This moves the model to be more like a DAG of inputs with nodes of calculated values:</p><p>Which makes the application logic more functional, more reactive, rather than <code>if</code> statements sprinkled in various places.</p><p>Granted, a separate but tempting tangent is that reactive / data flow paradigms have not generally taken hold on the server-side yet, especially at a &ldquo;more than just lifecycle hooks within a single micro-service/monolith/ORM codebase&rdquo; scale, so you still have to generally nudge/wire these derived values together, but I think the end result is still cleaner than the original &ldquo;fuzzy ownership of a single field&rdquo; approach.</p></div><footer><div id=disqus_thread></div><script>window.disqus_config=function(){},function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById("disqus_thread").innerHTML="Disqus comments not available by default when the website is previewed locally.";return}var t=document,e=t.createElement("script");e.async=!0,e.src="//draconianoverlord.disqus.com/embed.js",e.setAttribute("data-timestamp",+new Date),(t.head||t.body).appendChild(e)}(),document.addEventListener("themeChanged",function(){document.readyState=="complete"&&DISQUS.reset({reload:!0,config:disqus_config})})</script></footer></article></section></div><footer class=footer><section class=container>©
 2008 -
-2022
+2023
 Stephen Haberman
 ·
-Powered by <a href=https://gohugo.io/>Hugo</a> & <a href=https://github.com/luizdepra/hugo-coder/>Coder</a>.
-</section>
-</footer>
-</main>
-<script src=/js/coder.min.03b17769f4f91ae35667e1f2a1ca8c16f50562576cf90ff32b3179926914daa5.js integrity="sha256-A7F3afT5GuNWZ+HyocqMFvUFYlds+Q/zKzF5kmkU2qU="></script>
-</body>
-</html>
+Powered by <a href=https://gohugo.io/ target=_blank rel=noopener>Hugo</a> & <a href=https://github.com/luizdepra/hugo-coder/ target=_blank rel=noopener>Coder</a>.</section></footer></main><script src=/js/coder.min.6ae284be93d2d19dad1f02b0039508d9aab3180a12a06dcc71b0b0ef7825a317.js integrity="sha256-auKEvpPS0Z2tHwKwA5UI2aqzGAoSoG3McbCw73gloxc="></script></body></html>

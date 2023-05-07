@@ -1,269 +1,92 @@
-<!doctype html><html lang=en>
-<head>
-<meta charset=utf-8>
-<meta name=viewport content="width=device-width,initial-scale=1">
-<meta http-equiv=content-language content="en">
-<meta name=color-scheme content="light dark">
-<meta name=author content="Stephen Haberman">
-<meta name=description content="Prefetching is pretty well-known technique for optimizing ORM/database access. However, I was surprised at how much thought and cool stuff people are doing with it.
-n+1 Selects    The problem prefetching solves is known as n+1 selects. It is best seen by a code example:
-Blog blog = loadBlog(1); // load from somewhere for (Post post : blog.getPosts()) { for (Comment comment : post.getComments()) { render(comment); } } This usage almost always means:">
-<meta name=keywords content="blog,developer,personal">
-<meta name=twitter:card content="summary">
-<meta name=twitter:title content="Joist/ORM Prefetching">
-<meta name=twitter:description content="Prefetching is pretty well-known technique for optimizing ORM/database access. However, I was surprised at how much thought and cool stuff people are doing with it.
-n+1 Selects    The problem prefetching solves is known as n+1 selects. It is best seen by a code example:
-Blog blog = loadBlog(1); // load from somewhere for (Post post : blog.getPosts()) { for (Comment comment : post.getComments()) { render(comment); } } This usage almost always means:">
-<meta property="og:title" content="Joist/ORM Prefetching">
-<meta property="og:description" content="Prefetching is pretty well-known technique for optimizing ORM/database access. However, I was surprised at how much thought and cool stuff people are doing with it.
-n+1 Selects    The problem prefetching solves is known as n+1 selects. It is best seen by a code example:
-Blog blog = loadBlog(1); // load from somewhere for (Post post : blog.getPosts()) { for (Comment comment : post.getComments()) { render(comment); } } This usage almost always means:">
-<meta property="og:type" content="article">
-<meta property="og:url" content="https://www.draconianoverlord.com/2010/07/16/joist/orm-prefetching.html/"><meta property="article:section" content="posts">
-<meta property="article:published_time" content="2010-07-16T00:00:00+00:00">
-<meta property="article:modified_time" content="2010-07-16T00:00:00+00:00">
-<title>
-Joist/ORM Prefetching · Draconian Overlord
-</title>
-<link rel=canonical href=https://www.draconianoverlord.com/2010/07/16/joist/orm-prefetching.html/>
-<link rel=preload href="/fonts/forkawesome-webfont.woff2?v=1.2.0" as=font type=font/woff2 crossorigin>
-<link rel=stylesheet href=/css/coder.min.d9fddbffe6f27e69985dc5fe0471cdb0e57fbf4775714bc3d847accb08f4a1f6.css integrity="sha256-2f3b/+byfmmYXcX+BHHNsOV/v0d1cUvD2Eesywj0ofY=" crossorigin=anonymous media=screen>
-<link rel=stylesheet href=/css/coder-dark.min.aa883b9ce35a8ff4a2a5008619005175e842bb18a8a9f9cc2bbcf44dab2d91fa.css integrity="sha256-qog7nONaj/SipQCGGQBRdehCuxioqfnMK7z0Tastkfo=" crossorigin=anonymous media=screen>
-<link rel=icon type=image/png href=/images/favicon-32x32.png sizes=32x32>
-<link rel=icon type=image/png href=/images/favicon-16x16.png sizes=16x16>
-<link rel=apple-touch-icon href=/images/apple-touch-icon.png>
-<link rel=apple-touch-icon sizes=180x180 href=/images/apple-touch-icon.png>
-<meta name=generator content="Hugo 0.92.0">
-</head>
-<body class="preload-transitions colorscheme-auto">
-<div class=float-container>
-<a id=dark-mode-toggle class=colorscheme-toggle>
-<i class="fa fa-adjust fa-fw" aria-hidden=true></i>
-</a>
-</div>
-<main class=wrapper>
-<nav class=navigation>
-<section class=container>
-<a class=navigation-title href=/>Draconian Overlord</a>
-Oppressing software entropy
-</section>
-</nav>
-<div class=content>
-<section class="container post">
-<article>
-<header>
-<div class=post-title>
-<h1 class=title>
-<a class=title-link href=https://www.draconianoverlord.com/2010/07/16/joist/orm-prefetching.html/>
-Joist/ORM Prefetching
-</a>
-</h1>
-</div>
-<div class=post-meta>
-<div class=date>
-<span class=posted-on>
-<i class="fa fa-calendar" aria-hidden=true></i>
-<time datetime=2010-07-16T00:00:00Z>
-July 16, 2010
-</time>
-</span>
-<span class=reading-time>
-<i class="fa fa-clock-o" aria-hidden=true></i>
-6-minute read
-</span>
-</div>
-<div class=categories>
-<i class="fa fa-folder" aria-hidden=true></i>
-<a href=/categories/joist/>Joist</a></div>
-</div>
-</header>
-<div>
-<p>Prefetching is pretty well-known technique for optimizing ORM/database access. However, I was surprised at how much thought and cool stuff people are doing with it.</p>
-<h2 id=n1-selects>
-<code>n+1</code> Selects
-<a class=heading-link href=#n1-selects>
-<i class="fa fa-link" aria-hidden=true></i>
-</a>
-</h2>
-<p>The problem prefetching solves is known as <code>n+1</code> selects. It is best seen by a code example:</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java>Blog blog <span style=color:#f92672>=</span> loadBlog<span style=color:#f92672>(</span>1<span style=color:#f92672>);</span> <span style=color:#75715e>// load from somewhere
-</span><span style=color:#75715e></span><span style=color:#66d9ef>for</span> <span style=color:#f92672>(</span>Post post <span style=color:#f92672>:</span> blog<span style=color:#f92672>.</span><span style=color:#a6e22e>getPosts</span><span style=color:#f92672>())</span> <span style=color:#f92672>{</span>
-    <span style=color:#66d9ef>for</span> <span style=color:#f92672>(</span>Comment comment <span style=color:#f92672>:</span> post<span style=color:#f92672>.</span><span style=color:#a6e22e>getComments</span><span style=color:#f92672>())</span> <span style=color:#f92672>{</span>
-        render<span style=color:#f92672>(</span>comment<span style=color:#f92672>);</span>
-    <span style=color:#f92672>}</span>
-<span style=color:#f92672>}</span>
-</code></pre></div><p>This usage almost always means:</p>
-<ul>
-<li>1 query of <code>SELECT * FROM blog WHERE id = 1</code>&ndash;loads 1 blog</li>
-<li>1 query of <code>SELECT * FROM post WHERE blog_id = 1</code>&ndash;loads N posts</li>
-<li>N queries of <code>SELECT * FROM comment WHERE post_id = x</code>&ndash;loads 1 comment, repeatedly for each post</li>
-</ul>
-<p>If you have 20 blogs, you&rsquo;ll end up with 22 SQL calls back/forth to the database. Each call is a network trip, so this can quickly slow down your application.</p>
-<p>The goal of prefetching is to load the entire blog/posts/comments object graph with as few SQL calls as possible. Depending on the approach, you can have as few as 1 SQL call, which is a huge savings and will result in very real performance improvements.</p>
-<h2 id=explicit-pre-fetching>
-Explicit Pre-Fetching
-<a class=heading-link href=#explicit-pre-fetching>
-<i class="fa fa-link" aria-hidden=true></i>
-</a>
-</h2>
-<p>Traditionally, ORMs required explicit custom queries to prefetch an entire object graph.</p>
-<p>For example, with Hibernate you&rsquo;d do <a href=http://docs.jboss.org/hibernate/stable/core/reference/en/html_single/#querycriteria-dynamicfetching>something like</a>:</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=color:#66d9ef>public</span> Blog <span style=color:#a6e22e>loadViaCustomQuery</span><span style=color:#f92672>(</span><span style=color:#66d9ef>int</span> id<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
-  List blogs <span style=color:#f92672>=</span> sess<span style=color:#f92672>.</span><span style=color:#a6e22e>createCriteria</span><span style=color:#f92672>(</span>Blog<span style=color:#f92672>.</span><span style=color:#a6e22e>class</span><span style=color:#f92672>)</span>
-    <span style=color:#f92672>.</span><span style=color:#a6e22e>add</span><span style=color:#f92672>(</span>Restrictions<span style=color:#f92672>.</span><span style=color:#a6e22e>equal</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;id&#34;</span><span style=color:#f92672>,</span> id<span style=color:#f92672>))</span>
-    <span style=color:#f92672>.</span><span style=color:#a6e22e>setFetchMode</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;posts&#34;</span><span style=color:#f92672>,</span> FetchMode<span style=color:#f92672>.</span><span style=color:#a6e22e>EAGER</span><span style=color:#f92672>)</span>
-    <span style=color:#f92672>.</span><span style=color:#a6e22e>list</span><span style=color:#f92672>();</span>
-  <span style=color:#66d9ef>return</span> blogs<span style=color:#f92672>.</span><span style=color:#a6e22e>get</span><span style=color:#f92672>(</span>0<span style=color:#f92672>);</span>
-<span style=color:#f92672>}</span>
-</code></pre></div><p>The code then becomes:</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java>Blog blog <span style=color:#f92672>=</span> loadViaCustomQuery<span style=color:#f92672>(</span>1<span style=color:#f92672>);</span>
-<span style=color:#66d9ef>for</span> <span style=color:#f92672>(</span>Post post <span style=color:#f92672>:</span> blog<span style=color:#f92672>.</span><span style=color:#a6e22e>getPosts</span><span style=color:#f92672>())</span> <span style=color:#f92672>{</span>
-    <span style=color:#66d9ef>for</span> <span style=color:#f92672>(</span>Comment comment <span style=color:#f92672>:</span> post<span style=color:#f92672>.</span><span style=color:#a6e22e>getComments</span><span style=color:#f92672>())</span> <span style=color:#f92672>{</span>
-        render<span style=color:#f92672>(</span>comment<span style=color:#f92672>);</span>
-    <span style=color:#f92672>}</span>
-<span style=color:#f92672>}</span>
-</code></pre></div><p>This usage means:</p>
-<ul>
-<li>1 query of <code>SELECT b.*, p.* FROM blog b, LEFT OUTER JOIN posts p ON b.id = p.blog_id WHERE b.id = 1</code>&ndash;loads 1 blog plus <code>n</code> posts</li>
-<li><code>n</code> queries of <code>SELECT * FROM comment WHERE post_id = x</code>&ndash;loads 1 comment, repeatedly for each post</li>
-</ul>
-<p>So we removed 1 extra query, going from 22 calls to 21 calls, but we really we haven&rsquo;t avoided the <code>n+1</code> problem&ndash;I&rsquo;m still poking around Hibernate docs to see if you can bring back sub-sub-collections via prefetching.</p>
-<p>(<strong>Disclaimer</strong>: I don&rsquo;t have an active Hibernate setup right now&ndash;I&rsquo;ll come back and update this if I ever get it figured out, but until then, please correct any of the technical points I have wrong.)</p>
-<p>Even so, there are several problems with explicit prefetching:</p>
-<ul>
-<li>It requires up-front developer effort to write a custom query with correct prefetch semantics</li>
-<li>It requires on-going developer effort to update the custom query as the code changes what parts of the object graph it does/does not need&ndash;performance could actually end up degraded if the wrong data is being prefetched</li>
-</ul>
-<h2 id=implicit-pre-fetching>
-Implicit Pre-Fetching
-<a class=heading-link href=#implicit-pre-fetching>
-<i class="fa fa-link" aria-hidden=true></i>
-</a>
-</h2>
-<p>What seems more novel to me is eschewing custom queries and the ORM just being more intelligent about its usage.</p>
-<p>One trick that Hibernate actually already implements is <a href=http://docs.jboss.org/hibernate/stable/core/reference/en/html_single/#performance-fetching-subselect>subselect fetching</a>. The idea is that when you&rsquo;re mapping your <code>Post</code> class, you set <code>fetch=subselect</code> on the <code>comments</code> element:</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-xml data-lang=xml><span style=color:#f92672>&lt;class</span> <span style=color:#a6e22e>name=</span><span style=color:#e6db74>&#34;Post&#34;</span><span style=color:#f92672>&gt;</span>
-    <span style=color:#75715e>&lt;!-- ... other mappings ... --&gt;</span>
-    <span style=color:#f92672>&lt;set</span> <span style=color:#a6e22e>name=</span><span style=color:#e6db74>&#34;comments&#34;</span> <span style=color:#a6e22e>fetch=</span><span style=color:#e6db74>&#34;subselect&#34;</span><span style=color:#f92672>&gt;</span>
-        <span style=color:#f92672>&lt;key</span> <span style=color:#a6e22e>column=</span><span style=color:#e6db74>&#34;post_id&#34;</span> <span style=color:#a6e22e>not-null=</span><span style=color:#e6db74>&#34;true&#34;</span><span style=color:#f92672>/&gt;</span>
-        <span style=color:#f92672>&lt;one-to-many</span> <span style=color:#a6e22e>class=</span><span style=color:#e6db74>&#34;Comment&#34;</span><span style=color:#f92672>/&gt;</span>
-    <span style=color:#f92672>&lt;/set&gt;</span>
-<span style=color:#f92672>&lt;/class&gt;</span>
-</code></pre></div><p>Now our original code snippet:</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java>Blog blog <span style=color:#f92672>=</span> loadBlog<span style=color:#f92672>(</span>1<span style=color:#f92672>);</span> <span style=color:#75715e>// load from somewhere
-</span><span style=color:#75715e></span><span style=color:#66d9ef>for</span> <span style=color:#f92672>(</span>Post post <span style=color:#f92672>:</span> blog<span style=color:#f92672>.</span><span style=color:#a6e22e>getPosts</span><span style=color:#f92672>())</span> <span style=color:#f92672>{</span>
-    <span style=color:#66d9ef>for</span> <span style=color:#f92672>(</span>Comment comment <span style=color:#f92672>:</span> post<span style=color:#f92672>.</span><span style=color:#a6e22e>getComments</span><span style=color:#f92672>())</span> <span style=color:#f92672>{</span>
-        render<span style=color:#f92672>(</span>comment<span style=color:#f92672>);</span>
-    <span style=color:#f92672>}</span>
-<span style=color:#f92672>}</span>
-</code></pre></div><p>Will result in these queries:</p>
-<ul>
-<li>1 query on <code>loadBlog(1)</code> of <code>SELECT * FROM blog WHERE id = 1</code>&ndash;loads 1 blog</li>
-<li>1 query on <code>blog.getPosts()</code> of <code>SELECT * FROM post WHERE blog_id = 1</code>&ndash;loads <code>n</code> posts</li>
-<li>1 query on the 1st <code>post.getComments()</code> of <code>SELECT * FROM comment WHERE post_id IN (N post ids)</code>&ndash;loads <code>m</code> comments</li>
-</ul>
-<p><strong>Update</strong>: I reproduced this behavior in a project with <code>Parent</code>/<code>Child</code>/<code>GrandChild</code>, here is SQL Hibernate generated:</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sql data-lang=sql><span style=color:#66d9ef>select</span>
-  parent0_.id <span style=color:#66d9ef>as</span> id0_0_,
-  parent0_.<span style=color:#66d9ef>version</span> <span style=color:#66d9ef>as</span> version0_0_,
-  parent0_.<span style=color:#e6db74>&#34;name&#34;</span> <span style=color:#66d9ef>as</span> name3_0_0_
-  <span style=color:#66d9ef>from</span> <span style=color:#e6db74>&#34;parent&#34;</span> parent0_
-  <span style=color:#66d9ef>where</span> parent0_.id<span style=color:#f92672>=?</span>
-<span style=color:#66d9ef>select</span>
-  childs0_.parent_id <span style=color:#66d9ef>as</span> parent3_1_,
-  childs0_.id <span style=color:#66d9ef>as</span> id1_,
-  childs0_.id <span style=color:#66d9ef>as</span> id1_0_,
-  childs0_.<span style=color:#66d9ef>version</span> <span style=color:#66d9ef>as</span> version1_0_,
-  childs0_.<span style=color:#e6db74>&#34;parent_id&#34;</span> <span style=color:#66d9ef>as</span> parent3_1_0_,
-  childs0_.<span style=color:#e6db74>&#34;name&#34;</span> <span style=color:#66d9ef>as</span> name4_1_0_
-  <span style=color:#66d9ef>from</span> <span style=color:#e6db74>&#34;child&#34;</span> childs0_
-  <span style=color:#66d9ef>where</span> childs0_.parent_id<span style=color:#f92672>=?</span>
-<span style=color:#66d9ef>select</span>
-  grandchild0_.child_id <span style=color:#66d9ef>as</span> child3_1_,
-  grandchild0_.id <span style=color:#66d9ef>as</span> id1_,
-  grandchild0_.id <span style=color:#66d9ef>as</span> id2_0_,
-  grandchild0_.<span style=color:#66d9ef>version</span> <span style=color:#66d9ef>as</span> version2_0_,
-  grandchild0_.<span style=color:#e6db74>&#34;child_id&#34;</span> <span style=color:#66d9ef>as</span> child3_2_0_,
-  grandchild0_.<span style=color:#e6db74>&#34;name&#34;</span> <span style=color:#66d9ef>as</span> name4_2_0_
-  <span style=color:#66d9ef>from</span> <span style=color:#e6db74>&#34;grand_child&#34;</span> grandchild0_
-  <span style=color:#66d9ef>where</span> grandchild0_.child_id <span style=color:#66d9ef>in</span> (
-    <span style=color:#66d9ef>select</span> childs0_.id
-    <span style=color:#66d9ef>from</span> <span style=color:#e6db74>&#34;child&#34;</span> childs0_
-    <span style=color:#66d9ef>where</span> childs0_.parent_id<span style=color:#f92672>=?</span>
-  )
-</code></pre></div><p>What happened is that Hibernate applied a heuristic of saying: &ldquo;okay, you have <code>Post A</code>, and you want its <code>Comments</code>&mldr;but you also have <code>Post B</code>, <code>Post C</code>, etc., in your session, I&rsquo;m going to go ahead and get the <code>Comments</code> for all of those <code>Posts</code> at the same time.&rdquo;</p>
-<p>From my perspective, this seems like a pretty sweet optimization.</p>
-<ul>
-<li>It dramatically reduces the SQL queries&ndash;not all the way down to 1 query, but 3 is still a lot better than 22 (or whatever <code>n</code> is)</li>
-<li>It&rsquo;s automatic, and so requires no extra initial/on-going thought from the developers to maintain.</li>
-<li>You risk over-fetching data, however I think this is not a big deal because:
-<ul>
-<li>You&rsquo;re already making a SQL call, which is dominated by the wire-call/latency</li>
-<li>The <code>WHERE post_id IN (N posts ids)</code> is still a very simple query&ndash;no outer left joins which can lead to data duplication&ndash;so should return very fast even if slightly more data is coming back than you need</li>
-<li>Extremely large collections that would ruin this approach should probably not be mapped via implicit object graph navigation anyway&ndash;as soon as a parent has >100-500 children, you probably don&rsquo;t want to load them in a single UnitOfWork anyway and so should not map <code>parent.getChildren()</code> to prevent developers from accidentally causing session size bloat</li>
-</ul>
-</li>
-</ul>
-<h2 id=optimized-implicit-prefetching>
-Optimized Implicit Prefetching
-<a class=heading-link href=#optimized-implicit-prefetching>
-<i class="fa fa-link" aria-hidden=true></i>
-</a>
-</h2>
-<p>What is even cooler than implicit prefetching, is <em>profiled</em> implicit prefetching.</p>
-<p>I came across the paper <a href=http://userweb.cs.utexas.edu/~wcook/papers/AutoFetch/autofetch.pdf>Automatic Prefetching by Traversal Profiling in Object Persistence</a>, where the authors extend Hibernate 3.1 to keep live statistics about the application&rsquo;s object graph navigation.</p>
-<p>So, initially you&rsquo;ll get the worst case <code>n+1</code> selects, but after a few iterations, their AutoFetch algorithm recognizes that, given the line number/stack trace of the <code>loadBlog(1)</code> line, it will soon need all of the posts and comments, so issues a single:</p>
-<ul>
-<li>
-<p>1 query of:</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sql data-lang=sql><span style=color:#66d9ef>SELECT</span> b.<span style=color:#f92672>*</span>, p.<span style=color:#f92672>*</span>, <span style=color:#66d9ef>c</span>.<span style=color:#f92672>*</span>
-<span style=color:#66d9ef>FROM</span> blog b
-<span style=color:#66d9ef>LEFT</span> <span style=color:#66d9ef>OUTER</span> <span style=color:#66d9ef>JOIN</span> posts p <span style=color:#66d9ef>ON</span> b.id <span style=color:#f92672>=</span> p.blog_id
-<span style=color:#66d9ef>LEFT</span> <span style=color:#66d9ef>OUTER</span> <span style=color:#66d9ef>JOIN</span> comments <span style=color:#66d9ef>c</span> <span style=color:#66d9ef>ON</span> p.id <span style=color:#f92672>=</span> <span style=color:#66d9ef>c</span>.post_id
-<span style=color:#66d9ef>WHERE</span> b.id <span style=color:#f92672>=</span> <span style=color:#ae81ff>1</span>
-</code></pre></div><p>That loads the entire blog/posts/comments object graph</p>
-</li>
-</ul>
-<p>This is pretty magically awesome.</p>
-<p>I think the only downside is that technically that many outer joins in 1 query will lead to potentially large data duplication due to it being a cross product. I do not know how much of an issue this would be in real-world usage.</p>
-<p>They might be better off sending a trio 3 simple statements:</p>
-<ul>
-<li><code>SELECT * FROM blog WHERE id = 1</code></li>
-<li><code>SELECT * FROM post WHERE blog_id = 1</code></li>
-<li><code>SELECT * FROM comment WHERE post_id IN (SELECT id FROM post WHERE blog_id = 1)</code></li>
-</ul>
-<p>Across the wire all the same time, then getting back 3 separate result sets. This would avoid the nested <code>LEFT OUTER JOIN</code>s, but still get all the data in a single wire call.</p>
-<p>However, I really have no idea how well multi-statement result sets are supported in JDBC and the various databases that Hibernate supports.</p>
-<h2 id=active-research>
-Active Research
-<a class=heading-link href=#active-research>
-<i class="fa fa-link" aria-hidden=true></i>
-</a>
-</h2>
-<p>What is most surprising to me is that ORM techniques are an active area of academic research. For example, the AutoFetch paper came out of the University of Texas at Austin and was supported by a National Science Foundation.</p>
-<p>I never would have guessed that federal academic funding was going into such a real-world/everyday technology like ORMs.</p>
-<p>Besides the AutoFetch algorithm, the AutoFetch paper is also interesting as it cites several other ORM papers that seem worth tracking down and reading. I definitely suggest anyone else interested in the ORM problem try and do the same.</p>
-</div>
-<footer>
-<div id=disqus_thread></div>
-<script type=application/javascript>var disqus_config=function(){};(function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById('disqus_thread').innerHTML='Disqus comments not available by default when the website is previewed locally.';return}var b=document,a=b.createElement('script');a.async=!0,a.src='//draconianoverlord.disqus.com/embed.js',a.setAttribute('data-timestamp',+new Date),(b.head||b.body).appendChild(a)})()</script>
-<noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript>
-<a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a>
-</footer>
-</article>
-</section>
-</div>
-<footer class=footer>
-<section class=container>
-©
+<!doctype html><html lang=en><head><title>Joist/ORM Prefetching · Draconian Overlord</title><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=color-scheme content="light dark"><meta name=author content="Stephen Haberman"><meta name=description content="Prefetching is pretty well-known technique for optimizing ORM/database access. However, I was surprised at how much thought and cool stuff people are doing with it.
+n+1 Selects Link to heading The problem prefetching solves is known as n+1 selects. It is best seen by a code example:
+Blog blog = loadBlog(1); // load from somewhere for (Post post : blog.getPosts()) { for (Comment comment : post.getComments()) { render(comment); } } This usage almost always means:"><meta name=keywords content="blog,developer,personal"><meta name=twitter:card content="summary"><meta name=twitter:title content="Joist/ORM Prefetching"><meta name=twitter:description content="Prefetching is pretty well-known technique for optimizing ORM/database access. However, I was surprised at how much thought and cool stuff people are doing with it.
+n+1 Selects Link to heading The problem prefetching solves is known as n+1 selects. It is best seen by a code example:
+Blog blog = loadBlog(1); // load from somewhere for (Post post : blog.getPosts()) { for (Comment comment : post.getComments()) { render(comment); } } This usage almost always means:"><meta property="og:title" content="Joist/ORM Prefetching"><meta property="og:description" content="Prefetching is pretty well-known technique for optimizing ORM/database access. However, I was surprised at how much thought and cool stuff people are doing with it.
+n+1 Selects Link to heading The problem prefetching solves is known as n+1 selects. It is best seen by a code example:
+Blog blog = loadBlog(1); // load from somewhere for (Post post : blog.getPosts()) { for (Comment comment : post.getComments()) { render(comment); } } This usage almost always means:"><meta property="og:type" content="article"><meta property="og:url" content="https://www.draconianoverlord.com/2010/07/16/joist/orm-prefetching.html/"><meta property="article:section" content="posts"><meta property="article:published_time" content="2010-07-16T00:00:00+00:00"><meta property="article:modified_time" content="2010-07-16T00:00:00+00:00"><link rel=canonical href=https://www.draconianoverlord.com/2010/07/16/joist/orm-prefetching.html/><link rel=preload href="/fonts/forkawesome-webfont.woff2?v=1.2.0" as=font type=font/woff2 crossorigin><link rel=stylesheet href=/css/coder.min.65236a6d834b26194eed04a2a3b45e44d9194ef9e620253705d4bef03bd7ef81.css integrity="sha256-ZSNqbYNLJhlO7QSio7ReRNkZTvnmICU3BdS+8DvX74E=" crossorigin=anonymous media=screen><link rel=stylesheet href=/css/coder-dark.min.f6534b0b446b75d9b6ad77a97d43ede2ddaeff1b6e2361fb7198d6f8fcb7f83f.css integrity="sha256-9lNLC0Rrddm2rXepfUPt4t2u/xtuI2H7cZjW+Py3+D8=" crossorigin=anonymous media=screen><link rel=icon type=image/png href=/images/favicon-32x32.png sizes=32x32><link rel=icon type=image/png href=/images/favicon-16x16.png sizes=16x16><link rel=apple-touch-icon href=/images/apple-touch-icon.png><link rel=apple-touch-icon sizes=180x180 href=/images/apple-touch-icon.png><link rel=manifest href=/site.webmanifest><link rel=mask-icon href=/images/safari-pinned-tab.svg color=#5bbad5></head><body class="preload-transitions colorscheme-auto"><div class=float-container><a id=dark-mode-toggle class=colorscheme-toggle><i class="fa fa-adjust fa-fw" aria-hidden=true></i></a></div><main class=wrapper><nav class=navigation><section class=container><a class=navigation-title href=/>Draconian Overlord</a>
+Oppressing software entropy</section></nav><div class=content><section class="container post"><article><header><div class=post-title><h1 class=title><a class=title-link href=https://www.draconianoverlord.com/2010/07/16/joist/orm-prefetching.html/>Joist/ORM Prefetching</a></h1></div><div class=post-meta><div class=date><span class=posted-on><i class="fa fa-calendar" aria-hidden=true></i>
+<time datetime=2010-07-16T00:00:00Z>July 16, 2010</time></span>
+<span class=reading-time><i class="fa fa-clock-o" aria-hidden=true></i>
+6-minute read</span></div><div class=categories><i class="fa fa-folder" aria-hidden=true></i>
+<a href=/categories/joist/>Joist</a></div></div></header><div class=post-content><p>Prefetching is pretty well-known technique for optimizing ORM/database access. However, I was surprised at how much thought and cool stuff people are doing with it.</p><h2 id=n1-selects><code>n+1</code> Selects
+<a class=heading-link href=#n1-selects><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h2><p>The problem prefetching solves is known as <code>n+1</code> selects. It is best seen by a code example:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=display:flex><span>Blog blog <span style=color:#f92672>=</span> loadBlog<span style=color:#f92672>(</span><span style=color:#ae81ff>1</span><span style=color:#f92672>);</span> <span style=color:#75715e>// load from somewhere
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span><span style=color:#66d9ef>for</span> <span style=color:#f92672>(</span>Post post <span style=color:#f92672>:</span> blog<span style=color:#f92672>.</span><span style=color:#a6e22e>getPosts</span><span style=color:#f92672>())</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>for</span> <span style=color:#f92672>(</span>Comment comment <span style=color:#f92672>:</span> post<span style=color:#f92672>.</span><span style=color:#a6e22e>getComments</span><span style=color:#f92672>())</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>        render<span style=color:#f92672>(</span>comment<span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>}</span>
+</span></span></code></pre></div><p>This usage almost always means:</p><ul><li>1 query of <code>SELECT * FROM blog WHERE id = 1</code>&ndash;loads 1 blog</li><li>1 query of <code>SELECT * FROM post WHERE blog_id = 1</code>&ndash;loads N posts</li><li>N queries of <code>SELECT * FROM comment WHERE post_id = x</code>&ndash;loads 1 comment, repeatedly for each post</li></ul><p>If you have 20 blogs, you&rsquo;ll end up with 22 SQL calls back/forth to the database. Each call is a network trip, so this can quickly slow down your application.</p><p>The goal of prefetching is to load the entire blog/posts/comments object graph with as few SQL calls as possible. Depending on the approach, you can have as few as 1 SQL call, which is a huge savings and will result in very real performance improvements.</p><h2 id=explicit-pre-fetching>Explicit Pre-Fetching
+<a class=heading-link href=#explicit-pre-fetching><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h2><p>Traditionally, ORMs required explicit custom queries to prefetch an entire object graph.</p><p>For example, with Hibernate you&rsquo;d do <a href=http://docs.jboss.org/hibernate/stable/core/reference/en/html_single/#querycriteria-dynamicfetching class=external-link target=_blank rel=noopener>something like</a>:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=display:flex><span><span style=color:#66d9ef>public</span> Blog <span style=color:#a6e22e>loadViaCustomQuery</span><span style=color:#f92672>(</span><span style=color:#66d9ef>int</span> id<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>  List blogs <span style=color:#f92672>=</span> sess<span style=color:#f92672>.</span><span style=color:#a6e22e>createCriteria</span><span style=color:#f92672>(</span>Blog<span style=color:#f92672>.</span><span style=color:#a6e22e>class</span><span style=color:#f92672>)</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>.</span><span style=color:#a6e22e>add</span><span style=color:#f92672>(</span>Restrictions<span style=color:#f92672>.</span><span style=color:#a6e22e>equal</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;id&#34;</span><span style=color:#f92672>,</span> id<span style=color:#f92672>))</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>.</span><span style=color:#a6e22e>setFetchMode</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;posts&#34;</span><span style=color:#f92672>,</span> FetchMode<span style=color:#f92672>.</span><span style=color:#a6e22e>EAGER</span><span style=color:#f92672>)</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>.</span><span style=color:#a6e22e>list</span><span style=color:#f92672>();</span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>return</span> blogs<span style=color:#f92672>.</span><span style=color:#a6e22e>get</span><span style=color:#f92672>(</span><span style=color:#ae81ff>0</span><span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>}</span>
+</span></span></code></pre></div><p>The code then becomes:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=display:flex><span>Blog blog <span style=color:#f92672>=</span> loadViaCustomQuery<span style=color:#f92672>(</span><span style=color:#ae81ff>1</span><span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>for</span> <span style=color:#f92672>(</span>Post post <span style=color:#f92672>:</span> blog<span style=color:#f92672>.</span><span style=color:#a6e22e>getPosts</span><span style=color:#f92672>())</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>for</span> <span style=color:#f92672>(</span>Comment comment <span style=color:#f92672>:</span> post<span style=color:#f92672>.</span><span style=color:#a6e22e>getComments</span><span style=color:#f92672>())</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>        render<span style=color:#f92672>(</span>comment<span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>}</span>
+</span></span></code></pre></div><p>This usage means:</p><ul><li>1 query of <code>SELECT b.*, p.* FROM blog b, LEFT OUTER JOIN posts p ON b.id = p.blog_id WHERE b.id = 1</code>&ndash;loads 1 blog plus <code>n</code> posts</li><li><code>n</code> queries of <code>SELECT * FROM comment WHERE post_id = x</code>&ndash;loads 1 comment, repeatedly for each post</li></ul><p>So we removed 1 extra query, going from 22 calls to 21 calls, but we really we haven&rsquo;t avoided the <code>n+1</code> problem&ndash;I&rsquo;m still poking around Hibernate docs to see if you can bring back sub-sub-collections via prefetching.</p><p>(<strong>Disclaimer</strong>: I don&rsquo;t have an active Hibernate setup right now&ndash;I&rsquo;ll come back and update this if I ever get it figured out, but until then, please correct any of the technical points I have wrong.)</p><p>Even so, there are several problems with explicit prefetching:</p><ul><li>It requires up-front developer effort to write a custom query with correct prefetch semantics</li><li>It requires on-going developer effort to update the custom query as the code changes what parts of the object graph it does/does not need&ndash;performance could actually end up degraded if the wrong data is being prefetched</li></ul><h2 id=implicit-pre-fetching>Implicit Pre-Fetching
+<a class=heading-link href=#implicit-pre-fetching><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h2><p>What seems more novel to me is eschewing custom queries and the ORM just being more intelligent about its usage.</p><p>One trick that Hibernate actually already implements is <a href=http://docs.jboss.org/hibernate/stable/core/reference/en/html_single/#performance-fetching-subselect class=external-link target=_blank rel=noopener>subselect fetching</a>. The idea is that when you&rsquo;re mapping your <code>Post</code> class, you set <code>fetch=subselect</code> on the <code>comments</code> element:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-xml data-lang=xml><span style=display:flex><span><span style=color:#f92672>&lt;class</span> <span style=color:#a6e22e>name=</span><span style=color:#e6db74>&#34;Post&#34;</span><span style=color:#f92672>&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#75715e>&lt;!-- ... other mappings ... --&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>&lt;set</span> <span style=color:#a6e22e>name=</span><span style=color:#e6db74>&#34;comments&#34;</span> <span style=color:#a6e22e>fetch=</span><span style=color:#e6db74>&#34;subselect&#34;</span><span style=color:#f92672>&gt;</span>
+</span></span><span style=display:flex><span>        <span style=color:#f92672>&lt;key</span> <span style=color:#a6e22e>column=</span><span style=color:#e6db74>&#34;post_id&#34;</span> <span style=color:#a6e22e>not-null=</span><span style=color:#e6db74>&#34;true&#34;</span><span style=color:#f92672>/&gt;</span>
+</span></span><span style=display:flex><span>        <span style=color:#f92672>&lt;one-to-many</span> <span style=color:#a6e22e>class=</span><span style=color:#e6db74>&#34;Comment&#34;</span><span style=color:#f92672>/&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>&lt;/set&gt;</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>&lt;/class&gt;</span>
+</span></span></code></pre></div><p>Now our original code snippet:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=display:flex><span>Blog blog <span style=color:#f92672>=</span> loadBlog<span style=color:#f92672>(</span><span style=color:#ae81ff>1</span><span style=color:#f92672>);</span> <span style=color:#75715e>// load from somewhere
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span><span style=color:#66d9ef>for</span> <span style=color:#f92672>(</span>Post post <span style=color:#f92672>:</span> blog<span style=color:#f92672>.</span><span style=color:#a6e22e>getPosts</span><span style=color:#f92672>())</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>for</span> <span style=color:#f92672>(</span>Comment comment <span style=color:#f92672>:</span> post<span style=color:#f92672>.</span><span style=color:#a6e22e>getComments</span><span style=color:#f92672>())</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>        render<span style=color:#f92672>(</span>comment<span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>}</span>
+</span></span></code></pre></div><p>Will result in these queries:</p><ul><li>1 query on <code>loadBlog(1)</code> of <code>SELECT * FROM blog WHERE id = 1</code>&ndash;loads 1 blog</li><li>1 query on <code>blog.getPosts()</code> of <code>SELECT * FROM post WHERE blog_id = 1</code>&ndash;loads <code>n</code> posts</li><li>1 query on the 1st <code>post.getComments()</code> of <code>SELECT * FROM comment WHERE post_id IN (N post ids)</code>&ndash;loads <code>m</code> comments</li></ul><p><strong>Update</strong>: I reproduced this behavior in a project with <code>Parent</code>/<code>Child</code>/<code>GrandChild</code>, here is SQL Hibernate generated:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sql data-lang=sql><span style=display:flex><span><span style=color:#66d9ef>select</span>
+</span></span><span style=display:flex><span>  parent0_.id <span style=color:#66d9ef>as</span> id0_0_,
+</span></span><span style=display:flex><span>  parent0_.<span style=color:#66d9ef>version</span> <span style=color:#66d9ef>as</span> version0_0_,
+</span></span><span style=display:flex><span>  parent0_.<span style=color:#e6db74>&#34;name&#34;</span> <span style=color:#66d9ef>as</span> name3_0_0_
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>from</span> <span style=color:#e6db74>&#34;parent&#34;</span> parent0_
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>where</span> parent0_.id<span style=color:#f92672>=?</span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>select</span>
+</span></span><span style=display:flex><span>  childs0_.parent_id <span style=color:#66d9ef>as</span> parent3_1_,
+</span></span><span style=display:flex><span>  childs0_.id <span style=color:#66d9ef>as</span> id1_,
+</span></span><span style=display:flex><span>  childs0_.id <span style=color:#66d9ef>as</span> id1_0_,
+</span></span><span style=display:flex><span>  childs0_.<span style=color:#66d9ef>version</span> <span style=color:#66d9ef>as</span> version1_0_,
+</span></span><span style=display:flex><span>  childs0_.<span style=color:#e6db74>&#34;parent_id&#34;</span> <span style=color:#66d9ef>as</span> parent3_1_0_,
+</span></span><span style=display:flex><span>  childs0_.<span style=color:#e6db74>&#34;name&#34;</span> <span style=color:#66d9ef>as</span> name4_1_0_
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>from</span> <span style=color:#e6db74>&#34;child&#34;</span> childs0_
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>where</span> childs0_.parent_id<span style=color:#f92672>=?</span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>select</span>
+</span></span><span style=display:flex><span>  grandchild0_.child_id <span style=color:#66d9ef>as</span> child3_1_,
+</span></span><span style=display:flex><span>  grandchild0_.id <span style=color:#66d9ef>as</span> id1_,
+</span></span><span style=display:flex><span>  grandchild0_.id <span style=color:#66d9ef>as</span> id2_0_,
+</span></span><span style=display:flex><span>  grandchild0_.<span style=color:#66d9ef>version</span> <span style=color:#66d9ef>as</span> version2_0_,
+</span></span><span style=display:flex><span>  grandchild0_.<span style=color:#e6db74>&#34;child_id&#34;</span> <span style=color:#66d9ef>as</span> child3_2_0_,
+</span></span><span style=display:flex><span>  grandchild0_.<span style=color:#e6db74>&#34;name&#34;</span> <span style=color:#66d9ef>as</span> name4_2_0_
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>from</span> <span style=color:#e6db74>&#34;grand_child&#34;</span> grandchild0_
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>where</span> grandchild0_.child_id <span style=color:#66d9ef>in</span> (
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>select</span> childs0_.id
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>from</span> <span style=color:#e6db74>&#34;child&#34;</span> childs0_
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>where</span> childs0_.parent_id<span style=color:#f92672>=?</span>
+</span></span><span style=display:flex><span>  )
+</span></span></code></pre></div><p>What happened is that Hibernate applied a heuristic of saying: &ldquo;okay, you have <code>Post A</code>, and you want its <code>Comments</code>&mldr;but you also have <code>Post B</code>, <code>Post C</code>, etc., in your session, I&rsquo;m going to go ahead and get the <code>Comments</code> for all of those <code>Posts</code> at the same time.&rdquo;</p><p>From my perspective, this seems like a pretty sweet optimization.</p><ul><li>It dramatically reduces the SQL queries&ndash;not all the way down to 1 query, but 3 is still a lot better than 22 (or whatever <code>n</code> is)</li><li>It&rsquo;s automatic, and so requires no extra initial/on-going thought from the developers to maintain.</li><li>You risk over-fetching data, however I think this is not a big deal because:<ul><li>You&rsquo;re already making a SQL call, which is dominated by the wire-call/latency</li><li>The <code>WHERE post_id IN (N posts ids)</code> is still a very simple query&ndash;no outer left joins which can lead to data duplication&ndash;so should return very fast even if slightly more data is coming back than you need</li><li>Extremely large collections that would ruin this approach should probably not be mapped via implicit object graph navigation anyway&ndash;as soon as a parent has >100-500 children, you probably don&rsquo;t want to load them in a single UnitOfWork anyway and so should not map <code>parent.getChildren()</code> to prevent developers from accidentally causing session size bloat</li></ul></li></ul><h2 id=optimized-implicit-prefetching>Optimized Implicit Prefetching
+<a class=heading-link href=#optimized-implicit-prefetching><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h2><p>What is even cooler than implicit prefetching, is <em>profiled</em> implicit prefetching.</p><p>I came across the paper <a href=http://userweb.cs.utexas.edu/~wcook/papers/AutoFetch/autofetch.pdf class=external-link target=_blank rel=noopener>Automatic Prefetching by Traversal Profiling in Object Persistence</a>, where the authors extend Hibernate 3.1 to keep live statistics about the application&rsquo;s object graph navigation.</p><p>So, initially you&rsquo;ll get the worst case <code>n+1</code> selects, but after a few iterations, their AutoFetch algorithm recognizes that, given the line number/stack trace of the <code>loadBlog(1)</code> line, it will soon need all of the posts and comments, so issues a single:</p><ul><li><p>1 query of:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sql data-lang=sql><span style=display:flex><span><span style=color:#66d9ef>SELECT</span> b.<span style=color:#f92672>*</span>, p.<span style=color:#f92672>*</span>, <span style=color:#66d9ef>c</span>.<span style=color:#f92672>*</span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>FROM</span> blog b
+</span></span><span style=display:flex><span><span style=color:#66d9ef>LEFT</span> <span style=color:#66d9ef>OUTER</span> <span style=color:#66d9ef>JOIN</span> posts p <span style=color:#66d9ef>ON</span> b.id <span style=color:#f92672>=</span> p.blog_id
+</span></span><span style=display:flex><span><span style=color:#66d9ef>LEFT</span> <span style=color:#66d9ef>OUTER</span> <span style=color:#66d9ef>JOIN</span> comments <span style=color:#66d9ef>c</span> <span style=color:#66d9ef>ON</span> p.id <span style=color:#f92672>=</span> <span style=color:#66d9ef>c</span>.post_id
+</span></span><span style=display:flex><span><span style=color:#66d9ef>WHERE</span> b.id <span style=color:#f92672>=</span> <span style=color:#ae81ff>1</span>
+</span></span></code></pre></div><p>That loads the entire blog/posts/comments object graph</p></li></ul><p>This is pretty magically awesome.</p><p>I think the only downside is that technically that many outer joins in 1 query will lead to potentially large data duplication due to it being a cross product. I do not know how much of an issue this would be in real-world usage.</p><p>They might be better off sending a trio 3 simple statements:</p><ul><li><code>SELECT * FROM blog WHERE id = 1</code></li><li><code>SELECT * FROM post WHERE blog_id = 1</code></li><li><code>SELECT * FROM comment WHERE post_id IN (SELECT id FROM post WHERE blog_id = 1)</code></li></ul><p>Across the wire all the same time, then getting back 3 separate result sets. This would avoid the nested <code>LEFT OUTER JOIN</code>s, but still get all the data in a single wire call.</p><p>However, I really have no idea how well multi-statement result sets are supported in JDBC and the various databases that Hibernate supports.</p><h2 id=active-research>Active Research
+<a class=heading-link href=#active-research><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h2><p>What is most surprising to me is that ORM techniques are an active area of academic research. For example, the AutoFetch paper came out of the University of Texas at Austin and was supported by a National Science Foundation.</p><p>I never would have guessed that federal academic funding was going into such a real-world/everyday technology like ORMs.</p><p>Besides the AutoFetch algorithm, the AutoFetch paper is also interesting as it cites several other ORM papers that seem worth tracking down and reading. I definitely suggest anyone else interested in the ORM problem try and do the same.</p></div><footer><div id=disqus_thread></div><script>window.disqus_config=function(){},function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById("disqus_thread").innerHTML="Disqus comments not available by default when the website is previewed locally.";return}var t=document,e=t.createElement("script");e.async=!0,e.src="//draconianoverlord.disqus.com/embed.js",e.setAttribute("data-timestamp",+new Date),(t.head||t.body).appendChild(e)}(),document.addEventListener("themeChanged",function(){document.readyState=="complete"&&DISQUS.reset({reload:!0,config:disqus_config})})</script></footer></article></section></div><footer class=footer><section class=container>©
 2008 -
-2022
+2023
 Stephen Haberman
 ·
-Powered by <a href=https://gohugo.io/>Hugo</a> & <a href=https://github.com/luizdepra/hugo-coder/>Coder</a>.
-</section>
-</footer>
-</main>
-<script src=/js/coder.min.03b17769f4f91ae35667e1f2a1ca8c16f50562576cf90ff32b3179926914daa5.js integrity="sha256-A7F3afT5GuNWZ+HyocqMFvUFYlds+Q/zKzF5kmkU2qU="></script>
-</body>
-</html>
+Powered by <a href=https://gohugo.io/ target=_blank rel=noopener>Hugo</a> & <a href=https://github.com/luizdepra/hugo-coder/ target=_blank rel=noopener>Coder</a>.</section></footer></main><script src=/js/coder.min.6ae284be93d2d19dad1f02b0039508d9aab3180a12a06dcc71b0b0ef7825a317.js integrity="sha256-auKEvpPS0Z2tHwKwA5UI2aqzGAoSoG3McbCw73gloxc="></script></body></html>

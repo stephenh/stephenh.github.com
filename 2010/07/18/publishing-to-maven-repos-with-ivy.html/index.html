@@ -1,374 +1,216 @@
-<!doctype html><html lang=en>
-<head>
-<meta charset=utf-8>
-<meta name=viewport content="width=device-width,initial-scale=1">
-<meta http-equiv=content-language content="en">
-<meta name=color-scheme content="light dark">
-<meta name=author content="Stephen Haberman">
-<meta name=description content="Publishing to Maven Repos with Ivy    Publishing to Maven repositories is a fact of life for projects in the Java community.
-While I am not a fan of Maven itself, I readily admit that the standard shared repository/transitive-metadata approach they have driven has been a great thing for the community. While I was initially skeptical, downloading dependencies and keeping them out of source code repos is a good thing.">
-<meta name=keywords content="blog,developer,personal">
-<meta name=twitter:card content="summary">
-<meta name=twitter:title content="Publishing to Maven Repos with Ivy">
-<meta name=twitter:description content="Publishing to Maven Repos with Ivy    Publishing to Maven repositories is a fact of life for projects in the Java community.
-While I am not a fan of Maven itself, I readily admit that the standard shared repository/transitive-metadata approach they have driven has been a great thing for the community. While I was initially skeptical, downloading dependencies and keeping them out of source code repos is a good thing.">
-<meta property="og:title" content="Publishing to Maven Repos with Ivy">
-<meta property="og:description" content="Publishing to Maven Repos with Ivy    Publishing to Maven repositories is a fact of life for projects in the Java community.
-While I am not a fan of Maven itself, I readily admit that the standard shared repository/transitive-metadata approach they have driven has been a great thing for the community. While I was initially skeptical, downloading dependencies and keeping them out of source code repos is a good thing.">
-<meta property="og:type" content="article">
-<meta property="og:url" content="https://www.draconianoverlord.com/2010/07/18/publishing-to-maven-repos-with-ivy.html/"><meta property="article:section" content="posts">
-<meta property="article:published_time" content="2010-07-18T00:00:00+00:00">
-<meta property="article:modified_time" content="2010-07-18T00:00:00+00:00">
-<title>
-Publishing to Maven Repos with Ivy · Draconian Overlord
-</title>
-<link rel=canonical href=https://www.draconianoverlord.com/2010/07/18/publishing-to-maven-repos-with-ivy.html/>
-<link rel=preload href="/fonts/forkawesome-webfont.woff2?v=1.2.0" as=font type=font/woff2 crossorigin>
-<link rel=stylesheet href=/css/coder.min.d9fddbffe6f27e69985dc5fe0471cdb0e57fbf4775714bc3d847accb08f4a1f6.css integrity="sha256-2f3b/+byfmmYXcX+BHHNsOV/v0d1cUvD2Eesywj0ofY=" crossorigin=anonymous media=screen>
-<link rel=stylesheet href=/css/coder-dark.min.aa883b9ce35a8ff4a2a5008619005175e842bb18a8a9f9cc2bbcf44dab2d91fa.css integrity="sha256-qog7nONaj/SipQCGGQBRdehCuxioqfnMK7z0Tastkfo=" crossorigin=anonymous media=screen>
-<link rel=icon type=image/png href=/images/favicon-32x32.png sizes=32x32>
-<link rel=icon type=image/png href=/images/favicon-16x16.png sizes=16x16>
-<link rel=apple-touch-icon href=/images/apple-touch-icon.png>
-<link rel=apple-touch-icon sizes=180x180 href=/images/apple-touch-icon.png>
-<meta name=generator content="Hugo 0.92.0">
-</head>
-<body class="preload-transitions colorscheme-auto">
-<div class=float-container>
-<a id=dark-mode-toggle class=colorscheme-toggle>
-<i class="fa fa-adjust fa-fw" aria-hidden=true></i>
-</a>
-</div>
-<main class=wrapper>
-<nav class=navigation>
-<section class=container>
-<a class=navigation-title href=/>Draconian Overlord</a>
-Oppressing software entropy
-</section>
-</nav>
-<div class=content>
-<section class="container post">
-<article>
-<header>
-<div class=post-title>
-<h1 class=title>
-<a class=title-link href=https://www.draconianoverlord.com/2010/07/18/publishing-to-maven-repos-with-ivy.html/>
-Publishing to Maven Repos with Ivy
-</a>
-</h1>
-</div>
-<div class=post-meta>
-<div class=date>
-<span class=posted-on>
-<i class="fa fa-calendar" aria-hidden=true></i>
-<time datetime=2010-07-18T00:00:00Z>
-July 18, 2010
-</time>
-</span>
-<span class=reading-time>
-<i class="fa fa-clock-o" aria-hidden=true></i>
-7-minute read
-</span>
-</div>
-<div class=categories>
-<i class="fa fa-folder" aria-hidden=true></i>
-<a href=/categories/java/>Java</a></div>
-</div>
-</header>
-<div>
-<h1 id=publishing-to-maven-repos-with-ivy>
-Publishing to Maven Repos with Ivy
-<a class=heading-link href=#publishing-to-maven-repos-with-ivy>
-<i class="fa fa-link" aria-hidden=true></i>
-</a>
-</h1>
-<p>Publishing to Maven repositories is a fact of life for projects in the Java community.</p>
-<p>While I am not a fan of Maven itself, I readily admit that the standard shared repository/transitive-metadata approach they have driven has been a great thing for the community. While I was initially skeptical, downloading dependencies and keeping them out of source code repos is a good thing.</p>
-<h2 id=using-ivy>
-Using Ivy
-<a class=heading-link href=#using-ivy>
-<i class="fa fa-link" aria-hidden=true></i>
-</a>
-</h2>
-<p>That being said, I prefer to leverage Maven repositories from a safe, arms length distance via the excellent <a href=http://ant.apache.org/ivy>Ivy</a> (and <a href=http://ant.apache.org/ivy/ivyde/>IvyDE</a>) tool which, besides other features, can understand the Maven repository format both as a source for dependencies and destination for publishing projects.</p>
-<p>While Ivy-to-Maven works well, it did take me a few tries to get it right, so here are the various settings/files that so far are doing the job.</p>
-<p><strong>Update 12/05/2013:</strong> I don&rsquo;t know why I did this, but the example <code>ivysettings.xml</code>, <code>ivy.xml</code>, and <code>build.xml</code> files below are actually from two separate projects of mine (<a href=http://www.joist.ws>Joist</a> and <a href=http://www.tessell.org>Tessell</a>). So, sorry for that being confusing, but they should still work. Note that you can check out either the Joist or Tessell builds for the latest Ivy incantations, in case these have drifted.</p>
-<h2 id=ivysettingsxml>
-<code>ivysettings.xml</code>
-<a class=heading-link href=#ivysettingsxml>
-<i class="fa fa-link" aria-hidden=true></i>
-</a>
-</h2>
-<p>This is the <a href=https://github.com/stephenh/joist/blob/master/ivysettings.xml>ivysettings.xml</a> to Joist, with comments added.</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-xml data-lang=xml><span style=color:#f92672>&lt;ivysettings&gt;</span>
-  <span style=color:#75715e>&lt;!--
-</span><span style=color:#75715e>    This property is used later in the ivy.xml file to set
-</span><span style=color:#75715e>    the project&#39;s revision. Unless overridden, it defaults
-</span><span style=color:#75715e>    to the Maven SNAPSHOT convention, as that it works well
-</span><span style=color:#75715e>    for publishing local test builds to ~/.m2/repository.
-</span><span style=color:#75715e>  --&gt;</span>
-  <span style=color:#f92672>&lt;property</span> <span style=color:#a6e22e>name=</span><span style=color:#e6db74>&#34;revision&#34;</span> <span style=color:#a6e22e>value=</span><span style=color:#e6db74>&#34;SNAPSHOT&#34;</span> <span style=color:#a6e22e>override=</span><span style=color:#e6db74>&#34;false&#34;</span><span style=color:#f92672>/&gt;</span>
-
-  <span style=color:#75715e>&lt;!-- &#34;default&#34; is defined later in the file. --&gt;</span>
-  <span style=color:#f92672>&lt;settings</span> <span style=color:#a6e22e>defaultResolver=</span><span style=color:#e6db74>&#34;default&#34;</span><span style=color:#f92672>/&gt;</span>
-
-  <span style=color:#75715e>&lt;!-- Pulls in the &#34;public&#34; resolver for ibiblio-hosted jars. --&gt;</span>
-  <span style=color:#f92672>&lt;include</span> <span style=color:#a6e22e>url=</span><span style=color:#e6db74>&#34;${ivy.default.settings.dir}/ivysettings-public.xml&#34;</span><span style=color:#f92672>/&gt;</span>
-
-  <span style=color:#f92672>&lt;resolvers&gt;</span>
-    <span style=color:#75715e>&lt;!-- add any 3rd-party maven repos here... --&gt;</span>
-    <span style=color:#f92672>&lt;ibiblio</span> <span style=color:#a6e22e>name=</span><span style=color:#e6db74>&#34;joist&#34;</span> <span style=color:#a6e22e>m2compatible=</span><span style=color:#e6db74>&#34;true&#34;</span> <span style=color:#a6e22e>root=</span><span style=color:#e6db74>&#34;http://repo.joist.ws&#34;</span><span style=color:#f92672>/&gt;</span>
-
-    <span style=color:#75715e>&lt;!--
-</span><span style=color:#75715e>      for *retrieving* artifacts for local testing builds,
-</span><span style=color:#75715e>      we&#39;ll use maven&#39;s own .m2/repository.
-</span><span style=color:#75715e>    --&gt;</span>
-    <span style=color:#f92672>&lt;ibiblio</span>
-      <span style=color:#a6e22e>name=</span><span style=color:#e6db74>&#34;local-m2&#34;</span>
-      <span style=color:#a6e22e>m2compatible=</span><span style=color:#e6db74>&#34;true&#34;</span>
-      <span style=color:#a6e22e>root=</span><span style=color:#e6db74>&#34;file://${user.home}/.m2/repository&#34;</span><span style=color:#960050;background-color:#1e0010>/</span>
-      <span style=color:#a6e22e>changingPattern=</span><span style=color:#e6db74>&#34;.*SNAPSHOT&#34;</span><span style=color:#f92672>&gt;</span>
-
-    <span style=color:#75715e>&lt;!--
-</span><span style=color:#75715e>      for *publishing* artifacts for local testing builds,
-</span><span style=color:#75715e>      as the previous ibiblio resolver does not support
-</span><span style=color:#75715e>      publishing
-</span><span style=color:#75715e>    --&gt;</span>
-    <span style=color:#f92672>&lt;filesystem</span> <span style=color:#a6e22e>name=</span><span style=color:#e6db74>&#34;local-m2-publish&#34;</span> <span style=color:#a6e22e>m2compatible=</span><span style=color:#e6db74>&#34;true&#34;</span><span style=color:#f92672>&gt;</span>
-      <span style=color:#f92672>&lt;artifact</span> <span style=color:#a6e22e>pattern=</span><span style=color:#e6db74>&#34;${user.home}/.m2/repository/[organisation]/[module]/[revision]/[artifact]-[revision](-[classifier]).[ext]&#34;</span><span style=color:#f92672>/&gt;</span>
-    <span style=color:#f92672>&lt;/filesystem&gt;</span>
-
-    <span style=color:#75715e>&lt;!--
-</span><span style=color:#75715e>      for publishing release artifacts via an sshfs-mounted share
-</span><span style=color:#75715e>    --&gt;</span>
-    <span style=color:#f92672>&lt;filesystem</span> <span style=color:#a6e22e>name=</span><span style=color:#e6db74>&#34;share-m2&#34;</span> <span style=color:#a6e22e>m2compatible=</span><span style=color:#e6db74>&#34;true&#34;</span><span style=color:#f92672>&gt;</span>
-      <span style=color:#f92672>&lt;artifact</span> <span style=color:#a6e22e>pattern=</span><span style=color:#e6db74>&#34;${user.home}/repo/[organisation]/[module]/[revision]/[artifact]-[revision](-[classifier]).[ext]&#34;</span><span style=color:#f92672>/&gt;</span>
-    <span style=color:#f92672>&lt;filesystem&gt;</span>
-
-    <span style=color:#75715e>&lt;!-- strings the separate resolvers all together --&gt;</span>
-    <span style=color:#f92672>&lt;chain</span> <span style=color:#a6e22e>name=</span><span style=color:#e6db74>&#34;default&#34;</span> <span style=color:#a6e22e>changingPattern=</span><span style=color:#e6db74>&#34;.*SNAPSHOT&#34;</span><span style=color:#f92672>&gt;</span>
-      <span style=color:#f92672>&lt;resolver</span> <span style=color:#a6e22e>ref=</span><span style=color:#e6db74>&#34;public&#34;</span><span style=color:#f92672>/&gt;</span>
-      <span style=color:#f92672>&lt;resolver</span> <span style=color:#a6e22e>ref=</span><span style=color:#e6db74>&#34;joist&#34;</span><span style=color:#f92672>/&gt;</span>
-      <span style=color:#75715e>&lt;!--
-</span><span style=color:#75715e>        Potential gotcha: you want your local-m2 to be last, or at least
-</span><span style=color:#75715e>        after the public repo. Otherwise maven proper might partially
-</span><span style=color:#75715e>        download a project into ~/.m2, but not include sources, and if
-</span><span style=color:#75715e>        local-m2 is first, ivy will pull the artifacts out of ~/.m2 and
-</span><span style=color:#75715e>        cache the partially-downloaded view of the repo (i.e. no sources).
-</span><span style=color:#75715e>        If public is first, ivy will always try to get artifacts from their
-</span><span style=color:#75715e>        canonical source.
-</span><span style=color:#75715e>      --&gt;</span>
-      <span style=color:#f92672>&lt;resolver</span> <span style=color:#a6e22e>ref=</span><span style=color:#e6db74>&#34;local-m2&#34;</span><span style=color:#f92672>/&gt;</span>
-    <span style=color:#f92672>&lt;/chain&gt;</span>
-  <span style=color:#f92672>&lt;/resolvers&gt;</span>
-<span style=color:#f92672>&lt;/ivysettings&gt;</span>
-</code></pre></div><p>The primary gotcha in this <code>ivysettings.xml</code> was having to use two separate resolvers for the same <code>~/.m2/repository</code>. This is because:</p>
-<ul>
-<li>
-<p>Only the <code>ibiblio</code> resolver will parse poms and follow the pom&rsquo;s transitive dependencies.</p>
-<p>(Technically the <code>filesystem</code> or <code>url</code> resolvers could retrieve jars with a Maven-ish artifact pattern, but the pom dependencies would be skipped.)</p>
-</li>
-<li>
-<p>The <code>ibiblio</code> resolver does not support publishing, so we have to fall back to the <code>filesystem</code> resolver with a Maven-ish artifact pattern to publish.</p>
-</li>
-</ul>
-<p>So, with the current Ivy 2.1.0 capabilities, it takes two resolvers for a single Maven repo if you want to both retrieve from and publish to it.</p>
-<h2 id=ivyxml>
-<code>ivy.xml</code>
-<a class=heading-link href=#ivyxml>
-<i class="fa fa-link" aria-hidden=true></i>
-</a>
-</h2>
-<p>This is the <a href=http://github.com/stephenh/tessell/tree/master/dev/ivy.xml>Tessell <code>ivy.xml</code></a>, again with comments.</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-xml data-lang=xml><span style=color:#f92672>&lt;ivy-module</span> <span style=color:#a6e22e>version=</span><span style=color:#e6db74>&#34;2.0&#34;</span> <span style=color:#a6e22e>xmlns:m=</span><span style=color:#e6db74>&#34;http://ant.apache.org/ivy/maven&#34;</span><span style=color:#f92672>&gt;</span>
-  <span style=color:#75715e>&lt;!--
-</span><span style=color:#75715e>    We set the revision to the revision property from
-</span><span style=color:#75715e>    ivysettings.xml, which defaults to SNAPSHOT. This
-</span><span style=color:#75715e>    is overriden when publishing.
-</span><span style=color:#75715e>  --&gt;</span>
-  <span style=color:#f92672>&lt;info</span> <span style=color:#a6e22e>organisation=</span><span style=color:#e6db74>&#34;org.tessell&#34;</span> <span style=color:#a6e22e>module=</span><span style=color:#e6db74>&#34;tessell-dev&#34;</span> <span style=color:#a6e22e>revision=</span><span style=color:#e6db74>&#34;${revision}&#34;</span><span style=color:#f92672>/&gt;</span>
-
-  <span style=color:#75715e>&lt;!--
-</span><span style=color:#75715e>    I&#39;m not a huge fan of a separate sources conf,
-</span><span style=color:#75715e>    but that is how Ivy&#39;s ibiblio resolver converts
-</span><span style=color:#75715e>    poms, so we&#39;ll stay consistent with that.
-</span><span style=color:#75715e>  --&gt;</span>
-  <span style=color:#f92672>&lt;configurations&gt;</span>
-    <span style=color:#f92672>&lt;conf</span> <span style=color:#a6e22e>name=</span><span style=color:#e6db74>&#34;default&#34;</span><span style=color:#f92672>/&gt;</span>
-    <span style=color:#f92672>&lt;conf</span> <span style=color:#a6e22e>name=</span><span style=color:#e6db74>&#34;sources&#34;</span><span style=color:#f92672>/&gt;</span>
-  <span style=color:#f92672>&lt;/configurations&gt;</span>
-
-  <span style=color:#f92672>&lt;publications&gt;</span>
-    <span style=color:#75715e>&lt;!--
-</span><span style=color:#75715e>      We explicitly list a pom as an artifact of our
-</span><span style=color:#75715e>      project. This way the Ivy publish task will
-</span><span style=color:#75715e>      upload the pom to the maven repo, along with
-</span><span style=color:#75715e>      the jars and sources.
-</span><span style=color:#75715e>    --&gt;</span>
-    <span style=color:#f92672>&lt;artifact</span> <span style=color:#a6e22e>type=</span><span style=color:#e6db74>&#34;pom&#34;</span> <span style=color:#a6e22e>ext=</span><span style=color:#e6db74>&#34;pom&#34;</span> <span style=color:#a6e22e>conf=</span><span style=color:#e6db74>&#34;default&#34;</span><span style=color:#f92672>/&gt;</span>
-
-    <span style=color:#75715e>&lt;!--
-</span><span style=color:#75715e>      This is the main jar, nothing special.
-</span><span style=color:#75715e>    --&gt;</span>
-    <span style=color:#f92672>&lt;artifact</span> <span style=color:#a6e22e>type=</span><span style=color:#e6db74>&#34;jar&#34;</span> <span style=color:#a6e22e>ext=</span><span style=color:#e6db74>&#34;jar&#34;</span> <span style=color:#a6e22e>conf=</span><span style=color:#e6db74>&#34;default&#34;</span><span style=color:#f92672>/&gt;</span>
-
-    <span style=color:#75715e>&lt;!--
-</span><span style=color:#75715e>      To publish sources to a maven repo, the
-</span><span style=color:#75715e>      m:classifier=&#34;sources&#34; is required.
-</span><span style=color:#75715e>    --&gt;</span>
-    <span style=color:#f92672>&lt;artifact</span> <span style=color:#a6e22e>type=</span><span style=color:#e6db74>&#34;source&#34;</span> <span style=color:#a6e22e>ext=</span><span style=color:#e6db74>&#34;jar&#34;</span> <span style=color:#a6e22e>conf=</span><span style=color:#e6db74>&#34;sources&#34;</span> <span style=color:#a6e22e>m:classifier=</span><span style=color:#e6db74>&#34;sources&#34;</span><span style=color:#f92672>/&gt;</span>
-  <span style=color:#f92672>&lt;/publications&gt;</span>
-
-  <span style=color:#75715e>&lt;!--
-</span><span style=color:#75715e>    defaultconf == we want the jars + sources for our dependencies
-</span><span style=color:#75715e>    defaultconfmapping == unless specified otherwise, our confs map
-</span><span style=color:#75715e>      to default for our dependencies
-</span><span style=color:#75715e>  --&gt;</span>
-  <span style=color:#f92672>&lt;dependencies</span> <span style=color:#a6e22e>defaultconfmapping=</span><span style=color:#e6db74>&#34;sources-&gt;sources();%-&gt;default&#34;</span> <span style=color:#a6e22e>defaultconf=</span><span style=color:#e6db74>&#34;default;sources&#34;</span><span style=color:#f92672>&gt;</span>
-    <span style=color:#75715e>&lt;!--
-</span><span style=color:#75715e>      tessell-user is published simultaneously with
-</span><span style=color:#75715e>      tessell-dev, so depend on the same exact revision.
-</span><span style=color:#75715e>    --&gt;</span>
-    <span style=color:#f92672>&lt;dependency</span> <span style=color:#a6e22e>org=</span><span style=color:#e6db74>&#34;org.tessell&#34;</span> <span style=color:#a6e22e>name=</span><span style=color:#e6db74>&#34;tessell-user&#34;</span> <span style=color:#a6e22e>rev=</span><span style=color:#e6db74>&#34;${revision}&#34;</span> <span style=color:#a6e22e>conf=</span><span style=color:#e6db74>&#34;default&#34;</span><span style=color:#f92672>/&gt;</span>
-
-    <span style=color:#75715e>&lt;!-- other dependencies --&gt;</span>
-    <span style=color:#f92672>&lt;dependency</span> <span style=color:#a6e22e>org=</span><span style=color:#e6db74>&#34;com.google.gwt&#34;</span> <span style=color:#a6e22e>name=</span><span style=color:#e6db74>&#34;gwt-dev&#34;</span> <span style=color:#a6e22e>rev=</span><span style=color:#e6db74>&#34;2.1.0.M1&#34;</span> <span style=color:#a6e22e>conf=</span><span style=color:#e6db74>&#34;default&#34;</span><span style=color:#f92672>/&gt;</span>
-  <span style=color:#f92672>&lt;/dependencies&gt;</span>
-<span style=color:#f92672>&lt;/ivy-module&gt;</span>
-</code></pre></div><h2 id=buildxml>
-<code>build.xml</code>
-<a class=heading-link href=#buildxml>
-<i class="fa fa-link" aria-hidden=true></i>
-</a>
-</h2>
-<p>Finally, here is the Ivy-related part of the <a href=http://github.com/stephenh/tessell/tree/master/dev/build.xml>Tessell <code>build.xml</code></a>:</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-xml data-lang=xml><span style=color:#f92672>&lt;property</span> <span style=color:#a6e22e>name=</span><span style=color:#e6db74>&#34;ivy.jar.version&#34;</span> <span style=color:#a6e22e>value=</span><span style=color:#e6db74>&#34;2.1.0&#34;</span><span style=color:#f92672>/&gt;</span>
-<span style=color:#f92672>&lt;property</span> <span style=color:#a6e22e>name=</span><span style=color:#e6db74>&#34;ivy.jar.name&#34;</span> <span style=color:#a6e22e>value=</span><span style=color:#e6db74>&#34;ivy-${ivy.jar.version}.jar&#34;</span><span style=color:#f92672>/&gt;</span>
-<span style=color:#f92672>&lt;property</span> <span style=color:#a6e22e>name=</span><span style=color:#e6db74>&#34;ivy.home&#34;</span> <span style=color:#a6e22e>value=</span><span style=color:#e6db74>&#34;${user.home}/.ivy2&#34;</span><span style=color:#f92672>/&gt;</span>
-<span style=color:#f92672>&lt;available</span> <span style=color:#a6e22e>property=</span><span style=color:#e6db74>&#34;ivy.installed&#34;</span> <span style=color:#a6e22e>file=</span><span style=color:#e6db74>&#34;${ivy.home}/${ivy.jar.name}&#34;</span><span style=color:#f92672>/&gt;</span>
-
-<span style=color:#75715e>&lt;!-- 
-</span><span style=color:#75715e>  this is called once and auto-installs the ivy jar into
-</span><span style=color:#75715e>  ~/.ivy2 so that users only have to have ant to build.
-</span><span style=color:#75715e>--&gt;</span>
-<span style=color:#f92672>&lt;target</span> <span style=color:#a6e22e>name=</span><span style=color:#e6db74>&#34;ivy-install&#34;</span> <span style=color:#a6e22e>unless=</span><span style=color:#e6db74>&#34;ivy.installed&#34;</span><span style=color:#f92672>&gt;</span>
-  <span style=color:#f92672>&lt;mkdir</span> <span style=color:#a6e22e>dir=</span><span style=color:#e6db74>&#34;${ivy.home}&#34;</span><span style=color:#f92672>/&gt;</span>
-  <span style=color:#f92672>&lt;get</span> <span style=color:#a6e22e>src=</span><span style=color:#e6db74>&#34;http://repo1.maven.org/maven2/org/apache/ivy/ivy/${ivy.jar.version}/${ivy.jar.name}&#34;</span> <span style=color:#a6e22e>dest=</span><span style=color:#e6db74>&#34;${ivy.home}/${ivy.jar.name}&#34;</span><span style=color:#f92672>/&gt;</span>
-<span style=color:#f92672>&lt;/target&gt;</span>
-
-<span style=color:#75715e>&lt;!--
-</span><span style=color:#75715e>  this is called automatically and just inits ivy
-</span><span style=color:#75715e>--&gt;</span>
-<span style=color:#f92672>&lt;target</span> <span style=color:#a6e22e>name=</span><span style=color:#e6db74>&#34;ivy-init&#34;</span> <span style=color:#a6e22e>depends=</span><span style=color:#e6db74>&#34;ivy-install&#34;</span><span style=color:#f92672>&gt;</span>
-  <span style=color:#f92672>&lt;taskdef</span> <span style=color:#a6e22e>resource=</span><span style=color:#e6db74>&#34;org/apache/ivy/ant/antlib.xml&#34;</span> <span style=color:#a6e22e>uri=</span><span style=color:#e6db74>&#34;antlib:org.apache.ivy.ant&#34;</span> <span style=color:#a6e22e>classpath=</span><span style=color:#e6db74>&#34;${ivy.home}/${ivy.jar.name}&#34;</span><span style=color:#f92672>/&gt;</span>
-  <span style=color:#f92672>&lt;ivy:resolve/&gt;</span>
-<span style=color:#f92672>&lt;/target&gt;</span>
-
-<span style=color:#75715e>&lt;!--
-</span><span style=color:#75715e>  called by the user to download jars into bin/lib/
-</span><span style=color:#75715e>--&gt;</span>
-<span style=color:#f92672>&lt;target</span> <span style=color:#a6e22e>name=</span><span style=color:#e6db74>&#34;ivy-retrieve&#34;</span> <span style=color:#a6e22e>depends=</span><span style=color:#e6db74>&#34;ivy-init&#34;</span> <span style=color:#a6e22e>description=</span><span style=color:#e6db74>&#34;downloads jars for the project&#34;</span><span style=color:#f92672>&gt;</span>
-  <span style=color:#f92672>&lt;ivy:retrieve</span> <span style=color:#a6e22e>pattern=</span><span style=color:#e6db74>&#34;bin/lib/[conf]/[type]s/[artifact].[ext]&#34;</span> <span style=color:#a6e22e>conf=</span><span style=color:#e6db74>&#34;*&#34;</span> <span style=color:#a6e22e>type=</span><span style=color:#e6db74>&#34;*&#34;</span><span style=color:#f92672>/&gt;</span>
-<span style=color:#f92672>&lt;/target&gt;</span>
-
-<span style=color:#75715e>&lt;!--
-</span><span style=color:#75715e>  makes a pom for the project based off the ivy.xml file
-</span><span style=color:#75715e>--&gt;</span>
-<span style=color:#f92672>&lt;target</span> <span style=color:#a6e22e>name=</span><span style=color:#e6db74>&#34;gen-pom&#34;</span> <span style=color:#a6e22e>depends=</span><span style=color:#e6db74>&#34;ivy-init&#34;</span><span style=color:#f92672>&gt;</span>
-  <span style=color:#f92672>&lt;ivy:makepom</span> <span style=color:#a6e22e>ivyfile=</span><span style=color:#e6db74>&#34;ivy.xml&#34;</span> <span style=color:#a6e22e>pomfile=</span><span style=color:#e6db74>&#34;bin/poms/${ant.project.name}.pom&#34;</span><span style=color:#f92672>&gt;</span>
-    <span style=color:#75715e>&lt;!--
-</span><span style=color:#75715e>      Mapping confs to scopes is important, otherwise
-</span><span style=color:#75715e>      unmapped confs are included as optional. If you
-</span><span style=color:#75715e>      have private confs, the best option seems to
-</span><span style=color:#75715e>      be marking them as provided or system. See
-</span><span style=color:#75715e>      IVY-1201 for an ehancement request.
-</span><span style=color:#75715e>    --&gt;</span>
-    <span style=color:#f92672>&lt;mapping</span> <span style=color:#a6e22e>conf=</span><span style=color:#e6db74>&#34;default&#34;</span> <span style=color:#a6e22e>scope=</span><span style=color:#e6db74>&#34;compile&#34;</span><span style=color:#f92672>/&gt;</span>
-  <span style=color:#f92672>&lt;/ivy:makepom&gt;</span>
-<span style=color:#f92672>&lt;/target&gt;</span>
-
-<span style=color:#75715e>&lt;!--
-</span><span style=color:#75715e>  publishes to ~/.m2/repository so that other testing
-</span><span style=color:#75715e>  builds on our local machine can see it
-</span><span style=color:#75715e>--&gt;</span>
-<span style=color:#f92672>&lt;target</span> <span style=color:#a6e22e>name=</span><span style=color:#e6db74>&#34;ivy-publish-local&#34;</span> <span style=color:#a6e22e>depends=</span><span style=color:#e6db74>&#34;jar,ivy-init,gen-pom&#34;</span> <span style=color:#a6e22e>description=</span><span style=color:#e6db74>&#34;publish jar/source to maven repo mounted at ~/.m2/repository&#34;</span><span style=color:#f92672>&gt;</span>
-  <span style=color:#f92672>&lt;ivy:publish</span> <span style=color:#a6e22e>resolver=</span><span style=color:#e6db74>&#34;local-m2-publish&#34;</span> <span style=color:#a6e22e>forcedeliver=</span><span style=color:#e6db74>&#34;true&#34;</span> <span style=color:#a6e22e>overwrite=</span><span style=color:#e6db74>&#34;true&#34;</span> <span style=color:#a6e22e>publishivy=</span><span style=color:#e6db74>&#34;false&#34;</span><span style=color:#f92672>&gt;</span>
-    <span style=color:#f92672>&lt;artifacts</span> <span style=color:#a6e22e>pattern=</span><span style=color:#e6db74>&#34;bin/[type]s/[artifact].[ext]&#34;</span><span style=color:#f92672>/&gt;</span>
-  <span style=color:#f92672>&lt;/ivy:publish&gt;</span>
-<span style=color:#f92672>&lt;/target&gt;</span>
-
-<span style=color:#75715e>&lt;!--
-</span><span style=color:#75715e>  pubishes to the ~/repo directory, which should be something
-</span><span style=color:#75715e>  like an sshfs-mount of the public maven repository you are
-</span><span style=color:#75715e>  publishing to
-</span><span style=color:#75715e>--&gt;</span>
-<span style=color:#f92672>&lt;target</span> <span style=color:#a6e22e>name=</span><span style=color:#e6db74>&#34;ivy-publish-share&#34;</span> <span style=color:#a6e22e>depends=</span><span style=color:#e6db74>&#34;jar,ivy-init,gen-pom&#34;</span> <span style=color:#a6e22e>description=</span><span style=color:#e6db74>&#34;publish jar/source to maven repo mounted at ~/repo&#34;</span><span style=color:#f92672>&gt;</span>
-  <span style=color:#f92672>&lt;ivy:publish</span> <span style=color:#a6e22e>resolver=</span><span style=color:#e6db74>&#34;share-m2&#34;</span> <span style=color:#a6e22e>forcedeliver=</span><span style=color:#e6db74>&#34;true&#34;</span> <span style=color:#a6e22e>overwrite=</span><span style=color:#e6db74>&#34;true&#34;</span> <span style=color:#a6e22e>publishivy=</span><span style=color:#e6db74>&#34;false&#34;</span><span style=color:#f92672>&gt;</span>
-    <span style=color:#f92672>&lt;artifacts</span> <span style=color:#a6e22e>pattern=</span><span style=color:#e6db74>&#34;bin/[type]s/[artifact].[ext]&#34;</span> <span style=color:#f92672>/&gt;</span>
-  <span style=color:#f92672>&lt;/ivy:publish&gt;</span>
-<span style=color:#f92672>&lt;/target&gt;</span>
-</code></pre></div><h2 id=making-poms>
-Making Poms
-<a class=heading-link href=#making-poms>
-<i class="fa fa-link" aria-hidden=true></i>
-</a>
-</h2>
-<p>The <code>build.xml</code> file above uses Ivy&rsquo;s <code>makepom</code> Ant task to convert our project&rsquo;s <code>ivy.xml</code> into a <code>project.pom</code> before uploading it to the Maven repository.</p>
-<p>This is generally acceptable, insofar as Ivy will get all of the dependencies translated correctly, but you&rsquo;ll end up with a very minimal pom.</p>
-<p>So if you want to add more elements to the pom, it is probably easiest to just hand-maintain a <code>project.pom.template</code> and use a simple Ant filter to update the version on each build before being uploaded.</p>
-<p>For example, <a href=http://repo.joist.ws/org/tessell/tessell-dev/2.13.4/tessell-dev-2.13.4.pom>tessell-dev-2.13.4.pom</a> was built automatically by <code>makepom</code>, while <a href=http://repo.joist.ws/org/tessell/tessell-apt/2.6.3/tessell-apt-2.6.3.pom>tessell-apt-2.6.3.pom</a> was built from a hand-maintained template.</p>
-<h2 id=local-testing-builds>
-Local Testing Builds
-<a class=heading-link href=#local-testing-builds>
-<i class="fa fa-link" aria-hidden=true></i>
-</a>
-</h2>
-<p>So far I have not published <code>SNAPSHOT</code> versions publicly, but they are very handy for sharing in-development changes between projects on your local machine. Just doing:</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-plain data-lang=plain>ant ivy-publish-local
-</code></pre></div><p>Will publish a jar to <code>~/.m2</code> for other local projects to pull in your latest/uncommitted changes.</p>
-<p>Since we&rsquo;re going through the <code>local-m2</code> <code>&lt;ibiblio/></code> resolver, Ivy automatically handles latest-<code>SNAPSHOT</code> checking and we don&rsquo;t have to bother with any <code>~/.ivy2/cache</code>-busting tricks like I talked about in <a href=/2009/04/23/ivy-is-useful.html>Ivy Is Useful</a>.</p>
-<p>Though if you&rsquo;re using <a href=http://ant.apache.org/ivy/ivyde/>IvyDE</a> and workspace resolution of dependencies, Eclipse should setup all of the cross-project references correctly and you won&rsquo;t have to constantly publish <code>SNAPSHOT</code> jars just for local consumption each time you make a change.</p>
-<h2 id=doing-releases>
-Doing Releases
-<a class=heading-link href=#doing-releases>
-<i class="fa fa-link" aria-hidden=true></i>
-</a>
-</h2>
-<p>With the above setup, I can now publish Tessell to the <a href=http://repo.joist.ws/org/tessell>joist repo</a> via:</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-plain data-lang=plain>ant -Drevision=x.y ivy-publish-share
-</code></pre></div><h2 id=it-works>
-It Works
-<a class=heading-link href=#it-works>
-<i class="fa fa-link" aria-hidden=true></i>
-</a>
-</h2>
-<p>While this looks like a lot of code, my inline comments added a lot&ndash;it is generally ~50 lines of <code>ivysettings.xml</code> and <code>ivy.xml</code> per-project and then ~50 lines of straight-forward <code>build.xml</code> Ant code.</p>
-<p>While this is more than, say, 10 LOC, it hasn&rsquo;t been burdensome enough for me to investigate anything else, e.g. <a href=http://buildr.apache.org>Buildr</a>, or even near burdensome enough to consider using Maven itself.</p>
-<p>I should probably throw the common files into a shared git repository and then git submodule them around instead of being reduced to copy/paste. But I haven&rsquo;t gotten around to it yet, and it seems like each project always has some tweak here or there that would be annoying to generalize.</p>
-<p>Nonetheless, this has been working well for me. If I made any errors or omissions, please let me know.</p>
-<p><strong>Update 08/03/2010</strong>: Add gotcha about the <code>local-m2</code> resolver being chained after <code>public</code> resolvers.</p>
-<p><strong>Update 01/13/2011</strong>: Add <code>changingPattern="true"</code> to <code>local-m2</code> and <code>default</code> resolvers so that snapshots work without having Ant manually flushing the cache.</p>
-<p><strong>Update 12/05/2013</strong>: Fixed old &ldquo;gwt-mpv&rdquo; links to Tessell, as the project got renamed.</p>
-</div>
-<footer>
-<div id=disqus_thread></div>
-<script type=application/javascript>var disqus_config=function(){};(function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById('disqus_thread').innerHTML='Disqus comments not available by default when the website is previewed locally.';return}var b=document,a=b.createElement('script');a.async=!0,a.src='//draconianoverlord.disqus.com/embed.js',a.setAttribute('data-timestamp',+new Date),(b.head||b.body).appendChild(a)})()</script>
-<noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript>
-<a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a>
-</footer>
-</article>
-</section>
-</div>
-<footer class=footer>
-<section class=container>
-©
+<!doctype html><html lang=en><head><title>Publishing to Maven Repos with Ivy · Draconian Overlord</title><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=color-scheme content="light dark"><meta name=author content="Stephen Haberman"><meta name=description content="Publishing to Maven Repos with Ivy Link to heading Publishing to Maven repositories is a fact of life for projects in the Java community.
+While I am not a fan of Maven itself, I readily admit that the standard shared repository/transitive-metadata approach they have driven has been a great thing for the community. While I was initially skeptical, downloading dependencies and keeping them out of source code repos is a good thing."><meta name=keywords content="blog,developer,personal"><meta name=twitter:card content="summary"><meta name=twitter:title content="Publishing to Maven Repos with Ivy"><meta name=twitter:description content="Publishing to Maven Repos with Ivy Link to heading Publishing to Maven repositories is a fact of life for projects in the Java community.
+While I am not a fan of Maven itself, I readily admit that the standard shared repository/transitive-metadata approach they have driven has been a great thing for the community. While I was initially skeptical, downloading dependencies and keeping them out of source code repos is a good thing."><meta property="og:title" content="Publishing to Maven Repos with Ivy"><meta property="og:description" content="Publishing to Maven Repos with Ivy Link to heading Publishing to Maven repositories is a fact of life for projects in the Java community.
+While I am not a fan of Maven itself, I readily admit that the standard shared repository/transitive-metadata approach they have driven has been a great thing for the community. While I was initially skeptical, downloading dependencies and keeping them out of source code repos is a good thing."><meta property="og:type" content="article"><meta property="og:url" content="https://www.draconianoverlord.com/2010/07/18/publishing-to-maven-repos-with-ivy.html/"><meta property="article:section" content="posts"><meta property="article:published_time" content="2010-07-18T00:00:00+00:00"><meta property="article:modified_time" content="2010-07-18T00:00:00+00:00"><link rel=canonical href=https://www.draconianoverlord.com/2010/07/18/publishing-to-maven-repos-with-ivy.html/><link rel=preload href="/fonts/forkawesome-webfont.woff2?v=1.2.0" as=font type=font/woff2 crossorigin><link rel=stylesheet href=/css/coder.min.65236a6d834b26194eed04a2a3b45e44d9194ef9e620253705d4bef03bd7ef81.css integrity="sha256-ZSNqbYNLJhlO7QSio7ReRNkZTvnmICU3BdS+8DvX74E=" crossorigin=anonymous media=screen><link rel=stylesheet href=/css/coder-dark.min.f6534b0b446b75d9b6ad77a97d43ede2ddaeff1b6e2361fb7198d6f8fcb7f83f.css integrity="sha256-9lNLC0Rrddm2rXepfUPt4t2u/xtuI2H7cZjW+Py3+D8=" crossorigin=anonymous media=screen><link rel=icon type=image/png href=/images/favicon-32x32.png sizes=32x32><link rel=icon type=image/png href=/images/favicon-16x16.png sizes=16x16><link rel=apple-touch-icon href=/images/apple-touch-icon.png><link rel=apple-touch-icon sizes=180x180 href=/images/apple-touch-icon.png><link rel=manifest href=/site.webmanifest><link rel=mask-icon href=/images/safari-pinned-tab.svg color=#5bbad5></head><body class="preload-transitions colorscheme-auto"><div class=float-container><a id=dark-mode-toggle class=colorscheme-toggle><i class="fa fa-adjust fa-fw" aria-hidden=true></i></a></div><main class=wrapper><nav class=navigation><section class=container><a class=navigation-title href=/>Draconian Overlord</a>
+Oppressing software entropy</section></nav><div class=content><section class="container post"><article><header><div class=post-title><h1 class=title><a class=title-link href=https://www.draconianoverlord.com/2010/07/18/publishing-to-maven-repos-with-ivy.html/>Publishing to Maven Repos with Ivy</a></h1></div><div class=post-meta><div class=date><span class=posted-on><i class="fa fa-calendar" aria-hidden=true></i>
+<time datetime=2010-07-18T00:00:00Z>July 18, 2010</time></span>
+<span class=reading-time><i class="fa fa-clock-o" aria-hidden=true></i>
+7-minute read</span></div><div class=categories><i class="fa fa-folder" aria-hidden=true></i>
+<a href=/categories/java/>Java</a></div></div></header><div class=post-content><h1 id=publishing-to-maven-repos-with-ivy>Publishing to Maven Repos with Ivy
+<a class=heading-link href=#publishing-to-maven-repos-with-ivy><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h1><p>Publishing to Maven repositories is a fact of life for projects in the Java community.</p><p>While I am not a fan of Maven itself, I readily admit that the standard shared repository/transitive-metadata approach they have driven has been a great thing for the community. While I was initially skeptical, downloading dependencies and keeping them out of source code repos is a good thing.</p><h2 id=using-ivy>Using Ivy
+<a class=heading-link href=#using-ivy><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h2><p>That being said, I prefer to leverage Maven repositories from a safe, arms length distance via the excellent <a href=http://ant.apache.org/ivy class=external-link target=_blank rel=noopener>Ivy</a> (and <a href=http://ant.apache.org/ivy/ivyde/ class=external-link target=_blank rel=noopener>IvyDE</a>) tool which, besides other features, can understand the Maven repository format both as a source for dependencies and destination for publishing projects.</p><p>While Ivy-to-Maven works well, it did take me a few tries to get it right, so here are the various settings/files that so far are doing the job.</p><p><strong>Update 12/05/2013:</strong> I don&rsquo;t know why I did this, but the example <code>ivysettings.xml</code>, <code>ivy.xml</code>, and <code>build.xml</code> files below are actually from two separate projects of mine (<a href=http://www.joist.ws class=external-link target=_blank rel=noopener>Joist</a> and <a href=http://www.tessell.org class=external-link target=_blank rel=noopener>Tessell</a>). So, sorry for that being confusing, but they should still work. Note that you can check out either the Joist or Tessell builds for the latest Ivy incantations, in case these have drifted.</p><h2 id=ivysettingsxml><code>ivysettings.xml</code>
+<a class=heading-link href=#ivysettingsxml><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h2><p>This is the <a href=https://github.com/stephenh/joist/blob/master/ivysettings.xml class=external-link target=_blank rel=noopener>ivysettings.xml</a> to Joist, with comments added.</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-xml data-lang=xml><span style=display:flex><span><span style=color:#f92672>&lt;ivysettings&gt;</span>
+</span></span><span style=display:flex><span>  <span style=color:#75715e>&lt;!--
+</span></span></span><span style=display:flex><span><span style=color:#75715e>    This property is used later in the ivy.xml file to set
+</span></span></span><span style=display:flex><span><span style=color:#75715e>    the project&#39;s revision. Unless overridden, it defaults
+</span></span></span><span style=display:flex><span><span style=color:#75715e>    to the Maven SNAPSHOT convention, as that it works well
+</span></span></span><span style=display:flex><span><span style=color:#75715e>    for publishing local test builds to ~/.m2/repository.
+</span></span></span><span style=display:flex><span><span style=color:#75715e>  --&gt;</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>&lt;property</span> <span style=color:#a6e22e>name=</span><span style=color:#e6db74>&#34;revision&#34;</span> <span style=color:#a6e22e>value=</span><span style=color:#e6db74>&#34;SNAPSHOT&#34;</span> <span style=color:#a6e22e>override=</span><span style=color:#e6db74>&#34;false&#34;</span><span style=color:#f92672>/&gt;</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#75715e>&lt;!-- &#34;default&#34; is defined later in the file. --&gt;</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>&lt;settings</span> <span style=color:#a6e22e>defaultResolver=</span><span style=color:#e6db74>&#34;default&#34;</span><span style=color:#f92672>/&gt;</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#75715e>&lt;!-- Pulls in the &#34;public&#34; resolver for ibiblio-hosted jars. --&gt;</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>&lt;include</span> <span style=color:#a6e22e>url=</span><span style=color:#e6db74>&#34;${ivy.default.settings.dir}/ivysettings-public.xml&#34;</span><span style=color:#f92672>/&gt;</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>&lt;resolvers&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#75715e>&lt;!-- add any 3rd-party maven repos here... --&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>&lt;ibiblio</span> <span style=color:#a6e22e>name=</span><span style=color:#e6db74>&#34;joist&#34;</span> <span style=color:#a6e22e>m2compatible=</span><span style=color:#e6db74>&#34;true&#34;</span> <span style=color:#a6e22e>root=</span><span style=color:#e6db74>&#34;http://repo.joist.ws&#34;</span><span style=color:#f92672>/&gt;</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#75715e>&lt;!--
+</span></span></span><span style=display:flex><span><span style=color:#75715e>      for *retrieving* artifacts for local testing builds,
+</span></span></span><span style=display:flex><span><span style=color:#75715e>      we&#39;ll use maven&#39;s own .m2/repository.
+</span></span></span><span style=display:flex><span><span style=color:#75715e>    --&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>&lt;ibiblio</span>
+</span></span><span style=display:flex><span>      <span style=color:#a6e22e>name=</span><span style=color:#e6db74>&#34;local-m2&#34;</span>
+</span></span><span style=display:flex><span>      <span style=color:#a6e22e>m2compatible=</span><span style=color:#e6db74>&#34;true&#34;</span>
+</span></span><span style=display:flex><span>      <span style=color:#a6e22e>root=</span><span style=color:#e6db74>&#34;file://${user.home}/.m2/repository&#34;</span><span style=color:#960050;background-color:#1e0010>/</span>
+</span></span><span style=display:flex><span>      <span style=color:#a6e22e>changingPattern=</span><span style=color:#e6db74>&#34;.*SNAPSHOT&#34;</span><span style=color:#f92672>&gt;</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#75715e>&lt;!--
+</span></span></span><span style=display:flex><span><span style=color:#75715e>      for *publishing* artifacts for local testing builds,
+</span></span></span><span style=display:flex><span><span style=color:#75715e>      as the previous ibiblio resolver does not support
+</span></span></span><span style=display:flex><span><span style=color:#75715e>      publishing
+</span></span></span><span style=display:flex><span><span style=color:#75715e>    --&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>&lt;filesystem</span> <span style=color:#a6e22e>name=</span><span style=color:#e6db74>&#34;local-m2-publish&#34;</span> <span style=color:#a6e22e>m2compatible=</span><span style=color:#e6db74>&#34;true&#34;</span><span style=color:#f92672>&gt;</span>
+</span></span><span style=display:flex><span>      <span style=color:#f92672>&lt;artifact</span> <span style=color:#a6e22e>pattern=</span><span style=color:#e6db74>&#34;${user.home}/.m2/repository/[organisation]/[module]/[revision]/[artifact]-[revision](-[classifier]).[ext]&#34;</span><span style=color:#f92672>/&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>&lt;/filesystem&gt;</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#75715e>&lt;!--
+</span></span></span><span style=display:flex><span><span style=color:#75715e>      for publishing release artifacts via an sshfs-mounted share
+</span></span></span><span style=display:flex><span><span style=color:#75715e>    --&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>&lt;filesystem</span> <span style=color:#a6e22e>name=</span><span style=color:#e6db74>&#34;share-m2&#34;</span> <span style=color:#a6e22e>m2compatible=</span><span style=color:#e6db74>&#34;true&#34;</span><span style=color:#f92672>&gt;</span>
+</span></span><span style=display:flex><span>      <span style=color:#f92672>&lt;artifact</span> <span style=color:#a6e22e>pattern=</span><span style=color:#e6db74>&#34;${user.home}/repo/[organisation]/[module]/[revision]/[artifact]-[revision](-[classifier]).[ext]&#34;</span><span style=color:#f92672>/&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>&lt;filesystem&gt;</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#75715e>&lt;!-- strings the separate resolvers all together --&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>&lt;chain</span> <span style=color:#a6e22e>name=</span><span style=color:#e6db74>&#34;default&#34;</span> <span style=color:#a6e22e>changingPattern=</span><span style=color:#e6db74>&#34;.*SNAPSHOT&#34;</span><span style=color:#f92672>&gt;</span>
+</span></span><span style=display:flex><span>      <span style=color:#f92672>&lt;resolver</span> <span style=color:#a6e22e>ref=</span><span style=color:#e6db74>&#34;public&#34;</span><span style=color:#f92672>/&gt;</span>
+</span></span><span style=display:flex><span>      <span style=color:#f92672>&lt;resolver</span> <span style=color:#a6e22e>ref=</span><span style=color:#e6db74>&#34;joist&#34;</span><span style=color:#f92672>/&gt;</span>
+</span></span><span style=display:flex><span>      <span style=color:#75715e>&lt;!--
+</span></span></span><span style=display:flex><span><span style=color:#75715e>        Potential gotcha: you want your local-m2 to be last, or at least
+</span></span></span><span style=display:flex><span><span style=color:#75715e>        after the public repo. Otherwise maven proper might partially
+</span></span></span><span style=display:flex><span><span style=color:#75715e>        download a project into ~/.m2, but not include sources, and if
+</span></span></span><span style=display:flex><span><span style=color:#75715e>        local-m2 is first, ivy will pull the artifacts out of ~/.m2 and
+</span></span></span><span style=display:flex><span><span style=color:#75715e>        cache the partially-downloaded view of the repo (i.e. no sources).
+</span></span></span><span style=display:flex><span><span style=color:#75715e>        If public is first, ivy will always try to get artifacts from their
+</span></span></span><span style=display:flex><span><span style=color:#75715e>        canonical source.
+</span></span></span><span style=display:flex><span><span style=color:#75715e>      --&gt;</span>
+</span></span><span style=display:flex><span>      <span style=color:#f92672>&lt;resolver</span> <span style=color:#a6e22e>ref=</span><span style=color:#e6db74>&#34;local-m2&#34;</span><span style=color:#f92672>/&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>&lt;/chain&gt;</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>&lt;/resolvers&gt;</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>&lt;/ivysettings&gt;</span>
+</span></span></code></pre></div><p>The primary gotcha in this <code>ivysettings.xml</code> was having to use two separate resolvers for the same <code>~/.m2/repository</code>. This is because:</p><ul><li><p>Only the <code>ibiblio</code> resolver will parse poms and follow the pom&rsquo;s transitive dependencies.</p><p>(Technically the <code>filesystem</code> or <code>url</code> resolvers could retrieve jars with a Maven-ish artifact pattern, but the pom dependencies would be skipped.)</p></li><li><p>The <code>ibiblio</code> resolver does not support publishing, so we have to fall back to the <code>filesystem</code> resolver with a Maven-ish artifact pattern to publish.</p></li></ul><p>So, with the current Ivy 2.1.0 capabilities, it takes two resolvers for a single Maven repo if you want to both retrieve from and publish to it.</p><h2 id=ivyxml><code>ivy.xml</code>
+<a class=heading-link href=#ivyxml><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h2><p>This is the <a href=http://github.com/stephenh/tessell/tree/master/dev/ivy.xml class=external-link target=_blank rel=noopener>Tessell <code>ivy.xml</code></a>, again with comments.</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-xml data-lang=xml><span style=display:flex><span><span style=color:#f92672>&lt;ivy-module</span> <span style=color:#a6e22e>version=</span><span style=color:#e6db74>&#34;2.0&#34;</span> <span style=color:#a6e22e>xmlns:m=</span><span style=color:#e6db74>&#34;http://ant.apache.org/ivy/maven&#34;</span><span style=color:#f92672>&gt;</span>
+</span></span><span style=display:flex><span>  <span style=color:#75715e>&lt;!--
+</span></span></span><span style=display:flex><span><span style=color:#75715e>    We set the revision to the revision property from
+</span></span></span><span style=display:flex><span><span style=color:#75715e>    ivysettings.xml, which defaults to SNAPSHOT. This
+</span></span></span><span style=display:flex><span><span style=color:#75715e>    is overriden when publishing.
+</span></span></span><span style=display:flex><span><span style=color:#75715e>  --&gt;</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>&lt;info</span> <span style=color:#a6e22e>organisation=</span><span style=color:#e6db74>&#34;org.tessell&#34;</span> <span style=color:#a6e22e>module=</span><span style=color:#e6db74>&#34;tessell-dev&#34;</span> <span style=color:#a6e22e>revision=</span><span style=color:#e6db74>&#34;${revision}&#34;</span><span style=color:#f92672>/&gt;</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#75715e>&lt;!--
+</span></span></span><span style=display:flex><span><span style=color:#75715e>    I&#39;m not a huge fan of a separate sources conf,
+</span></span></span><span style=display:flex><span><span style=color:#75715e>    but that is how Ivy&#39;s ibiblio resolver converts
+</span></span></span><span style=display:flex><span><span style=color:#75715e>    poms, so we&#39;ll stay consistent with that.
+</span></span></span><span style=display:flex><span><span style=color:#75715e>  --&gt;</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>&lt;configurations&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>&lt;conf</span> <span style=color:#a6e22e>name=</span><span style=color:#e6db74>&#34;default&#34;</span><span style=color:#f92672>/&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>&lt;conf</span> <span style=color:#a6e22e>name=</span><span style=color:#e6db74>&#34;sources&#34;</span><span style=color:#f92672>/&gt;</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>&lt;/configurations&gt;</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>&lt;publications&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#75715e>&lt;!--
+</span></span></span><span style=display:flex><span><span style=color:#75715e>      We explicitly list a pom as an artifact of our
+</span></span></span><span style=display:flex><span><span style=color:#75715e>      project. This way the Ivy publish task will
+</span></span></span><span style=display:flex><span><span style=color:#75715e>      upload the pom to the maven repo, along with
+</span></span></span><span style=display:flex><span><span style=color:#75715e>      the jars and sources.
+</span></span></span><span style=display:flex><span><span style=color:#75715e>    --&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>&lt;artifact</span> <span style=color:#a6e22e>type=</span><span style=color:#e6db74>&#34;pom&#34;</span> <span style=color:#a6e22e>ext=</span><span style=color:#e6db74>&#34;pom&#34;</span> <span style=color:#a6e22e>conf=</span><span style=color:#e6db74>&#34;default&#34;</span><span style=color:#f92672>/&gt;</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#75715e>&lt;!--
+</span></span></span><span style=display:flex><span><span style=color:#75715e>      This is the main jar, nothing special.
+</span></span></span><span style=display:flex><span><span style=color:#75715e>    --&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>&lt;artifact</span> <span style=color:#a6e22e>type=</span><span style=color:#e6db74>&#34;jar&#34;</span> <span style=color:#a6e22e>ext=</span><span style=color:#e6db74>&#34;jar&#34;</span> <span style=color:#a6e22e>conf=</span><span style=color:#e6db74>&#34;default&#34;</span><span style=color:#f92672>/&gt;</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#75715e>&lt;!--
+</span></span></span><span style=display:flex><span><span style=color:#75715e>      To publish sources to a maven repo, the
+</span></span></span><span style=display:flex><span><span style=color:#75715e>      m:classifier=&#34;sources&#34; is required.
+</span></span></span><span style=display:flex><span><span style=color:#75715e>    --&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>&lt;artifact</span> <span style=color:#a6e22e>type=</span><span style=color:#e6db74>&#34;source&#34;</span> <span style=color:#a6e22e>ext=</span><span style=color:#e6db74>&#34;jar&#34;</span> <span style=color:#a6e22e>conf=</span><span style=color:#e6db74>&#34;sources&#34;</span> <span style=color:#a6e22e>m:classifier=</span><span style=color:#e6db74>&#34;sources&#34;</span><span style=color:#f92672>/&gt;</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>&lt;/publications&gt;</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#75715e>&lt;!--
+</span></span></span><span style=display:flex><span><span style=color:#75715e>    defaultconf == we want the jars + sources for our dependencies
+</span></span></span><span style=display:flex><span><span style=color:#75715e>    defaultconfmapping == unless specified otherwise, our confs map
+</span></span></span><span style=display:flex><span><span style=color:#75715e>      to default for our dependencies
+</span></span></span><span style=display:flex><span><span style=color:#75715e>  --&gt;</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>&lt;dependencies</span> <span style=color:#a6e22e>defaultconfmapping=</span><span style=color:#e6db74>&#34;sources-&gt;sources();%-&gt;default&#34;</span> <span style=color:#a6e22e>defaultconf=</span><span style=color:#e6db74>&#34;default;sources&#34;</span><span style=color:#f92672>&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#75715e>&lt;!--
+</span></span></span><span style=display:flex><span><span style=color:#75715e>      tessell-user is published simultaneously with
+</span></span></span><span style=display:flex><span><span style=color:#75715e>      tessell-dev, so depend on the same exact revision.
+</span></span></span><span style=display:flex><span><span style=color:#75715e>    --&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>&lt;dependency</span> <span style=color:#a6e22e>org=</span><span style=color:#e6db74>&#34;org.tessell&#34;</span> <span style=color:#a6e22e>name=</span><span style=color:#e6db74>&#34;tessell-user&#34;</span> <span style=color:#a6e22e>rev=</span><span style=color:#e6db74>&#34;${revision}&#34;</span> <span style=color:#a6e22e>conf=</span><span style=color:#e6db74>&#34;default&#34;</span><span style=color:#f92672>/&gt;</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#75715e>&lt;!-- other dependencies --&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>&lt;dependency</span> <span style=color:#a6e22e>org=</span><span style=color:#e6db74>&#34;com.google.gwt&#34;</span> <span style=color:#a6e22e>name=</span><span style=color:#e6db74>&#34;gwt-dev&#34;</span> <span style=color:#a6e22e>rev=</span><span style=color:#e6db74>&#34;2.1.0.M1&#34;</span> <span style=color:#a6e22e>conf=</span><span style=color:#e6db74>&#34;default&#34;</span><span style=color:#f92672>/&gt;</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>&lt;/dependencies&gt;</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>&lt;/ivy-module&gt;</span>
+</span></span></code></pre></div><h2 id=buildxml><code>build.xml</code>
+<a class=heading-link href=#buildxml><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h2><p>Finally, here is the Ivy-related part of the <a href=http://github.com/stephenh/tessell/tree/master/dev/build.xml class=external-link target=_blank rel=noopener>Tessell <code>build.xml</code></a>:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-xml data-lang=xml><span style=display:flex><span><span style=color:#f92672>&lt;property</span> <span style=color:#a6e22e>name=</span><span style=color:#e6db74>&#34;ivy.jar.version&#34;</span> <span style=color:#a6e22e>value=</span><span style=color:#e6db74>&#34;2.1.0&#34;</span><span style=color:#f92672>/&gt;</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>&lt;property</span> <span style=color:#a6e22e>name=</span><span style=color:#e6db74>&#34;ivy.jar.name&#34;</span> <span style=color:#a6e22e>value=</span><span style=color:#e6db74>&#34;ivy-${ivy.jar.version}.jar&#34;</span><span style=color:#f92672>/&gt;</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>&lt;property</span> <span style=color:#a6e22e>name=</span><span style=color:#e6db74>&#34;ivy.home&#34;</span> <span style=color:#a6e22e>value=</span><span style=color:#e6db74>&#34;${user.home}/.ivy2&#34;</span><span style=color:#f92672>/&gt;</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>&lt;available</span> <span style=color:#a6e22e>property=</span><span style=color:#e6db74>&#34;ivy.installed&#34;</span> <span style=color:#a6e22e>file=</span><span style=color:#e6db74>&#34;${ivy.home}/${ivy.jar.name}&#34;</span><span style=color:#f92672>/&gt;</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#75715e>&lt;!-- 
+</span></span></span><span style=display:flex><span><span style=color:#75715e>  this is called once and auto-installs the ivy jar into
+</span></span></span><span style=display:flex><span><span style=color:#75715e>  ~/.ivy2 so that users only have to have ant to build.
+</span></span></span><span style=display:flex><span><span style=color:#75715e>--&gt;</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>&lt;target</span> <span style=color:#a6e22e>name=</span><span style=color:#e6db74>&#34;ivy-install&#34;</span> <span style=color:#a6e22e>unless=</span><span style=color:#e6db74>&#34;ivy.installed&#34;</span><span style=color:#f92672>&gt;</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>&lt;mkdir</span> <span style=color:#a6e22e>dir=</span><span style=color:#e6db74>&#34;${ivy.home}&#34;</span><span style=color:#f92672>/&gt;</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>&lt;get</span> <span style=color:#a6e22e>src=</span><span style=color:#e6db74>&#34;http://repo1.maven.org/maven2/org/apache/ivy/ivy/${ivy.jar.version}/${ivy.jar.name}&#34;</span> <span style=color:#a6e22e>dest=</span><span style=color:#e6db74>&#34;${ivy.home}/${ivy.jar.name}&#34;</span><span style=color:#f92672>/&gt;</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>&lt;/target&gt;</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#75715e>&lt;!--
+</span></span></span><span style=display:flex><span><span style=color:#75715e>  this is called automatically and just inits ivy
+</span></span></span><span style=display:flex><span><span style=color:#75715e>--&gt;</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>&lt;target</span> <span style=color:#a6e22e>name=</span><span style=color:#e6db74>&#34;ivy-init&#34;</span> <span style=color:#a6e22e>depends=</span><span style=color:#e6db74>&#34;ivy-install&#34;</span><span style=color:#f92672>&gt;</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>&lt;taskdef</span> <span style=color:#a6e22e>resource=</span><span style=color:#e6db74>&#34;org/apache/ivy/ant/antlib.xml&#34;</span> <span style=color:#a6e22e>uri=</span><span style=color:#e6db74>&#34;antlib:org.apache.ivy.ant&#34;</span> <span style=color:#a6e22e>classpath=</span><span style=color:#e6db74>&#34;${ivy.home}/${ivy.jar.name}&#34;</span><span style=color:#f92672>/&gt;</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>&lt;ivy:resolve/&gt;</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>&lt;/target&gt;</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#75715e>&lt;!--
+</span></span></span><span style=display:flex><span><span style=color:#75715e>  called by the user to download jars into bin/lib/
+</span></span></span><span style=display:flex><span><span style=color:#75715e>--&gt;</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>&lt;target</span> <span style=color:#a6e22e>name=</span><span style=color:#e6db74>&#34;ivy-retrieve&#34;</span> <span style=color:#a6e22e>depends=</span><span style=color:#e6db74>&#34;ivy-init&#34;</span> <span style=color:#a6e22e>description=</span><span style=color:#e6db74>&#34;downloads jars for the project&#34;</span><span style=color:#f92672>&gt;</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>&lt;ivy:retrieve</span> <span style=color:#a6e22e>pattern=</span><span style=color:#e6db74>&#34;bin/lib/[conf]/[type]s/[artifact].[ext]&#34;</span> <span style=color:#a6e22e>conf=</span><span style=color:#e6db74>&#34;*&#34;</span> <span style=color:#a6e22e>type=</span><span style=color:#e6db74>&#34;*&#34;</span><span style=color:#f92672>/&gt;</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>&lt;/target&gt;</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#75715e>&lt;!--
+</span></span></span><span style=display:flex><span><span style=color:#75715e>  makes a pom for the project based off the ivy.xml file
+</span></span></span><span style=display:flex><span><span style=color:#75715e>--&gt;</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>&lt;target</span> <span style=color:#a6e22e>name=</span><span style=color:#e6db74>&#34;gen-pom&#34;</span> <span style=color:#a6e22e>depends=</span><span style=color:#e6db74>&#34;ivy-init&#34;</span><span style=color:#f92672>&gt;</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>&lt;ivy:makepom</span> <span style=color:#a6e22e>ivyfile=</span><span style=color:#e6db74>&#34;ivy.xml&#34;</span> <span style=color:#a6e22e>pomfile=</span><span style=color:#e6db74>&#34;bin/poms/${ant.project.name}.pom&#34;</span><span style=color:#f92672>&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#75715e>&lt;!--
+</span></span></span><span style=display:flex><span><span style=color:#75715e>      Mapping confs to scopes is important, otherwise
+</span></span></span><span style=display:flex><span><span style=color:#75715e>      unmapped confs are included as optional. If you
+</span></span></span><span style=display:flex><span><span style=color:#75715e>      have private confs, the best option seems to
+</span></span></span><span style=display:flex><span><span style=color:#75715e>      be marking them as provided or system. See
+</span></span></span><span style=display:flex><span><span style=color:#75715e>      IVY-1201 for an ehancement request.
+</span></span></span><span style=display:flex><span><span style=color:#75715e>    --&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>&lt;mapping</span> <span style=color:#a6e22e>conf=</span><span style=color:#e6db74>&#34;default&#34;</span> <span style=color:#a6e22e>scope=</span><span style=color:#e6db74>&#34;compile&#34;</span><span style=color:#f92672>/&gt;</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>&lt;/ivy:makepom&gt;</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>&lt;/target&gt;</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#75715e>&lt;!--
+</span></span></span><span style=display:flex><span><span style=color:#75715e>  publishes to ~/.m2/repository so that other testing
+</span></span></span><span style=display:flex><span><span style=color:#75715e>  builds on our local machine can see it
+</span></span></span><span style=display:flex><span><span style=color:#75715e>--&gt;</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>&lt;target</span> <span style=color:#a6e22e>name=</span><span style=color:#e6db74>&#34;ivy-publish-local&#34;</span> <span style=color:#a6e22e>depends=</span><span style=color:#e6db74>&#34;jar,ivy-init,gen-pom&#34;</span> <span style=color:#a6e22e>description=</span><span style=color:#e6db74>&#34;publish jar/source to maven repo mounted at ~/.m2/repository&#34;</span><span style=color:#f92672>&gt;</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>&lt;ivy:publish</span> <span style=color:#a6e22e>resolver=</span><span style=color:#e6db74>&#34;local-m2-publish&#34;</span> <span style=color:#a6e22e>forcedeliver=</span><span style=color:#e6db74>&#34;true&#34;</span> <span style=color:#a6e22e>overwrite=</span><span style=color:#e6db74>&#34;true&#34;</span> <span style=color:#a6e22e>publishivy=</span><span style=color:#e6db74>&#34;false&#34;</span><span style=color:#f92672>&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>&lt;artifacts</span> <span style=color:#a6e22e>pattern=</span><span style=color:#e6db74>&#34;bin/[type]s/[artifact].[ext]&#34;</span><span style=color:#f92672>/&gt;</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>&lt;/ivy:publish&gt;</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>&lt;/target&gt;</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#75715e>&lt;!--
+</span></span></span><span style=display:flex><span><span style=color:#75715e>  pubishes to the ~/repo directory, which should be something
+</span></span></span><span style=display:flex><span><span style=color:#75715e>  like an sshfs-mount of the public maven repository you are
+</span></span></span><span style=display:flex><span><span style=color:#75715e>  publishing to
+</span></span></span><span style=display:flex><span><span style=color:#75715e>--&gt;</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>&lt;target</span> <span style=color:#a6e22e>name=</span><span style=color:#e6db74>&#34;ivy-publish-share&#34;</span> <span style=color:#a6e22e>depends=</span><span style=color:#e6db74>&#34;jar,ivy-init,gen-pom&#34;</span> <span style=color:#a6e22e>description=</span><span style=color:#e6db74>&#34;publish jar/source to maven repo mounted at ~/repo&#34;</span><span style=color:#f92672>&gt;</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>&lt;ivy:publish</span> <span style=color:#a6e22e>resolver=</span><span style=color:#e6db74>&#34;share-m2&#34;</span> <span style=color:#a6e22e>forcedeliver=</span><span style=color:#e6db74>&#34;true&#34;</span> <span style=color:#a6e22e>overwrite=</span><span style=color:#e6db74>&#34;true&#34;</span> <span style=color:#a6e22e>publishivy=</span><span style=color:#e6db74>&#34;false&#34;</span><span style=color:#f92672>&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>&lt;artifacts</span> <span style=color:#a6e22e>pattern=</span><span style=color:#e6db74>&#34;bin/[type]s/[artifact].[ext]&#34;</span> <span style=color:#f92672>/&gt;</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>&lt;/ivy:publish&gt;</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>&lt;/target&gt;</span>
+</span></span></code></pre></div><h2 id=making-poms>Making Poms
+<a class=heading-link href=#making-poms><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h2><p>The <code>build.xml</code> file above uses Ivy&rsquo;s <code>makepom</code> Ant task to convert our project&rsquo;s <code>ivy.xml</code> into a <code>project.pom</code> before uploading it to the Maven repository.</p><p>This is generally acceptable, insofar as Ivy will get all of the dependencies translated correctly, but you&rsquo;ll end up with a very minimal pom.</p><p>So if you want to add more elements to the pom, it is probably easiest to just hand-maintain a <code>project.pom.template</code> and use a simple Ant filter to update the version on each build before being uploaded.</p><p>For example, <a href=http://repo.joist.ws/org/tessell/tessell-dev/2.13.4/tessell-dev-2.13.4.pom class=external-link target=_blank rel=noopener>tessell-dev-2.13.4.pom</a> was built automatically by <code>makepom</code>, while <a href=http://repo.joist.ws/org/tessell/tessell-apt/2.6.3/tessell-apt-2.6.3.pom class=external-link target=_blank rel=noopener>tessell-apt-2.6.3.pom</a> was built from a hand-maintained template.</p><h2 id=local-testing-builds>Local Testing Builds
+<a class=heading-link href=#local-testing-builds><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h2><p>So far I have not published <code>SNAPSHOT</code> versions publicly, but they are very handy for sharing in-development changes between projects on your local machine. Just doing:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-plain data-lang=plain><span style=display:flex><span>ant ivy-publish-local
+</span></span></code></pre></div><p>Will publish a jar to <code>~/.m2</code> for other local projects to pull in your latest/uncommitted changes.</p><p>Since we&rsquo;re going through the <code>local-m2</code> <code>&lt;ibiblio/></code> resolver, Ivy automatically handles latest-<code>SNAPSHOT</code> checking and we don&rsquo;t have to bother with any <code>~/.ivy2/cache</code>-busting tricks like I talked about in <a href=/2009/04/23/ivy-is-useful.html>Ivy Is Useful</a>.</p><p>Though if you&rsquo;re using <a href=http://ant.apache.org/ivy/ivyde/ class=external-link target=_blank rel=noopener>IvyDE</a> and workspace resolution of dependencies, Eclipse should setup all of the cross-project references correctly and you won&rsquo;t have to constantly publish <code>SNAPSHOT</code> jars just for local consumption each time you make a change.</p><h2 id=doing-releases>Doing Releases
+<a class=heading-link href=#doing-releases><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h2><p>With the above setup, I can now publish Tessell to the <a href=http://repo.joist.ws/org/tessell class=external-link target=_blank rel=noopener>joist repo</a> via:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-plain data-lang=plain><span style=display:flex><span>ant -Drevision=x.y ivy-publish-share
+</span></span></code></pre></div><h2 id=it-works>It Works
+<a class=heading-link href=#it-works><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h2><p>While this looks like a lot of code, my inline comments added a lot&ndash;it is generally ~50 lines of <code>ivysettings.xml</code> and <code>ivy.xml</code> per-project and then ~50 lines of straight-forward <code>build.xml</code> Ant code.</p><p>While this is more than, say, 10 LOC, it hasn&rsquo;t been burdensome enough for me to investigate anything else, e.g. <a href=http://buildr.apache.org class=external-link target=_blank rel=noopener>Buildr</a>, or even near burdensome enough to consider using Maven itself.</p><p>I should probably throw the common files into a shared git repository and then git submodule them around instead of being reduced to copy/paste. But I haven&rsquo;t gotten around to it yet, and it seems like each project always has some tweak here or there that would be annoying to generalize.</p><p>Nonetheless, this has been working well for me. If I made any errors or omissions, please let me know.</p><p><strong>Update 08/03/2010</strong>: Add gotcha about the <code>local-m2</code> resolver being chained after <code>public</code> resolvers.</p><p><strong>Update 01/13/2011</strong>: Add <code>changingPattern="true"</code> to <code>local-m2</code> and <code>default</code> resolvers so that snapshots work without having Ant manually flushing the cache.</p><p><strong>Update 12/05/2013</strong>: Fixed old &ldquo;gwt-mpv&rdquo; links to Tessell, as the project got renamed.</p></div><footer><div id=disqus_thread></div><script>window.disqus_config=function(){},function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById("disqus_thread").innerHTML="Disqus comments not available by default when the website is previewed locally.";return}var t=document,e=t.createElement("script");e.async=!0,e.src="//draconianoverlord.disqus.com/embed.js",e.setAttribute("data-timestamp",+new Date),(t.head||t.body).appendChild(e)}(),document.addEventListener("themeChanged",function(){document.readyState=="complete"&&DISQUS.reset({reload:!0,config:disqus_config})})</script></footer></article></section></div><footer class=footer><section class=container>©
 2008 -
-2022
+2023
 Stephen Haberman
 ·
-Powered by <a href=https://gohugo.io/>Hugo</a> & <a href=https://github.com/luizdepra/hugo-coder/>Coder</a>.
-</section>
-</footer>
-</main>
-<script src=/js/coder.min.03b17769f4f91ae35667e1f2a1ca8c16f50562576cf90ff32b3179926914daa5.js integrity="sha256-A7F3afT5GuNWZ+HyocqMFvUFYlds+Q/zKzF5kmkU2qU="></script>
-</body>
-</html>
+Powered by <a href=https://gohugo.io/ target=_blank rel=noopener>Hugo</a> & <a href=https://github.com/luizdepra/hugo-coder/ target=_blank rel=noopener>Coder</a>.</section></footer></main><script src=/js/coder.min.6ae284be93d2d19dad1f02b0039508d9aab3180a12a06dcc71b0b0ef7825a317.js integrity="sha256-auKEvpPS0Z2tHwKwA5UI2aqzGAoSoG3McbCw73gloxc="></script></body></html>

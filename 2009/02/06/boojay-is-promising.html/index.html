@@ -1,112 +1,17 @@
-<!doctype html><html lang=en>
-<head>
-<meta charset=utf-8>
-<meta name=viewport content="width=device-width,initial-scale=1">
-<meta http-equiv=content-language content="en">
-<meta name=color-scheme content="light dark">
-<meta name=author content="Stephen Haberman">
-<meta name=description content="Rodrigo B. de Oliveira has a new post up about his progress getting boo running in Eclipse and compiling to the JVM. This is very cool stuff.
+<!doctype html><html lang=en><head><title>Boojay is Promising · Draconian Overlord</title><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=color-scheme content="light dark"><meta name=author content="Stephen Haberman"><meta name=description content="Rodrigo B. de Oliveira has a new post up about his progress getting boo running in Eclipse and compiling to the JVM. This is very cool stuff.
 Boo has both a wrist-friendly syntax and macro meta-programming abilities, but in a type-safe language without all the &ldquo;gee, what does this code do at runtime again?&rdquo; ambiguities of dynamic languages like Groovy and Ruby.
-Okay, yeah, boo can&rsquo;t do method_missing, but I don&rsquo;t want that anyway.">
-<meta name=keywords content="blog,developer,personal">
-<meta name=twitter:card content="summary">
-<meta name=twitter:title content="Boojay is Promising">
-<meta name=twitter:description content="Rodrigo B. de Oliveira has a new post up about his progress getting boo running in Eclipse and compiling to the JVM. This is very cool stuff.
+Okay, yeah, boo can&rsquo;t do method_missing, but I don&rsquo;t want that anyway."><meta name=keywords content="blog,developer,personal"><meta name=twitter:card content="summary"><meta name=twitter:title content="Boojay is Promising"><meta name=twitter:description content="Rodrigo B. de Oliveira has a new post up about his progress getting boo running in Eclipse and compiling to the JVM. This is very cool stuff.
 Boo has both a wrist-friendly syntax and macro meta-programming abilities, but in a type-safe language without all the &ldquo;gee, what does this code do at runtime again?&rdquo; ambiguities of dynamic languages like Groovy and Ruby.
-Okay, yeah, boo can&rsquo;t do method_missing, but I don&rsquo;t want that anyway.">
-<meta property="og:title" content="Boojay is Promising">
-<meta property="og:description" content="Rodrigo B. de Oliveira has a new post up about his progress getting boo running in Eclipse and compiling to the JVM. This is very cool stuff.
+Okay, yeah, boo can&rsquo;t do method_missing, but I don&rsquo;t want that anyway."><meta property="og:title" content="Boojay is Promising"><meta property="og:description" content="Rodrigo B. de Oliveira has a new post up about his progress getting boo running in Eclipse and compiling to the JVM. This is very cool stuff.
 Boo has both a wrist-friendly syntax and macro meta-programming abilities, but in a type-safe language without all the &ldquo;gee, what does this code do at runtime again?&rdquo; ambiguities of dynamic languages like Groovy and Ruby.
-Okay, yeah, boo can&rsquo;t do method_missing, but I don&rsquo;t want that anyway.">
-<meta property="og:type" content="article">
-<meta property="og:url" content="https://www.draconianoverlord.com/2009/02/06/boojay-is-promising.html/"><meta property="article:section" content="posts">
-<meta property="article:published_time" content="2009-02-06T00:00:00+00:00">
-<meta property="article:modified_time" content="2009-02-06T00:00:00+00:00">
-<title>
-Boojay is Promising · Draconian Overlord
-</title>
-<link rel=canonical href=https://www.draconianoverlord.com/2009/02/06/boojay-is-promising.html/>
-<link rel=preload href="/fonts/forkawesome-webfont.woff2?v=1.2.0" as=font type=font/woff2 crossorigin>
-<link rel=stylesheet href=/css/coder.min.d9fddbffe6f27e69985dc5fe0471cdb0e57fbf4775714bc3d847accb08f4a1f6.css integrity="sha256-2f3b/+byfmmYXcX+BHHNsOV/v0d1cUvD2Eesywj0ofY=" crossorigin=anonymous media=screen>
-<link rel=stylesheet href=/css/coder-dark.min.aa883b9ce35a8ff4a2a5008619005175e842bb18a8a9f9cc2bbcf44dab2d91fa.css integrity="sha256-qog7nONaj/SipQCGGQBRdehCuxioqfnMK7z0Tastkfo=" crossorigin=anonymous media=screen>
-<link rel=icon type=image/png href=/images/favicon-32x32.png sizes=32x32>
-<link rel=icon type=image/png href=/images/favicon-16x16.png sizes=16x16>
-<link rel=apple-touch-icon href=/images/apple-touch-icon.png>
-<link rel=apple-touch-icon sizes=180x180 href=/images/apple-touch-icon.png>
-<meta name=generator content="Hugo 0.92.0">
-</head>
-<body class="preload-transitions colorscheme-auto">
-<div class=float-container>
-<a id=dark-mode-toggle class=colorscheme-toggle>
-<i class="fa fa-adjust fa-fw" aria-hidden=true></i>
-</a>
-</div>
-<main class=wrapper>
-<nav class=navigation>
-<section class=container>
-<a class=navigation-title href=/>Draconian Overlord</a>
-Oppressing software entropy
-</section>
-</nav>
-<div class=content>
-<section class="container post">
-<article>
-<header>
-<div class=post-title>
-<h1 class=title>
-<a class=title-link href=https://www.draconianoverlord.com/2009/02/06/boojay-is-promising.html/>
-Boojay is Promising
-</a>
-</h1>
-</div>
-<div class=post-meta>
-<div class=date>
-<span class=posted-on>
-<i class="fa fa-calendar" aria-hidden=true></i>
-<time datetime=2009-02-06T00:00:00Z>
-February 6, 2009
-</time>
-</span>
-<span class=reading-time>
-<i class="fa fa-clock-o" aria-hidden=true></i>
-2-minute read
-</span>
-</div>
-<div class=categories>
-<i class="fa fa-folder" aria-hidden=true></i>
-<a href=/categories/languages/>Languages</a></div>
-</div>
-</header>
-<div>
-<p>Rodrigo B. de Oliveira has a new <a href=http://blogs.codehaus.org/people/bamboo/archives/001751_experience_boojay_with_monolipse.html>post</a> up about his progress getting <a href=http://boo.codehaus.org>boo</a> running in Eclipse and compiling to the JVM. This is very cool stuff.</p>
-<p>Boo has both a wrist-friendly syntax and macro meta-programming abilities, but in a type-safe language without all the &ldquo;gee, what does this code do at runtime again?&rdquo; ambiguities of dynamic languages like Groovy and Ruby.</p>
-<p>Okay, yeah, boo can&rsquo;t do <code>method_missing</code>, but I don&rsquo;t want that anyway. Closures, type inference, and macros? That&rsquo;s all the magic I want and need.</p>
-<p>If you watch the video in his post, it even shows a dual view of the &ldquo;regular&rdquo; macro/type inferred source code that you actually type, then you can press a shortcut and see a read-only view of the &ldquo;processed&rdquo; source code after it has been expanded by macros and had the types filled in. I.e. you can easily see exactly what the code you write is going to end up as after the magic is applied.</p>
-<p>Try doing that in the dynamic language of your choice.</p>
-<p>I tried to get Rodrigo&rsquo;s example working on my Windows box, and it seems to be really close, but I cannot get the Mono Eclipse plugin to find my local Mono runtime, so nothing is compiling right now. But I&rsquo;m not too worried&ndash;it&rsquo;s not ready to go just yet, but the progress is very impressive.</p>
-<p>Boo has also impressed me with its longevity&ndash;back in the early days, it seemed like a very cool .NET hobby language that would probably fade after a few releases. IIRC, it even had an edge on C# 1.0 for awhile. Then Microsoft blew everyone away with the C# 2.0 and 3.0 releases, but, contrary to Java, boo is steadily <a href=http://docs.codehaus.org/display/BOO/2009/01/27/Boo+0.9+is+here!>catching up</a>.</p>
-<p>In my opinion, boojay is currently the best &ldquo;Java++&rdquo; contender. I can&rsquo;t wait for a few more releases to go by to see where it goes.</p>
-</div>
-<footer>
-<div id=disqus_thread></div>
-<script type=application/javascript>var disqus_config=function(){};(function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById('disqus_thread').innerHTML='Disqus comments not available by default when the website is previewed locally.';return}var b=document,a=b.createElement('script');a.async=!0,a.src='//draconianoverlord.disqus.com/embed.js',a.setAttribute('data-timestamp',+new Date),(b.head||b.body).appendChild(a)})()</script>
-<noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript>
-<a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a>
-</footer>
-</article>
-</section>
-</div>
-<footer class=footer>
-<section class=container>
-©
+Okay, yeah, boo can&rsquo;t do method_missing, but I don&rsquo;t want that anyway."><meta property="og:type" content="article"><meta property="og:url" content="https://www.draconianoverlord.com/2009/02/06/boojay-is-promising.html/"><meta property="article:section" content="posts"><meta property="article:published_time" content="2009-02-06T00:00:00+00:00"><meta property="article:modified_time" content="2009-02-06T00:00:00+00:00"><link rel=canonical href=https://www.draconianoverlord.com/2009/02/06/boojay-is-promising.html/><link rel=preload href="/fonts/forkawesome-webfont.woff2?v=1.2.0" as=font type=font/woff2 crossorigin><link rel=stylesheet href=/css/coder.min.65236a6d834b26194eed04a2a3b45e44d9194ef9e620253705d4bef03bd7ef81.css integrity="sha256-ZSNqbYNLJhlO7QSio7ReRNkZTvnmICU3BdS+8DvX74E=" crossorigin=anonymous media=screen><link rel=stylesheet href=/css/coder-dark.min.f6534b0b446b75d9b6ad77a97d43ede2ddaeff1b6e2361fb7198d6f8fcb7f83f.css integrity="sha256-9lNLC0Rrddm2rXepfUPt4t2u/xtuI2H7cZjW+Py3+D8=" crossorigin=anonymous media=screen><link rel=icon type=image/png href=/images/favicon-32x32.png sizes=32x32><link rel=icon type=image/png href=/images/favicon-16x16.png sizes=16x16><link rel=apple-touch-icon href=/images/apple-touch-icon.png><link rel=apple-touch-icon sizes=180x180 href=/images/apple-touch-icon.png><link rel=manifest href=/site.webmanifest><link rel=mask-icon href=/images/safari-pinned-tab.svg color=#5bbad5></head><body class="preload-transitions colorscheme-auto"><div class=float-container><a id=dark-mode-toggle class=colorscheme-toggle><i class="fa fa-adjust fa-fw" aria-hidden=true></i></a></div><main class=wrapper><nav class=navigation><section class=container><a class=navigation-title href=/>Draconian Overlord</a>
+Oppressing software entropy</section></nav><div class=content><section class="container post"><article><header><div class=post-title><h1 class=title><a class=title-link href=https://www.draconianoverlord.com/2009/02/06/boojay-is-promising.html/>Boojay is Promising</a></h1></div><div class=post-meta><div class=date><span class=posted-on><i class="fa fa-calendar" aria-hidden=true></i>
+<time datetime=2009-02-06T00:00:00Z>February 6, 2009</time></span>
+<span class=reading-time><i class="fa fa-clock-o" aria-hidden=true></i>
+2-minute read</span></div><div class=categories><i class="fa fa-folder" aria-hidden=true></i>
+<a href=/categories/languages/>Languages</a></div></div></header><div class=post-content><p>Rodrigo B. de Oliveira has a new <a href=http://blogs.codehaus.org/people/bamboo/archives/001751_experience_boojay_with_monolipse.html class=external-link target=_blank rel=noopener>post</a> up about his progress getting <a href=http://boo.codehaus.org class=external-link target=_blank rel=noopener>boo</a> running in Eclipse and compiling to the JVM. This is very cool stuff.</p><p>Boo has both a wrist-friendly syntax and macro meta-programming abilities, but in a type-safe language without all the &ldquo;gee, what does this code do at runtime again?&rdquo; ambiguities of dynamic languages like Groovy and Ruby.</p><p>Okay, yeah, boo can&rsquo;t do <code>method_missing</code>, but I don&rsquo;t want that anyway. Closures, type inference, and macros? That&rsquo;s all the magic I want and need.</p><p>If you watch the video in his post, it even shows a dual view of the &ldquo;regular&rdquo; macro/type inferred source code that you actually type, then you can press a shortcut and see a read-only view of the &ldquo;processed&rdquo; source code after it has been expanded by macros and had the types filled in. I.e. you can easily see exactly what the code you write is going to end up as after the magic is applied.</p><p>Try doing that in the dynamic language of your choice.</p><p>I tried to get Rodrigo&rsquo;s example working on my Windows box, and it seems to be really close, but I cannot get the Mono Eclipse plugin to find my local Mono runtime, so nothing is compiling right now. But I&rsquo;m not too worried&ndash;it&rsquo;s not ready to go just yet, but the progress is very impressive.</p><p>Boo has also impressed me with its longevity&ndash;back in the early days, it seemed like a very cool .NET hobby language that would probably fade after a few releases. IIRC, it even had an edge on C# 1.0 for awhile. Then Microsoft blew everyone away with the C# 2.0 and 3.0 releases, but, contrary to Java, boo is steadily <a href=http://docs.codehaus.org/display/BOO/2009/01/27/Boo+0.9+is+here! class=external-link target=_blank rel=noopener>catching up</a>.</p><p>In my opinion, boojay is currently the best &ldquo;Java++&rdquo; contender. I can&rsquo;t wait for a few more releases to go by to see where it goes.</p></div><footer><div id=disqus_thread></div><script>window.disqus_config=function(){},function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById("disqus_thread").innerHTML="Disqus comments not available by default when the website is previewed locally.";return}var t=document,e=t.createElement("script");e.async=!0,e.src="//draconianoverlord.disqus.com/embed.js",e.setAttribute("data-timestamp",+new Date),(t.head||t.body).appendChild(e)}(),document.addEventListener("themeChanged",function(){document.readyState=="complete"&&DISQUS.reset({reload:!0,config:disqus_config})})</script></footer></article></section></div><footer class=footer><section class=container>©
 2008 -
-2022
+2023
 Stephen Haberman
 ·
-Powered by <a href=https://gohugo.io/>Hugo</a> & <a href=https://github.com/luizdepra/hugo-coder/>Coder</a>.
-</section>
-</footer>
-</main>
-<script src=/js/coder.min.03b17769f4f91ae35667e1f2a1ca8c16f50562576cf90ff32b3179926914daa5.js integrity="sha256-A7F3afT5GuNWZ+HyocqMFvUFYlds+Q/zKzF5kmkU2qU="></script>
-</body>
-</html>
+Powered by <a href=https://gohugo.io/ target=_blank rel=noopener>Hugo</a> & <a href=https://github.com/luizdepra/hugo-coder/ target=_blank rel=noopener>Coder</a>.</section></footer></main><script src=/js/coder.min.6ae284be93d2d19dad1f02b0039508d9aab3180a12a06dcc71b0b0ef7825a317.js integrity="sha256-auKEvpPS0Z2tHwKwA5UI2aqzGAoSoG3McbCw73gloxc="></script></body></html>

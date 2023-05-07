@@ -1,439 +1,248 @@
-<!doctype html><html lang=en>
-<head>
-<meta charset=utf-8>
-<meta name=viewport content="width=device-width,initial-scale=1">
-<meta http-equiv=content-language content="en">
-<meta name=color-scheme content="light dark">
-<meta name=author content="Stephen Haberman">
-<meta name=description content="Recently, I thought of a simple thought experiment.
-With a Servlet    Let&rsquo;s start with a servlet that just writes out &ldquo;Hello World&rdquo;. I&rsquo;m going to use a pseudo API instead of something like javax.servlet to facilitate the thought experiment.
-public void service(Writer w) { w.write(&#34;Hello World&#34;); } Simple enough. We can fake-out Writer (use a mock Writer or a StubWriter) and put the service method under test.">
-<meta name=keywords content="blog,developer,personal">
-<meta name=twitter:card content="summary">
-<meta name=twitter:title content="Dependency Injection Thought Experiment">
-<meta name=twitter:description content="Recently, I thought of a simple thought experiment.
-With a Servlet    Let&rsquo;s start with a servlet that just writes out &ldquo;Hello World&rdquo;. I&rsquo;m going to use a pseudo API instead of something like javax.servlet to facilitate the thought experiment.
-public void service(Writer w) { w.write(&#34;Hello World&#34;); } Simple enough. We can fake-out Writer (use a mock Writer or a StubWriter) and put the service method under test.">
-<meta property="og:title" content="Dependency Injection Thought Experiment">
-<meta property="og:description" content="Recently, I thought of a simple thought experiment.
-With a Servlet    Let&rsquo;s start with a servlet that just writes out &ldquo;Hello World&rdquo;. I&rsquo;m going to use a pseudo API instead of something like javax.servlet to facilitate the thought experiment.
-public void service(Writer w) { w.write(&#34;Hello World&#34;); } Simple enough. We can fake-out Writer (use a mock Writer or a StubWriter) and put the service method under test.">
-<meta property="og:type" content="article">
-<meta property="og:url" content="https://www.draconianoverlord.com/2014/02/08/dependency-injection-thought-experiment.html/"><meta property="article:section" content="posts">
-<meta property="article:published_time" content="2014-02-08T00:00:00+00:00">
-<meta property="article:modified_time" content="2014-02-08T00:00:00+00:00">
-<title>
-Dependency Injection Thought Experiment · Draconian Overlord
-</title>
-<link rel=canonical href=https://www.draconianoverlord.com/2014/02/08/dependency-injection-thought-experiment.html/>
-<link rel=preload href="/fonts/forkawesome-webfont.woff2?v=1.2.0" as=font type=font/woff2 crossorigin>
-<link rel=stylesheet href=/css/coder.min.d9fddbffe6f27e69985dc5fe0471cdb0e57fbf4775714bc3d847accb08f4a1f6.css integrity="sha256-2f3b/+byfmmYXcX+BHHNsOV/v0d1cUvD2Eesywj0ofY=" crossorigin=anonymous media=screen>
-<link rel=stylesheet href=/css/coder-dark.min.aa883b9ce35a8ff4a2a5008619005175e842bb18a8a9f9cc2bbcf44dab2d91fa.css integrity="sha256-qog7nONaj/SipQCGGQBRdehCuxioqfnMK7z0Tastkfo=" crossorigin=anonymous media=screen>
-<link rel=icon type=image/png href=/images/favicon-32x32.png sizes=32x32>
-<link rel=icon type=image/png href=/images/favicon-16x16.png sizes=16x16>
-<link rel=apple-touch-icon href=/images/apple-touch-icon.png>
-<link rel=apple-touch-icon sizes=180x180 href=/images/apple-touch-icon.png>
-<meta name=generator content="Hugo 0.92.0">
-</head>
-<body class="preload-transitions colorscheme-auto">
-<div class=float-container>
-<a id=dark-mode-toggle class=colorscheme-toggle>
-<i class="fa fa-adjust fa-fw" aria-hidden=true></i>
-</a>
-</div>
-<main class=wrapper>
-<nav class=navigation>
-<section class=container>
-<a class=navigation-title href=/>Draconian Overlord</a>
-Oppressing software entropy
-</section>
-</nav>
-<div class=content>
-<section class="container post">
-<article>
-<header>
-<div class=post-title>
-<h1 class=title>
-<a class=title-link href=https://www.draconianoverlord.com/2014/02/08/dependency-injection-thought-experiment.html/>
-Dependency Injection Thought Experiment
-</a>
-</h1>
-</div>
-<div class=post-meta>
-<div class=date>
-<span class=posted-on>
-<i class="fa fa-calendar" aria-hidden=true></i>
-<time datetime=2014-02-08T00:00:00Z>
-February 8, 2014
-</time>
-</span>
-<span class=reading-time>
-<i class="fa fa-clock-o" aria-hidden=true></i>
-10-minute read
-</span>
-</div>
-<div class=categories>
-<i class="fa fa-folder" aria-hidden=true></i>
-<a href=/categories/architecture/>Architecture</a></div>
-</div>
-</header>
-<div>
-<p>Recently, I thought of a simple thought experiment.</p>
-<h2 id=with-a-servlet>
-With a Servlet
-<a class=heading-link href=#with-a-servlet>
-<i class="fa fa-link" aria-hidden=true></i>
-</a>
-</h2>
-<p>Let&rsquo;s start with a servlet that just writes out &ldquo;Hello World&rdquo;. I&rsquo;m going to use a pseudo API instead of something like <code>javax.servlet</code> to facilitate the thought experiment.</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>service</span><span style=color:#f92672>(</span>Writer w<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
-  w<span style=color:#f92672>.</span><span style=color:#a6e22e>write</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;Hello World&#34;</span><span style=color:#f92672>);</span>
-<span style=color:#f92672>}</span>
-</code></pre></div><p>Simple enough. We can fake-out <code>Writer</code> (use a mock <code>Writer</code> or a <code>StubWriter</code>) and put the <code>service</code> method under test.</p>
-<p>I&rsquo;ll skip the test code as, regardless of whether you mock or stub, it&rsquo;ll be pretty simple.</p>
-<p>So, now let&rsquo;s say our code needs access to the query parameters:</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>service</span><span style=color:#f92672>(</span>Writer w<span style=color:#f92672>,</span> Map<span style=color:#f92672>&lt;</span>String<span style=color:#f92672>,</span> String<span style=color:#f92672>&gt;</span> params<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
-  w<span style=color:#f92672>.</span><span style=color:#a6e22e>write</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;Hello World &#34;</span> <span style=color:#f92672>+</span> params<span style=color:#f92672>.</span><span style=color:#a6e22e>get</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;queryParam&#34;</span><span style=color:#f92672>));</span>
-<span style=color:#f92672>}</span>
-</code></pre></div><p>We now have 2 method parameters. Fair enough.</p>
-<p>But now let&rsquo;s say we also want the HTTP headers:</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>service</span><span style=color:#f92672>(</span>
-    Writer w<span style=color:#f92672>,</span>
-    Map<span style=color:#f92672>&lt;</span>String<span style=color:#f92672>,</span> String<span style=color:#f92672>&gt;</span> params<span style=color:#f92672>,</span>
-    Map<span style=color:#f92672>&lt;</span>String<span style=color:#f92672>,</span> String<span style=color:#f92672>&gt;</span> headers<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
-  w<span style=color:#f92672>.</span><span style=color:#a6e22e>write</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;Hello World &#34;</span> <span style=color:#f92672>+</span>
-    params<span style=color:#f92672>.</span><span style=color:#a6e22e>get</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;queryParam&#34;</span><span style=color:#f92672>)</span> <span style=color:#f92672>+</span>
-    <span style=color:#e6db74>&#34; using &#34;</span> <span style=color:#f92672>+</span>
-    headers<span style=color:#f92672>.</span><span style=color:#a6e22e>get</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;User-Agent&#34;</span><span style=color:#f92672>));</span>
-<span style=color:#f92672>}</span>
-</code></pre></div><p>We have 3 method parameters. Still fine.</p>
-<p>But then next we need the session:</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>service</span><span style=color:#f92672>(</span>
-    Writer w<span style=color:#f92672>,</span>
-    Map<span style=color:#f92672>&lt;</span>String<span style=color:#f92672>,</span> String<span style=color:#f92672>&gt;</span> params<span style=color:#f92672>,</span>
-    Map<span style=color:#f92672>&lt;</span>String<span style=color:#f92672>,</span> String<span style=color:#f92672>&gt;</span> headers<span style=color:#f92672>,</span>
-    Map<span style=color:#f92672>&lt;</span>String<span style=color:#f92672>,</span> String<span style=color:#f92672>&gt;</span> session<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
-  w<span style=color:#f92672>.</span><span style=color:#a6e22e>write</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;Hello World &#34;</span> <span style=color:#f92672>+</span>
-    params<span style=color:#f92672>.</span><span style=color:#a6e22e>get</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;queryParam&#34;</span><span style=color:#f92672>)</span> <span style=color:#f92672>+</span>
-    <span style=color:#e6db74>&#34; using &#34;</span> <span style=color:#f92672>+</span>
-    headers<span style=color:#f92672>.</span><span style=color:#a6e22e>get</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;User-Agent&#34;</span><span style=color:#f92672>)</span> <span style=color:#f92672>+</span>
-    session<span style=color:#f92672>.</span><span style=color:#a6e22e>get</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;username&#34;</span><span style=color:#f92672>));</span>
-<span style=color:#f92672>}</span>
-</code></pre></div><p>Oh, and now we also want to set the response Content-Type header:</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>service</span><span style=color:#f92672>(</span>
-    Writer w<span style=color:#f92672>,</span>
-    Map<span style=color:#f92672>&lt;</span>String<span style=color:#f92672>,</span> String<span style=color:#f92672>&gt;</span> params<span style=color:#f92672>,</span>
-    Map<span style=color:#f92672>&lt;</span>String<span style=color:#f92672>,</span> String<span style=color:#f92672>&gt;</span> headers<span style=color:#f92672>,</span>
-    Map<span style=color:#f92672>&lt;</span>String<span style=color:#f92672>,</span> String<span style=color:#f92672>&gt;</span> session<span style=color:#f92672>,</span>
-    Map<span style=color:#f92672>&lt;</span>String<span style=color:#f92672>,</span> String<span style=color:#f92672>&gt;</span> outHeaders<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
-  outHeaders<span style=color:#f92672>.</span><span style=color:#a6e22e>put</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;Content-Type&#34;</span><span style=color:#f92672>,</span> <span style=color:#e6db74>&#34;text/html&#34;</span><span style=color:#f92672>);</span>
-  w<span style=color:#f92672>.</span><span style=color:#a6e22e>write</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;Hello World &#34;</span> <span style=color:#f92672>+</span>
-    params<span style=color:#f92672>.</span><span style=color:#a6e22e>get</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;queryParam&#34;</span><span style=color:#f92672>)</span> <span style=color:#f92672>+</span>
-    <span style=color:#e6db74>&#34; using &#34;</span> <span style=color:#f92672>+</span>
-    headers<span style=color:#f92672>.</span><span style=color:#a6e22e>get</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;User-Agent&#34;</span><span style=color:#f92672>)</span> <span style=color:#f92672>+</span>
-    session<span style=color:#f92672>.</span><span style=color:#a6e22e>get</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;username&#34;</span><span style=color:#f92672>));</span>
-<span style=color:#f92672>}</span>
-</code></pre></div><p>Eesh. Now we&rsquo;re at 5 method parameters.</p>
-<p>How about one last thing&ndash;so far our <code>service</code> method has been stateless, which is fine, that&rsquo;s how servlets work.</p>
-<p>But, illustration purposes, let&rsquo;s pretend our &ldquo;servlet&rdquo; component it actually stateful (e.g. one is created per-request):</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>Servlet</span> <span style=color:#f92672>{</span>
-  <span style=color:#66d9ef>private</span> <span style=color:#66d9ef>final</span> Writer w<span style=color:#f92672>;</span>
-  <span style=color:#66d9ef>private</span> <span style=color:#66d9ef>final</span> Map<span style=color:#f92672>&lt;</span>String<span style=color:#f92672>,</span> String<span style=color:#f92672>&gt;</span> params<span style=color:#f92672>;</span>
-  <span style=color:#66d9ef>private</span> <span style=color:#66d9ef>final</span> Map<span style=color:#f92672>&lt;</span>String<span style=color:#f92672>,</span> String<span style=color:#f92672>&gt;</span> headers<span style=color:#f92672>;</span>
-  <span style=color:#66d9ef>private</span> <span style=color:#66d9ef>final</span> Map<span style=color:#f92672>&lt;</span>String<span style=color:#f92672>,</span> String<span style=color:#f92672>&gt;</span> session<span style=color:#f92672>;</span>
-  <span style=color:#66d9ef>private</span> <span style=color:#66d9ef>final</span> Map<span style=color:#f92672>&lt;</span>String<span style=color:#f92672>,</span> String<span style=color:#f92672>&gt;</span> outHeaders<span style=color:#f92672>;</span>
-
-  <span style=color:#66d9ef>public</span> <span style=color:#a6e22e>Servlet</span><span style=color:#f92672>(</span>
-      <span style=color:#66d9ef>final</span> Writer w<span style=color:#f92672>,</span>
-      <span style=color:#66d9ef>final</span> Map<span style=color:#f92672>&lt;</span>String<span style=color:#f92672>,</span> String<span style=color:#f92672>&gt;</span> params<span style=color:#f92672>,</span>
-      <span style=color:#66d9ef>final</span> Map<span style=color:#f92672>&lt;</span>String<span style=color:#f92672>,</span> String<span style=color:#f92672>&gt;</span> headers<span style=color:#f92672>,</span>
-      <span style=color:#66d9ef>final</span> Map<span style=color:#f92672>&lt;</span>String<span style=color:#f92672>,</span> String<span style=color:#f92672>&gt;</span> session<span style=color:#f92672>,</span>
-      <span style=color:#66d9ef>final</span> Map<span style=color:#f92672>&lt;</span>String<span style=color:#f92672>,</span> String<span style=color:#f92672>&gt;</span> outHeaders<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
-    <span style=color:#66d9ef>this</span><span style=color:#f92672>.</span><span style=color:#a6e22e>w</span> <span style=color:#f92672>=</span> w<span style=color:#f92672>;</span>
-    <span style=color:#66d9ef>this</span><span style=color:#f92672>.</span><span style=color:#a6e22e>params</span> <span style=color:#f92672>=</span> params<span style=color:#f92672>;</span>
-    <span style=color:#66d9ef>this</span><span style=color:#f92672>.</span><span style=color:#a6e22e>headers</span> <span style=color:#f92672>=</span> headers<span style=color:#f92672>;</span>
-    <span style=color:#66d9ef>this</span><span style=color:#f92672>.</span><span style=color:#a6e22e>session</span> <span style=color:#f92672>=</span> session<span style=color:#f92672>;</span>
-    <span style=color:#66d9ef>this</span><span style=color:#f92672>.</span><span style=color:#a6e22e>outHeaders</span> <span style=color:#f92672>=</span> outHeaders<span style=color:#f92672>;</span>
-  <span style=color:#f92672>}</span>
-
-  <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>service</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
-    outHeaders<span style=color:#f92672>.</span><span style=color:#a6e22e>put</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;Content-Type&#34;</span><span style=color:#f92672>,</span> <span style=color:#e6db74>&#34;text/html&#34;</span><span style=color:#f92672>);</span>
-    w<span style=color:#f92672>.</span><span style=color:#a6e22e>write</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;Hello World &#34;</span> <span style=color:#f92672>+</span>
-      params<span style=color:#f92672>.</span><span style=color:#a6e22e>get</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;queryParam&#34;</span><span style=color:#f92672>)</span> <span style=color:#f92672>+</span>
-      <span style=color:#e6db74>&#34; using &#34;</span> <span style=color:#f92672>+</span>
-      headers<span style=color:#f92672>.</span><span style=color:#a6e22e>get</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;User-Agent&#34;</span><span style=color:#f92672>)</span> <span style=color:#f92672>+</span>
-      session<span style=color:#f92672>.</span><span style=color:#a6e22e>get</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;username&#34;</span><span style=color:#f92672>));</span>
-  <span style=color:#f92672>}</span>
-<span style=color:#f92672>}</span>
-</code></pre></div><p>At this point, passing around the parameter list is getting out of hand.</p>
-<p>Which is fine, we can apply a well known refactoring, <a href=http://www.refactoring.com/catalog/introduceParameterObject.html>Introduce Parameter Object</a>, and make <code>Request</code> and <code>Response</code> interfaces:</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>interface</span> <span style=color:#a6e22e>Request</span> <span style=color:#f92672>{</span>
-  Map<span style=color:#f92672>&lt;</span>String<span style=color:#f92672>,</span> String<span style=color:#f92672>&gt;</span> <span style=color:#a6e22e>getParams</span><span style=color:#f92672>();</span>
-  Map<span style=color:#f92672>&lt;</span>String<span style=color:#f92672>,</span> String<span style=color:#f92672>&gt;</span> <span style=color:#a6e22e>getHeaders</span><span style=color:#f92672>();</span>
-  Map<span style=color:#f92672>&lt;</span>String<span style=color:#f92672>,</span> String<span style=color:#f92672>&gt;</span> <span style=color:#a6e22e>getSession</span><span style=color:#f92672>();</span>
-<span style=color:#f92672>}</span>
-
-<span style=color:#66d9ef>public</span> <span style=color:#66d9ef>interface</span> <span style=color:#a6e22e>Response</span> <span style=color:#f92672>{</span>
-  setHeader<span style=color:#f92672>(</span>String name<span style=color:#f92672>,</span> String value<span style=color:#f92672>);</span>
-  Writer <span style=color:#a6e22e>getWriter</span><span style=color:#f92672>();</span>
-<span style=color:#f92672>}</span>
-</code></pre></div><p>And now have our <code>Servlet</code> class use them:</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>Servlet</span> <span style=color:#f92672>{</span>
-  <span style=color:#66d9ef>private</span> <span style=color:#66d9ef>final</span> Request request<span style=color:#f92672>;</span>
-  <span style=color:#66d9ef>private</span> <span style=color:#66d9ef>final</span> Response response<span style=color:#f92672>;</span>
-
-  <span style=color:#66d9ef>public</span> <span style=color:#a6e22e>Servlet</span><span style=color:#f92672>(</span>Request request<span style=color:#f92672>,</span> Response response<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
-    <span style=color:#66d9ef>this</span><span style=color:#f92672>.</span><span style=color:#a6e22e>request</span> <span style=color:#f92672>=</span> request<span style=color:#f92672>;</span>
-    <span style=color:#66d9ef>this</span><span style=color:#f92672>.</span><span style=color:#a6e22e>response</span> <span style=color:#f92672>=</span> response<span style=color:#f92672>;</span>
-  <span style=color:#f92672>}</span>
-
-  <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>service</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
-    request<span style=color:#f92672>.</span><span style=color:#a6e22e>setHeader</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;Content-Type&#34;</span><span style=color:#f92672>,</span> <span style=color:#e6db74>&#34;text/html&#34;</span><span style=color:#f92672>);</span>
-    response<span style=color:#f92672>.</span><span style=color:#a6e22e>getWriter</span><span style=color:#f92672>().</span><span style=color:#a6e22e>write</span><span style=color:#f92672>(</span>
-      <span style=color:#e6db74>&#34;Hello World&#34;</span> <span style=color:#f92672>+</span>
-      request<span style=color:#f92672>.</span><span style=color:#a6e22e>getParams</span><span style=color:#f92672>().</span><span style=color:#a6e22e>get</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;queryParam&#34;</span><span style=color:#f92672>)</span> <span style=color:#f92672>+</span>
-      <span style=color:#e6db74>&#34; using &#34;</span> <span style=color:#f92672>+</span>
-      request<span style=color:#f92672>.</span><span style=color:#a6e22e>getHeaders</span><span style=color:#f92672>().</span><span style=color:#a6e22e>get</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;User-Agent&#34;</span><span style=color:#f92672>)</span> <span style=color:#f92672>+</span>
-      request<span style=color:#f92672>.</span><span style=color:#a6e22e>getSession</span><span style=color:#f92672>().</span><span style=color:#a6e22e>get</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;username&#34;</span><span style=color:#f92672>));</span>
-  <span style=color:#f92672>}</span>
-<span style=color:#f92672>}</span>
-</code></pre></div><p>This looks a lot better.</p>
-<p>We introduced a <code>Request</code> abstraction that groups request-lifecycle attributes, and so instead of passing around lots of related parameters, we can pass around <code>Request</code> and <code>Response</code> instances.</p>
-<p>So far, none of this should be new or different, because HTTP libraries in basically any OO language look this way.</p>
-<h2 id=servlet-testing>
-Servlet Testing
-<a class=heading-link href=#servlet-testing>
-<i class="fa fa-link" aria-hidden=true></i>
-</a>
-</h2>
-<p>After introducing the <code>Request</code> interface, testing the <code>Servlet</code> class involves a level of indirection.</p>
-<p>Previously we could pass fake <code>Writer</code>, <code>Map</code>, etc. instances directly as parameters to our <code>service</code> method&ndash;now we have to wrap a <code>Request</code> around the test <code>Writer</code>, <code>Map</code>, etc. and pass the <code>Request</code> instead.</p>
-<p>If you&rsquo;re mocking, you just mock out the parts of <code>Request</code> you need:</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=color:#66d9ef>private</span> Request request <span style=color:#f92672>=</span> mock<span style=color:#f92672>(</span>Request<span style=color:#f92672>.</span><span style=color:#a6e22e>class</span><span style=color:#f92672>);</span>
-<span style=color:#66d9ef>private</span> Response response <span style=color:#f92672>=</span> mock<span style=color:#f92672>(</span>Response<span style=color:#f92672>.</span><span style=color:#a6e22e>class</span><span style=color:#f92672>);</span>
-
-<span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>testServletOne</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
-  <span style=color:#75715e>// ServletOne only needs Writer
-</span><span style=color:#75715e></span>  when<span style=color:#f92672>(</span>response<span style=color:#f92672>.</span><span style=color:#a6e22e>getWriter</span><span style=color:#f92672>()).</span><span style=color:#a6e22e>thenReturn</span><span style=color:#f92672>(</span>mockWriter<span style=color:#f92672>);</span>
-  servlet <span style=color:#f92672>=</span> <span style=color:#66d9ef>new</span> ServletOne<span style=color:#f92672>(</span>request<span style=color:#f92672>,</span> response<span style=color:#f92672>);</span>
-  <span style=color:#75715e>// ...rest of test...
-</span><span style=color:#75715e></span><span style=color:#f92672>}</span>
-
-<span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>testServletTwo</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
-  <span style=color:#75715e>// ServletTwo needs headers and Writer
-</span><span style=color:#75715e></span>  when<span style=color:#f92672>(</span>request<span style=color:#f92672>.</span><span style=color:#a6e22e>getHeaders</span><span style=color:#f92672>()).</span><span style=color:#a6e22e>thenReturn</span><span style=color:#f92672>(</span>mockHeaders<span style=color:#f92672>);</span>
-  when<span style=color:#f92672>(</span>response<span style=color:#f92672>.</span><span style=color:#a6e22e>getWriter</span><span style=color:#f92672>()).</span><span style=color:#a6e22e>thenReturn</span><span style=color:#f92672>(</span>mockWriter<span style=color:#f92672>);</span>
-  servlet <span style=color:#f92672>=</span> <span style=color:#66d9ef>new</span> ServletTwo<span style=color:#f92672>(</span>request<span style=color:#f92672>,</span> response<span style=color:#f92672>);</span>
-  <span style=color:#75715e>// ..rest of test ...
-</span><span style=color:#75715e></span><span style=color:#f92672>}</span>
-</code></pre></div><p>Personally, I <a href=/2010/07/09/why-i-dont-like-mocks.html>prefer stubbing</a> in this scenario, and would use something akin Spring&rsquo;s misnamed <a href=http://static.springsource.org/spring/docs/2.0.x/api/org/springframework/mock/web/MockHttpServletRequest.html>MockHttpServletRequest</a> (it&rsquo;s really a <a href=http://martinfowler.com/articles/mocksArentStubs.html>stub</a>):</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=color:#66d9ef>private</span> Request request <span style=color:#f92672>=</span> <span style=color:#66d9ef>new</span> StubRequest<span style=color:#f92672>();</span>
-<span style=color:#66d9ef>private</span> Response response <span style=color:#f92672>=</span> <span style=color:#66d9ef>new</span> StubResponse<span style=color:#f92672>();</span>
-
-<span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>testServletOne</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
-  servlet <span style=color:#f92672>=</span> <span style=color:#66d9ef>new</span> ServletOne<span style=color:#f92672>(</span>request<span style=color:#f92672>,</span> response<span style=color:#f92672>);</span>
-  <span style=color:#75715e>// ...rest of test...
-</span><span style=color:#75715e></span><span style=color:#f92672>}</span>
-
-<span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>testServletTwo</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
-  servlet <span style=color:#f92672>=</span> <span style=color:#66d9ef>new</span> ServletTwo<span style=color:#f92672>(</span>request<span style=color:#f92672>,</span> response<span style=color:#f92672>);</span>
-  <span style=color:#75715e>// ...rest of test ...
-</span><span style=color:#75715e></span><span style=color:#f92672>}</span>
-</code></pre></div><p>But, which ever style you prefer, this extra level of mocking/stubbing in tests is pretty standard for <code>Request</code> interfaces.</p>
-<h2 id=thoughts-on-servlet-refactoring>
-Thoughts on Servlet Refactoring
-<a class=heading-link href=#thoughts-on-servlet-refactoring>
-<i class="fa fa-link" aria-hidden=true></i>
-</a>
-</h2>
-<p>So far, whether you prefer a stateful or stateless <code>Servlet</code> class aside, I think this has been a pretty standard &ldquo;best practice&rdquo; refactoring.</p>
-<p>But let&rsquo;s be pedantic and focus on the API change of our constructor (using the stateful <code>Servlet</code> class), both pre- and post-<code>Request</code> refactoring:</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=color:#75715e>// before
-</span><span style=color:#75715e></span><span style=color:#66d9ef>public</span> <span style=color:#a6e22e>Servlet</span><span style=color:#f92672>(</span>
-    <span style=color:#66d9ef>final</span> Writer w<span style=color:#f92672>,</span>
-    <span style=color:#66d9ef>final</span> Map<span style=color:#f92672>&lt;</span>String<span style=color:#f92672>,</span> String<span style=color:#f92672>&gt;</span> params<span style=color:#f92672>,</span>
-    <span style=color:#66d9ef>final</span> Map<span style=color:#f92672>&lt;</span>String<span style=color:#f92672>,</span> String<span style=color:#f92672>&gt;</span> headers<span style=color:#f92672>,</span>
-    <span style=color:#66d9ef>final</span> Map<span style=color:#f92672>&lt;</span>String<span style=color:#f92672>,</span> String<span style=color:#f92672>&gt;</span> session<span style=color:#f92672>,</span>
-    <span style=color:#66d9ef>final</span> Map<span style=color:#f92672>&lt;</span>String<span style=color:#f92672>,</span> String<span style=color:#f92672>&gt;</span> outHeaders<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
-  <span style=color:#66d9ef>this</span><span style=color:#f92672>.</span><span style=color:#a6e22e>w</span> <span style=color:#f92672>=</span> w<span style=color:#f92672>;</span>
-  <span style=color:#66d9ef>this</span><span style=color:#f92672>.</span><span style=color:#a6e22e>params</span> <span style=color:#f92672>=</span> params<span style=color:#f92672>;</span>
-  <span style=color:#66d9ef>this</span><span style=color:#f92672>.</span><span style=color:#a6e22e>headers</span> <span style=color:#f92672>=</span> headers<span style=color:#f92672>;</span>
-  <span style=color:#66d9ef>this</span><span style=color:#f92672>.</span><span style=color:#a6e22e>session</span> <span style=color:#f92672>=</span> session<span style=color:#f92672>;</span>
-  <span style=color:#66d9ef>this</span><span style=color:#f92672>.</span><span style=color:#a6e22e>outHeaders</span> <span style=color:#f92672>=</span> outHeaders<span style=color:#f92672>;</span>
-<span style=color:#f92672>}</span>
-
-<span style=color:#75715e>// after
-</span><span style=color:#75715e></span><span style=color:#66d9ef>public</span> <span style=color:#a6e22e>Servlet</span><span style=color:#f92672>(</span>
-  <span style=color:#66d9ef>final</span> Request request<span style=color:#f92672>,</span>
-  <span style=color:#66d9ef>final</span> Response response<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
-  <span style=color:#66d9ef>this</span><span style=color:#f92672>.</span><span style=color:#a6e22e>request</span> <span style=color:#f92672>=</span> request<span style=color:#f92672>;</span>
-  <span style=color:#66d9ef>this</span><span style=color:#f92672>.</span><span style=color:#a6e22e>response</span> <span style=color:#f92672>=</span> response<span style=color:#f92672>;</span>
-<span style=color:#f92672>}</span>
-</code></pre></div><p>What are the pros and cons of the change?</p>
-<ul>
-<li>Pro: less parameters to pass around</li>
-<li>Pro: more decoupled&ndash;whoever instantiates our <code>Servlet</code> does not have to know exactly which parts of the request our <code>service</code> method is going to use</li>
-<li>Con: less explicit&ndash;previously we could see exactly what parts of the request we needed; if we didn&rsquo;t need the <code>session</code> map, we could leave it out of our constructor, and it is immediately apparent to callers</li>
-</ul>
-<p>Personally, I think the pros outweighs the cons here. And given that every servlet-type API I&rsquo;ve seen lately has a <code>Request</code> interface, I think its fair to say this is a well-accepted, non-controversial refactoring.</p>
-<p>You might take a moment to note to yourself whether you do/do not agree with this refactoring, just for the purpose of the thought experiment.</p>
-<h2 id=now-with-services>
-Now with Services
-<a class=heading-link href=#now-with-services>
-<i class="fa fa-link" aria-hidden=true></i>
-</a>
-</h2>
-<p>Instead of a servlet, let&rsquo;s now write a service, some sort of stateless &ldquo;bean&rdquo; (it&rsquo;s 2014, I really should stop using that word) in your application that needs application-scoped dependencies:</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>Service</span> <span style=color:#f92672>{</span>
-  <span style=color:#66d9ef>private</span> <span style=color:#66d9ef>final</span> EmailSender emailSender<span style=color:#f92672>;</span>
-  <span style=color:#66d9ef>private</span> <span style=color:#66d9ef>final</span> FooDao fooDao<span style=color:#f92672>;</span>
-  <span style=color:#66d9ef>private</span> <span style=color:#66d9ef>final</span> BlahService blahService
-
-  <span style=color:#66d9ef>public</span> <span style=color:#a6e22e>Service</span><span style=color:#f92672>(</span>
-      <span style=color:#66d9ef>final</span> EmailSender emailSender<span style=color:#f92672>,</span>
-      <span style=color:#66d9ef>final</span> FooDao fooDao<span style=color:#f92672>,</span>
-      <span style=color:#66d9ef>final</span> BlahService blahService<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
-    <span style=color:#66d9ef>this</span><span style=color:#f92672>.</span><span style=color:#a6e22e>emailSender</span> <span style=color:#f92672>=</span> emailSender<span style=color:#f92672>;</span>
-    <span style=color:#66d9ef>this</span><span style=color:#f92672>.</span><span style=color:#a6e22e>fooDao</span> <span style=color:#f92672>=</span> fooDao<span style=color:#f92672>;</span>
-    <span style=color:#66d9ef>this</span><span style=color:#f92672>.</span><span style=color:#a6e22e>blahService</span> <span style=color:#f92672>=</span> blahService<span style=color:#f92672>;</span>
-  <span style=color:#f92672>}</span>
-
-  <span style=color:#75715e>// ...service methods...
-</span><span style=color:#75715e></span><span style=color:#f92672>}</span>
-</code></pre></div><p>I&rsquo;ve made up <code>EmailSender</code>, <code>FooDao</code>, and <code>BlahService</code> as dependencies of <code>Service</code>&ndash;what the actual dependencies are isn&rsquo;t important. The main point is that they are all application-scoped dependencies.</p>
-<p>Do you notice how similar this <code>Service</code> code looks to the pre-<code>Request</code> <code>Servlet</code> code?</p>
-<p>Most people look at the <code>Service</code> constructor and think there&rsquo;s no way they want to instantiate by hand all 10-50-whatever services they have in their project when the constructor is going to vary so widely from service to service.</p>
-<p>So, in steps auto-wiring dependency injection (Spring, Guice, whatever) as the hero to solve this problem. They give up strongly-typed <code>new Service</code> calls and say &ldquo;here, let me use reflection to call all these nasty constructors for you&rdquo;.</p>
-<p>Which makes sense if you&rsquo;re forcing yourself to stick with the <code>Service(EmailSender, FooDao, BlahService)</code> constructor.</p>
-<p>But what if we apply the same refactoring that we just applied to <code>Servlet</code>? We applied Introduce Parameter Object and made a <code>Request</code> interface&ndash;let&rsquo;s apply it here and make an <code>AppContext</code> interface:</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>interface</span> <span style=color:#a6e22e>AppContext</span> <span style=color:#f92672>{</span>
-  EmailSender <span style=color:#a6e22e>getEmailSender</span><span style=color:#f92672>();</span>
-  FooDao <span style=color:#a6e22e>getFooDao</span><span style=color:#f92672>();</span>
-  BlahService <span style=color:#a6e22e>getBlahService</span><span style=color:#f92672>();</span>
-<span style=color:#f92672>}</span>
-</code></pre></div><p>And now let&rsquo;s use it:</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=color:#75715e>// style 1
-</span><span style=color:#75715e></span><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>Service</span> <span style=color:#f92672>{</span>
-  <span style=color:#66d9ef>private</span> <span style=color:#66d9ef>final</span> AppContext appContext<span style=color:#f92672>;</span>
-  <span style=color:#66d9ef>public</span> <span style=color:#a6e22e>Service</span><span style=color:#f92672>(</span><span style=color:#66d9ef>final</span> AppContext appContext<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
-    <span style=color:#66d9ef>this</span><span style=color:#f92672>.</span><span style=color:#a6e22e>appContext</span><span style=color:#f92672>=</span>appContext<span style=color:#f92672>;</span>
-  <span style=color:#f92672>}</span>
-  <span style=color:#75715e>// service method calls appContext.getBlahService().xxx();
-</span><span style=color:#75715e></span><span style=color:#f92672>}</span>
-
-<span style=color:#75715e>// style 2
-</span><span style=color:#75715e></span><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>Service</span> <span style=color:#f92672>{</span>
-  <span style=color:#66d9ef>private</span> <span style=color:#66d9ef>final</span> EmailSender emailSender<span style=color:#f92672>;</span>
-  <span style=color:#66d9ef>private</span> <span style=color:#66d9ef>final</span> FooDao fooDao<span style=color:#f92672>;</span>
-  <span style=color:#66d9ef>private</span> <span style=color:#66d9ef>final</span> BlahService blahService
-
-  <span style=color:#66d9ef>public</span> <span style=color:#a6e22e>Service</span><span style=color:#f92672>(</span><span style=color:#66d9ef>final</span> AppContext appContext<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
-    <span style=color:#66d9ef>this</span><span style=color:#f92672>.</span><span style=color:#a6e22e>emailSender</span> <span style=color:#f92672>=</span> appContext<span style=color:#f92672>.</span><span style=color:#a6e22e>getEmailSender</span><span style=color:#f92672>();</span>
-    <span style=color:#66d9ef>this</span><span style=color:#f92672>.</span><span style=color:#a6e22e>fooDao</span> <span style=color:#f92672>=</span> appContext<span style=color:#f92672>.</span><span style=color:#a6e22e>getFooDao</span><span style=color:#f92672>();</span>
-    <span style=color:#66d9ef>this</span><span style=color:#f92672>.</span><span style=color:#a6e22e>blahService</span> <span style=color:#f92672>=</span> appContext<span style=color:#f92672>.</span><span style=color:#a6e22e>getBlahService</span><span style=color:#f92672>();</span>
-  <span style=color:#f92672>}</span>
-  <span style=color:#75715e>// service method calls blahService.xxx();
-</span><span style=color:#75715e></span><span style=color:#f92672>}</span>
-</code></pre></div><p>Whichever style you prefer, we&rsquo;ve drastically simplified our constructor&ndash;instead of saying &ldquo;I need X, Y, Z, &mldr;&rdquo;, it&rsquo;s &ldquo;I need some of my application&rsquo;s app-scoped dependencies&rdquo;.</p>
-<h2 id=service-testing>
-Service Testing
-<a class=heading-link href=#service-testing>
-<i class="fa fa-link" aria-hidden=true></i>
-</a>
-</h2>
-<p>Much like Servlet Testing earlier, adding an <code>AppContext</code> adds a level of indirection to our tests that we must mock/stub out.</p>
-<p>You can either mock:</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=color:#66d9ef>private</span> AppContext appContext <span style=color:#f92672>=</span> mock<span style=color:#f92672>(</span>AppContext<span style=color:#f92672>.</span><span style=color:#a6e22e>class</span><span style=color:#f92672>);</span>
-
-<span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>testServiceOne</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
-  <span style=color:#75715e>// ServiceOne only needs FooDao
-</span><span style=color:#75715e></span>  when<span style=color:#f92672>(</span>appContext<span style=color:#f92672>.</span><span style=color:#a6e22e>getFooDao</span><span style=color:#f92672>()).</span><span style=color:#a6e22e>thenReturn</span><span style=color:#f92672>(</span>mockFooDao<span style=color:#f92672>);</span>
-  service <span style=color:#f92672>=</span> <span style=color:#66d9ef>new</span> ServiceOne<span style=color:#f92672>(</span>appContext<span style=color:#f92672>);</span>
-  <span style=color:#75715e>// ...rest of test...
-</span><span style=color:#75715e></span><span style=color:#f92672>}</span>
-
-<span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>testServiceTwo</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
-  <span style=color:#75715e>// ServiceTwo needs needs FooDao and EmailSender
-</span><span style=color:#75715e></span>  when<span style=color:#f92672>(</span>appContext<span style=color:#f92672>.</span><span style=color:#a6e22e>getFooDao</span><span style=color:#f92672>()).</span><span style=color:#a6e22e>thenReturn</span><span style=color:#f92672>(</span>mockFooDao<span style=color:#f92672>);</span>
-  when<span style=color:#f92672>(</span>appContext<span style=color:#f92672>.</span><span style=color:#a6e22e>getEmailSender</span><span style=color:#f92672>()).</span><span style=color:#a6e22e>thenReturn</span><span style=color:#f92672>(</span>mockEmailSender<span style=color:#f92672>);</span>
-  service <span style=color:#f92672>=</span> <span style=color:#66d9ef>new</span> ServiceTwo<span style=color:#f92672>(</span>appContext<span style=color:#f92672>);</span>
-  <span style=color:#75715e>// ...rest of test ...
-</span><span style=color:#75715e></span><span style=color:#f92672>}</span>
-</code></pre></div><p>Or, stub:</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=color:#66d9ef>private</span> StubAppContext appContext <span style=color:#f92672>=</span> <span style=color:#66d9ef>new</span> StubAppContext<span style=color:#f92672>();</span>
-
-<span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>testServiceOne</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
-  service <span style=color:#f92672>=</span> <span style=color:#66d9ef>new</span> ServiceOne<span style=color:#f92672>(</span>appContext<span style=color:#f92672>);</span>
-  <span style=color:#75715e>// ...rest of test...
-</span><span style=color:#75715e></span><span style=color:#f92672>}</span>
-
-<span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>testServiceTwo</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
-  service <span style=color:#f92672>=</span> <span style=color:#66d9ef>new</span> ServiceTwo<span style=color:#f92672>(</span>appContext<span style=color:#f92672>);</span>
-  <span style=color:#75715e>// ...rest of test ...
-</span><span style=color:#75715e></span><span style=color:#f92672>}</span>
-</code></pre></div><h2 id=thoughts-on-service-refactoring>
-Thoughts on Service Refactoring
-<a class=heading-link href=#thoughts-on-service-refactoring>
-<i class="fa fa-link" aria-hidden=true></i>
-</a>
-</h2>
-<p>Okay, so what are the pros/cons of the <code>AppContext</code> approach for <code>Service</code>?</p>
-<p>To me, they are the same as the pros/cons of the <code>Servlet</code> refactoring:</p>
-<ul>
-<li>Pro: less parameters to pass around</li>
-<li>Pro: more decoupled&ndash;whoever instantiates our <code>Service</code> does not have to know exactly which parts of the application context we need</li>
-<li>Con: less explicit&ndash;less obvious what our <code>Service</code>&rsquo;s application-scoped dependencies are</li>
-</ul>
-<p>Either way, our instantiation of <code>Service</code> is now trivial. We can just call <code>new Service(appContext)</code>.</p>
-<p>I assert that our constructor is now simple enough that mere mortals can instantiate services&ndash;we don&rsquo;t need Spring, Guice, or anything fancy to call <code>new</code> for us.</p>
-<p>We still have Dependency Injection:</p>
-<ul>
-<li>The <code>AppContext</code> methods return interfaces whose implementation is determined at runtime</li>
-<li>No statics are involved that would complicate testing</li>
-<li>No <code>XxxFactory</code> classes are involved (which is a popular strawman in auto-wiring DI tutorials)</li>
-</ul>
-<p>And, most importantly, it&rsquo;s simple. Anyone who understands interfaces can understand <code>AppContext</code>. And not just how to <em>use</em> it, but how it <em>actually works</em>. There is no magic.</p>
-<p>I think this is a stark contrast to auto-wiring DI, where only a handful of experts on a project truly understand what is happening behind the scenes. The rest of the team, or even entire teams if they lack a true expert, cargo cult their way through auto-wiring DI because it&rsquo;s best practice.</p>
-<h2 id=are-request-and-appcontext-that-different>
-Are <code>Request</code> and <code>AppContext</code> that Different?
-<a class=heading-link href=#are-request-and-appcontext-that-different>
-<i class="fa fa-link" aria-hidden=true></i>
-</a>
-</h2>
-<p>So, the <code>Request</code> object groups request-related/request-scoped parameters.</p>
-<p>The <code>AppContext</code> object groups application-related/application-scoped services.</p>
-<p>My assertion is that they are based on the same underlying principles.</p>
-<p>Which is why, when debating pros/cons of an <code>AppContext</code> approach vs. an auto-wiring approach, I find it frustrating when the admitted cons of <code>AppContext</code> come up (like less explicit which services are actually being used).</p>
-<p>I will not disagree that they are not cons, but I feel they are generally outweighed by the pros (simple, type-safe, no need to rely on a framework), that, in other &ldquo;Introduce Parameter Object&rdquo; instances (like Request, etc.), are taken as perfectly fine and a worthy trade-off.</p>
-<p>But something about these parameters being &ldquo;dependencies&rdquo; (usually application-scoped, but also custom-scoped, given frameworks support that), means developers end up treating/thinking of them differently. I&rsquo;m not sure why.</p>
-<p>Personally, I&rsquo;ve been using this <code>AppContext</code> style for quite awhile in various codebases, since I wrote <a href=/2010/01/15/changing-my-style.html>Changing my style</a> (where I referred to it as a registry), and it is still working well. (Note that I make no claim for originality.)</p>
-<p>Perhaps there are cases where an <code>AppContext</code> approach becomes very degenerate, say with hundreds of services. Hundreds of services would be awkward, but I would be tempted at that point to apply the <a href=http://www.growing-object-oriented-software.com/>GooS</a> philosophy that the awkwardness is pointing out a real smell (a huge codebase with many unstructured dependencies), and not just sweep it under the rug by throwing a framework at it.</p>
-<p>But, even if it does become degenerate in some scenarios (extremely large system/something/something), I can somewhat selfishly assert that, that&rsquo;s fine, those are not my scenarios.</p>
-<p>(And vice versa, if other developers assert that an <code>AppContext</code> approach would be degenerate for their demonstrably different scenarios, and auto-wiring DI is awesome, I&rsquo;m willing to trust them on on that.)</p>
-<p>That said, I suppose I will go a bit further and assert that most systems that are using auto-wiring DI because it&rsquo;s &ldquo;best practice&rdquo;, would likely be just fine, and in fact easier/simpler to understand, with a &ldquo;standard OO&rdquo; solution to the problem.</p>
-<p>As a final note, this was sitting in my &ldquo;drafts&rdquo; directory for ages, so I&rsquo;m somewhat past the whole DI/AppContext debate; I&rsquo;m not sure why, perhaps because I&rsquo;ve been away from any DI-using systems for awhile now. Definitely at <a href=http://www.bizo.com>Bizo</a>, but also in the wider Scala community, it seems that Scala systems have eschewed adopting auto-wiring DI as idiomatic.</p>
-<p>But I thought I&rsquo;d still go ahead and publish it, if anything so that I can have a link to point people to in the future.</p>
-</div>
-<footer>
-<div id=disqus_thread></div>
-<script type=application/javascript>var disqus_config=function(){};(function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById('disqus_thread').innerHTML='Disqus comments not available by default when the website is previewed locally.';return}var b=document,a=b.createElement('script');a.async=!0,a.src='//draconianoverlord.disqus.com/embed.js',a.setAttribute('data-timestamp',+new Date),(b.head||b.body).appendChild(a)})()</script>
-<noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript>
-<a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a>
-</footer>
-</article>
-</section>
-</div>
-<footer class=footer>
-<section class=container>
-©
+<!doctype html><html lang=en><head><title>Dependency Injection Thought Experiment · Draconian Overlord</title><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=color-scheme content="light dark"><meta name=author content="Stephen Haberman"><meta name=description content="Recently, I thought of a simple thought experiment.
+With a Servlet Link to heading Let&rsquo;s start with a servlet that just writes out &ldquo;Hello World&rdquo;. I&rsquo;m going to use a pseudo API instead of something like javax.servlet to facilitate the thought experiment.
+public void service(Writer w) { w.write(&#34;Hello World&#34;); } Simple enough. We can fake-out Writer (use a mock Writer or a StubWriter) and put the service method under test."><meta name=keywords content="blog,developer,personal"><meta name=twitter:card content="summary"><meta name=twitter:title content="Dependency Injection Thought Experiment"><meta name=twitter:description content="Recently, I thought of a simple thought experiment.
+With a Servlet Link to heading Let&rsquo;s start with a servlet that just writes out &ldquo;Hello World&rdquo;. I&rsquo;m going to use a pseudo API instead of something like javax.servlet to facilitate the thought experiment.
+public void service(Writer w) { w.write(&#34;Hello World&#34;); } Simple enough. We can fake-out Writer (use a mock Writer or a StubWriter) and put the service method under test."><meta property="og:title" content="Dependency Injection Thought Experiment"><meta property="og:description" content="Recently, I thought of a simple thought experiment.
+With a Servlet Link to heading Let&rsquo;s start with a servlet that just writes out &ldquo;Hello World&rdquo;. I&rsquo;m going to use a pseudo API instead of something like javax.servlet to facilitate the thought experiment.
+public void service(Writer w) { w.write(&#34;Hello World&#34;); } Simple enough. We can fake-out Writer (use a mock Writer or a StubWriter) and put the service method under test."><meta property="og:type" content="article"><meta property="og:url" content="https://www.draconianoverlord.com/2014/02/08/dependency-injection-thought-experiment.html/"><meta property="article:section" content="posts"><meta property="article:published_time" content="2014-02-08T00:00:00+00:00"><meta property="article:modified_time" content="2014-02-08T00:00:00+00:00"><link rel=canonical href=https://www.draconianoverlord.com/2014/02/08/dependency-injection-thought-experiment.html/><link rel=preload href="/fonts/forkawesome-webfont.woff2?v=1.2.0" as=font type=font/woff2 crossorigin><link rel=stylesheet href=/css/coder.min.65236a6d834b26194eed04a2a3b45e44d9194ef9e620253705d4bef03bd7ef81.css integrity="sha256-ZSNqbYNLJhlO7QSio7ReRNkZTvnmICU3BdS+8DvX74E=" crossorigin=anonymous media=screen><link rel=stylesheet href=/css/coder-dark.min.f6534b0b446b75d9b6ad77a97d43ede2ddaeff1b6e2361fb7198d6f8fcb7f83f.css integrity="sha256-9lNLC0Rrddm2rXepfUPt4t2u/xtuI2H7cZjW+Py3+D8=" crossorigin=anonymous media=screen><link rel=icon type=image/png href=/images/favicon-32x32.png sizes=32x32><link rel=icon type=image/png href=/images/favicon-16x16.png sizes=16x16><link rel=apple-touch-icon href=/images/apple-touch-icon.png><link rel=apple-touch-icon sizes=180x180 href=/images/apple-touch-icon.png><link rel=manifest href=/site.webmanifest><link rel=mask-icon href=/images/safari-pinned-tab.svg color=#5bbad5></head><body class="preload-transitions colorscheme-auto"><div class=float-container><a id=dark-mode-toggle class=colorscheme-toggle><i class="fa fa-adjust fa-fw" aria-hidden=true></i></a></div><main class=wrapper><nav class=navigation><section class=container><a class=navigation-title href=/>Draconian Overlord</a>
+Oppressing software entropy</section></nav><div class=content><section class="container post"><article><header><div class=post-title><h1 class=title><a class=title-link href=https://www.draconianoverlord.com/2014/02/08/dependency-injection-thought-experiment.html/>Dependency Injection Thought Experiment</a></h1></div><div class=post-meta><div class=date><span class=posted-on><i class="fa fa-calendar" aria-hidden=true></i>
+<time datetime=2014-02-08T00:00:00Z>February 8, 2014</time></span>
+<span class=reading-time><i class="fa fa-clock-o" aria-hidden=true></i>
+10-minute read</span></div><div class=categories><i class="fa fa-folder" aria-hidden=true></i>
+<a href=/categories/architecture/>Architecture</a></div></div></header><div class=post-content><p>Recently, I thought of a simple thought experiment.</p><h2 id=with-a-servlet>With a Servlet
+<a class=heading-link href=#with-a-servlet><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h2><p>Let&rsquo;s start with a servlet that just writes out &ldquo;Hello World&rdquo;. I&rsquo;m going to use a pseudo API instead of something like <code>javax.servlet</code> to facilitate the thought experiment.</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=display:flex><span><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>service</span><span style=color:#f92672>(</span>Writer w<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>  w<span style=color:#f92672>.</span><span style=color:#a6e22e>write</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;Hello World&#34;</span><span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>}</span>
+</span></span></code></pre></div><p>Simple enough. We can fake-out <code>Writer</code> (use a mock <code>Writer</code> or a <code>StubWriter</code>) and put the <code>service</code> method under test.</p><p>I&rsquo;ll skip the test code as, regardless of whether you mock or stub, it&rsquo;ll be pretty simple.</p><p>So, now let&rsquo;s say our code needs access to the query parameters:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=display:flex><span><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>service</span><span style=color:#f92672>(</span>Writer w<span style=color:#f92672>,</span> Map<span style=color:#f92672>&lt;</span>String<span style=color:#f92672>,</span> String<span style=color:#f92672>&gt;</span> params<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>  w<span style=color:#f92672>.</span><span style=color:#a6e22e>write</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;Hello World &#34;</span> <span style=color:#f92672>+</span> params<span style=color:#f92672>.</span><span style=color:#a6e22e>get</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;queryParam&#34;</span><span style=color:#f92672>));</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>}</span>
+</span></span></code></pre></div><p>We now have 2 method parameters. Fair enough.</p><p>But now let&rsquo;s say we also want the HTTP headers:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=display:flex><span><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>service</span><span style=color:#f92672>(</span>
+</span></span><span style=display:flex><span>    Writer w<span style=color:#f92672>,</span>
+</span></span><span style=display:flex><span>    Map<span style=color:#f92672>&lt;</span>String<span style=color:#f92672>,</span> String<span style=color:#f92672>&gt;</span> params<span style=color:#f92672>,</span>
+</span></span><span style=display:flex><span>    Map<span style=color:#f92672>&lt;</span>String<span style=color:#f92672>,</span> String<span style=color:#f92672>&gt;</span> headers<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>  w<span style=color:#f92672>.</span><span style=color:#a6e22e>write</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;Hello World &#34;</span> <span style=color:#f92672>+</span>
+</span></span><span style=display:flex><span>    params<span style=color:#f92672>.</span><span style=color:#a6e22e>get</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;queryParam&#34;</span><span style=color:#f92672>)</span> <span style=color:#f92672>+</span>
+</span></span><span style=display:flex><span>    <span style=color:#e6db74>&#34; using &#34;</span> <span style=color:#f92672>+</span>
+</span></span><span style=display:flex><span>    headers<span style=color:#f92672>.</span><span style=color:#a6e22e>get</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;User-Agent&#34;</span><span style=color:#f92672>));</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>}</span>
+</span></span></code></pre></div><p>We have 3 method parameters. Still fine.</p><p>But then next we need the session:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=display:flex><span><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>service</span><span style=color:#f92672>(</span>
+</span></span><span style=display:flex><span>    Writer w<span style=color:#f92672>,</span>
+</span></span><span style=display:flex><span>    Map<span style=color:#f92672>&lt;</span>String<span style=color:#f92672>,</span> String<span style=color:#f92672>&gt;</span> params<span style=color:#f92672>,</span>
+</span></span><span style=display:flex><span>    Map<span style=color:#f92672>&lt;</span>String<span style=color:#f92672>,</span> String<span style=color:#f92672>&gt;</span> headers<span style=color:#f92672>,</span>
+</span></span><span style=display:flex><span>    Map<span style=color:#f92672>&lt;</span>String<span style=color:#f92672>,</span> String<span style=color:#f92672>&gt;</span> session<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>  w<span style=color:#f92672>.</span><span style=color:#a6e22e>write</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;Hello World &#34;</span> <span style=color:#f92672>+</span>
+</span></span><span style=display:flex><span>    params<span style=color:#f92672>.</span><span style=color:#a6e22e>get</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;queryParam&#34;</span><span style=color:#f92672>)</span> <span style=color:#f92672>+</span>
+</span></span><span style=display:flex><span>    <span style=color:#e6db74>&#34; using &#34;</span> <span style=color:#f92672>+</span>
+</span></span><span style=display:flex><span>    headers<span style=color:#f92672>.</span><span style=color:#a6e22e>get</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;User-Agent&#34;</span><span style=color:#f92672>)</span> <span style=color:#f92672>+</span>
+</span></span><span style=display:flex><span>    session<span style=color:#f92672>.</span><span style=color:#a6e22e>get</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;username&#34;</span><span style=color:#f92672>));</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>}</span>
+</span></span></code></pre></div><p>Oh, and now we also want to set the response Content-Type header:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=display:flex><span><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>service</span><span style=color:#f92672>(</span>
+</span></span><span style=display:flex><span>    Writer w<span style=color:#f92672>,</span>
+</span></span><span style=display:flex><span>    Map<span style=color:#f92672>&lt;</span>String<span style=color:#f92672>,</span> String<span style=color:#f92672>&gt;</span> params<span style=color:#f92672>,</span>
+</span></span><span style=display:flex><span>    Map<span style=color:#f92672>&lt;</span>String<span style=color:#f92672>,</span> String<span style=color:#f92672>&gt;</span> headers<span style=color:#f92672>,</span>
+</span></span><span style=display:flex><span>    Map<span style=color:#f92672>&lt;</span>String<span style=color:#f92672>,</span> String<span style=color:#f92672>&gt;</span> session<span style=color:#f92672>,</span>
+</span></span><span style=display:flex><span>    Map<span style=color:#f92672>&lt;</span>String<span style=color:#f92672>,</span> String<span style=color:#f92672>&gt;</span> outHeaders<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>  outHeaders<span style=color:#f92672>.</span><span style=color:#a6e22e>put</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;Content-Type&#34;</span><span style=color:#f92672>,</span> <span style=color:#e6db74>&#34;text/html&#34;</span><span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>  w<span style=color:#f92672>.</span><span style=color:#a6e22e>write</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;Hello World &#34;</span> <span style=color:#f92672>+</span>
+</span></span><span style=display:flex><span>    params<span style=color:#f92672>.</span><span style=color:#a6e22e>get</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;queryParam&#34;</span><span style=color:#f92672>)</span> <span style=color:#f92672>+</span>
+</span></span><span style=display:flex><span>    <span style=color:#e6db74>&#34; using &#34;</span> <span style=color:#f92672>+</span>
+</span></span><span style=display:flex><span>    headers<span style=color:#f92672>.</span><span style=color:#a6e22e>get</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;User-Agent&#34;</span><span style=color:#f92672>)</span> <span style=color:#f92672>+</span>
+</span></span><span style=display:flex><span>    session<span style=color:#f92672>.</span><span style=color:#a6e22e>get</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;username&#34;</span><span style=color:#f92672>));</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>}</span>
+</span></span></code></pre></div><p>Eesh. Now we&rsquo;re at 5 method parameters.</p><p>How about one last thing&ndash;so far our <code>service</code> method has been stateless, which is fine, that&rsquo;s how servlets work.</p><p>But, illustration purposes, let&rsquo;s pretend our &ldquo;servlet&rdquo; component it actually stateful (e.g. one is created per-request):</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=display:flex><span><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>Servlet</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>private</span> <span style=color:#66d9ef>final</span> Writer w<span style=color:#f92672>;</span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>private</span> <span style=color:#66d9ef>final</span> Map<span style=color:#f92672>&lt;</span>String<span style=color:#f92672>,</span> String<span style=color:#f92672>&gt;</span> params<span style=color:#f92672>;</span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>private</span> <span style=color:#66d9ef>final</span> Map<span style=color:#f92672>&lt;</span>String<span style=color:#f92672>,</span> String<span style=color:#f92672>&gt;</span> headers<span style=color:#f92672>;</span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>private</span> <span style=color:#66d9ef>final</span> Map<span style=color:#f92672>&lt;</span>String<span style=color:#f92672>,</span> String<span style=color:#f92672>&gt;</span> session<span style=color:#f92672>;</span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>private</span> <span style=color:#66d9ef>final</span> Map<span style=color:#f92672>&lt;</span>String<span style=color:#f92672>,</span> String<span style=color:#f92672>&gt;</span> outHeaders<span style=color:#f92672>;</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>public</span> <span style=color:#a6e22e>Servlet</span><span style=color:#f92672>(</span>
+</span></span><span style=display:flex><span>      <span style=color:#66d9ef>final</span> Writer w<span style=color:#f92672>,</span>
+</span></span><span style=display:flex><span>      <span style=color:#66d9ef>final</span> Map<span style=color:#f92672>&lt;</span>String<span style=color:#f92672>,</span> String<span style=color:#f92672>&gt;</span> params<span style=color:#f92672>,</span>
+</span></span><span style=display:flex><span>      <span style=color:#66d9ef>final</span> Map<span style=color:#f92672>&lt;</span>String<span style=color:#f92672>,</span> String<span style=color:#f92672>&gt;</span> headers<span style=color:#f92672>,</span>
+</span></span><span style=display:flex><span>      <span style=color:#66d9ef>final</span> Map<span style=color:#f92672>&lt;</span>String<span style=color:#f92672>,</span> String<span style=color:#f92672>&gt;</span> session<span style=color:#f92672>,</span>
+</span></span><span style=display:flex><span>      <span style=color:#66d9ef>final</span> Map<span style=color:#f92672>&lt;</span>String<span style=color:#f92672>,</span> String<span style=color:#f92672>&gt;</span> outHeaders<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>this</span><span style=color:#f92672>.</span><span style=color:#a6e22e>w</span> <span style=color:#f92672>=</span> w<span style=color:#f92672>;</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>this</span><span style=color:#f92672>.</span><span style=color:#a6e22e>params</span> <span style=color:#f92672>=</span> params<span style=color:#f92672>;</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>this</span><span style=color:#f92672>.</span><span style=color:#a6e22e>headers</span> <span style=color:#f92672>=</span> headers<span style=color:#f92672>;</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>this</span><span style=color:#f92672>.</span><span style=color:#a6e22e>session</span> <span style=color:#f92672>=</span> session<span style=color:#f92672>;</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>this</span><span style=color:#f92672>.</span><span style=color:#a6e22e>outHeaders</span> <span style=color:#f92672>=</span> outHeaders<span style=color:#f92672>;</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>service</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>    outHeaders<span style=color:#f92672>.</span><span style=color:#a6e22e>put</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;Content-Type&#34;</span><span style=color:#f92672>,</span> <span style=color:#e6db74>&#34;text/html&#34;</span><span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>    w<span style=color:#f92672>.</span><span style=color:#a6e22e>write</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;Hello World &#34;</span> <span style=color:#f92672>+</span>
+</span></span><span style=display:flex><span>      params<span style=color:#f92672>.</span><span style=color:#a6e22e>get</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;queryParam&#34;</span><span style=color:#f92672>)</span> <span style=color:#f92672>+</span>
+</span></span><span style=display:flex><span>      <span style=color:#e6db74>&#34; using &#34;</span> <span style=color:#f92672>+</span>
+</span></span><span style=display:flex><span>      headers<span style=color:#f92672>.</span><span style=color:#a6e22e>get</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;User-Agent&#34;</span><span style=color:#f92672>)</span> <span style=color:#f92672>+</span>
+</span></span><span style=display:flex><span>      session<span style=color:#f92672>.</span><span style=color:#a6e22e>get</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;username&#34;</span><span style=color:#f92672>));</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>}</span>
+</span></span></code></pre></div><p>At this point, passing around the parameter list is getting out of hand.</p><p>Which is fine, we can apply a well known refactoring, <a href=http://www.refactoring.com/catalog/introduceParameterObject.html class=external-link target=_blank rel=noopener>Introduce Parameter Object</a>, and make <code>Request</code> and <code>Response</code> interfaces:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=display:flex><span><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>interface</span> <span style=color:#a6e22e>Request</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>  Map<span style=color:#f92672>&lt;</span>String<span style=color:#f92672>,</span> String<span style=color:#f92672>&gt;</span> <span style=color:#a6e22e>getParams</span><span style=color:#f92672>();</span>
+</span></span><span style=display:flex><span>  Map<span style=color:#f92672>&lt;</span>String<span style=color:#f92672>,</span> String<span style=color:#f92672>&gt;</span> <span style=color:#a6e22e>getHeaders</span><span style=color:#f92672>();</span>
+</span></span><span style=display:flex><span>  Map<span style=color:#f92672>&lt;</span>String<span style=color:#f92672>,</span> String<span style=color:#f92672>&gt;</span> <span style=color:#a6e22e>getSession</span><span style=color:#f92672>();</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>interface</span> <span style=color:#a6e22e>Response</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>  setHeader<span style=color:#f92672>(</span>String name<span style=color:#f92672>,</span> String value<span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>  Writer <span style=color:#a6e22e>getWriter</span><span style=color:#f92672>();</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>}</span>
+</span></span></code></pre></div><p>And now have our <code>Servlet</code> class use them:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=display:flex><span><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>Servlet</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>private</span> <span style=color:#66d9ef>final</span> Request request<span style=color:#f92672>;</span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>private</span> <span style=color:#66d9ef>final</span> Response response<span style=color:#f92672>;</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>public</span> <span style=color:#a6e22e>Servlet</span><span style=color:#f92672>(</span>Request request<span style=color:#f92672>,</span> Response response<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>this</span><span style=color:#f92672>.</span><span style=color:#a6e22e>request</span> <span style=color:#f92672>=</span> request<span style=color:#f92672>;</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>this</span><span style=color:#f92672>.</span><span style=color:#a6e22e>response</span> <span style=color:#f92672>=</span> response<span style=color:#f92672>;</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>service</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>    request<span style=color:#f92672>.</span><span style=color:#a6e22e>setHeader</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;Content-Type&#34;</span><span style=color:#f92672>,</span> <span style=color:#e6db74>&#34;text/html&#34;</span><span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>    response<span style=color:#f92672>.</span><span style=color:#a6e22e>getWriter</span><span style=color:#f92672>().</span><span style=color:#a6e22e>write</span><span style=color:#f92672>(</span>
+</span></span><span style=display:flex><span>      <span style=color:#e6db74>&#34;Hello World&#34;</span> <span style=color:#f92672>+</span>
+</span></span><span style=display:flex><span>      request<span style=color:#f92672>.</span><span style=color:#a6e22e>getParams</span><span style=color:#f92672>().</span><span style=color:#a6e22e>get</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;queryParam&#34;</span><span style=color:#f92672>)</span> <span style=color:#f92672>+</span>
+</span></span><span style=display:flex><span>      <span style=color:#e6db74>&#34; using &#34;</span> <span style=color:#f92672>+</span>
+</span></span><span style=display:flex><span>      request<span style=color:#f92672>.</span><span style=color:#a6e22e>getHeaders</span><span style=color:#f92672>().</span><span style=color:#a6e22e>get</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;User-Agent&#34;</span><span style=color:#f92672>)</span> <span style=color:#f92672>+</span>
+</span></span><span style=display:flex><span>      request<span style=color:#f92672>.</span><span style=color:#a6e22e>getSession</span><span style=color:#f92672>().</span><span style=color:#a6e22e>get</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;username&#34;</span><span style=color:#f92672>));</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>}</span>
+</span></span></code></pre></div><p>This looks a lot better.</p><p>We introduced a <code>Request</code> abstraction that groups request-lifecycle attributes, and so instead of passing around lots of related parameters, we can pass around <code>Request</code> and <code>Response</code> instances.</p><p>So far, none of this should be new or different, because HTTP libraries in basically any OO language look this way.</p><h2 id=servlet-testing>Servlet Testing
+<a class=heading-link href=#servlet-testing><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h2><p>After introducing the <code>Request</code> interface, testing the <code>Servlet</code> class involves a level of indirection.</p><p>Previously we could pass fake <code>Writer</code>, <code>Map</code>, etc. instances directly as parameters to our <code>service</code> method&ndash;now we have to wrap a <code>Request</code> around the test <code>Writer</code>, <code>Map</code>, etc. and pass the <code>Request</code> instead.</p><p>If you&rsquo;re mocking, you just mock out the parts of <code>Request</code> you need:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=display:flex><span><span style=color:#66d9ef>private</span> Request request <span style=color:#f92672>=</span> mock<span style=color:#f92672>(</span>Request<span style=color:#f92672>.</span><span style=color:#a6e22e>class</span><span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>private</span> Response response <span style=color:#f92672>=</span> mock<span style=color:#f92672>(</span>Response<span style=color:#f92672>.</span><span style=color:#a6e22e>class</span><span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>testServletOne</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>  <span style=color:#75715e>// ServletOne only needs Writer
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>  when<span style=color:#f92672>(</span>response<span style=color:#f92672>.</span><span style=color:#a6e22e>getWriter</span><span style=color:#f92672>()).</span><span style=color:#a6e22e>thenReturn</span><span style=color:#f92672>(</span>mockWriter<span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>  servlet <span style=color:#f92672>=</span> <span style=color:#66d9ef>new</span> ServletOne<span style=color:#f92672>(</span>request<span style=color:#f92672>,</span> response<span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>  <span style=color:#75715e>// ...rest of test...
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span><span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>testServletTwo</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>  <span style=color:#75715e>// ServletTwo needs headers and Writer
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>  when<span style=color:#f92672>(</span>request<span style=color:#f92672>.</span><span style=color:#a6e22e>getHeaders</span><span style=color:#f92672>()).</span><span style=color:#a6e22e>thenReturn</span><span style=color:#f92672>(</span>mockHeaders<span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>  when<span style=color:#f92672>(</span>response<span style=color:#f92672>.</span><span style=color:#a6e22e>getWriter</span><span style=color:#f92672>()).</span><span style=color:#a6e22e>thenReturn</span><span style=color:#f92672>(</span>mockWriter<span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>  servlet <span style=color:#f92672>=</span> <span style=color:#66d9ef>new</span> ServletTwo<span style=color:#f92672>(</span>request<span style=color:#f92672>,</span> response<span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>  <span style=color:#75715e>// ..rest of test ...
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span><span style=color:#f92672>}</span>
+</span></span></code></pre></div><p>Personally, I <a href=/2010/07/09/why-i-dont-like-mocks.html>prefer stubbing</a> in this scenario, and would use something akin Spring&rsquo;s misnamed <a href=http://static.springsource.org/spring/docs/2.0.x/api/org/springframework/mock/web/MockHttpServletRequest.html class=external-link target=_blank rel=noopener>MockHttpServletRequest</a> (it&rsquo;s really a <a href=http://martinfowler.com/articles/mocksArentStubs.html class=external-link target=_blank rel=noopener>stub</a>):</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=display:flex><span><span style=color:#66d9ef>private</span> Request request <span style=color:#f92672>=</span> <span style=color:#66d9ef>new</span> StubRequest<span style=color:#f92672>();</span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>private</span> Response response <span style=color:#f92672>=</span> <span style=color:#66d9ef>new</span> StubResponse<span style=color:#f92672>();</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>testServletOne</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>  servlet <span style=color:#f92672>=</span> <span style=color:#66d9ef>new</span> ServletOne<span style=color:#f92672>(</span>request<span style=color:#f92672>,</span> response<span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>  <span style=color:#75715e>// ...rest of test...
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span><span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>testServletTwo</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>  servlet <span style=color:#f92672>=</span> <span style=color:#66d9ef>new</span> ServletTwo<span style=color:#f92672>(</span>request<span style=color:#f92672>,</span> response<span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>  <span style=color:#75715e>// ...rest of test ...
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span><span style=color:#f92672>}</span>
+</span></span></code></pre></div><p>But, which ever style you prefer, this extra level of mocking/stubbing in tests is pretty standard for <code>Request</code> interfaces.</p><h2 id=thoughts-on-servlet-refactoring>Thoughts on Servlet Refactoring
+<a class=heading-link href=#thoughts-on-servlet-refactoring><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h2><p>So far, whether you prefer a stateful or stateless <code>Servlet</code> class aside, I think this has been a pretty standard &ldquo;best practice&rdquo; refactoring.</p><p>But let&rsquo;s be pedantic and focus on the API change of our constructor (using the stateful <code>Servlet</code> class), both pre- and post-<code>Request</code> refactoring:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=display:flex><span><span style=color:#75715e>// before
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span><span style=color:#66d9ef>public</span> <span style=color:#a6e22e>Servlet</span><span style=color:#f92672>(</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>final</span> Writer w<span style=color:#f92672>,</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>final</span> Map<span style=color:#f92672>&lt;</span>String<span style=color:#f92672>,</span> String<span style=color:#f92672>&gt;</span> params<span style=color:#f92672>,</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>final</span> Map<span style=color:#f92672>&lt;</span>String<span style=color:#f92672>,</span> String<span style=color:#f92672>&gt;</span> headers<span style=color:#f92672>,</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>final</span> Map<span style=color:#f92672>&lt;</span>String<span style=color:#f92672>,</span> String<span style=color:#f92672>&gt;</span> session<span style=color:#f92672>,</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>final</span> Map<span style=color:#f92672>&lt;</span>String<span style=color:#f92672>,</span> String<span style=color:#f92672>&gt;</span> outHeaders<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>this</span><span style=color:#f92672>.</span><span style=color:#a6e22e>w</span> <span style=color:#f92672>=</span> w<span style=color:#f92672>;</span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>this</span><span style=color:#f92672>.</span><span style=color:#a6e22e>params</span> <span style=color:#f92672>=</span> params<span style=color:#f92672>;</span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>this</span><span style=color:#f92672>.</span><span style=color:#a6e22e>headers</span> <span style=color:#f92672>=</span> headers<span style=color:#f92672>;</span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>this</span><span style=color:#f92672>.</span><span style=color:#a6e22e>session</span> <span style=color:#f92672>=</span> session<span style=color:#f92672>;</span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>this</span><span style=color:#f92672>.</span><span style=color:#a6e22e>outHeaders</span> <span style=color:#f92672>=</span> outHeaders<span style=color:#f92672>;</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#75715e>// after
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span><span style=color:#66d9ef>public</span> <span style=color:#a6e22e>Servlet</span><span style=color:#f92672>(</span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>final</span> Request request<span style=color:#f92672>,</span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>final</span> Response response<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>this</span><span style=color:#f92672>.</span><span style=color:#a6e22e>request</span> <span style=color:#f92672>=</span> request<span style=color:#f92672>;</span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>this</span><span style=color:#f92672>.</span><span style=color:#a6e22e>response</span> <span style=color:#f92672>=</span> response<span style=color:#f92672>;</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>}</span>
+</span></span></code></pre></div><p>What are the pros and cons of the change?</p><ul><li>Pro: less parameters to pass around</li><li>Pro: more decoupled&ndash;whoever instantiates our <code>Servlet</code> does not have to know exactly which parts of the request our <code>service</code> method is going to use</li><li>Con: less explicit&ndash;previously we could see exactly what parts of the request we needed; if we didn&rsquo;t need the <code>session</code> map, we could leave it out of our constructor, and it is immediately apparent to callers</li></ul><p>Personally, I think the pros outweighs the cons here. And given that every servlet-type API I&rsquo;ve seen lately has a <code>Request</code> interface, I think its fair to say this is a well-accepted, non-controversial refactoring.</p><p>You might take a moment to note to yourself whether you do/do not agree with this refactoring, just for the purpose of the thought experiment.</p><h2 id=now-with-services>Now with Services
+<a class=heading-link href=#now-with-services><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h2><p>Instead of a servlet, let&rsquo;s now write a service, some sort of stateless &ldquo;bean&rdquo; (it&rsquo;s 2014, I really should stop using that word) in your application that needs application-scoped dependencies:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=display:flex><span><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>Service</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>private</span> <span style=color:#66d9ef>final</span> EmailSender emailSender<span style=color:#f92672>;</span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>private</span> <span style=color:#66d9ef>final</span> FooDao fooDao<span style=color:#f92672>;</span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>private</span> <span style=color:#66d9ef>final</span> BlahService blahService
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>public</span> <span style=color:#a6e22e>Service</span><span style=color:#f92672>(</span>
+</span></span><span style=display:flex><span>      <span style=color:#66d9ef>final</span> EmailSender emailSender<span style=color:#f92672>,</span>
+</span></span><span style=display:flex><span>      <span style=color:#66d9ef>final</span> FooDao fooDao<span style=color:#f92672>,</span>
+</span></span><span style=display:flex><span>      <span style=color:#66d9ef>final</span> BlahService blahService<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>this</span><span style=color:#f92672>.</span><span style=color:#a6e22e>emailSender</span> <span style=color:#f92672>=</span> emailSender<span style=color:#f92672>;</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>this</span><span style=color:#f92672>.</span><span style=color:#a6e22e>fooDao</span> <span style=color:#f92672>=</span> fooDao<span style=color:#f92672>;</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>this</span><span style=color:#f92672>.</span><span style=color:#a6e22e>blahService</span> <span style=color:#f92672>=</span> blahService<span style=color:#f92672>;</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#75715e>// ...service methods...
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span><span style=color:#f92672>}</span>
+</span></span></code></pre></div><p>I&rsquo;ve made up <code>EmailSender</code>, <code>FooDao</code>, and <code>BlahService</code> as dependencies of <code>Service</code>&ndash;what the actual dependencies are isn&rsquo;t important. The main point is that they are all application-scoped dependencies.</p><p>Do you notice how similar this <code>Service</code> code looks to the pre-<code>Request</code> <code>Servlet</code> code?</p><p>Most people look at the <code>Service</code> constructor and think there&rsquo;s no way they want to instantiate by hand all 10-50-whatever services they have in their project when the constructor is going to vary so widely from service to service.</p><p>So, in steps auto-wiring dependency injection (Spring, Guice, whatever) as the hero to solve this problem. They give up strongly-typed <code>new Service</code> calls and say &ldquo;here, let me use reflection to call all these nasty constructors for you&rdquo;.</p><p>Which makes sense if you&rsquo;re forcing yourself to stick with the <code>Service(EmailSender, FooDao, BlahService)</code> constructor.</p><p>But what if we apply the same refactoring that we just applied to <code>Servlet</code>? We applied Introduce Parameter Object and made a <code>Request</code> interface&ndash;let&rsquo;s apply it here and make an <code>AppContext</code> interface:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=display:flex><span><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>interface</span> <span style=color:#a6e22e>AppContext</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>  EmailSender <span style=color:#a6e22e>getEmailSender</span><span style=color:#f92672>();</span>
+</span></span><span style=display:flex><span>  FooDao <span style=color:#a6e22e>getFooDao</span><span style=color:#f92672>();</span>
+</span></span><span style=display:flex><span>  BlahService <span style=color:#a6e22e>getBlahService</span><span style=color:#f92672>();</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>}</span>
+</span></span></code></pre></div><p>And now let&rsquo;s use it:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=display:flex><span><span style=color:#75715e>// style 1
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>Service</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>private</span> <span style=color:#66d9ef>final</span> AppContext appContext<span style=color:#f92672>;</span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>public</span> <span style=color:#a6e22e>Service</span><span style=color:#f92672>(</span><span style=color:#66d9ef>final</span> AppContext appContext<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>this</span><span style=color:#f92672>.</span><span style=color:#a6e22e>appContext</span><span style=color:#f92672>=</span>appContext<span style=color:#f92672>;</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>  <span style=color:#75715e>// service method calls appContext.getBlahService().xxx();
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span><span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#75715e>// style 2
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>Service</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>private</span> <span style=color:#66d9ef>final</span> EmailSender emailSender<span style=color:#f92672>;</span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>private</span> <span style=color:#66d9ef>final</span> FooDao fooDao<span style=color:#f92672>;</span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>private</span> <span style=color:#66d9ef>final</span> BlahService blahService
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>public</span> <span style=color:#a6e22e>Service</span><span style=color:#f92672>(</span><span style=color:#66d9ef>final</span> AppContext appContext<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>this</span><span style=color:#f92672>.</span><span style=color:#a6e22e>emailSender</span> <span style=color:#f92672>=</span> appContext<span style=color:#f92672>.</span><span style=color:#a6e22e>getEmailSender</span><span style=color:#f92672>();</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>this</span><span style=color:#f92672>.</span><span style=color:#a6e22e>fooDao</span> <span style=color:#f92672>=</span> appContext<span style=color:#f92672>.</span><span style=color:#a6e22e>getFooDao</span><span style=color:#f92672>();</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>this</span><span style=color:#f92672>.</span><span style=color:#a6e22e>blahService</span> <span style=color:#f92672>=</span> appContext<span style=color:#f92672>.</span><span style=color:#a6e22e>getBlahService</span><span style=color:#f92672>();</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>  <span style=color:#75715e>// service method calls blahService.xxx();
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span><span style=color:#f92672>}</span>
+</span></span></code></pre></div><p>Whichever style you prefer, we&rsquo;ve drastically simplified our constructor&ndash;instead of saying &ldquo;I need X, Y, Z, &mldr;&rdquo;, it&rsquo;s &ldquo;I need some of my application&rsquo;s app-scoped dependencies&rdquo;.</p><h2 id=service-testing>Service Testing
+<a class=heading-link href=#service-testing><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h2><p>Much like Servlet Testing earlier, adding an <code>AppContext</code> adds a level of indirection to our tests that we must mock/stub out.</p><p>You can either mock:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=display:flex><span><span style=color:#66d9ef>private</span> AppContext appContext <span style=color:#f92672>=</span> mock<span style=color:#f92672>(</span>AppContext<span style=color:#f92672>.</span><span style=color:#a6e22e>class</span><span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>testServiceOne</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>  <span style=color:#75715e>// ServiceOne only needs FooDao
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>  when<span style=color:#f92672>(</span>appContext<span style=color:#f92672>.</span><span style=color:#a6e22e>getFooDao</span><span style=color:#f92672>()).</span><span style=color:#a6e22e>thenReturn</span><span style=color:#f92672>(</span>mockFooDao<span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>  service <span style=color:#f92672>=</span> <span style=color:#66d9ef>new</span> ServiceOne<span style=color:#f92672>(</span>appContext<span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>  <span style=color:#75715e>// ...rest of test...
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span><span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>testServiceTwo</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>  <span style=color:#75715e>// ServiceTwo needs needs FooDao and EmailSender
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>  when<span style=color:#f92672>(</span>appContext<span style=color:#f92672>.</span><span style=color:#a6e22e>getFooDao</span><span style=color:#f92672>()).</span><span style=color:#a6e22e>thenReturn</span><span style=color:#f92672>(</span>mockFooDao<span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>  when<span style=color:#f92672>(</span>appContext<span style=color:#f92672>.</span><span style=color:#a6e22e>getEmailSender</span><span style=color:#f92672>()).</span><span style=color:#a6e22e>thenReturn</span><span style=color:#f92672>(</span>mockEmailSender<span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>  service <span style=color:#f92672>=</span> <span style=color:#66d9ef>new</span> ServiceTwo<span style=color:#f92672>(</span>appContext<span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>  <span style=color:#75715e>// ...rest of test ...
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span><span style=color:#f92672>}</span>
+</span></span></code></pre></div><p>Or, stub:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=display:flex><span><span style=color:#66d9ef>private</span> StubAppContext appContext <span style=color:#f92672>=</span> <span style=color:#66d9ef>new</span> StubAppContext<span style=color:#f92672>();</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>testServiceOne</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>  service <span style=color:#f92672>=</span> <span style=color:#66d9ef>new</span> ServiceOne<span style=color:#f92672>(</span>appContext<span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>  <span style=color:#75715e>// ...rest of test...
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span><span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>testServiceTwo</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>  service <span style=color:#f92672>=</span> <span style=color:#66d9ef>new</span> ServiceTwo<span style=color:#f92672>(</span>appContext<span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>  <span style=color:#75715e>// ...rest of test ...
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span><span style=color:#f92672>}</span>
+</span></span></code></pre></div><h2 id=thoughts-on-service-refactoring>Thoughts on Service Refactoring
+<a class=heading-link href=#thoughts-on-service-refactoring><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h2><p>Okay, so what are the pros/cons of the <code>AppContext</code> approach for <code>Service</code>?</p><p>To me, they are the same as the pros/cons of the <code>Servlet</code> refactoring:</p><ul><li>Pro: less parameters to pass around</li><li>Pro: more decoupled&ndash;whoever instantiates our <code>Service</code> does not have to know exactly which parts of the application context we need</li><li>Con: less explicit&ndash;less obvious what our <code>Service</code>&rsquo;s application-scoped dependencies are</li></ul><p>Either way, our instantiation of <code>Service</code> is now trivial. We can just call <code>new Service(appContext)</code>.</p><p>I assert that our constructor is now simple enough that mere mortals can instantiate services&ndash;we don&rsquo;t need Spring, Guice, or anything fancy to call <code>new</code> for us.</p><p>We still have Dependency Injection:</p><ul><li>The <code>AppContext</code> methods return interfaces whose implementation is determined at runtime</li><li>No statics are involved that would complicate testing</li><li>No <code>XxxFactory</code> classes are involved (which is a popular strawman in auto-wiring DI tutorials)</li></ul><p>And, most importantly, it&rsquo;s simple. Anyone who understands interfaces can understand <code>AppContext</code>. And not just how to <em>use</em> it, but how it <em>actually works</em>. There is no magic.</p><p>I think this is a stark contrast to auto-wiring DI, where only a handful of experts on a project truly understand what is happening behind the scenes. The rest of the team, or even entire teams if they lack a true expert, cargo cult their way through auto-wiring DI because it&rsquo;s best practice.</p><h2 id=are-request-and-appcontext-that-different>Are <code>Request</code> and <code>AppContext</code> that Different?
+<a class=heading-link href=#are-request-and-appcontext-that-different><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h2><p>So, the <code>Request</code> object groups request-related/request-scoped parameters.</p><p>The <code>AppContext</code> object groups application-related/application-scoped services.</p><p>My assertion is that they are based on the same underlying principles.</p><p>Which is why, when debating pros/cons of an <code>AppContext</code> approach vs. an auto-wiring approach, I find it frustrating when the admitted cons of <code>AppContext</code> come up (like less explicit which services are actually being used).</p><p>I will not disagree that they are not cons, but I feel they are generally outweighed by the pros (simple, type-safe, no need to rely on a framework), that, in other &ldquo;Introduce Parameter Object&rdquo; instances (like Request, etc.), are taken as perfectly fine and a worthy trade-off.</p><p>But something about these parameters being &ldquo;dependencies&rdquo; (usually application-scoped, but also custom-scoped, given frameworks support that), means developers end up treating/thinking of them differently. I&rsquo;m not sure why.</p><p>Personally, I&rsquo;ve been using this <code>AppContext</code> style for quite awhile in various codebases, since I wrote <a href=/2010/01/15/changing-my-style.html>Changing my style</a> (where I referred to it as a registry), and it is still working well. (Note that I make no claim for originality.)</p><p>Perhaps there are cases where an <code>AppContext</code> approach becomes very degenerate, say with hundreds of services. Hundreds of services would be awkward, but I would be tempted at that point to apply the <a href=http://www.growing-object-oriented-software.com/ class=external-link target=_blank rel=noopener>GooS</a> philosophy that the awkwardness is pointing out a real smell (a huge codebase with many unstructured dependencies), and not just sweep it under the rug by throwing a framework at it.</p><p>But, even if it does become degenerate in some scenarios (extremely large system/something/something), I can somewhat selfishly assert that, that&rsquo;s fine, those are not my scenarios.</p><p>(And vice versa, if other developers assert that an <code>AppContext</code> approach would be degenerate for their demonstrably different scenarios, and auto-wiring DI is awesome, I&rsquo;m willing to trust them on on that.)</p><p>That said, I suppose I will go a bit further and assert that most systems that are using auto-wiring DI because it&rsquo;s &ldquo;best practice&rdquo;, would likely be just fine, and in fact easier/simpler to understand, with a &ldquo;standard OO&rdquo; solution to the problem.</p><p>As a final note, this was sitting in my &ldquo;drafts&rdquo; directory for ages, so I&rsquo;m somewhat past the whole DI/AppContext debate; I&rsquo;m not sure why, perhaps because I&rsquo;ve been away from any DI-using systems for awhile now. Definitely at <a href=http://www.bizo.com class=external-link target=_blank rel=noopener>Bizo</a>, but also in the wider Scala community, it seems that Scala systems have eschewed adopting auto-wiring DI as idiomatic.</p><p>But I thought I&rsquo;d still go ahead and publish it, if anything so that I can have a link to point people to in the future.</p></div><footer><div id=disqus_thread></div><script>window.disqus_config=function(){},function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById("disqus_thread").innerHTML="Disqus comments not available by default when the website is previewed locally.";return}var t=document,e=t.createElement("script");e.async=!0,e.src="//draconianoverlord.disqus.com/embed.js",e.setAttribute("data-timestamp",+new Date),(t.head||t.body).appendChild(e)}(),document.addEventListener("themeChanged",function(){document.readyState=="complete"&&DISQUS.reset({reload:!0,config:disqus_config})})</script></footer></article></section></div><footer class=footer><section class=container>©
 2008 -
-2022
+2023
 Stephen Haberman
 ·
-Powered by <a href=https://gohugo.io/>Hugo</a> & <a href=https://github.com/luizdepra/hugo-coder/>Coder</a>.
-</section>
-</footer>
-</main>
-<script src=/js/coder.min.03b17769f4f91ae35667e1f2a1ca8c16f50562576cf90ff32b3179926914daa5.js integrity="sha256-A7F3afT5GuNWZ+HyocqMFvUFYlds+Q/zKzF5kmkU2qU="></script>
-</body>
-</html>
+Powered by <a href=https://gohugo.io/ target=_blank rel=noopener>Hugo</a> & <a href=https://github.com/luizdepra/hugo-coder/ target=_blank rel=noopener>Coder</a>.</section></footer></main><script src=/js/coder.min.6ae284be93d2d19dad1f02b0039508d9aab3180a12a06dcc71b0b0ef7825a317.js integrity="sha256-auKEvpPS0Z2tHwKwA5UI2aqzGAoSoG3McbCw73gloxc="></script></body></html>

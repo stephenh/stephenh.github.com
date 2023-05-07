@@ -1,331 +1,134 @@
-<!doctype html><html lang=en>
-<head>
-<meta charset=utf-8>
-<meta name=viewport content="width=device-width,initial-scale=1">
-<meta http-equiv=content-language content="en">
-<meta name=color-scheme content="light dark">
-<meta name=author content="Stephen Haberman">
-<meta name=description content="Intro    Structural typing is an interesting approach to static typing that I&rsquo;ve been thinking more about lately.
+<!doctype html><html lang=en><head><title>Caller-Side Structural Typing · Draconian Overlord</title><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=color-scheme content="light dark"><meta name=author content="Stephen Haberman"><meta name=description content="Intro Link to heading Structural typing is an interesting approach to static typing that I&rsquo;ve been thinking more about lately.
 The basic gist of structural typing is that type names don&rsquo;t matter&ndash;only type structures matter.
-Though first a disclaimer: being a JVM guy, I&rsquo;m mostly interesting in hacking structural types into the JVM environment. If you&rsquo;re in a language like Go, which has native structural typing, then my points are moot.">
-<meta name=keywords content="blog,developer,personal">
-<meta name=twitter:card content="summary">
-<meta name=twitter:title content="Caller-Side Structural Typing">
-<meta name=twitter:description content="Intro    Structural typing is an interesting approach to static typing that I&rsquo;ve been thinking more about lately.
+Though first a disclaimer: being a JVM guy, I&rsquo;m mostly interesting in hacking structural types into the JVM environment. If you&rsquo;re in a language like Go, which has native structural typing, then my points are moot."><meta name=keywords content="blog,developer,personal"><meta name=twitter:card content="summary"><meta name=twitter:title content="Caller-Side Structural Typing"><meta name=twitter:description content="Intro Link to heading Structural typing is an interesting approach to static typing that I&rsquo;ve been thinking more about lately.
 The basic gist of structural typing is that type names don&rsquo;t matter&ndash;only type structures matter.
-Though first a disclaimer: being a JVM guy, I&rsquo;m mostly interesting in hacking structural types into the JVM environment. If you&rsquo;re in a language like Go, which has native structural typing, then my points are moot.">
-<meta property="og:title" content="Caller-Side Structural Typing">
-<meta property="og:description" content="Intro    Structural typing is an interesting approach to static typing that I&rsquo;ve been thinking more about lately.
+Though first a disclaimer: being a JVM guy, I&rsquo;m mostly interesting in hacking structural types into the JVM environment. If you&rsquo;re in a language like Go, which has native structural typing, then my points are moot."><meta property="og:title" content="Caller-Side Structural Typing"><meta property="og:description" content="Intro Link to heading Structural typing is an interesting approach to static typing that I&rsquo;ve been thinking more about lately.
 The basic gist of structural typing is that type names don&rsquo;t matter&ndash;only type structures matter.
-Though first a disclaimer: being a JVM guy, I&rsquo;m mostly interesting in hacking structural types into the JVM environment. If you&rsquo;re in a language like Go, which has native structural typing, then my points are moot.">
-<meta property="og:type" content="article">
-<meta property="og:url" content="https://www.draconianoverlord.com/2010/01/17/caller-side-structural-typing.html/"><meta property="article:section" content="posts">
-<meta property="article:published_time" content="2010-01-17T00:00:00+00:00">
-<meta property="article:modified_time" content="2010-01-17T00:00:00+00:00">
-<title>
-Caller-Side Structural Typing · Draconian Overlord
-</title>
-<link rel=canonical href=https://www.draconianoverlord.com/2010/01/17/caller-side-structural-typing.html/>
-<link rel=preload href="/fonts/forkawesome-webfont.woff2?v=1.2.0" as=font type=font/woff2 crossorigin>
-<link rel=stylesheet href=/css/coder.min.d9fddbffe6f27e69985dc5fe0471cdb0e57fbf4775714bc3d847accb08f4a1f6.css integrity="sha256-2f3b/+byfmmYXcX+BHHNsOV/v0d1cUvD2Eesywj0ofY=" crossorigin=anonymous media=screen>
-<link rel=stylesheet href=/css/coder-dark.min.aa883b9ce35a8ff4a2a5008619005175e842bb18a8a9f9cc2bbcf44dab2d91fa.css integrity="sha256-qog7nONaj/SipQCGGQBRdehCuxioqfnMK7z0Tastkfo=" crossorigin=anonymous media=screen>
-<link rel=icon type=image/png href=/images/favicon-32x32.png sizes=32x32>
-<link rel=icon type=image/png href=/images/favicon-16x16.png sizes=16x16>
-<link rel=apple-touch-icon href=/images/apple-touch-icon.png>
-<link rel=apple-touch-icon sizes=180x180 href=/images/apple-touch-icon.png>
-<meta name=generator content="Hugo 0.92.0">
-</head>
-<body class="preload-transitions colorscheme-auto">
-<div class=float-container>
-<a id=dark-mode-toggle class=colorscheme-toggle>
-<i class="fa fa-adjust fa-fw" aria-hidden=true></i>
-</a>
-</div>
-<main class=wrapper>
-<nav class=navigation>
-<section class=container>
-<a class=navigation-title href=/>Draconian Overlord</a>
-Oppressing software entropy
-</section>
-</nav>
-<div class=content>
-<section class="container post">
-<article>
-<header>
-<div class=post-title>
-<h1 class=title>
-<a class=title-link href=https://www.draconianoverlord.com/2010/01/17/caller-side-structural-typing.html/>
-Caller-Side Structural Typing
-</a>
-</h1>
-</div>
-<div class=post-meta>
-<div class=date>
-<span class=posted-on>
-<i class="fa fa-calendar" aria-hidden=true></i>
-<time datetime=2010-01-17T00:00:00Z>
-January 17, 2010
-</time>
-</span>
-<span class=reading-time>
-<i class="fa fa-clock-o" aria-hidden=true></i>
-10-minute read
-</span>
-</div>
-<div class=categories>
-<i class="fa fa-folder" aria-hidden=true></i>
-<a href=/categories/languages/>Languages</a></div>
-</div>
-</header>
-<div>
-<h2 id=intro>
-Intro
-<a class=heading-link href=#intro>
-<i class="fa fa-link" aria-hidden=true></i>
-</a>
-</h2>
-<p>Structural typing is an interesting approach to static typing that I&rsquo;ve been thinking more about lately.</p>
-<p>The basic gist of structural typing is that type names don&rsquo;t matter&ndash;only type structures matter.</p>
-<p>Though first a disclaimer: being a JVM guy, I&rsquo;m mostly interesting in hacking structural types into the JVM environment. If you&rsquo;re in a language like Go, which has native structural typing, then my points are moot.</p>
-<h2 id=in-java>
-In Java
-<a class=heading-link href=#in-java>
-<i class="fa fa-link" aria-hidden=true></i>
-</a>
-</h2>
-<p>I think structural types are best explained with an example. Let&rsquo;s start with Java. Say you define an interface <code>Closeable</code>:</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>interface</span> <span style=color:#a6e22e>Closeable</span> <span style=color:#f92672>{</span>
-  <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>close</span><span style=color:#f92672>();</span>
-<span style=color:#f92672>}</span>
-</code></pre></div><p>And then you write some nifty library routines for working with <code>Closeable</code>s:</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>YourLibrary</span> <span style=color:#f92672>{</span>
-  <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>static</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>doClose</span><span style=color:#f92672>(</span>Closeable closeable<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
-    <span style=color:#75715e>// other nifty stuff
-</span><span style=color:#75715e></span>    closeable<span style=color:#f92672>.</span><span style=color:#a6e22e>close</span><span style=color:#f92672>();</span>
-  <span style=color:#f92672>}</span>
-<span style=color:#f92672>}</span>
-</code></pre></div><p>Now, let&rsquo;s say somebody else wants to use your <code>doClose</code> method, e.g. they have a class:</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>SomeClass</span> <span style=color:#f92672>{</span>
-  <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>close</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
-    <span style=color:#75715e>// want this to be called by doClose
-</span><span style=color:#75715e></span>  <span style=color:#f92672>}</span>
-<span style=color:#f92672>}</span>
-</code></pre></div><p>With traditional static typing, they cannot pass instances of <code>SomeClass</code> to your <code>doClose</code> useless <code>SomeClass</code> explicitly has an <code>implements Closeable</code> declaration.</p>
-<p>Which, okay, yeah, most of the time its fairly easily to add this line.</p>
-<p>But, sometimes, it gets annoying&ndash;and this is where structural typing steps in.</p>
-<p>Let&rsquo;s say you try to call:</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java>SomeClass s <span style=color:#f92672>=</span> <span style=color:#66d9ef>new</span> SomeClass<span style=color:#f92672>();</span>
-<span style=color:#75715e>// stuff
-</span><span style=color:#75715e></span>YourLibrary<span style=color:#f92672>.</span><span style=color:#a6e22e>doClose</span><span style=color:#f92672>(</span>s<span style=color:#f92672>);</span> <span style=color:#75715e>// usually a compile error
-</span></code></pre></div><p>Structural typing notices that <code>doClose</code> wants a <code>Closeable</code>, and while <code>SomeClass</code> does not directly implement <code>Closeable</code>, it does have all of the methods required (specifically <code>void close()</code>) to meet the <em>structural</em> requirements of implementing <code>Closeable</code>.</p>
-<p>So, the idea is that this is good enough, and you should be able to go ahead and pass an almost-<code>Closeable</code> <code>SomeClass</code> to <code>doClose</code>.</p>
-<p>Obviously Java doesn&rsquo;t do this today, but Scala and a few other languages do, so let&rsquo;s look at what they do.</p>
-<h2 id=in-scala>
-In Scala
-<a class=heading-link href=#in-scala>
-<i class="fa fa-link" aria-hidden=true></i>
-</a>
-</h2>
-<p>Scala&rsquo;s approach to structural typing doesn&rsquo;t quite work like my above description. It requires you do declare up-front what types are structural. E.g. if you define a method:</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-scala data-lang=scala><span style=color:#66d9ef>object</span> <span style=color:#a6e22e>YourLibrary</span> <span style=color:#f92672>{</span>
-  <span style=color:#66d9ef>def</span> doClose<span style=color:#f92672>(</span>closeable<span style=color:#66d9ef>:</span> <span style=color:#f92672>{</span> <span style=color:#66d9ef>def</span> <span style=color:#66d9ef>close</span><span style=color:#f92672>()</span><span style=color:#66d9ef>:</span> <span style=color:#66d9ef>Unit</span> <span style=color:#f92672>})</span> <span style=color:#66d9ef>=</span> <span style=color:#f92672>{</span>
-    <span style=color:#75715e>// other nifty stuff
-</span><span style=color:#75715e></span>    closeable<span style=color:#f92672>.</span>close<span style=color:#f92672>()</span>
-  <span style=color:#f92672>}</span>
-<span style=color:#f92672>}</span>
-</code></pre></div><p>The type of the argument <code>closeable</code> does not an have an explicitly named type. The <code>{ def close(): Unit }</code> is Scala&rsquo;s syntax for inline structural types. It means &ldquo;any type that has a <code>close</code> method on it&rdquo;.</p>
-<p>Also note that if you don&rsquo;t like the inline syntax, or need to reuse the <code>closeable</code> structural type a lot, you can define a type alias like so:</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-scala data-lang=scala><span style=color:#66d9ef>object</span> <span style=color:#a6e22e>YourLibrary</span> <span style=color:#f92672>{</span>
-  <span style=color:#75715e>// this is a type alias for the structural type
-</span><span style=color:#75715e></span>  <span style=color:#66d9ef>type</span> <span style=color:#66d9ef>Closeable</span> <span style=color:#f92672>=</span> <span style=color:#f92672>{</span>
-    <span style=color:#66d9ef>def</span> close<span style=color:#f92672>()</span><span style=color:#66d9ef>:</span> <span style=color:#66d9ef>Unit</span>
-  <span style=color:#f92672>}</span>
-  <span style=color:#75715e>// now use &#39;: Closeable&#39; like regular syntax, but its still
-</span><span style=color:#75715e></span>  <span style=color:#75715e>// a structural &#34;anything that has close on it&#34; type
-</span><span style=color:#75715e></span>  <span style=color:#66d9ef>def</span> doClose<span style=color:#f92672>(</span>closeable<span style=color:#66d9ef>:</span> <span style=color:#66d9ef>Closeable</span><span style=color:#f92672>)</span> <span style=color:#66d9ef>=</span> <span style=color:#f92672>{</span>
-    <span style=color:#75715e>// other nifty stuff
-</span><span style=color:#75715e></span>    closeable<span style=color:#f92672>.</span>close<span style=color:#f92672>()</span>
-  <span style=color:#f92672>}</span>
-<span style=color:#f92672>}</span>
-</code></pre></div><p>Since the Scala compiler understands structural types, per our Java example above, you can now do:</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-scala data-lang=scala><span style=color:#66d9ef>val</span> s <span style=color:#66d9ef>=</span> <span style=color:#66d9ef>new</span> <span style=color:#a6e22e>SomeClass</span><span style=color:#f92672>()</span>
-<span style=color:#75715e>// stuff
-</span><span style=color:#75715e>// compiles because SomeClose.close matches structurally
-</span><span style=color:#75715e></span><span style=color:#a6e22e>YourLibrary</span><span style=color:#f92672>.</span>doClose<span style=color:#f92672>(</span>s<span style=color:#f92672>)</span>
-</code></pre></div><p>Without explicitly declaring <code>SomeClass extends Closeable</code>. So, this is it, we&rsquo;ve got structural typing.</p>
-<p>However, this is just compile-time. At runtime, Scala now has to cater to the JVM and figure out how to pass &ldquo;any-type-that-is-basically-Closeable-but-not-really&rdquo; to <code>doClose</code>.</p>
-<p>To the JVM, <code>doClose</code> has to accept &ldquo;any-type&rdquo;, because there is no single interface/class name we could put here without forcing our callers to implement that type&ndash;which is exactly what we&rsquo;re trying to avoid.</p>
-<p>So, in the class file, the <code>YourLibrary.doClose</code>&rsquo;s <code>closeable</code> argument is actually a plain <code>java.lang.Object</code>. Then inside of <code>doClose</code>, Scala uses cached reflection grab the <code>closeable</code> argument&rsquo;s <code>close</code> method and invoke it.</p>
-<p>So your code at runtime basically becomes:</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-scala data-lang=scala><span style=color:#75715e>// Runtime view
-</span><span style=color:#75715e></span><span style=color:#66d9ef>object</span> <span style=color:#a6e22e>YourLibrary</span> <span style=color:#f92672>{</span>
-  <span style=color:#66d9ef>def</span> doClose<span style=color:#f92672>(</span>closeable<span style=color:#66d9ef>:</span> <span style=color:#66d9ef>Object</span><span style=color:#f92672>)</span> <span style=color:#66d9ef>=</span> <span style=color:#f92672>{</span>
-    <span style=color:#a6e22e>Method</span> m <span style=color:#66d9ef>=</span> getMethodWithFancyCaching<span style=color:#f92672>(</span>closeable<span style=color:#f92672>,</span> <span style=color:#e6db74>&#34;close&#34;</span><span style=color:#f92672>);</span>
-    m<span style=color:#f92672>.</span>invoke<span style=color:#f92672>();</span>
-  <span style=color:#f92672>}</span>
-<span style=color:#f92672>}</span>
-</code></pre></div><p>Note that while the reflection side of things looks a lot like Ruby/Groovy-style dynamic language duck typing, the compiler (assuming you stay within Scala) still statically enforces that any types you pass to <code>doClose</code> do actually have the <code>close()</code> method.</p>
-<p>So the <code>getMethod</code> call is guaranteed to work, it just happens to be reflectively-dispatched at runtime to hack around the JVM&rsquo;s lack of native structural typing.</p>
-<p>Summarizing, Scala has definition-side structural typing (I&rsquo;m blatantly making up terms here). You declare what types/arguments in your library you wish to be structural and it becomes statically-checked compiler syntax sugar for runtime reflection calls.</p>
-<h2 id=in-whiteoak>
-In Whiteoak
-<a class=heading-link href=#in-whiteoak>
-<i class="fa fa-link" aria-hidden=true></i>
-</a>
-</h2>
-<p><a href=http://ssdl-wiki.cs.technion.ac.il/wiki/images/6/61/Wo-0608.pdf>Whiteoak</a> is an extension of Java that adds structural typing. Syntactically, their approach is very similar to Scala&rsquo;s&ndash;explicit, definition-side declaration of structural types.</p>
-<p>The syntax looks something like:</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>YourLibrary</span> <span style=color:#f92672>{</span>
-  <span style=color:#75715e>// they introduce a &#39;struct&#39; keyword for &#39;structural&#39;
-</span><span style=color:#75715e></span>  struct Closeable <span style=color:#f92672>{</span>
-    <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>close</span><span style=color:#f92672>();</span>
-  <span style=color:#f92672>}</span>
-  <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>static</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>doClose</span><span style=color:#f92672>(</span>Closeable closeable<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
-    <span style=color:#75715e>// do stuff
-</span><span style=color:#75715e></span>    closeable<span style=color:#f92672>.</span><span style=color:#a6e22e>close</span><span style=color:#f92672>()</span>
-  <span style=color:#f92672>}</span>
-<span style=color:#f92672>}</span>
-</code></pre></div><p>So, at compile-time, it looks very much like using interfaces.</p>
-<p>However, just like Scala, at runtime it has to jump through some hoops to satisfy the JVM and accept non-<code>Closeable</code> arguments to the <code>doClose</code> method.</p>
-<p>To do this, Whiteoak uses the same approach as Scala&ndash;structurally typed arguments become <code>java.lang.Object</code>s in the class file. However, unlike Scala, Whiteoak generates cached adaptor classes at runtime.</p>
-<p>So your code at runtime basically becomes:</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=color:#75715e>// Runtime version
-</span><span style=color:#75715e></span><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>YourLibrary</span> <span style=color:#f92672>{</span>
-  <span style=color:#75715e>// Closeable gets an interface
-</span><span style=color:#75715e></span>  <span style=color:#66d9ef>interface</span> <span style=color:#a6e22e>ICloseable</span> <span style=color:#f92672>{</span>
-    <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>close</span><span style=color:#f92672>();</span>
-  <span style=color:#f92672>}</span>
-  <span style=color:#75715e>// doClose takes an Object but, like Scala, any argument has been
-</span><span style=color:#75715e></span>  <span style=color:#75715e>// compile-time checked to structurally have a close method
-</span><span style=color:#75715e></span>  <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>static</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>doClose</span><span style=color:#f92672>(</span>Object closeable<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
-    ICloseable c <span style=color:#f92672>=</span> Whiteoak<span style=color:#f92672>.</span><span style=color:#a6e22e>make</span><span style=color:#f92672>(</span>closeable<span style=color:#f92672>,</span> ICloseable<span style=color:#f92672>.</span><span style=color:#a6e22e>class</span><span style=color:#f92672>);</span>
-    c<span style=color:#f92672>.</span><span style=color:#a6e22e>close</span><span style=color:#f92672>();</span>
-  <span style=color:#f92672>}</span>
-<span style=color:#f92672>}</span>
-
-<span style=color:#75715e>// Whiteoak.make looks at closeable, and ifs its SomeClass, uses
-</span><span style=color:#75715e>// runtime bytecode generation to make a class like:
-</span><span style=color:#75715e></span><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>GeneratedSomeClass</span> <span style=color:#f92672>{</span>
-  <span style=color:#66d9ef>private</span> SomeClass contents<span style=color:#f92672>;</span>
-  <span style=color:#66d9ef>public</span> <span style=color:#a6e22e>SomeClass</span><span style=color:#f92672>(</span>Object contents<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
-    <span style=color:#66d9ef>this</span><span style=color:#f92672>.</span><span style=color:#a6e22e>contents</span> <span style=color:#f92672>=</span> <span style=color:#f92672>(</span>SomeClass<span style=color:#f92672>)</span> contents<span style=color:#f92672>;</span>
-  <span style=color:#f92672>}</span>
-  <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>close</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
-    contents<span style=color:#f92672>.</span><span style=color:#a6e22e>close</span><span style=color:#f92672>();</span>
-  <span style=color:#f92672>}</span>
-<span style=color:#f92672>}</span>
-</code></pre></div><p>You&rsquo;ll end up with a separate <code>GeneratedXxx</code> adaptor class for each type you pass in to <code>doClose</code>. However, like Scala caching for reflection, Whiteoak uses caching to avoid re-generating the class on each <code>make</code> call.</p>
-<p>Between the two, I don&rsquo;t consider Scala&rsquo;s cached-reflection vs. Whiteoak&rsquo;s cached-adaptors to be that large of a difference. The paper <a href="http://portal.acm.org/citation.cfm?id=1565829&dl=GUIDE&coll=GUIDE&CFID=73421715&CFTOKEN=28828316">Compiling structural types on the JVM</a> goes into more detail and also benchmarks the two approaches.</p>
-<p>However, essentially, they both treat structural types as a definition-side concern and consider it <code>doClose</code>&rsquo;s responsibility to take a <code>java.lang.Object</code> and know how to do the right thing with it to get <code>close</code> called.</p>
-<h2 id=in-heron>
-In Heron
-<a class=heading-link href=#in-heron>
-<i class="fa fa-link" aria-hidden=true></i>
-</a>
-</h2>
-<p><a href=http://code.google.com/p/heron-language/>Heron</a> is an interesting language that takes a caller-side approach to structural typing. It is not actually a JVM language, but his caller-side approach is something I like, so I thought I&rsquo;d include it.</p>
-<p>The author of Heron also wrote a very good article, <a href=http://drdobbs.com/blogs/architecture-and-design/228701413>Explicit Structural Typing</a>, that covers these same structural typing ideas and terminology better than I do.</p>
-<p>So, Heron implements <em>explicit</em> <em>caller-side</em> structural typing. You can see the explicit syntax in its <a href=http://code.google.com/p/heron-language/source/browse/trunk/HeronEngine/tests/TestDuckTyping.heron>unit test</a>, or, in our example, it looks like:</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-scala data-lang=scala> <span style=color:#75715e>// define Closeable as a regular interface
-</span><span style=color:#75715e></span> <span style=color:#75715e>// define YourLibrary.doClose as a regular method taking Closeable
-</span><span style=color:#75715e></span> <span style=color:#66d9ef>var</span> s <span style=color:#66d9ef>=</span> <span style=color:#66d9ef>new</span> <span style=color:#a6e22e>SomeClass</span><span style=color:#f92672>()</span>
- <span style=color:#75715e>// compiles because `as Closeable` suffix
-</span><span style=color:#75715e></span> <span style=color:#a6e22e>YourLibrary</span><span style=color:#f92672>.</span>doClose<span style=color:#f92672>(</span>s as <span style=color:#a6e22e>Closeable</span><span style=color:#f92672>)</span>
-</code></pre></div><p>The <code>as Closeable</code> directive ensures <code>s</code> structurally complies with <code>Closeable</code> and then lets the call happen.</p>
-<p>At least I think it does the structural check at compile time. He mentions a runtime check also occurring and then what I assume to be a Whiteoak-like adaptor object being made at runtime as well.</p>
-<p>I&rsquo;m a little fuzzy on the details as I just came across the language, but the key thing is that Heron moves structural typing to be something you as a caller decide you want to use. The declaration-side, the <code>doClose</code> implementation, is none the wiser.</p>
-<h2 id=implicit-caller-side>
-Implicit Caller-Side
-<a class=heading-link href=#implicit-caller-side>
-<i class="fa fa-link" aria-hidden=true></i>
-</a>
-</h2>
-<p>In my look-ma-I&rsquo;m-a-language-designer opinion, I like Heron&rsquo;s approach, but I think Scala should do one better and support <em>implicit</em> caller-side structural typing. As in you don&rsquo;t need the <code>as Closeable</code>, the compiler just notices this should happen and makes it so.</p>
-<p>With this approach, you can write library/API code and be blithely unaware of whether your callers are passing in real-conforming or structurally-conforming arguments.</p>
-<p>So, it&rsquo;d look like:</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-scala data-lang=scala><span style=color:#66d9ef>object</span> <span style=color:#a6e22e>YourLibrary</span> <span style=color:#f92672>{</span>
-  <span style=color:#75715e>// regular trait/interface
-</span><span style=color:#75715e></span>  <span style=color:#66d9ef>trait</span> <span style=color:#a6e22e>Closeable</span> <span style=color:#f92672>{</span>
-    <span style=color:#66d9ef>def</span> close<span style=color:#f92672>()</span><span style=color:#66d9ef>:</span> <span style=color:#66d9ef>Unit</span>
-  <span style=color:#f92672>}</span>
-  <span style=color:#66d9ef>def</span> doClose<span style=color:#f92672>(</span>closeable<span style=color:#66d9ef>:</span> <span style=color:#66d9ef>Closeable</span><span style=color:#f92672>)</span> <span style=color:#66d9ef>=</span> <span style=color:#f92672>{</span>
-    <span style=color:#75715e>// other nifty stuff
-</span><span style=color:#75715e></span>    closeable<span style=color:#f92672>.</span>close<span style=color:#f92672>()</span>
-  <span style=color:#f92672>}</span>
-<span style=color:#f92672>}</span>
-</code></pre></div><p>So far, this is all straight, &ldquo;non-structural&rdquo; Scala code. But then, when the compiler notices the caller passing in a <code>SomeClass</code> argument that is not actually a <code>Closeable</code>, do one of two things:</p>
-<ol>
-<li>
-<p>Generate, at compile-time, a adaptor class that implements <code>Closeable</code>. E.g. something like:</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-scala data-lang=scala><span style=color:#66d9ef>class</span> <span style=color:#a6e22e>SomeClassAsCloseable</span><span style=color:#f92672>(</span><span style=color:#66d9ef>val</span> c<span style=color:#66d9ef>:</span> <span style=color:#66d9ef>Closeable</span><span style=color:#f92672>)</span> <span style=color:#66d9ef>extends</span> <span style=color:#a6e22e>Closeable</span> <span style=color:#f92672>{</span>
-  <span style=color:#66d9ef>def</span> close<span style=color:#f92672>()</span> <span style=color:#66d9ef>=</span> c<span style=color:#f92672>.</span>close<span style=color:#f92672>()</span>
-<span style=color:#f92672>}</span>
-</code></pre></div><p>And automatically transform the caller&rsquo;s call into:</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-scala data-lang=scala><span style=color:#66d9ef>val</span> s <span style=color:#66d9ef>=</span> <span style=color:#66d9ef>new</span> <span style=color:#a6e22e>SomeClass</span><span style=color:#f92672>()</span>
-<span style=color:#a6e22e>YourLibrary</span><span style=color:#f92672>.</span>doClose<span style=color:#f92672>(</span><span style=color:#66d9ef>new</span> <span style=color:#a6e22e>SomeClassAsCloseable</span><span style=color:#f92672>(</span>s<span style=color:#f92672>))</span>
-</code></pre></div><p>Points:</p>
-<ul>
-<li>Pro: Everything is plain Java at runtime&ndash;<code>doClose</code> still takes a regular <code>Closeable</code> interface and there is no reflection/bytecode generation</li>
-<li>Pro: Conversion semantics are similar to Scala&rsquo;s views/implicit conversions, which are used extensively</li>
-<li>Pro: Doable now&ndash;doesn&rsquo;t rely on new JDK features (see option 2)</li>
-<li>Con: Object identity is broken&ndash;if <code>doClose</code> does any identity comparison of its argument, it will do so against the <code>SomeClassAsCloseable</code> adaptor instance instead of <code>SomeClass</code> itself. (I don&rsquo;t consider this a huge deal given how much proxies are used in Java and implicit views in Scala.)</li>
-<li>Con: Generates an extra adaptor class for each caller-side type (like Whiteoak, except generation is at compile-time, so there is no runtime hit)</li>
-<li>Con: Generates an extra adaptor instance (<code>new SomeClassAsCloseable</code>) for each <code>Closeable</code> call (though perhaps this could be cached somewhere, e.g. on <code>SomeClass.asCloseable</code> if <code>SomeClass</code> was a class we controlled)</li>
-</ul>
-</li>
-<li>
-<p>Use <a href=http://blogs.sun.com/jrose/entry/interface_injection_in_the_vm>Interface Injection</a></p>
-<p>This is a JDK7 feature, but the idea is that there will be a way to, at runtime, dynamically add <code>Closeable</code> to the list of interfaces that <code>SomeClass</code> implements. This is like reaching into the <code>SomeClass</code> class declaration line and saying &ldquo;oh, yeah, you meant to add <code>implements Closeable</code>, let me do that for you&rdquo;.</p>
-<p>I think this is the best option for JVM-based structural typing, it just sucks that it is not available yet.</p>
-<p>Points:</p>
-<ul>
-<li>Pro: Object identity is not broken&ndash;there is no proxy/adaptor instance hiding the real <code>SomeClass</code> instance in the background</li>
-<li>Con: Relies on a JDK7 feature that is at least 6-12 months away from release. Even then, it is doubtful Scala would use such a cutting edge feature and limit its target-able runtimes.</li>
-</ul>
-</li>
-</ol>
-<h2 id=concerns-about-implicit-conversion>
-Concerns About Implicit Conversion
-<a class=heading-link href=#concerns-about-implicit-conversion>
-<i class="fa fa-link" aria-hidden=true></i>
-</a>
-</h2>
-<p>A few articles on structural typing have mentioned structural typing in and of itself is potentially a bad thing&ndash;the assertion is that a named interface entails a documented protocol across the entire set of methods, not just a grab bag of disparate methods that can be called willy nilly.</p>
-<p>For example, let&rsquo;s say <code>SomeClass.close()</code> was actually part of <code>SomeClass</code> implementing this other interface <code>IResource</code>. And part of <code>IResource</code>&rsquo;s contract is that clients must call <code>open()</code> before calling <code>close()</code> or else bad things happen. And so <code>SomeClass</code> is implemented with this contract in mind.</p>
-<p>But now you pass <code>SomeClass</code> to <code>doClose</code>, and the compiler magically turns it into a <code>ICloseable</code> for you. However, <code>ICloseable</code> has no documented &ldquo;call <code>open()</code> first&rdquo; contract, and so now the <code>doClose</code> method will start violating <code>SomeClass.close</code>&rsquo;s semantics without knowing any better.</p>
-<p>This is not a bad point. And, perhaps by making structural types an explicit/definition-side concern, Scala and Whiteoak were purposefully setting out to say library/API designers need to explicitly note that they are okay with getting a &ldquo;grab bag of methods&rdquo;.</p>
-<p>Certainly making structural typing an implicit, caller-side implementation as I&rsquo;m proposing will increase the chances of semantics being unintentionally violated.</p>
-<p>However, foregoing the &ldquo;lack of documented protocol&rdquo; concern is how Google&rsquo;s Go implements structural typing, so it will be interesting to see if that plays out well and if &ldquo;willy nilly&rdquo; structural typing gains either popularity or notoriety.</p>
-<h2 id=wrapping-up>
-Wrapping Up
-<a class=heading-link href=#wrapping-up>
-<i class="fa fa-link" aria-hidden=true></i>
-</a>
-</h2>
-<p>I ended up talking more about how other languages implement structural typing more than I intended to. Well, besides the fact that I avoided the big one, Google&rsquo;s Go, which I haven&rsquo;t looked in to enough yet.</p>
-<p>My main assertion is that Scala&rsquo;s structural typing seems like it would integrate better with the JVM if it used caller-side/compile-time adaptor hacks. Basically in the same vein of how Scala 2.8&rsquo;s default/named arguments also use caller-side/compile-time hacks. And, as an added bonus, this would mean structural typing could be used anywhere that takes existing regular traits/interfaces instead of only those picked to accept structural types.</p>
-<p>Of course, declaration-side structural typing still gets the job done and I&rsquo;ll definitely use it, assuming I control the library/API implementation and foresee the needed flexibility.</p>
-</div>
-<footer>
-<div id=disqus_thread></div>
-<script type=application/javascript>var disqus_config=function(){};(function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById('disqus_thread').innerHTML='Disqus comments not available by default when the website is previewed locally.';return}var b=document,a=b.createElement('script');a.async=!0,a.src='//draconianoverlord.disqus.com/embed.js',a.setAttribute('data-timestamp',+new Date),(b.head||b.body).appendChild(a)})()</script>
-<noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript>
-<a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a>
-</footer>
-</article>
-</section>
-</div>
-<footer class=footer>
-<section class=container>
-©
+Though first a disclaimer: being a JVM guy, I&rsquo;m mostly interesting in hacking structural types into the JVM environment. If you&rsquo;re in a language like Go, which has native structural typing, then my points are moot."><meta property="og:type" content="article"><meta property="og:url" content="https://www.draconianoverlord.com/2010/01/17/caller-side-structural-typing.html/"><meta property="article:section" content="posts"><meta property="article:published_time" content="2010-01-17T00:00:00+00:00"><meta property="article:modified_time" content="2010-01-17T00:00:00+00:00"><link rel=canonical href=https://www.draconianoverlord.com/2010/01/17/caller-side-structural-typing.html/><link rel=preload href="/fonts/forkawesome-webfont.woff2?v=1.2.0" as=font type=font/woff2 crossorigin><link rel=stylesheet href=/css/coder.min.65236a6d834b26194eed04a2a3b45e44d9194ef9e620253705d4bef03bd7ef81.css integrity="sha256-ZSNqbYNLJhlO7QSio7ReRNkZTvnmICU3BdS+8DvX74E=" crossorigin=anonymous media=screen><link rel=stylesheet href=/css/coder-dark.min.f6534b0b446b75d9b6ad77a97d43ede2ddaeff1b6e2361fb7198d6f8fcb7f83f.css integrity="sha256-9lNLC0Rrddm2rXepfUPt4t2u/xtuI2H7cZjW+Py3+D8=" crossorigin=anonymous media=screen><link rel=icon type=image/png href=/images/favicon-32x32.png sizes=32x32><link rel=icon type=image/png href=/images/favicon-16x16.png sizes=16x16><link rel=apple-touch-icon href=/images/apple-touch-icon.png><link rel=apple-touch-icon sizes=180x180 href=/images/apple-touch-icon.png><link rel=manifest href=/site.webmanifest><link rel=mask-icon href=/images/safari-pinned-tab.svg color=#5bbad5></head><body class="preload-transitions colorscheme-auto"><div class=float-container><a id=dark-mode-toggle class=colorscheme-toggle><i class="fa fa-adjust fa-fw" aria-hidden=true></i></a></div><main class=wrapper><nav class=navigation><section class=container><a class=navigation-title href=/>Draconian Overlord</a>
+Oppressing software entropy</section></nav><div class=content><section class="container post"><article><header><div class=post-title><h1 class=title><a class=title-link href=https://www.draconianoverlord.com/2010/01/17/caller-side-structural-typing.html/>Caller-Side Structural Typing</a></h1></div><div class=post-meta><div class=date><span class=posted-on><i class="fa fa-calendar" aria-hidden=true></i>
+<time datetime=2010-01-17T00:00:00Z>January 17, 2010</time></span>
+<span class=reading-time><i class="fa fa-clock-o" aria-hidden=true></i>
+10-minute read</span></div><div class=categories><i class="fa fa-folder" aria-hidden=true></i>
+<a href=/categories/languages/>Languages</a></div></div></header><div class=post-content><h2 id=intro>Intro
+<a class=heading-link href=#intro><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h2><p>Structural typing is an interesting approach to static typing that I&rsquo;ve been thinking more about lately.</p><p>The basic gist of structural typing is that type names don&rsquo;t matter&ndash;only type structures matter.</p><p>Though first a disclaimer: being a JVM guy, I&rsquo;m mostly interesting in hacking structural types into the JVM environment. If you&rsquo;re in a language like Go, which has native structural typing, then my points are moot.</p><h2 id=in-java>In Java
+<a class=heading-link href=#in-java><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h2><p>I think structural types are best explained with an example. Let&rsquo;s start with Java. Say you define an interface <code>Closeable</code>:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=display:flex><span><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>interface</span> <span style=color:#a6e22e>Closeable</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>close</span><span style=color:#f92672>();</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>}</span>
+</span></span></code></pre></div><p>And then you write some nifty library routines for working with <code>Closeable</code>s:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=display:flex><span><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>YourLibrary</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>static</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>doClose</span><span style=color:#f92672>(</span>Closeable closeable<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>    <span style=color:#75715e>// other nifty stuff
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>    closeable<span style=color:#f92672>.</span><span style=color:#a6e22e>close</span><span style=color:#f92672>();</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>}</span>
+</span></span></code></pre></div><p>Now, let&rsquo;s say somebody else wants to use your <code>doClose</code> method, e.g. they have a class:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=display:flex><span><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>SomeClass</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>close</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>    <span style=color:#75715e>// want this to be called by doClose
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>  <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>}</span>
+</span></span></code></pre></div><p>With traditional static typing, they cannot pass instances of <code>SomeClass</code> to your <code>doClose</code> useless <code>SomeClass</code> explicitly has an <code>implements Closeable</code> declaration.</p><p>Which, okay, yeah, most of the time its fairly easily to add this line.</p><p>But, sometimes, it gets annoying&ndash;and this is where structural typing steps in.</p><p>Let&rsquo;s say you try to call:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=display:flex><span>SomeClass s <span style=color:#f92672>=</span> <span style=color:#66d9ef>new</span> SomeClass<span style=color:#f92672>();</span>
+</span></span><span style=display:flex><span><span style=color:#75715e>// stuff
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>YourLibrary<span style=color:#f92672>.</span><span style=color:#a6e22e>doClose</span><span style=color:#f92672>(</span>s<span style=color:#f92672>);</span> <span style=color:#75715e>// usually a compile error
+</span></span></span></code></pre></div><p>Structural typing notices that <code>doClose</code> wants a <code>Closeable</code>, and while <code>SomeClass</code> does not directly implement <code>Closeable</code>, it does have all of the methods required (specifically <code>void close()</code>) to meet the <em>structural</em> requirements of implementing <code>Closeable</code>.</p><p>So, the idea is that this is good enough, and you should be able to go ahead and pass an almost-<code>Closeable</code> <code>SomeClass</code> to <code>doClose</code>.</p><p>Obviously Java doesn&rsquo;t do this today, but Scala and a few other languages do, so let&rsquo;s look at what they do.</p><h2 id=in-scala>In Scala
+<a class=heading-link href=#in-scala><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h2><p>Scala&rsquo;s approach to structural typing doesn&rsquo;t quite work like my above description. It requires you do declare up-front what types are structural. E.g. if you define a method:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-scala data-lang=scala><span style=display:flex><span><span style=color:#66d9ef>object</span> <span style=color:#a6e22e>YourLibrary</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>def</span> doClose<span style=color:#f92672>(</span>closeable<span style=color:#66d9ef>:</span> <span style=color:#f92672>{</span> <span style=color:#66d9ef>def</span> <span style=color:#66d9ef>close</span><span style=color:#f92672>()</span><span style=color:#66d9ef>:</span> <span style=color:#66d9ef>Unit</span> <span style=color:#f92672>})</span> <span style=color:#66d9ef>=</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>    <span style=color:#75715e>// other nifty stuff
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>    closeable<span style=color:#f92672>.</span>close<span style=color:#f92672>()</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>}</span>
+</span></span></code></pre></div><p>The type of the argument <code>closeable</code> does not an have an explicitly named type. The <code>{ def close(): Unit }</code> is Scala&rsquo;s syntax for inline structural types. It means &ldquo;any type that has a <code>close</code> method on it&rdquo;.</p><p>Also note that if you don&rsquo;t like the inline syntax, or need to reuse the <code>closeable</code> structural type a lot, you can define a type alias like so:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-scala data-lang=scala><span style=display:flex><span><span style=color:#66d9ef>object</span> <span style=color:#a6e22e>YourLibrary</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>  <span style=color:#75715e>// this is a type alias for the structural type
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>  <span style=color:#66d9ef>type</span> <span style=color:#66d9ef>Closeable</span> <span style=color:#f92672>=</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>def</span> close<span style=color:#f92672>()</span><span style=color:#66d9ef>:</span> <span style=color:#66d9ef>Unit</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>  <span style=color:#75715e>// now use &#39;: Closeable&#39; like regular syntax, but its still
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>  <span style=color:#75715e>// a structural &#34;anything that has close on it&#34; type
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>  <span style=color:#66d9ef>def</span> doClose<span style=color:#f92672>(</span>closeable<span style=color:#66d9ef>:</span> <span style=color:#66d9ef>Closeable</span><span style=color:#f92672>)</span> <span style=color:#66d9ef>=</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>    <span style=color:#75715e>// other nifty stuff
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>    closeable<span style=color:#f92672>.</span>close<span style=color:#f92672>()</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>}</span>
+</span></span></code></pre></div><p>Since the Scala compiler understands structural types, per our Java example above, you can now do:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-scala data-lang=scala><span style=display:flex><span><span style=color:#66d9ef>val</span> s <span style=color:#66d9ef>=</span> <span style=color:#66d9ef>new</span> <span style=color:#a6e22e>SomeClass</span><span style=color:#f92672>()</span>
+</span></span><span style=display:flex><span><span style=color:#75715e>// stuff
+</span></span></span><span style=display:flex><span><span style=color:#75715e>// compiles because SomeClose.close matches structurally
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span><span style=color:#a6e22e>YourLibrary</span><span style=color:#f92672>.</span>doClose<span style=color:#f92672>(</span>s<span style=color:#f92672>)</span>
+</span></span></code></pre></div><p>Without explicitly declaring <code>SomeClass extends Closeable</code>. So, this is it, we&rsquo;ve got structural typing.</p><p>However, this is just compile-time. At runtime, Scala now has to cater to the JVM and figure out how to pass &ldquo;any-type-that-is-basically-Closeable-but-not-really&rdquo; to <code>doClose</code>.</p><p>To the JVM, <code>doClose</code> has to accept &ldquo;any-type&rdquo;, because there is no single interface/class name we could put here without forcing our callers to implement that type&ndash;which is exactly what we&rsquo;re trying to avoid.</p><p>So, in the class file, the <code>YourLibrary.doClose</code>&rsquo;s <code>closeable</code> argument is actually a plain <code>java.lang.Object</code>. Then inside of <code>doClose</code>, Scala uses cached reflection grab the <code>closeable</code> argument&rsquo;s <code>close</code> method and invoke it.</p><p>So your code at runtime basically becomes:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-scala data-lang=scala><span style=display:flex><span><span style=color:#75715e>// Runtime view
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span><span style=color:#66d9ef>object</span> <span style=color:#a6e22e>YourLibrary</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>def</span> doClose<span style=color:#f92672>(</span>closeable<span style=color:#66d9ef>:</span> <span style=color:#66d9ef>Object</span><span style=color:#f92672>)</span> <span style=color:#66d9ef>=</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>Method</span> m <span style=color:#66d9ef>=</span> getMethodWithFancyCaching<span style=color:#f92672>(</span>closeable<span style=color:#f92672>,</span> <span style=color:#e6db74>&#34;close&#34;</span><span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>    m<span style=color:#f92672>.</span>invoke<span style=color:#f92672>();</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>}</span>
+</span></span></code></pre></div><p>Note that while the reflection side of things looks a lot like Ruby/Groovy-style dynamic language duck typing, the compiler (assuming you stay within Scala) still statically enforces that any types you pass to <code>doClose</code> do actually have the <code>close()</code> method.</p><p>So the <code>getMethod</code> call is guaranteed to work, it just happens to be reflectively-dispatched at runtime to hack around the JVM&rsquo;s lack of native structural typing.</p><p>Summarizing, Scala has definition-side structural typing (I&rsquo;m blatantly making up terms here). You declare what types/arguments in your library you wish to be structural and it becomes statically-checked compiler syntax sugar for runtime reflection calls.</p><h2 id=in-whiteoak>In Whiteoak
+<a class=heading-link href=#in-whiteoak><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h2><p><a href=http://ssdl-wiki.cs.technion.ac.il/wiki/images/6/61/Wo-0608.pdf class=external-link target=_blank rel=noopener>Whiteoak</a> is an extension of Java that adds structural typing. Syntactically, their approach is very similar to Scala&rsquo;s&ndash;explicit, definition-side declaration of structural types.</p><p>The syntax looks something like:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=display:flex><span><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>YourLibrary</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>  <span style=color:#75715e>// they introduce a &#39;struct&#39; keyword for &#39;structural&#39;
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>  struct Closeable <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>close</span><span style=color:#f92672>();</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>static</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>doClose</span><span style=color:#f92672>(</span>Closeable closeable<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>    <span style=color:#75715e>// do stuff
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>    closeable<span style=color:#f92672>.</span><span style=color:#a6e22e>close</span><span style=color:#f92672>()</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>}</span>
+</span></span></code></pre></div><p>So, at compile-time, it looks very much like using interfaces.</p><p>However, just like Scala, at runtime it has to jump through some hoops to satisfy the JVM and accept non-<code>Closeable</code> arguments to the <code>doClose</code> method.</p><p>To do this, Whiteoak uses the same approach as Scala&ndash;structurally typed arguments become <code>java.lang.Object</code>s in the class file. However, unlike Scala, Whiteoak generates cached adaptor classes at runtime.</p><p>So your code at runtime basically becomes:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=display:flex><span><span style=color:#75715e>// Runtime version
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>YourLibrary</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>  <span style=color:#75715e>// Closeable gets an interface
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>  <span style=color:#66d9ef>interface</span> <span style=color:#a6e22e>ICloseable</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>close</span><span style=color:#f92672>();</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>  <span style=color:#75715e>// doClose takes an Object but, like Scala, any argument has been
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>  <span style=color:#75715e>// compile-time checked to structurally have a close method
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>  <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>static</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>doClose</span><span style=color:#f92672>(</span>Object closeable<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>    ICloseable c <span style=color:#f92672>=</span> Whiteoak<span style=color:#f92672>.</span><span style=color:#a6e22e>make</span><span style=color:#f92672>(</span>closeable<span style=color:#f92672>,</span> ICloseable<span style=color:#f92672>.</span><span style=color:#a6e22e>class</span><span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>    c<span style=color:#f92672>.</span><span style=color:#a6e22e>close</span><span style=color:#f92672>();</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#75715e>// Whiteoak.make looks at closeable, and ifs its SomeClass, uses
+</span></span></span><span style=display:flex><span><span style=color:#75715e>// runtime bytecode generation to make a class like:
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>GeneratedSomeClass</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>private</span> SomeClass contents<span style=color:#f92672>;</span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>public</span> <span style=color:#a6e22e>SomeClass</span><span style=color:#f92672>(</span>Object contents<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>this</span><span style=color:#f92672>.</span><span style=color:#a6e22e>contents</span> <span style=color:#f92672>=</span> <span style=color:#f92672>(</span>SomeClass<span style=color:#f92672>)</span> contents<span style=color:#f92672>;</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>close</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>    contents<span style=color:#f92672>.</span><span style=color:#a6e22e>close</span><span style=color:#f92672>();</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>}</span>
+</span></span></code></pre></div><p>You&rsquo;ll end up with a separate <code>GeneratedXxx</code> adaptor class for each type you pass in to <code>doClose</code>. However, like Scala caching for reflection, Whiteoak uses caching to avoid re-generating the class on each <code>make</code> call.</p><p>Between the two, I don&rsquo;t consider Scala&rsquo;s cached-reflection vs. Whiteoak&rsquo;s cached-adaptors to be that large of a difference. The paper <a href="http://portal.acm.org/citation.cfm?id=1565829&amp;dl=GUIDE&amp;coll=GUIDE&amp;CFID=73421715&amp;CFTOKEN=28828316" class=external-link target=_blank rel=noopener>Compiling structural types on the JVM</a> goes into more detail and also benchmarks the two approaches.</p><p>However, essentially, they both treat structural types as a definition-side concern and consider it <code>doClose</code>&rsquo;s responsibility to take a <code>java.lang.Object</code> and know how to do the right thing with it to get <code>close</code> called.</p><h2 id=in-heron>In Heron
+<a class=heading-link href=#in-heron><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h2><p><a href=http://code.google.com/p/heron-language/ class=external-link target=_blank rel=noopener>Heron</a> is an interesting language that takes a caller-side approach to structural typing. It is not actually a JVM language, but his caller-side approach is something I like, so I thought I&rsquo;d include it.</p><p>The author of Heron also wrote a very good article, <a href=http://drdobbs.com/blogs/architecture-and-design/228701413 class=external-link target=_blank rel=noopener>Explicit Structural Typing</a>, that covers these same structural typing ideas and terminology better than I do.</p><p>So, Heron implements <em>explicit</em> <em>caller-side</em> structural typing. You can see the explicit syntax in its <a href=http://code.google.com/p/heron-language/source/browse/trunk/HeronEngine/tests/TestDuckTyping.heron class=external-link target=_blank rel=noopener>unit test</a>, or, in our example, it looks like:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-scala data-lang=scala><span style=display:flex><span> <span style=color:#75715e>// define Closeable as a regular interface
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span> <span style=color:#75715e>// define YourLibrary.doClose as a regular method taking Closeable
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span> <span style=color:#66d9ef>var</span> s <span style=color:#66d9ef>=</span> <span style=color:#66d9ef>new</span> <span style=color:#a6e22e>SomeClass</span><span style=color:#f92672>()</span>
+</span></span><span style=display:flex><span> <span style=color:#75715e>// compiles because `as Closeable` suffix
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span> <span style=color:#a6e22e>YourLibrary</span><span style=color:#f92672>.</span>doClose<span style=color:#f92672>(</span>s as <span style=color:#a6e22e>Closeable</span><span style=color:#f92672>)</span>
+</span></span></code></pre></div><p>The <code>as Closeable</code> directive ensures <code>s</code> structurally complies with <code>Closeable</code> and then lets the call happen.</p><p>At least I think it does the structural check at compile time. He mentions a runtime check also occurring and then what I assume to be a Whiteoak-like adaptor object being made at runtime as well.</p><p>I&rsquo;m a little fuzzy on the details as I just came across the language, but the key thing is that Heron moves structural typing to be something you as a caller decide you want to use. The declaration-side, the <code>doClose</code> implementation, is none the wiser.</p><h2 id=implicit-caller-side>Implicit Caller-Side
+<a class=heading-link href=#implicit-caller-side><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h2><p>In my look-ma-I&rsquo;m-a-language-designer opinion, I like Heron&rsquo;s approach, but I think Scala should do one better and support <em>implicit</em> caller-side structural typing. As in you don&rsquo;t need the <code>as Closeable</code>, the compiler just notices this should happen and makes it so.</p><p>With this approach, you can write library/API code and be blithely unaware of whether your callers are passing in real-conforming or structurally-conforming arguments.</p><p>So, it&rsquo;d look like:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-scala data-lang=scala><span style=display:flex><span><span style=color:#66d9ef>object</span> <span style=color:#a6e22e>YourLibrary</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>  <span style=color:#75715e>// regular trait/interface
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>  <span style=color:#66d9ef>trait</span> <span style=color:#a6e22e>Closeable</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>def</span> close<span style=color:#f92672>()</span><span style=color:#66d9ef>:</span> <span style=color:#66d9ef>Unit</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>def</span> doClose<span style=color:#f92672>(</span>closeable<span style=color:#66d9ef>:</span> <span style=color:#66d9ef>Closeable</span><span style=color:#f92672>)</span> <span style=color:#66d9ef>=</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>    <span style=color:#75715e>// other nifty stuff
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>    closeable<span style=color:#f92672>.</span>close<span style=color:#f92672>()</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>}</span>
+</span></span></code></pre></div><p>So far, this is all straight, &ldquo;non-structural&rdquo; Scala code. But then, when the compiler notices the caller passing in a <code>SomeClass</code> argument that is not actually a <code>Closeable</code>, do one of two things:</p><ol><li><p>Generate, at compile-time, a adaptor class that implements <code>Closeable</code>. E.g. something like:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-scala data-lang=scala><span style=display:flex><span><span style=color:#66d9ef>class</span> <span style=color:#a6e22e>SomeClassAsCloseable</span><span style=color:#f92672>(</span><span style=color:#66d9ef>val</span> c<span style=color:#66d9ef>:</span> <span style=color:#66d9ef>Closeable</span><span style=color:#f92672>)</span> <span style=color:#66d9ef>extends</span> <span style=color:#a6e22e>Closeable</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>def</span> close<span style=color:#f92672>()</span> <span style=color:#66d9ef>=</span> c<span style=color:#f92672>.</span>close<span style=color:#f92672>()</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>}</span>
+</span></span></code></pre></div><p>And automatically transform the caller&rsquo;s call into:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-scala data-lang=scala><span style=display:flex><span><span style=color:#66d9ef>val</span> s <span style=color:#66d9ef>=</span> <span style=color:#66d9ef>new</span> <span style=color:#a6e22e>SomeClass</span><span style=color:#f92672>()</span>
+</span></span><span style=display:flex><span><span style=color:#a6e22e>YourLibrary</span><span style=color:#f92672>.</span>doClose<span style=color:#f92672>(</span><span style=color:#66d9ef>new</span> <span style=color:#a6e22e>SomeClassAsCloseable</span><span style=color:#f92672>(</span>s<span style=color:#f92672>))</span>
+</span></span></code></pre></div><p>Points:</p><ul><li>Pro: Everything is plain Java at runtime&ndash;<code>doClose</code> still takes a regular <code>Closeable</code> interface and there is no reflection/bytecode generation</li><li>Pro: Conversion semantics are similar to Scala&rsquo;s views/implicit conversions, which are used extensively</li><li>Pro: Doable now&ndash;doesn&rsquo;t rely on new JDK features (see option 2)</li><li>Con: Object identity is broken&ndash;if <code>doClose</code> does any identity comparison of its argument, it will do so against the <code>SomeClassAsCloseable</code> adaptor instance instead of <code>SomeClass</code> itself. (I don&rsquo;t consider this a huge deal given how much proxies are used in Java and implicit views in Scala.)</li><li>Con: Generates an extra adaptor class for each caller-side type (like Whiteoak, except generation is at compile-time, so there is no runtime hit)</li><li>Con: Generates an extra adaptor instance (<code>new SomeClassAsCloseable</code>) for each <code>Closeable</code> call (though perhaps this could be cached somewhere, e.g. on <code>SomeClass.asCloseable</code> if <code>SomeClass</code> was a class we controlled)</li></ul></li><li><p>Use <a href=http://blogs.sun.com/jrose/entry/interface_injection_in_the_vm class=external-link target=_blank rel=noopener>Interface Injection</a></p><p>This is a JDK7 feature, but the idea is that there will be a way to, at runtime, dynamically add <code>Closeable</code> to the list of interfaces that <code>SomeClass</code> implements. This is like reaching into the <code>SomeClass</code> class declaration line and saying &ldquo;oh, yeah, you meant to add <code>implements Closeable</code>, let me do that for you&rdquo;.</p><p>I think this is the best option for JVM-based structural typing, it just sucks that it is not available yet.</p><p>Points:</p><ul><li>Pro: Object identity is not broken&ndash;there is no proxy/adaptor instance hiding the real <code>SomeClass</code> instance in the background</li><li>Con: Relies on a JDK7 feature that is at least 6-12 months away from release. Even then, it is doubtful Scala would use such a cutting edge feature and limit its target-able runtimes.</li></ul></li></ol><h2 id=concerns-about-implicit-conversion>Concerns About Implicit Conversion
+<a class=heading-link href=#concerns-about-implicit-conversion><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h2><p>A few articles on structural typing have mentioned structural typing in and of itself is potentially a bad thing&ndash;the assertion is that a named interface entails a documented protocol across the entire set of methods, not just a grab bag of disparate methods that can be called willy nilly.</p><p>For example, let&rsquo;s say <code>SomeClass.close()</code> was actually part of <code>SomeClass</code> implementing this other interface <code>IResource</code>. And part of <code>IResource</code>&rsquo;s contract is that clients must call <code>open()</code> before calling <code>close()</code> or else bad things happen. And so <code>SomeClass</code> is implemented with this contract in mind.</p><p>But now you pass <code>SomeClass</code> to <code>doClose</code>, and the compiler magically turns it into a <code>ICloseable</code> for you. However, <code>ICloseable</code> has no documented &ldquo;call <code>open()</code> first&rdquo; contract, and so now the <code>doClose</code> method will start violating <code>SomeClass.close</code>&rsquo;s semantics without knowing any better.</p><p>This is not a bad point. And, perhaps by making structural types an explicit/definition-side concern, Scala and Whiteoak were purposefully setting out to say library/API designers need to explicitly note that they are okay with getting a &ldquo;grab bag of methods&rdquo;.</p><p>Certainly making structural typing an implicit, caller-side implementation as I&rsquo;m proposing will increase the chances of semantics being unintentionally violated.</p><p>However, foregoing the &ldquo;lack of documented protocol&rdquo; concern is how Google&rsquo;s Go implements structural typing, so it will be interesting to see if that plays out well and if &ldquo;willy nilly&rdquo; structural typing gains either popularity or notoriety.</p><h2 id=wrapping-up>Wrapping Up
+<a class=heading-link href=#wrapping-up><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h2><p>I ended up talking more about how other languages implement structural typing more than I intended to. Well, besides the fact that I avoided the big one, Google&rsquo;s Go, which I haven&rsquo;t looked in to enough yet.</p><p>My main assertion is that Scala&rsquo;s structural typing seems like it would integrate better with the JVM if it used caller-side/compile-time adaptor hacks. Basically in the same vein of how Scala 2.8&rsquo;s default/named arguments also use caller-side/compile-time hacks. And, as an added bonus, this would mean structural typing could be used anywhere that takes existing regular traits/interfaces instead of only those picked to accept structural types.</p><p>Of course, declaration-side structural typing still gets the job done and I&rsquo;ll definitely use it, assuming I control the library/API implementation and foresee the needed flexibility.</p></div><footer><div id=disqus_thread></div><script>window.disqus_config=function(){},function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById("disqus_thread").innerHTML="Disqus comments not available by default when the website is previewed locally.";return}var t=document,e=t.createElement("script");e.async=!0,e.src="//draconianoverlord.disqus.com/embed.js",e.setAttribute("data-timestamp",+new Date),(t.head||t.body).appendChild(e)}(),document.addEventListener("themeChanged",function(){document.readyState=="complete"&&DISQUS.reset({reload:!0,config:disqus_config})})</script></footer></article></section></div><footer class=footer><section class=container>©
 2008 -
-2022
+2023
 Stephen Haberman
 ·
-Powered by <a href=https://gohugo.io/>Hugo</a> & <a href=https://github.com/luizdepra/hugo-coder/>Coder</a>.
-</section>
-</footer>
-</main>
-<script src=/js/coder.min.03b17769f4f91ae35667e1f2a1ca8c16f50562576cf90ff32b3179926914daa5.js integrity="sha256-A7F3afT5GuNWZ+HyocqMFvUFYlds+Q/zKzF5kmkU2qU="></script>
-</body>
-</html>
+Powered by <a href=https://gohugo.io/ target=_blank rel=noopener>Hugo</a> & <a href=https://github.com/luizdepra/hugo-coder/ target=_blank rel=noopener>Coder</a>.</section></footer></main><script src=/js/coder.min.6ae284be93d2d19dad1f02b0039508d9aab3180a12a06dcc71b0b0ef7825a317.js integrity="sha256-auKEvpPS0Z2tHwKwA5UI2aqzGAoSoG3McbCw73gloxc="></script></body></html>

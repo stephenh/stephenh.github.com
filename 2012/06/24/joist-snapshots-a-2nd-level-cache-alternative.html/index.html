@@ -1,195 +1,55 @@
-<!doctype html><html lang=en>
-<head>
-<meta charset=utf-8>
-<meta name=viewport content="width=device-width,initial-scale=1">
-<meta http-equiv=content-language content="en">
-<meta name=color-scheme content="light dark">
-<meta name=author content="Stephen Haberman">
-<meta name=description content="Joist 1.4.x got a new feature, Unit of Work snapshots, which I think are a neat way to handle a particular use-case that sometimes the chattiness of ORMs doesn&rsquo;t handle well.
-The Use Case    Specifically, I worked on an enterprise system once that had a fairly common pattern of:
-// as part of the nightly batch cycle for (Integer parentId : allParentIds) { for (Integer childId : loadParent(parentId).">
-<meta name=keywords content="blog,developer,personal">
-<meta name=twitter:card content="summary">
-<meta name=twitter:title content="Joist Snapshots, A 2nd-Level Cache Alternative">
-<meta name=twitter:description content="Joist 1.4.x got a new feature, Unit of Work snapshots, which I think are a neat way to handle a particular use-case that sometimes the chattiness of ORMs doesn&rsquo;t handle well.
-The Use Case    Specifically, I worked on an enterprise system once that had a fairly common pattern of:
-// as part of the nightly batch cycle for (Integer parentId : allParentIds) { for (Integer childId : loadParent(parentId).">
-<meta property="og:title" content="Joist Snapshots, A 2nd-Level Cache Alternative">
-<meta property="og:description" content="Joist 1.4.x got a new feature, Unit of Work snapshots, which I think are a neat way to handle a particular use-case that sometimes the chattiness of ORMs doesn&rsquo;t handle well.
-The Use Case    Specifically, I worked on an enterprise system once that had a fairly common pattern of:
-// as part of the nightly batch cycle for (Integer parentId : allParentIds) { for (Integer childId : loadParent(parentId).">
-<meta property="og:type" content="article">
-<meta property="og:url" content="https://www.draconianoverlord.com/2012/06/24/joist-snapshots-a-2nd-level-cache-alternative.html/"><meta property="article:section" content="posts">
-<meta property="article:published_time" content="2012-06-24T00:00:00+00:00">
-<meta property="article:modified_time" content="2012-06-24T00:00:00+00:00">
-<title>
-Joist Snapshots, A 2nd-Level Cache Alternative · Draconian Overlord
-</title>
-<link rel=canonical href=https://www.draconianoverlord.com/2012/06/24/joist-snapshots-a-2nd-level-cache-alternative.html/>
-<link rel=preload href="/fonts/forkawesome-webfont.woff2?v=1.2.0" as=font type=font/woff2 crossorigin>
-<link rel=stylesheet href=/css/coder.min.d9fddbffe6f27e69985dc5fe0471cdb0e57fbf4775714bc3d847accb08f4a1f6.css integrity="sha256-2f3b/+byfmmYXcX+BHHNsOV/v0d1cUvD2Eesywj0ofY=" crossorigin=anonymous media=screen>
-<link rel=stylesheet href=/css/coder-dark.min.aa883b9ce35a8ff4a2a5008619005175e842bb18a8a9f9cc2bbcf44dab2d91fa.css integrity="sha256-qog7nONaj/SipQCGGQBRdehCuxioqfnMK7z0Tastkfo=" crossorigin=anonymous media=screen>
-<link rel=icon type=image/png href=/images/favicon-32x32.png sizes=32x32>
-<link rel=icon type=image/png href=/images/favicon-16x16.png sizes=16x16>
-<link rel=apple-touch-icon href=/images/apple-touch-icon.png>
-<link rel=apple-touch-icon sizes=180x180 href=/images/apple-touch-icon.png>
-<meta name=generator content="Hugo 0.92.0">
-</head>
-<body class="preload-transitions colorscheme-auto">
-<div class=float-container>
-<a id=dark-mode-toggle class=colorscheme-toggle>
-<i class="fa fa-adjust fa-fw" aria-hidden=true></i>
-</a>
-</div>
-<main class=wrapper>
-<nav class=navigation>
-<section class=container>
-<a class=navigation-title href=/>Draconian Overlord</a>
-Oppressing software entropy
-</section>
-</nav>
-<div class=content>
-<section class="container post">
-<article>
-<header>
-<div class=post-title>
-<h1 class=title>
-<a class=title-link href=https://www.draconianoverlord.com/2012/06/24/joist-snapshots-a-2nd-level-cache-alternative.html/>
-Joist Snapshots, A 2nd-Level Cache Alternative
-</a>
-</h1>
-</div>
-<div class=post-meta>
-<div class=date>
-<span class=posted-on>
-<i class="fa fa-calendar" aria-hidden=true></i>
-<time datetime=2012-06-24T00:00:00Z>
-June 24, 2012
-</time>
-</span>
-<span class=reading-time>
-<i class="fa fa-clock-o" aria-hidden=true></i>
-6-minute read
-</span>
-</div>
-<div class=categories>
-<i class="fa fa-folder" aria-hidden=true></i>
-<a href=/categories/joist/>Joist</a></div>
-</div>
-</header>
-<div>
-<p><a href=http://joist.ws>Joist</a> 1.4.x got a new feature, Unit of Work snapshots, which I think are a neat way to handle a particular use-case that sometimes the chattiness of ORMs doesn&rsquo;t handle well.</p>
-<h2 id=the-use-case>
-The Use Case
-<a class=heading-link href=#the-use-case>
-<i class="fa fa-link" aria-hidden=true></i>
-</a>
-</h2>
-<p>Specifically, I worked on an enterprise system once that had a fairly common pattern of:</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=color:#75715e>// as part of the nightly batch cycle
-</span><span style=color:#75715e></span><span style=color:#66d9ef>for</span> <span style=color:#f92672>(</span>Integer parentId <span style=color:#f92672>:</span> allParentIds<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
-  <span style=color:#66d9ef>for</span> <span style=color:#f92672>(</span>Integer childId <span style=color:#f92672>:</span> loadParent<span style=color:#f92672>(</span>parentId<span style=color:#f92672>).</span><span style=color:#a6e22e>getChildIds</span><span style=color:#f92672>())</span> <span style=color:#f92672>{</span>
-    <span style=color:#66d9ef>for</span> <span style=color:#f92672>(</span>Integer grandId <span style=color:#f92672>:</span> loadChild<span style=color:#f92672>(</span>childId<span style=color:#f92672>).</span><span style=color:#a6e22e>getGrandChildrenIds</span><span style=color:#f92672>())</span> <span style=color:#f92672>{</span>
-      <span style=color:#75715e>// load parent
-</span><span style=color:#75715e></span>      <span style=color:#75715e>// load child
-</span><span style=color:#75715e></span>      <span style=color:#75715e>// perform business logic on the grand child
-</span><span style=color:#75715e></span>    <span style=color:#f92672>}</span>
-  <span style=color:#f92672>}</span>
-<span style=color:#f92672>}</span>
-</code></pre></div><p>Each 3rd-level/grand child entity was processed in its own transaction. But, for an ORM, that generally means a new session, which means re-querying the database for the parent, the child, etc., on each iteration of the loop.</p>
-<p>(Specifically, each parent was a <code>Client</code> of the financial vendor, each client has many <code>Division</code>s, and each division has many <code>Employee</code>s that need to be processed individually. Both the <code>Client</code> entity and <code>Division</code> entity have an array of settings and lookup tables that are necessary while processing each <code>Employee</code>.)</p>
-<p>For a few, or even a few hundred, iterations, this isn&rsquo;t a big deal. But on iteration 1,000 or 10,000, re-loading the parent (and any parent-level related domain objects) on each time through the loop, and the latency inherent in that going out over the wire, starts to add up.</p>
-<h2 id=the-typical-solution-2nd-level-cache>
-The Typical Solution, 2nd Level Cache
-<a class=heading-link href=#the-typical-solution-2nd-level-cache>
-<i class="fa fa-link" aria-hidden=true></i>
-</a>
-</h2>
-<p>The answer most ORMs, AFAIK, have to this scenario is to turn on 2nd-level caching, which is where the ORM will, behind the scenes, store a copy of objects in-memory (either locally in RAM or in a distributed cache), keyed by table+primary key.</p>
-<p>Then the parent and child entities will be cached in memory, avoiding the wire call (for local-RAM caching), and things will be snappy again.</p>
-<p>However, I have a few problems with 2nd-level caching:</p>
-<ol>
-<li>
-<p>It is commonly all-or-nothing at the entity level. E.g. <code>Client</code> is always cached or never cached, throughout your entire program.</p>
-<p>I dislike this lack of flexibility, because often times I don&rsquo;t want the caching&ndash;if I&rsquo;m on the CRUD screen for the <code>Client</code>, I really do want to see the latest results, even if it means a wire call.</p>
-</li>
-<li>
-<p>You&rsquo;re basically knowingly introducing eventual consistency throughout your system, where, sans a fancy cache invalidation scheme, you will have stale data.</p>
-<p>Given one of the main advantages of an RDBMs is the simplicity of the ACID semantics, I generally try and hold on to that simplicity for as long as possible, and only give it up if I absolutely have too.</p>
-<p>And I don&rsquo;t trust fancy distributed cache invalidation schemes.</p>
-</li>
-</ol>
-<p>For these reasons, I&rsquo;ve generally avoided using an ORM-based 2nd-level cache.</p>
-<p>Which is not to say I never use caching; caching is great, when appropriate. I just usually have better luck applying it more subtly than entity-level all-or-nothing. There are pros and cons to this, but I&rsquo;ll leave it at that for now.</p>
-<h2 id=an-alternative-joists-snapshots>
-An Alternative, Joist&rsquo;s Snapshots
-<a class=heading-link href=#an-alternative-joists-snapshots>
-<i class="fa fa-link" aria-hidden=true></i>
-</a>
-</h2>
-<p>So, Joist&rsquo;s alternative was to look at this specific use case and realize the programmer probably knows <em>exactly what data they want to cache</em>, and <em>what the scope of that cache should be</em>.</p>
-<p>I.e., in the above loop, we don&rsquo;t need <code>Client</code> cached for the entire JVM lifetime, and to force every single other thread to use the cached version (especially if they don&rsquo;t want to, whatever their process/semantics happen to be). If they make an extra wire call, that&rsquo;s fine. We just don&rsquo;t want to make 10,000 in a loop.</p>
-<p>Snapshots then, allow the programmer to do this, e.g.:</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=color:#75715e>// as part of the nightly batch cycle
-</span><span style=color:#75715e></span><span style=color:#66d9ef>for</span> <span style=color:#f92672>(</span>Integer parentId <span style=color:#f92672>:</span> allParentIds<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
-  <span style=color:#75715e>// load parent data just once
-</span><span style=color:#75715e></span>  Snapshot s1 <span style=color:#f92672>=</span> UoW<span style=color:#f92672>.</span><span style=color:#a6e22e>snapshot</span><span style=color:#f92672>(</span>repo<span style=color:#f92672>,</span> <span style=color:#66d9ef>new</span> Block<span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
-    <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>go</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
-      <span style=color:#75715e>// load parent, any other parent-level objects
-</span><span style=color:#75715e></span>    <span style=color:#f92672>}</span>
-  <span style=color:#f92672>};</span>
-  <span style=color:#66d9ef>for</span> <span style=color:#f92672>(</span>Integer childId <span style=color:#f92672>:</span> loadParent<span style=color:#f92672>(</span>parentId<span style=color:#f92672>).</span><span style=color:#a6e22e>getChildIds</span><span style=color:#f92672>())</span> <span style=color:#f92672>{</span>
-    Snapshot s2 <span style=color:#f92672>=</span> UoW<span style=color:#f92672>.</span><span style=color:#a6e22e>snapshot</span><span style=color:#f92672>(</span>repo<span style=color:#f92672>,</span> s1<span style=color:#f92672>,</span> <span style=color:#66d9ef>new</span> Block<span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
-      <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>go</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
-        <span style=color:#75715e>// load child, any other child-level objects
-</span><span style=color:#75715e></span>      <span style=color:#f92672>}</span>
-    <span style=color:#f92672>};</span>
-    <span style=color:#66d9ef>for</span> <span style=color:#f92672>(</span>Integer grandId <span style=color:#f92672>:</span> loadChild<span style=color:#f92672>(</span>childId<span style=color:#f92672>).</span><span style=color:#a6e22e>getGrandChildrenIds</span><span style=color:#f92672>())</span> <span style=color:#f92672>{</span>
-      <span style=color:#75715e>// now use cached parent/child data:
-</span><span style=color:#75715e></span>      UoW<span style=color:#f92672>.</span><span style=color:#a6e22e>go</span><span style=color:#f92672>(</span>repo<span style=color:#f92672>,</span> s2<span style=color:#f92672>,</span> <span style=color:#f92672>...);</span>
-    <span style=color:#f92672>}</span>
-  <span style=color:#f92672>}</span>
-<span style=color:#f92672>}</span>
-</code></pre></div><p>Thanks to Java&rsquo;s anonymous inner classes, this is a tad verbose, but should show the basic idea.</p>
-<p>In the outer loops, the programmer has a chance to load this level of domain objects just once. First for <code>Parent</code> level in the <code>s1</code> snapshot, and the building on top of that for the <code>Child</code> level in the <code>s2</code> snapshot.</p>
-<p>Now with the <code>s2</code> snapshot passed to the <code>UoW.go</code> method, which opens our grandchild (e.g. <code>Employee</code>-level) connection/transaction, any loads for the <code>Parent</code> or <code>Child</code> entities (including their one-to-many relations/collections) within the grandchild&rsquo;s Unit of Work will avoid going over the wire, and instead use the serialized state from the snapshots.</p>
-<p>Which, yeah, this is still a cache. However, the important difference is that the programmer explicitly opts-in to the cache, for a specific use-case within our program, where we know we prefer the &ldquo;no wire call performance&rdquo; over &ldquo;never stale data&rdquo; trade-off.</p>
-<p>This can be a good thing or a bad thing. It does mean more code, i.e. it&rsquo;s not completely transparent like ORM-wide 2nd level caching is, where the client code doesn&rsquo;t even know it&rsquo;s happening. (If you want/need that, that&rsquo;s fine, maybe Joist will do that someday, it just does not currently.)</p>
-<p><strong>Update May 2018:</strong> In retrospect, it would be cool if, while traversing the object graph, e.g. <code>parent.getSettings()</code>, within the grandchild&rsquo;s Unit of Work, Joist could remember &ldquo;oh, we loaded these <code>ParentSettings</code> from the <code>parent</code> which is in snapshot <code>s1</code>&rdquo;, and so also put just-loaded <code>ParentSetting</code>s into the <code>s1</code> snapshot. Currently any newly-loaded objects within the grandchild Unit Of Work are only stored within that UoW, but if Joist could differentiate when to/to not store <code>Parent</code>-level entities into <code>s1</code> and <code>Child</code>-level entities into <code>s2</code>, then all of the &ldquo;hand-trigger loading of the <code>Parent</code>/<code>Child</code> object graph you know you need&rdquo; would go away.</p>
-<p>Personally, I find the more explicit snapshot approach to be, for this use case, both more intuitive and more precise than just saying &ldquo;any <code>Parent</code> entity in the app may be ~5 minutes old&rdquo;.</p>
-<p>Sometimes implicit semantics are nice, and sometimes they&rsquo;re too magical. It is a trade off that will depend on your situation.</p>
-<p>However, I&rsquo;ll note that I think often times the more implicit approach wins de facto, just because it has less LOC. This may be perfectly fine, as I&rsquo;m certainly not advocating boilerplate. But abstractions have their cost (conceptual overhead, leakiness, etc.) and that sometimes you&rsquo;re better off just using the more explicit approach whose semantics are easier to understand.</p>
-<h2 id=future-improvements>
-Future Improvements
-<a class=heading-link href=#future-improvements>
-<i class="fa fa-link" aria-hidden=true></i>
-</a>
-</h2>
-<p>I should add some very basic metrics to Joist to allow easy profiling, without using a full-fledged profiler. Since often times a system won&rsquo;t be bottlenecked on CPU or IO, but instead always waiting on wire call latency, easily showing what the ORM is up to would be really nice.</p>
-<p>For example, every 10-30 seconds, output the number of object loads per table, number of collection loads per table, and maybe even highlight specific objects being constantly reloaded.</p>
-<p>E.g., for the original code snippet above, if <code>Parent#5</code> showed up in Joist&rsquo;s stats as being loaded more than 5-10/whatever times per 30-second interval, Joist could log an info/warning that the programmer might look into applying snapshot-style caching.</p>
-<p>That should make hunting down ORM-level waste, or at least the low-hanging fruit that hopefully is 80% of the performance problem, pretty easy.</p>
-</div>
-<footer>
-<div id=disqus_thread></div>
-<script type=application/javascript>var disqus_config=function(){};(function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById('disqus_thread').innerHTML='Disqus comments not available by default when the website is previewed locally.';return}var b=document,a=b.createElement('script');a.async=!0,a.src='//draconianoverlord.disqus.com/embed.js',a.setAttribute('data-timestamp',+new Date),(b.head||b.body).appendChild(a)})()</script>
-<noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript>
-<a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a>
-</footer>
-</article>
-</section>
-</div>
-<footer class=footer>
-<section class=container>
-©
+<!doctype html><html lang=en><head><title>Joist Snapshots, A 2nd-Level Cache Alternative · Draconian Overlord</title><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=color-scheme content="light dark"><meta name=author content="Stephen Haberman"><meta name=description content="Joist 1.4.x got a new feature, Unit of Work snapshots, which I think are a neat way to handle a particular use-case that sometimes the chattiness of ORMs doesn&rsquo;t handle well.
+The Use Case Link to heading Specifically, I worked on an enterprise system once that had a fairly common pattern of:
+// as part of the nightly batch cycle for (Integer parentId : allParentIds) { for (Integer childId : loadParent(parentId)."><meta name=keywords content="blog,developer,personal"><meta name=twitter:card content="summary"><meta name=twitter:title content="Joist Snapshots, A 2nd-Level Cache Alternative"><meta name=twitter:description content="Joist 1.4.x got a new feature, Unit of Work snapshots, which I think are a neat way to handle a particular use-case that sometimes the chattiness of ORMs doesn&rsquo;t handle well.
+The Use Case Link to heading Specifically, I worked on an enterprise system once that had a fairly common pattern of:
+// as part of the nightly batch cycle for (Integer parentId : allParentIds) { for (Integer childId : loadParent(parentId)."><meta property="og:title" content="Joist Snapshots, A 2nd-Level Cache Alternative"><meta property="og:description" content="Joist 1.4.x got a new feature, Unit of Work snapshots, which I think are a neat way to handle a particular use-case that sometimes the chattiness of ORMs doesn&rsquo;t handle well.
+The Use Case Link to heading Specifically, I worked on an enterprise system once that had a fairly common pattern of:
+// as part of the nightly batch cycle for (Integer parentId : allParentIds) { for (Integer childId : loadParent(parentId)."><meta property="og:type" content="article"><meta property="og:url" content="https://www.draconianoverlord.com/2012/06/24/joist-snapshots-a-2nd-level-cache-alternative.html/"><meta property="article:section" content="posts"><meta property="article:published_time" content="2012-06-24T00:00:00+00:00"><meta property="article:modified_time" content="2012-06-24T00:00:00+00:00"><link rel=canonical href=https://www.draconianoverlord.com/2012/06/24/joist-snapshots-a-2nd-level-cache-alternative.html/><link rel=preload href="/fonts/forkawesome-webfont.woff2?v=1.2.0" as=font type=font/woff2 crossorigin><link rel=stylesheet href=/css/coder.min.65236a6d834b26194eed04a2a3b45e44d9194ef9e620253705d4bef03bd7ef81.css integrity="sha256-ZSNqbYNLJhlO7QSio7ReRNkZTvnmICU3BdS+8DvX74E=" crossorigin=anonymous media=screen><link rel=stylesheet href=/css/coder-dark.min.f6534b0b446b75d9b6ad77a97d43ede2ddaeff1b6e2361fb7198d6f8fcb7f83f.css integrity="sha256-9lNLC0Rrddm2rXepfUPt4t2u/xtuI2H7cZjW+Py3+D8=" crossorigin=anonymous media=screen><link rel=icon type=image/png href=/images/favicon-32x32.png sizes=32x32><link rel=icon type=image/png href=/images/favicon-16x16.png sizes=16x16><link rel=apple-touch-icon href=/images/apple-touch-icon.png><link rel=apple-touch-icon sizes=180x180 href=/images/apple-touch-icon.png><link rel=manifest href=/site.webmanifest><link rel=mask-icon href=/images/safari-pinned-tab.svg color=#5bbad5></head><body class="preload-transitions colorscheme-auto"><div class=float-container><a id=dark-mode-toggle class=colorscheme-toggle><i class="fa fa-adjust fa-fw" aria-hidden=true></i></a></div><main class=wrapper><nav class=navigation><section class=container><a class=navigation-title href=/>Draconian Overlord</a>
+Oppressing software entropy</section></nav><div class=content><section class="container post"><article><header><div class=post-title><h1 class=title><a class=title-link href=https://www.draconianoverlord.com/2012/06/24/joist-snapshots-a-2nd-level-cache-alternative.html/>Joist Snapshots, A 2nd-Level Cache Alternative</a></h1></div><div class=post-meta><div class=date><span class=posted-on><i class="fa fa-calendar" aria-hidden=true></i>
+<time datetime=2012-06-24T00:00:00Z>June 24, 2012</time></span>
+<span class=reading-time><i class="fa fa-clock-o" aria-hidden=true></i>
+6-minute read</span></div><div class=categories><i class="fa fa-folder" aria-hidden=true></i>
+<a href=/categories/joist/>Joist</a></div></div></header><div class=post-content><p><a href=http://joist.ws class=external-link target=_blank rel=noopener>Joist</a> 1.4.x got a new feature, Unit of Work snapshots, which I think are a neat way to handle a particular use-case that sometimes the chattiness of ORMs doesn&rsquo;t handle well.</p><h2 id=the-use-case>The Use Case
+<a class=heading-link href=#the-use-case><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h2><p>Specifically, I worked on an enterprise system once that had a fairly common pattern of:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=display:flex><span><span style=color:#75715e>// as part of the nightly batch cycle
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span><span style=color:#66d9ef>for</span> <span style=color:#f92672>(</span>Integer parentId <span style=color:#f92672>:</span> allParentIds<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>for</span> <span style=color:#f92672>(</span>Integer childId <span style=color:#f92672>:</span> loadParent<span style=color:#f92672>(</span>parentId<span style=color:#f92672>).</span><span style=color:#a6e22e>getChildIds</span><span style=color:#f92672>())</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>for</span> <span style=color:#f92672>(</span>Integer grandId <span style=color:#f92672>:</span> loadChild<span style=color:#f92672>(</span>childId<span style=color:#f92672>).</span><span style=color:#a6e22e>getGrandChildrenIds</span><span style=color:#f92672>())</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>      <span style=color:#75715e>// load parent
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>      <span style=color:#75715e>// load child
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>      <span style=color:#75715e>// perform business logic on the grand child
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>    <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>}</span>
+</span></span></code></pre></div><p>Each 3rd-level/grand child entity was processed in its own transaction. But, for an ORM, that generally means a new session, which means re-querying the database for the parent, the child, etc., on each iteration of the loop.</p><p>(Specifically, each parent was a <code>Client</code> of the financial vendor, each client has many <code>Division</code>s, and each division has many <code>Employee</code>s that need to be processed individually. Both the <code>Client</code> entity and <code>Division</code> entity have an array of settings and lookup tables that are necessary while processing each <code>Employee</code>.)</p><p>For a few, or even a few hundred, iterations, this isn&rsquo;t a big deal. But on iteration 1,000 or 10,000, re-loading the parent (and any parent-level related domain objects) on each time through the loop, and the latency inherent in that going out over the wire, starts to add up.</p><h2 id=the-typical-solution-2nd-level-cache>The Typical Solution, 2nd Level Cache
+<a class=heading-link href=#the-typical-solution-2nd-level-cache><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h2><p>The answer most ORMs, AFAIK, have to this scenario is to turn on 2nd-level caching, which is where the ORM will, behind the scenes, store a copy of objects in-memory (either locally in RAM or in a distributed cache), keyed by table+primary key.</p><p>Then the parent and child entities will be cached in memory, avoiding the wire call (for local-RAM caching), and things will be snappy again.</p><p>However, I have a few problems with 2nd-level caching:</p><ol><li><p>It is commonly all-or-nothing at the entity level. E.g. <code>Client</code> is always cached or never cached, throughout your entire program.</p><p>I dislike this lack of flexibility, because often times I don&rsquo;t want the caching&ndash;if I&rsquo;m on the CRUD screen for the <code>Client</code>, I really do want to see the latest results, even if it means a wire call.</p></li><li><p>You&rsquo;re basically knowingly introducing eventual consistency throughout your system, where, sans a fancy cache invalidation scheme, you will have stale data.</p><p>Given one of the main advantages of an RDBMs is the simplicity of the ACID semantics, I generally try and hold on to that simplicity for as long as possible, and only give it up if I absolutely have too.</p><p>And I don&rsquo;t trust fancy distributed cache invalidation schemes.</p></li></ol><p>For these reasons, I&rsquo;ve generally avoided using an ORM-based 2nd-level cache.</p><p>Which is not to say I never use caching; caching is great, when appropriate. I just usually have better luck applying it more subtly than entity-level all-or-nothing. There are pros and cons to this, but I&rsquo;ll leave it at that for now.</p><h2 id=an-alternative-joists-snapshots>An Alternative, Joist&rsquo;s Snapshots
+<a class=heading-link href=#an-alternative-joists-snapshots><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h2><p>So, Joist&rsquo;s alternative was to look at this specific use case and realize the programmer probably knows <em>exactly what data they want to cache</em>, and <em>what the scope of that cache should be</em>.</p><p>I.e., in the above loop, we don&rsquo;t need <code>Client</code> cached for the entire JVM lifetime, and to force every single other thread to use the cached version (especially if they don&rsquo;t want to, whatever their process/semantics happen to be). If they make an extra wire call, that&rsquo;s fine. We just don&rsquo;t want to make 10,000 in a loop.</p><p>Snapshots then, allow the programmer to do this, e.g.:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=display:flex><span><span style=color:#75715e>// as part of the nightly batch cycle
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span><span style=color:#66d9ef>for</span> <span style=color:#f92672>(</span>Integer parentId <span style=color:#f92672>:</span> allParentIds<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>  <span style=color:#75715e>// load parent data just once
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>  Snapshot s1 <span style=color:#f92672>=</span> UoW<span style=color:#f92672>.</span><span style=color:#a6e22e>snapshot</span><span style=color:#f92672>(</span>repo<span style=color:#f92672>,</span> <span style=color:#66d9ef>new</span> Block<span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>go</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>      <span style=color:#75715e>// load parent, any other parent-level objects
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>    <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>};</span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>for</span> <span style=color:#f92672>(</span>Integer childId <span style=color:#f92672>:</span> loadParent<span style=color:#f92672>(</span>parentId<span style=color:#f92672>).</span><span style=color:#a6e22e>getChildIds</span><span style=color:#f92672>())</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>    Snapshot s2 <span style=color:#f92672>=</span> UoW<span style=color:#f92672>.</span><span style=color:#a6e22e>snapshot</span><span style=color:#f92672>(</span>repo<span style=color:#f92672>,</span> s1<span style=color:#f92672>,</span> <span style=color:#66d9ef>new</span> Block<span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>      <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>go</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>        <span style=color:#75715e>// load child, any other child-level objects
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>      <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>};</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>for</span> <span style=color:#f92672>(</span>Integer grandId <span style=color:#f92672>:</span> loadChild<span style=color:#f92672>(</span>childId<span style=color:#f92672>).</span><span style=color:#a6e22e>getGrandChildrenIds</span><span style=color:#f92672>())</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>      <span style=color:#75715e>// now use cached parent/child data:
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>      UoW<span style=color:#f92672>.</span><span style=color:#a6e22e>go</span><span style=color:#f92672>(</span>repo<span style=color:#f92672>,</span> s2<span style=color:#f92672>,</span> <span style=color:#f92672>...);</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>}</span>
+</span></span></code></pre></div><p>Thanks to Java&rsquo;s anonymous inner classes, this is a tad verbose, but should show the basic idea.</p><p>In the outer loops, the programmer has a chance to load this level of domain objects just once. First for <code>Parent</code> level in the <code>s1</code> snapshot, and the building on top of that for the <code>Child</code> level in the <code>s2</code> snapshot.</p><p>Now with the <code>s2</code> snapshot passed to the <code>UoW.go</code> method, which opens our grandchild (e.g. <code>Employee</code>-level) connection/transaction, any loads for the <code>Parent</code> or <code>Child</code> entities (including their one-to-many relations/collections) within the grandchild&rsquo;s Unit of Work will avoid going over the wire, and instead use the serialized state from the snapshots.</p><p>Which, yeah, this is still a cache. However, the important difference is that the programmer explicitly opts-in to the cache, for a specific use-case within our program, where we know we prefer the &ldquo;no wire call performance&rdquo; over &ldquo;never stale data&rdquo; trade-off.</p><p>This can be a good thing or a bad thing. It does mean more code, i.e. it&rsquo;s not completely transparent like ORM-wide 2nd level caching is, where the client code doesn&rsquo;t even know it&rsquo;s happening. (If you want/need that, that&rsquo;s fine, maybe Joist will do that someday, it just does not currently.)</p><p><strong>Update May 2018:</strong> In retrospect, it would be cool if, while traversing the object graph, e.g. <code>parent.getSettings()</code>, within the grandchild&rsquo;s Unit of Work, Joist could remember &ldquo;oh, we loaded these <code>ParentSettings</code> from the <code>parent</code> which is in snapshot <code>s1</code>&rdquo;, and so also put just-loaded <code>ParentSetting</code>s into the <code>s1</code> snapshot. Currently any newly-loaded objects within the grandchild Unit Of Work are only stored within that UoW, but if Joist could differentiate when to/to not store <code>Parent</code>-level entities into <code>s1</code> and <code>Child</code>-level entities into <code>s2</code>, then all of the &ldquo;hand-trigger loading of the <code>Parent</code>/<code>Child</code> object graph you know you need&rdquo; would go away.</p><p>Personally, I find the more explicit snapshot approach to be, for this use case, both more intuitive and more precise than just saying &ldquo;any <code>Parent</code> entity in the app may be ~5 minutes old&rdquo;.</p><p>Sometimes implicit semantics are nice, and sometimes they&rsquo;re too magical. It is a trade off that will depend on your situation.</p><p>However, I&rsquo;ll note that I think often times the more implicit approach wins de facto, just because it has less LOC. This may be perfectly fine, as I&rsquo;m certainly not advocating boilerplate. But abstractions have their cost (conceptual overhead, leakiness, etc.) and that sometimes you&rsquo;re better off just using the more explicit approach whose semantics are easier to understand.</p><h2 id=future-improvements>Future Improvements
+<a class=heading-link href=#future-improvements><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h2><p>I should add some very basic metrics to Joist to allow easy profiling, without using a full-fledged profiler. Since often times a system won&rsquo;t be bottlenecked on CPU or IO, but instead always waiting on wire call latency, easily showing what the ORM is up to would be really nice.</p><p>For example, every 10-30 seconds, output the number of object loads per table, number of collection loads per table, and maybe even highlight specific objects being constantly reloaded.</p><p>E.g., for the original code snippet above, if <code>Parent#5</code> showed up in Joist&rsquo;s stats as being loaded more than 5-10/whatever times per 30-second interval, Joist could log an info/warning that the programmer might look into applying snapshot-style caching.</p><p>That should make hunting down ORM-level waste, or at least the low-hanging fruit that hopefully is 80% of the performance problem, pretty easy.</p></div><footer><div id=disqus_thread></div><script>window.disqus_config=function(){},function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById("disqus_thread").innerHTML="Disqus comments not available by default when the website is previewed locally.";return}var t=document,e=t.createElement("script");e.async=!0,e.src="//draconianoverlord.disqus.com/embed.js",e.setAttribute("data-timestamp",+new Date),(t.head||t.body).appendChild(e)}(),document.addEventListener("themeChanged",function(){document.readyState=="complete"&&DISQUS.reset({reload:!0,config:disqus_config})})</script></footer></article></section></div><footer class=footer><section class=container>©
 2008 -
-2022
+2023
 Stephen Haberman
 ·
-Powered by <a href=https://gohugo.io/>Hugo</a> & <a href=https://github.com/luizdepra/hugo-coder/>Coder</a>.
-</section>
-</footer>
-</main>
-<script src=/js/coder.min.03b17769f4f91ae35667e1f2a1ca8c16f50562576cf90ff32b3179926914daa5.js integrity="sha256-A7F3afT5GuNWZ+HyocqMFvUFYlds+Q/zKzF5kmkU2qU="></script>
-</body>
-</html>
+Powered by <a href=https://gohugo.io/ target=_blank rel=noopener>Hugo</a> & <a href=https://github.com/luizdepra/hugo-coder/ target=_blank rel=noopener>Coder</a>.</section></footer></main><script src=/js/coder.min.6ae284be93d2d19dad1f02b0039508d9aab3180a12a06dcc71b0b0ef7825a317.js integrity="sha256-auKEvpPS0Z2tHwKwA5UI2aqzGAoSoG3McbCw73gloxc="></script></body></html>

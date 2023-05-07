@@ -1,436 +1,262 @@
-<!doctype html><html lang=en>
-<head>
-<meta charset=utf-8>
-<meta name=viewport content="width=device-width,initial-scale=1">
-<meta http-equiv=content-language content="en">
-<meta name=color-scheme content="light dark">
-<meta name=author content="Stephen Haberman">
-<meta name=description content="I&rsquo;ve used the Selenium API, in pleasure and rage, for years, and it&rsquo;s still difficult to find a 100%-perfect approach. So I thought I would write up the current options that I weighed.
-Raw API    You can start out using the raw API, e.g.:
+<!doctype html><html lang=en><head><title>Dealing with Selenium API Gotchas · Draconian Overlord</title><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=color-scheme content="light dark"><meta name=author content="Stephen Haberman"><meta name=description content="I&rsquo;ve used the Selenium API, in pleasure and rage, for years, and it&rsquo;s still difficult to find a 100%-perfect approach. So I thought I would write up the current options that I weighed.
+Raw API Link to heading You can start out using the raw API, e.g.:
 driver.findElement(By.cssSelector(&#34;.foo&#34;)).click(); driver.findElement(By.cssSelector(&#34;.input&#34;)).sendKeys(&#34;input&#34;); There are a few issues with this:
- It scatters selectors throughout your tests The low-level click and sendKeys methods are somewhat naive  E.">
-<meta name=keywords content="blog,developer,personal">
-<meta name=twitter:card content="summary">
-<meta name=twitter:title content="Dealing with Selenium API Gotchas">
-<meta name=twitter:description content="I&rsquo;ve used the Selenium API, in pleasure and rage, for years, and it&rsquo;s still difficult to find a 100%-perfect approach. So I thought I would write up the current options that I weighed.
-Raw API    You can start out using the raw API, e.g.:
+It scatters selectors throughout your tests The low-level click and sendKeys methods are somewhat naive E."><meta name=keywords content="blog,developer,personal"><meta name=twitter:card content="summary"><meta name=twitter:title content="Dealing with Selenium API Gotchas"><meta name=twitter:description content="I&rsquo;ve used the Selenium API, in pleasure and rage, for years, and it&rsquo;s still difficult to find a 100%-perfect approach. So I thought I would write up the current options that I weighed.
+Raw API Link to heading You can start out using the raw API, e.g.:
 driver.findElement(By.cssSelector(&#34;.foo&#34;)).click(); driver.findElement(By.cssSelector(&#34;.input&#34;)).sendKeys(&#34;input&#34;); There are a few issues with this:
- It scatters selectors throughout your tests The low-level click and sendKeys methods are somewhat naive  E.">
-<meta property="og:title" content="Dealing with Selenium API Gotchas">
-<meta property="og:description" content="I&rsquo;ve used the Selenium API, in pleasure and rage, for years, and it&rsquo;s still difficult to find a 100%-perfect approach. So I thought I would write up the current options that I weighed.
-Raw API    You can start out using the raw API, e.g.:
+It scatters selectors throughout your tests The low-level click and sendKeys methods are somewhat naive E."><meta property="og:title" content="Dealing with Selenium API Gotchas"><meta property="og:description" content="I&rsquo;ve used the Selenium API, in pleasure and rage, for years, and it&rsquo;s still difficult to find a 100%-perfect approach. So I thought I would write up the current options that I weighed.
+Raw API Link to heading You can start out using the raw API, e.g.:
 driver.findElement(By.cssSelector(&#34;.foo&#34;)).click(); driver.findElement(By.cssSelector(&#34;.input&#34;)).sendKeys(&#34;input&#34;); There are a few issues with this:
- It scatters selectors throughout your tests The low-level click and sendKeys methods are somewhat naive  E.">
-<meta property="og:type" content="article">
-<meta property="og:url" content="https://www.draconianoverlord.com/2017/09/30/dealing-with-selenium-api-gotchas.html/"><meta property="article:section" content="posts">
-<meta property="article:published_time" content="2017-09-30T00:00:00+00:00">
-<meta property="article:modified_time" content="2017-09-30T00:00:00+00:00">
-<title>
-Dealing with Selenium API Gotchas · Draconian Overlord
-</title>
-<link rel=canonical href=https://www.draconianoverlord.com/2017/09/30/dealing-with-selenium-api-gotchas.html/>
-<link rel=preload href="/fonts/forkawesome-webfont.woff2?v=1.2.0" as=font type=font/woff2 crossorigin>
-<link rel=stylesheet href=/css/coder.min.d9fddbffe6f27e69985dc5fe0471cdb0e57fbf4775714bc3d847accb08f4a1f6.css integrity="sha256-2f3b/+byfmmYXcX+BHHNsOV/v0d1cUvD2Eesywj0ofY=" crossorigin=anonymous media=screen>
-<link rel=stylesheet href=/css/coder-dark.min.aa883b9ce35a8ff4a2a5008619005175e842bb18a8a9f9cc2bbcf44dab2d91fa.css integrity="sha256-qog7nONaj/SipQCGGQBRdehCuxioqfnMK7z0Tastkfo=" crossorigin=anonymous media=screen>
-<link rel=icon type=image/png href=/images/favicon-32x32.png sizes=32x32>
-<link rel=icon type=image/png href=/images/favicon-16x16.png sizes=16x16>
-<link rel=apple-touch-icon href=/images/apple-touch-icon.png>
-<link rel=apple-touch-icon sizes=180x180 href=/images/apple-touch-icon.png>
-<meta name=generator content="Hugo 0.92.0">
-</head>
-<body class="preload-transitions colorscheme-auto">
-<div class=float-container>
-<a id=dark-mode-toggle class=colorscheme-toggle>
-<i class="fa fa-adjust fa-fw" aria-hidden=true></i>
-</a>
-</div>
-<main class=wrapper>
-<nav class=navigation>
-<section class=container>
-<a class=navigation-title href=/>Draconian Overlord</a>
-Oppressing software entropy
-</section>
-</nav>
-<div class=content>
-<section class="container post">
-<article>
-<header>
-<div class=post-title>
-<h1 class=title>
-<a class=title-link href=https://www.draconianoverlord.com/2017/09/30/dealing-with-selenium-api-gotchas.html/>
-Dealing with Selenium API Gotchas
-</a>
-</h1>
-</div>
-<div class=post-meta>
-<div class=date>
-<span class=posted-on>
-<i class="fa fa-calendar" aria-hidden=true></i>
-<time datetime=2017-09-30T00:00:00Z>
-September 30, 2017
-</time>
-</span>
-<span class=reading-time>
-<i class="fa fa-clock-o" aria-hidden=true></i>
-9-minute read
-</span>
-</div>
-<div class=categories>
-<i class="fa fa-folder" aria-hidden=true></i>
-<a href=/categories/testing/>Testing</a></div>
-</div>
-</header>
-<div>
-<p>I&rsquo;ve used the Selenium API, in pleasure and rage, for years, and it&rsquo;s still difficult to find a 100%-perfect approach. So I thought I would write up the current options that I weighed.</p>
-<h2 id=raw-api>
-Raw API
-<a class=heading-link href=#raw-api>
-<i class="fa fa-link" aria-hidden=true></i>
-</a>
-</h2>
-<p>You can start out using the raw API, e.g.:</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java>driver<span style=color:#f92672>.</span><span style=color:#a6e22e>findElement</span><span style=color:#f92672>(</span>By<span style=color:#f92672>.</span><span style=color:#a6e22e>cssSelector</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;.foo&#34;</span><span style=color:#f92672>)).</span><span style=color:#a6e22e>click</span><span style=color:#f92672>();</span>
-driver<span style=color:#f92672>.</span><span style=color:#a6e22e>findElement</span><span style=color:#f92672>(</span>By<span style=color:#f92672>.</span><span style=color:#a6e22e>cssSelector</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;.input&#34;</span><span style=color:#f92672>)).</span><span style=color:#a6e22e>sendKeys</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;input&#34;</span><span style=color:#f92672>);</span>
-</code></pre></div><p>There are a few issues with this:</p>
-<ul>
-<li>It scatters selectors throughout your tests</li>
-<li>The low-level <code>click</code> and <code>sendKeys</code> methods are somewhat naive</li>
-</ul>
-<p>E.g. for the <code>click</code> method, invariably it works until we run on CI, and the browser resolution is slightly different, and the want-to-click element is off screen. So we need our own click method:</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>click</span><span style=color:#f92672>(</span>WebElement e<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
-  <span style=color:#75715e>// Unfortunately Actions.moveToElement doesn&#39;t really work
-</span><span style=color:#75715e></span>  <span style=color:#f92672>((</span>JavascriptExecutor<span style=color:#f92672>)</span> driver<span style=color:#f92672>).</span><span style=color:#a6e22e>executeScript</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;arguments[0].scrollIntoView(true);&#34;</span><span style=color:#f92672>,</span> element<span style=color:#f92672>);</span>
-  <span style=color:#66d9ef>new</span> Actions<span style=color:#f92672>(</span>context<span style=color:#f92672>.</span><span style=color:#a6e22e>webDriver</span><span style=color:#f92672>).</span><span style=color:#a6e22e>moveToElement</span><span style=color:#f92672>(</span>element<span style=color:#f92672>).</span><span style=color:#a6e22e>click</span><span style=color:#f92672>().</span><span style=color:#a6e22e>perform</span><span style=color:#f92672>();</span>
-<span style=color:#f92672>}</span>
-</code></pre></div><p>Similarly, <code>sendKeys</code> doesn&rsquo;t cause a change/unfocus event (which is good if you don&rsquo;t want that to happen, but in ~90% of the times, you do), so we have a <code>setValue</code> method:</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>setValue</span><span style=color:#f92672>(</span>WebElement e<span style=color:#f92672>,</span> String text<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
-  <span style=color:#75715e>// remove existing text
-</span><span style=color:#75715e></span>  element<span style=color:#f92672>.</span><span style=color:#a6e22e>clear</span><span style=color:#f92672>();</span>
-  element<span style=color:#f92672>.</span><span style=color:#a6e22e>sendKeys</span><span style=color:#f92672>(</span>value<span style=color:#f92672>);</span>
-  <span style=color:#75715e>// onchange event will not fire until a different element is selected
-</span><span style=color:#75715e></span>  element<span style=color:#f92672>.</span><span style=color:#a6e22e>sendKeys</span><span style=color:#f92672>(</span>Keys<span style=color:#f92672>.</span><span style=color:#a6e22e>chord</span><span style=color:#f92672>(</span>Keys<span style=color:#f92672>.</span><span style=color:#a6e22e>SHIFT</span><span style=color:#f92672>,</span> Keys<span style=color:#f92672>.</span><span style=color:#a6e22e>TAB</span><span style=color:#f92672>));</span>
-<span style=color:#f92672>}</span>
-</code></pre></div><p>So, fair enough, we have some helper methods.</p>
-<p>To solve the scattered-selectors problem, we use the well-known <a href=https://github.com/SeleniumHQ/selenium/wiki/PageObjects>page objects</a> pattern:</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>FooPage</span> <span style=color:#f92672>{</span>
-  <span style=color:#66d9ef>public</span> WebElement <span style=color:#a6e22e>getFirstName</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
-    <span style=color:#75715e>// use a base class/helper method for findElement(By.cssSelector(...))
-</span><span style=color:#75715e></span>    <span style=color:#66d9ef>return</span> get<span style=color:#f92672>(</span><span style=color:#e6db74>&#34;.first-name&#34;</span><span style=color:#f92672>);</span> 
-  <span style=color:#f92672>}</span>
-<span style=color:#f92672>}</span>
-</code></pre></div><p>(Granted, a more strict page objects approach would be not expose any WebElements at all, as they are treated as internal implementation details that the test should not be coupled to, and instead the page object exposes bespoke methods for the test to use, like <code>public void setFirstname(...)</code>; I get the appeal of this, but IMO it risks creating huge page objects, with a ton of boilerplate helper methods, so I generally prefer to let tests directly poke the <code>WebElements</code>, but at least get them from the page object, and as needed add higher-level helper methods, like <code>fooPage.fillInDefaults()</code>, which are abstractions that are legitimately useful.)</p>
-<p>Fair enough. Now, the nuances.</p>
-<h2 id=implicit-waiting>
-Implicit Waiting
-<a class=heading-link href=#implicit-waiting>
-<i class="fa fa-link" aria-hidden=true></i>
-</a>
-</h2>
-<p>Note that, if at all possible, you should stay away from implicit waiting and use post-action waiting, e.g. see <a href=/2011/10/14/sane-selenium-testing.html>this post</a>. Knowing explicitly that your page has &ldquo;settled&rdquo; and all AJAX/deferred calls are done is the best way to get reliable selenium tests.</p>
-<p>However, if your application does not have that instrumentation, you may want to enable implicit waiting:</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java>  driver<span style=color:#f92672>.</span><span style=color:#a6e22e>manage</span><span style=color:#f92672>().</span><span style=color:#a6e22e>timeouts</span><span style=color:#f92672>().</span><span style=color:#a6e22e>implicitlyWait</span><span style=color:#f92672>(</span>30<span style=color:#f92672>,</span> TimeUnit<span style=color:#f92672>.</span><span style=color:#a6e22e>SECONDS</span><span style=color:#f92672>);</span>
-</code></pre></div><p>This is handy, because the wait is built-in as a first-class notion in the Selenium wire protocol, so if it takes ~5 seconds for an element to show up, instead of your selenium test making ~10-20 wire calls to the (say) Chrome process or Selenium grid, asking &ldquo;is it there?&rdquo;, &ldquo;is it there?&rdquo;, &ldquo;is it there?&rdquo;, you make a single blocking call, and the Chrome/Selenium grid will do the polling/waiting on it&rsquo;s side, and then return immediately.</p>
-<p>So, if you have to use this, that&rsquo;s fine.</p>
-<p>However, if you&rsquo;re using the page object pattern, that means every single call in your test will now get that implicit wait, e.g.:</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java>  <span style=color:#75715e>// will implicit wait, good!
-</span><span style=color:#75715e></span>  setValue<span style=color:#f92672>(</span>page<span style=color:#f92672>.</span><span style=color:#a6e22e>getFirstName</span><span style=color:#f92672>(),</span> <span style=color:#e6db74>&#34;foo&#34;</span><span style=color:#f92672>);</span>
-
-  <span style=color:#75715e>// will also implicit wait...we just wasted 30 seconds
-</span><span style=color:#75715e></span>  assertNotFound<span style=color:#f92672>(</span>page<span style=color:#f92672>.</span><span style=color:#a6e22e>getFirstName</span><span style=color:#f92672>());</span>
-</code></pre></div><p>We basically need to conditionally disable the implicit wait, if we know that we&rsquo;re doing a &ldquo;not found&rdquo; assertion.</p>
-<p>A boilerplate way of doing that would be:</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java>  disableImplicitWait<span style=color:#f92672>();</span>
-  assertNotFound<span style=color:#f92672>(</span>page<span style=color:#f92672>.</span><span style=color:#a6e22e>getFirstName</span><span style=color:#f92672>());</span>
-  renableImplicitWait<span style=color:#f92672>();</span>
-</code></pre></div><p>But this is pretty boilerplate. A better approach would be to use a lambda to make our look up lazy:</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java>  assertEquals<span style=color:#f92672>(</span>isFound<span style=color:#f92672>(()</span> <span style=color:#f92672>-&gt;</span> page<span style=color:#f92672>.</span><span style=color:#a6e22e>getFirstName</span><span style=color:#f92672>()),</span> <span style=color:#66d9ef>false</span><span style=color:#f92672>);</span>
-
-  <span style=color:#f92672>...</span>
-
-  <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>boolean</span> <span style=color:#a6e22e>isFound</span><span style=color:#f92672>(</span>Supplier<span style=color:#f92672>&lt;</span>WebElement<span style=color:#f92672>&gt;</span> f<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
-    <span style=color:#66d9ef>try</span> <span style=color:#f92672>{</span>
-      disableImplicitWait<span style=color:#f92672>();</span>
-      <span style=color:#66d9ef>return</span> f<span style=color:#f92672>.</span><span style=color:#a6e22e>get</span><span style=color:#f92672>().</span><span style=color:#a6e22e>isDisplayed</span><span style=color:#f92672>();</span>
-    <span style=color:#f92672>}</span> <span style=color:#66d9ef>catch</span> <span style=color:#f92672>(</span>TimeoutException <span style=color:#f92672>|</span> StaleElementReferenceException <span style=color:#f92672>|</span> NotFoundException e<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
-      <span style=color:#66d9ef>return</span> <span style=color:#66d9ef>false</span><span style=color:#f92672>;</span>
-    <span style=color:#f92672>}</span> <span style=color:#66d9ef>finally</span> <span style=color:#f92672>{</span>
-      enableImplicitWait<span style=color:#f92672>();</span>
-    <span style=color:#f92672>}</span>
-  <span style=color:#f92672>}</span>
-</code></pre></div><h2 id=dealing-with-staleelementreferenceexceptions>
-Dealing with <code>StaleElementReferenceExceptions</code>
-<a class=heading-link href=#dealing-with-staleelementreferenceexceptions>
-<i class="fa fa-link" aria-hidden=true></i>
-</a>
-</h2>
-<p>So far, so good. We can occasionally make lookups lazy, e.g. for <code>isFound</code> calls, with a lambda.</p>
-<p>Unfortunately, there is another, more pervasive, reason to make essentially all lookups lazy, which is StaleElementReferenceExceptions (again, unless you&rsquo;re posting post-action explicit &ldquo;settle&rdquo; waiting).</p>
-<p>Obviously, stale exceptions can happen if you hold a <code>WebElement</code> for a long-time, e.g.:</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java>  WebElement firstName <span style=color:#f92672>=</span> page<span style=color:#f92672>.</span><span style=color:#a6e22e>getFirstName</span><span style=color:#f92672>();</span>
-  
-  <span style=color:#75715e>// do something that causes a re-render
-</span><span style=color:#75715e></span>  setValue<span style=color:#f92672>(</span>firstName<span style=color:#f92672>,</span> <span style=color:#e6db74>&#34;blah&#34;</span><span style=color:#f92672>);</span>
-
-  <span style=color:#75715e>// fails with StaleElementReferenceException, because WebElement
-</span><span style=color:#75715e></span>  <span style=color:#75715e>// was a pointer to a very specific DOM element that has since
-</span><span style=color:#75715e></span>  <span style=color:#75715e>// been thrown away and re-created
-</span><span style=color:#75715e></span>  assertTrue<span style=color:#f92672>(</span>firstName<span style=color:#f92672>.</span><span style=color:#a6e22e>isDisplayed</span><span style=color:#f92672>());</span>
-</code></pre></div><p>This is pretty easy to solve (in theory) by not keeping local variables of <code>WebElement</code>, e.g.:</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java>  setValue<span style=color:#f92672>(</span>page<span style=color:#f92672>.</span><span style=color:#a6e22e>getFirstName</span><span style=color:#f92672>(),</span> <span style=color:#e6db74>&#34;blah&#34;</span><span style=color:#f92672>);</span>
-
-  <span style=color:#75715e>// a re-render happened
-</span><span style=color:#75715e></span>
-  <span style=color:#75715e>// re-lookup a fresh WebElement
-</span><span style=color:#75715e></span>  assertTrue<span style=color:#f92672>(</span>page<span style=color:#f92672>.</span><span style=color:#a6e22e>getFirstName</span><span style=color:#f92672>().</span><span style=color:#a6e22e>isDisplayed</span><span style=color:#f92672>());</span>
-</code></pre></div><p>Seems good. But in reality we&rsquo;ve only reduced the window where a stale exception can happen. E.g. pedantically if we did:</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java>  setValue<span style=color:#f92672>(</span>page<span style=color:#f92672>.</span><span style=color:#a6e22e>getFirstName</span><span style=color:#f92672>(),</span> <span style=color:#e6db74>&#34;blah&#34;</span><span style=color:#f92672>);</span>
-
-  <span style=color:#75715e>// actual flow could be:
-</span><span style=color:#75715e></span>  <span style=color:#75715e>// page.getFirstName() --&gt; returns a WebElement
-</span><span style=color:#75715e></span>  <span style=color:#75715e>// some pending rendered we didn&#39;t know about happens
-</span><span style=color:#75715e></span>  <span style=color:#75715e>// inside setValue, StaleElementReferenceException happens
-</span><span style=color:#75715e></span>  nowStaleElement<span style=color:#f92672>.</span><span style=color:#a6e22e>sendKeys</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;blah&#34;</span><span style=color:#f92672>);</span>
-</code></pre></div><p>Which, granted, this is a very tiny window, but still, we&rsquo;re shooting for 100% reliability.</p>
-<p>So, without explicit post-action waiting, are we going to have to wrap <em>all</em> of our methods in &ldquo;try again&rdquo;? E.g.:</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java>  setValue<span style=color:#f92672>(()</span> <span style=color:#f92672>-&gt;</span> page<span style=color:#f92672>.</span><span style=color:#a6e22e>getFirstName</span><span style=color:#f92672>(),</span> <span style=color:#e6db74>&#34;blah&#34;</span><span style=color:#f92672>);</span>
-
-  <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>setValue</span><span style=color:#f92672>(</span>Supplier<span style=color:#f92672>&lt;</span>WebElement<span style=color:#f92672>&gt;</span> e<span style=color:#f92672>,</span> String value<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
-    retryOnStaleElement<span style=color:#f92672>(()</span> <span style=color:#f92672>-&gt;</span> <span style=color:#f92672>{</span>
-      setValue<span style=color:#f92672>(</span>e<span style=color:#f92672>.</span><span style=color:#a6e22e>get</span><span style=color:#f92672>(),</span> value<span style=color:#f92672>();</span>
-    <span style=color:#f92672>});</span>
-  <span style=color:#f92672>}</span>
-
-  <span style=color:#66d9ef>private</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>retryOnStaleElement</span><span style=color:#f92672>(</span>Runnable r<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
-    <span style=color:#66d9ef>for</span> <span style=color:#f92672>(</span><span style=color:#66d9ef>int</span> i <span style=color:#f92672>=</span> 0<span style=color:#f92672>;</span> i <span style=color:#f92672>&lt;</span> times<span style=color:#f92672>;</span> i<span style=color:#f92672>++)</span> <span style=color:#f92672>{</span>
-      <span style=color:#66d9ef>try</span> <span style=color:#f92672>{</span>
-        r<span style=color:#f92672>.</span><span style=color:#a6e22e>run</span><span style=color:#f92672>();</span>
-        <span style=color:#66d9ef>return</span><span style=color:#f92672>;</span>
-      <span style=color:#f92672>}</span> <span style=color:#66d9ef>catch</span> <span style=color:#f92672>(</span>StaleElementReferenceException e<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
-        <span style=color:#75715e>// retry
-</span><span style=color:#75715e></span>      <span style=color:#f92672>}</span>
-    <span style=color:#f92672>}</span>
-    <span style=color:#66d9ef>throw</span> <span style=color:#66d9ef>new</span> RuntimeException<span style=color:#f92672>(</span><span style=color:#e6db74>&#34;Retries failed&#34;</span><span style=color:#f92672>);</span>
-  <span style=color:#f92672>}</span>
-<span style=color:#f92672>}</span>
-</code></pre></div><p>I think this is the most &ldquo;robust&rdquo;, but passing lambdas all over the place sucks. It makes our tests a lot messier.</p>
-<h2 id=returning-something-else>
-Returning Something Else?
-<a class=heading-link href=#returning-something-else>
-<i class="fa fa-link" aria-hidden=true></i>
-</a>
-</h2>
-<p>So, maybe instead of returning <code>WebElement</code>, which is super-finicky and low-level, our page objects should return something else.</p>
-<p>There are a few options.</p>
-<h3 id=returning-by-objects>
-Returning <code>By</code> objects
-<a class=heading-link href=#returning-by-objects>
-<i class="fa fa-link" aria-hidden=true></i>
-</a>
-</h3>
-<p>To me, the most natural one would be to return the <code>By</code> type, which is Selenium&rsquo;s abstraction of &ldquo;find me an element&rdquo;. So that might look like:</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java>  <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>FooPage</span> <span style=color:#f92672>{</span>
-    <span style=color:#66d9ef>public</span> By <span style=color:#a6e22e>getFirstName</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
-      <span style=color:#66d9ef>return</span> By<span style=color:#f92672>.</span><span style=color:#a6e22e>cssSelector</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;.first-name&#34;</span><span style=color:#f92672>);</span>
-    <span style=color:#f92672>}</span>
-  <span style=color:#f92672>}</span>
-
-  <span style=color:#75715e>// in test
-</span><span style=color:#75715e></span>  setValue<span style=color:#f92672>(</span>page<span style=color:#f92672>.</span><span style=color:#a6e22e>getFirstName</span><span style=color:#f92672>(),</span> <span style=color:#e6db74>&#34;blah&#34;</span><span style=color:#f92672>);</span>
-
-  <span style=color:#75715e>// in utils
-</span><span style=color:#75715e></span>  <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>setValue</span><span style=color:#f92672>(</span>By by<span style=color:#f92672>,</span> String value<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
-    retryOnStaleElement<span style=color:#f92672>(()</span> <span style=color:#f92672>-&gt;</span> <span style=color:#f92672>{</span>
-      setValue<span style=color:#f92672>(</span>driver<span style=color:#f92672>.</span><span style=color:#a6e22e>findElement</span><span style=color:#f92672>(</span>by<span style=color:#f92672>),</span> value<span style=color:#f92672>);</span>
-    <span style=color:#f92672>});</span>
-  <span style=color:#f92672>}</span>
-<span style=color:#f92672>}</span>
-</code></pre></div><p>Unfortunately, the biggest con to this is that <code>By</code> is not nestable.</p>
-<p>What I mean if that sometimes (not often, but frequent enough) you want to find an element within an another, e.g. something like:</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java>  WebElement table <span style=color:#f92672>=</span> driver<span style=color:#f92672>.</span><span style=color:#a6e22e>findElement</span><span style=color:#f92672>(</span>By<span style=color:#f92672>.</span><span style=color:#a6e22e>css</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;.table&#34;</span><span style=color:#f92672>));</span>
-  WebElement cell <span style=color:#f92672>=</span> table<span style=color:#f92672>.</span><span style=color:#a6e22e>findElement</span><span style=color:#f92672>(</span>By<span style=color:#f92672>.</span><span style=color:#a6e22e>css</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;.cell&#34;</span><span style=color:#f92672>));</span>
-</code></pre></div><p>Granted, you can usually make this a single selector (if you&rsquo;re using CSS):</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java>  WebElement cell <span style=color:#f92672>=</span> driver<span style=color:#f92672>.</span><span style=color:#a6e22e>findElement</span><span style=color:#f92672>(</span>By<span style=color:#f92672>.</span><span style=color:#a6e22e>css</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;.table .cell&#34;</span><span style=color:#f92672>));</span>
-</code></pre></div><p>But you&rsquo;re duplicating the <code>.table</code> selector. If you have ~10-20 elements to find within the table, you&rsquo;re going to duplicate your <code>.table</code> string. Granted, you can do a constant like:</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java>  <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>FooPage</span> <span style=color:#f92672>{</span>
-    <span style=color:#66d9ef>private</span> <span style=color:#66d9ef>static</span> <span style=color:#66d9ef>final</span> String TABLE_SELECTOR <span style=color:#f92672>=</span> <span style=color:#e6db74>&#34;.table&#34;</span><span style=color:#f92672>;</span>
-
-    <span style=color:#66d9ef>public</span> WebElement <span style=color:#a6e22e>getTable</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
-      <span style=color:#66d9ef>return</span> get<span style=color:#f92672>(</span>TABLE_SELECTOR<span style=color:#f92672>);</span>
-    <span style=color:#f92672>}</span>
-
-    <span style=color:#66d9ef>public</span> WebElement <span style=color:#a6e22e>getCell</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
-      <span style=color:#66d9ef>return</span> get<span style=color:#f92672>(</span>TABLE_SELECTOR <span style=color:#f92672>+</span> <span style=color:#e6db74>&#34; .cell&#34;</span><span style=color:#f92672>);</span>
-    <span style=color:#f92672>}</span>
-  <span style=color:#f92672>}</span>
-</code></pre></div><p>Which, dunno, maybe I should just be fine with that. But it assumes you&rsquo;re using CSS selectors, and just seems a little ugly.</p>
-<p>I&rsquo;d prefer first-class composition, like:</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java>  <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>FooPage</span> <span style=color:#f92672>{</span>
-    <span style=color:#66d9ef>public</span> WebElement <span style=color:#a6e22e>getTable</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
-      <span style=color:#66d9ef>return</span> get<span style=color:#f92672>(</span><span style=color:#e6db74>&#34;.table&#34;</span><span style=color:#f92672>);</span>
-    <span style=color:#f92672>}</span>
-
-    <span style=color:#66d9ef>public</span> WebElement <span style=color:#a6e22e>getCell</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
-      <span style=color:#66d9ef>return</span> get<span style=color:#f92672>(</span>getTable<span style=color:#f92672>(),</span> <span style=color:#e6db74>&#34;.cell&#34;</span><span style=color:#f92672>);</span>
-    <span style=color:#f92672>}</span>
-  <span style=color:#f92672>}</span>
-</code></pre></div><p>But we&rsquo;re back to the issue of <code>WebElement</code> being non-lazy, and there is no way, AFAIK to use <code>By</code> like:</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java>  <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>FooPage</span> <span style=color:#f92672>{</span>
-    <span style=color:#66d9ef>public</span> By <span style=color:#a6e22e>getTable</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
-      <span style=color:#66d9ef>return</span> By<span style=color:#f92672>.</span><span style=color:#a6e22e>cssSelector</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;.table&#34;</span><span style=color:#f92672>);</span>
-    <span style=color:#f92672>}</span>
-
-    <span style=color:#66d9ef>public</span> By <span style=color:#a6e22e>getCell</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
-      <span style=color:#75715e>// returns a &#34;nested&#34; By...this API does not exist
-</span><span style=color:#75715e></span>      <span style=color:#66d9ef>return</span> getTable<span style=color:#f92672>().</span><span style=color:#a6e22e>find</span><span style=color:#f92672>(</span>By<span style=color:#f92672>.</span><span style=color:#a6e22e>cssSelector</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;.cell&#34;</span><span style=color:#f92672>));</span>
-    <span style=color:#f92672>}</span>
-  <span style=color:#f92672>}</span>
-</code></pre></div><h3 id=return-string-selectors>
-Return string selectors
-<a class=heading-link href=#return-string-selectors>
-<i class="fa fa-link" aria-hidden=true></i>
-</a>
-</h3>
-<p>A very low-tech approach would be to just return string selectors:</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java>  <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>FooPage</span> <span style=color:#f92672>{</span>
-    <span style=color:#66d9ef>public</span> String <span style=color:#a6e22e>getFirstName</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
-      <span style=color:#66d9ef>return</span> <span style=color:#e6db74>&#34;.first-name&#34;</span><span style=color:#f92672>;</span>
-    <span style=color:#f92672>}</span>
-
-    <span style=color:#66d9ef>public</span> String <span style=color:#a6e22e>getTable</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
-      <span style=color:#66d9ef>return</span> <span style=color:#e6db74>&#34;.table&#34;</span><span style=color:#f92672>;</span>
-    <span style=color:#f92672>}</span>
-
-    <span style=color:#66d9ef>public</span> String <span style=color:#a6e22e>getCell</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
-      <span style=color:#66d9ef>return</span> getTable<span style=color:#f92672>()</span> <span style=color:#f92672>+</span> <span style=color:#e6db74>&#34; .cell&#34;</span><span style=color:#f92672>:</span>
-    <span style=color:#f92672>}</span>
-  <span style=color:#f92672>}</span>
-
-  <span style=color:#75715e>// in test
-</span><span style=color:#75715e></span>  setValue<span style=color:#f92672>(</span>page<span style=color:#f92672>.</span><span style=color:#a6e22e>getFirstName</span><span style=color:#f92672>(),</span> <span style=color:#e6db74>&#34;blah&#34;</span><span style=color:#f92672>);</span>
-
-  <span style=color:#75715e>// in utils
-</span><span style=color:#75715e></span>  <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>setValue</span><span style=color:#f92672>(</span>String selector<span style=color:#f92672>,</span> String value<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
-    retryOnStaleElement<span style=color:#f92672>(()</span> <span style=color:#f92672>-&gt;</span> <span style=color:#f92672>{</span>
-      WebElement e <span style=color:#f92672>=</span> driver<span style=color:#f92672>.</span><span style=color:#a6e22e>findElement</span><span style=color:#f92672>(</span>By<span style=color:#f92672>.</span><span style=color:#a6e22e>cssSelector</span><span style=color:#f92672>(</span>selector<span style=color:#f92672>),</span> value<span style=color:#f92672>);</span>
-      setValue<span style=color:#f92672>(</span>e<span style=color:#f92672>,</span> value<span style=color:#f92672>);</span>
-    <span style=color:#f92672>});</span>
-  <span style=color:#f92672>}</span>
-</code></pre></div><p>This surprisingly solves a lot of our issues (it&rsquo;s inherently lazy, easily composable)&mldr;as long as all of your lookups use the same <code>By</code> lookup, e.g. <code>By.cssSelector</code>.</p>
-<p>If you tried to use <code>By.cssSelector</code> sometimes and <code>By.xpath</code> others, this approach breaks down.</p>
-<p>It&rsquo;s also just feels dirty, passing raw strings all over the place, but that is admittedly just my habitual gut reaction.</p>
-<h3 id=return-element-objects>
-Return element objects
-<a class=heading-link href=#return-element-objects>
-<i class="fa fa-link" aria-hidden=true></i>
-</a>
-</h3>
-<p>One potential pattern is to introduce our own &ldquo;element objects&rdquo;, which move the deferred lookup and helper methods into a &ldquo;better-than-WebElement&rdquo; API.</p>
-<p>E.g. it might look like:</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java>  <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>FooPage</span> <span style=color:#f92672>{</span>
-    <span style=color:#66d9ef>public</span> InputObject <span style=color:#a6e22e>getFirstName</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
-      <span style=color:#66d9ef>return</span> <span style=color:#66d9ef>new</span> InputObject<span style=color:#f92672>(</span><span style=color:#e6db74>&#34;.first-name&#34;</span><span style=color:#f92672>);</span>
-    <span style=color:#f92672>}</span>
-  <span style=color:#f92672>}</span>
-
-  <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>InputObject</span> <span style=color:#66d9ef>extends</span> ElementObject <span style=color:#f92672>{</span>
-    <span style=color:#66d9ef>public</span> <span style=color:#a6e22e>InputObject</span><span style=color:#f92672>(</span>String cssSelector<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
-      <span style=color:#66d9ef>super</span><span style=color:#f92672>(</span>By<span style=color:#f92672>.</span><span style=color:#a6e22e>cssSelector</span><span style=color:#f92672>(</span>cssSelector<span style=color:#f92672>));</span>
-    <span style=color:#f92672>}</span>
-
-    <span style=color:#75715e>// now we put our util methods here
-</span><span style=color:#75715e></span>    <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>type</span><span style=color:#f92672>(</span>String value<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
-      retryOnStaleElement<span style=color:#f92672>(()</span> <span style=color:#f92672>-&gt;</span> <span style=color:#f92672>{</span>
-        WebElement e <span style=color:#f92672>=</span> <span style=color:#66d9ef>super</span><span style=color:#f92672>.</span><span style=color:#a6e22e>getElement</span><span style=color:#f92672>();</span>
-        setValue<span style=color:#f92672>(</span>e<span style=color:#f92672>,</span> value<span style=color:#f92672>);</span>
-      <span style=color:#f92672>});</span>
-    <span style=color:#f92672>}</span>
-  <span style=color:#f92672>}</span>
-
-  <span style=color:#75715e>// in the test, we get a nice API
-</span><span style=color:#75715e></span>  page<span style=color:#f92672>.</span><span style=color:#a6e22e>getFirstName</span><span style=color:#f92672>().</span><span style=color:#a6e22e>type</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;blah&#34;</span><span style=color:#f92672>);</span>
-</code></pre></div><p>I think this is my favorite abstraction, as it moves our tests away from knowing about <code>WebElement</code> all together.</p>
-<p>I wrote a library that does this awhile back, unfortunately with a very unimaginative name, <a href=https://github.com/stephenh/pageobjects/tree/master/src/main/java/com/bizo/pageobjects>pageobjects</a> but have not been using it recently.</p>
-<p>Note that the element object still has the composable problem, e.g. if we wanted to do:</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java>  <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>FooPage</span> <span style=color:#f92672>{</span>
-    <span style=color:#66d9ef>public</span> ElementObject <span style=color:#a6e22e>getTable</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
-      <span style=color:#66d9ef>return</span> <span style=color:#66d9ef>new</span> ElementObject<span style=color:#f92672>(</span><span style=color:#e6db74>&#34;.table&#34;</span><span style=color:#f92672>);</span>
-    <span style=color:#f92672>}</span>
-
-    <span style=color:#66d9ef>public</span> ElementObject <span style=color:#a6e22e>getCell</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
-      <span style=color:#66d9ef>return</span> <span style=color:#66d9ef>new</span> ElementObject<span style=color:#f92672>(</span>getTable<span style=color:#f92672>(),</span> <span style=color:#e6db74>&#34;.cell&#34;</span><span style=color:#f92672>);</span>
-    <span style=color:#f92672>}</span>
-  <span style=color:#f92672>}</span>
-</code></pre></div><p>We need some way to lazily represent &ldquo;look up element A, then element B&rdquo;.</p>
-<p>My current guess is that both the &ldquo;return <code>By</code>&rdquo; approach and the element object approach fundamentally need a new type, currently/hackily called <code>Bys</code>, which knows how to add nested lookups on top of <code>By</code>, e.g. the API would be something like:</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java>  <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>Bys</span> <span style=color:#f92672>{</span>
-    <span style=color:#66d9ef>private</span> List<span style=color:#f92672>&lt;</span>By<span style=color:#f92672>&gt;</span> bys <span style=color:#f92672>=</span> <span style=color:#66d9ef>new</span> ArrayList<span style=color:#f92672>&lt;&gt;();</span>
-
-    <span style=color:#66d9ef>public</span> <span style=color:#a6e22e>Bys</span><span style=color:#f92672>(</span>By single<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
-      bys<span style=color:#f92672>.</span><span style=color:#a6e22e>add</span><span style=color:#f92672>(</span>single<span style=color:#f92672>);</span>
-    <span style=color:#f92672>}</span>
-
-    <span style=color:#66d9ef>public</span> <span style=color:#a6e22e>Bys</span><span style=color:#f92672>(</span>Bys existing<span style=color:#f92672>,</span> By nested<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
-      bys<span style=color:#f92672>.</span><span style=color:#a6e22e>addAll</span><span style=color:#f92672>(</span>existing<span style=color:#f92672>);</span>
-      bys<span style=color:#f92672>.</span><span style=color:#a6e22e>add</span><span style=color:#f92672>(</span>nested<span style=color:#f92672>);</span>
-    <span style=color:#f92672>}</span>
-
-    <span style=color:#66d9ef>public</span> WebElement <span style=color:#a6e22e>findElement</span><span style=color:#f92672>(</span>WebDriver driver<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
-      WebElement current <span style=color:#f92672>=</span> driver<span style=color:#f92672>.</span><span style=color:#a6e22e>findElement</span><span style=color:#f92672>(</span>bys<span style=color:#f92672>.</span><span style=color:#a6e22e>get</span><span style=color:#f92672>(</span>0<span style=color:#f92672>));</span>
-      <span style=color:#66d9ef>for</span> <span style=color:#f92672>(</span><span style=color:#66d9ef>int</span> i <span style=color:#f92672>=</span> 1<span style=color:#f92672>;</span> i <span style=color:#f92672>&lt;</span> bys<span style=color:#f92672>.</span><span style=color:#a6e22e>size</span><span style=color:#f92672>();</span> i<span style=color:#f92672>++)</span> <span style=color:#f92672>{</span>
-        current <span style=color:#f92672>=</span> current<span style=color:#f92672>.</span><span style=color:#a6e22e>findElement</span><span style=color:#f92672>(</span>bys<span style=color:#f92672>.</span><span style=color:#a6e22e>get</span><span style=color:#f92672>(</span>i<span style=color:#f92672>));</span>
-      <span style=color:#f92672>}</span>
-      <span style=color:#66d9ef>return</span> current<span style=color:#f92672>;</span>
-    <span style=color:#f92672>}</span>
-
-    <span style=color:#66d9ef>public</span> Bys <span style=color:#a6e22e>then</span><span style=color:#f92672>(</span>By nested<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
-      <span style=color:#66d9ef>return</span> <span style=color:#66d9ef>new</span> Bys<span style=color:#f92672>(</span>bys<span style=color:#f92672>,</span> nested<span style=color:#f92672>);</span>
-    <span style=color:#f92672>}</span>
-  <span style=color:#f92672>}</span>
-<span style=color:#f92672>}</span>
-</code></pre></div><p>Now our page objects can return it with easy nesting:</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java>  <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>FooPage</span> <span style=color:#f92672>{</span>
-    <span style=color:#66d9ef>public</span> Bys <span style=color:#a6e22e>getTable</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
-      <span style=color:#75715e>// creates new Bys(By.cssSelector(...));
-</span><span style=color:#75715e></span>      <span style=color:#66d9ef>return</span> get<span style=color:#f92672>(</span><span style=color:#e6db74>&#34;.table&#34;</span><span style=color:#f92672>);</span>
-    <span style=color:#f92672>}</span>
-
-    <span style=color:#66d9ef>public</span> Bys <span style=color:#a6e22e>getCell</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
-      <span style=color:#75715e>// creates new Bys(table, By.cssSelector(...));
-</span><span style=color:#75715e></span>      <span style=color:#66d9ef>return</span> getTable<span style=color:#f92672>().</span><span style=color:#a6e22e>then</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;.cell&#34;</span><span style=color:#f92672>);</span>
-    <span style=color:#f92672>}</span>
-  <span style=color:#f92672>}</span>
-<span style=color:#f92672>}</span>
-</code></pre></div><p>I&rsquo;ve not actually used this yet, but I like it, and probably should.</p>
-<h2 id=done>
-Done
-<a class=heading-link href=#done>
-<i class="fa fa-link" aria-hidden=true></i>
-</a>
-</h2>
-<p>So, anyway, that is my current thoughts on the various gotchas related to Selenium and the <code>WebElement</code> API.</p>
-<p>Basically, in my opinion, you have to wrap the <code>WebElement</code> API with some sort of higher-level library to get good usability, test readability, and most importantly test reliability.</p>
-<p>Note that I don&rsquo;t fault Selenium for this, I&rsquo;d prefer they focus on making a rock-solid core library, and defer to higher-level libraries to iterate on different styles, fluent DSLs, etc., where iteration can happen quickly/easily on top of their core.</p>
-</div>
-<footer>
-<div id=disqus_thread></div>
-<script type=application/javascript>var disqus_config=function(){};(function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById('disqus_thread').innerHTML='Disqus comments not available by default when the website is previewed locally.';return}var b=document,a=b.createElement('script');a.async=!0,a.src='//draconianoverlord.disqus.com/embed.js',a.setAttribute('data-timestamp',+new Date),(b.head||b.body).appendChild(a)})()</script>
-<noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript>
-<a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a>
-</footer>
-</article>
-</section>
-</div>
-<footer class=footer>
-<section class=container>
-©
+It scatters selectors throughout your tests The low-level click and sendKeys methods are somewhat naive E."><meta property="og:type" content="article"><meta property="og:url" content="https://www.draconianoverlord.com/2017/09/30/dealing-with-selenium-api-gotchas.html/"><meta property="article:section" content="posts"><meta property="article:published_time" content="2017-09-30T00:00:00+00:00"><meta property="article:modified_time" content="2017-09-30T00:00:00+00:00"><link rel=canonical href=https://www.draconianoverlord.com/2017/09/30/dealing-with-selenium-api-gotchas.html/><link rel=preload href="/fonts/forkawesome-webfont.woff2?v=1.2.0" as=font type=font/woff2 crossorigin><link rel=stylesheet href=/css/coder.min.65236a6d834b26194eed04a2a3b45e44d9194ef9e620253705d4bef03bd7ef81.css integrity="sha256-ZSNqbYNLJhlO7QSio7ReRNkZTvnmICU3BdS+8DvX74E=" crossorigin=anonymous media=screen><link rel=stylesheet href=/css/coder-dark.min.f6534b0b446b75d9b6ad77a97d43ede2ddaeff1b6e2361fb7198d6f8fcb7f83f.css integrity="sha256-9lNLC0Rrddm2rXepfUPt4t2u/xtuI2H7cZjW+Py3+D8=" crossorigin=anonymous media=screen><link rel=icon type=image/png href=/images/favicon-32x32.png sizes=32x32><link rel=icon type=image/png href=/images/favicon-16x16.png sizes=16x16><link rel=apple-touch-icon href=/images/apple-touch-icon.png><link rel=apple-touch-icon sizes=180x180 href=/images/apple-touch-icon.png><link rel=manifest href=/site.webmanifest><link rel=mask-icon href=/images/safari-pinned-tab.svg color=#5bbad5></head><body class="preload-transitions colorscheme-auto"><div class=float-container><a id=dark-mode-toggle class=colorscheme-toggle><i class="fa fa-adjust fa-fw" aria-hidden=true></i></a></div><main class=wrapper><nav class=navigation><section class=container><a class=navigation-title href=/>Draconian Overlord</a>
+Oppressing software entropy</section></nav><div class=content><section class="container post"><article><header><div class=post-title><h1 class=title><a class=title-link href=https://www.draconianoverlord.com/2017/09/30/dealing-with-selenium-api-gotchas.html/>Dealing with Selenium API Gotchas</a></h1></div><div class=post-meta><div class=date><span class=posted-on><i class="fa fa-calendar" aria-hidden=true></i>
+<time datetime=2017-09-30T00:00:00Z>September 30, 2017</time></span>
+<span class=reading-time><i class="fa fa-clock-o" aria-hidden=true></i>
+9-minute read</span></div><div class=categories><i class="fa fa-folder" aria-hidden=true></i>
+<a href=/categories/testing/>Testing</a></div></div></header><div class=post-content><p>I&rsquo;ve used the Selenium API, in pleasure and rage, for years, and it&rsquo;s still difficult to find a 100%-perfect approach. So I thought I would write up the current options that I weighed.</p><h2 id=raw-api>Raw API
+<a class=heading-link href=#raw-api><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h2><p>You can start out using the raw API, e.g.:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=display:flex><span>driver<span style=color:#f92672>.</span><span style=color:#a6e22e>findElement</span><span style=color:#f92672>(</span>By<span style=color:#f92672>.</span><span style=color:#a6e22e>cssSelector</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;.foo&#34;</span><span style=color:#f92672>)).</span><span style=color:#a6e22e>click</span><span style=color:#f92672>();</span>
+</span></span><span style=display:flex><span>driver<span style=color:#f92672>.</span><span style=color:#a6e22e>findElement</span><span style=color:#f92672>(</span>By<span style=color:#f92672>.</span><span style=color:#a6e22e>cssSelector</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;.input&#34;</span><span style=color:#f92672>)).</span><span style=color:#a6e22e>sendKeys</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;input&#34;</span><span style=color:#f92672>);</span>
+</span></span></code></pre></div><p>There are a few issues with this:</p><ul><li>It scatters selectors throughout your tests</li><li>The low-level <code>click</code> and <code>sendKeys</code> methods are somewhat naive</li></ul><p>E.g. for the <code>click</code> method, invariably it works until we run on CI, and the browser resolution is slightly different, and the want-to-click element is off screen. So we need our own click method:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=display:flex><span><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>click</span><span style=color:#f92672>(</span>WebElement e<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>  <span style=color:#75715e>// Unfortunately Actions.moveToElement doesn&#39;t really work
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>  <span style=color:#f92672>((</span>JavascriptExecutor<span style=color:#f92672>)</span> driver<span style=color:#f92672>).</span><span style=color:#a6e22e>executeScript</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;arguments[0].scrollIntoView(true);&#34;</span><span style=color:#f92672>,</span> element<span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>new</span> Actions<span style=color:#f92672>(</span>context<span style=color:#f92672>.</span><span style=color:#a6e22e>webDriver</span><span style=color:#f92672>).</span><span style=color:#a6e22e>moveToElement</span><span style=color:#f92672>(</span>element<span style=color:#f92672>).</span><span style=color:#a6e22e>click</span><span style=color:#f92672>().</span><span style=color:#a6e22e>perform</span><span style=color:#f92672>();</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>}</span>
+</span></span></code></pre></div><p>Similarly, <code>sendKeys</code> doesn&rsquo;t cause a change/unfocus event (which is good if you don&rsquo;t want that to happen, but in ~90% of the times, you do), so we have a <code>setValue</code> method:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=display:flex><span><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>setValue</span><span style=color:#f92672>(</span>WebElement e<span style=color:#f92672>,</span> String text<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>  <span style=color:#75715e>// remove existing text
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>  element<span style=color:#f92672>.</span><span style=color:#a6e22e>clear</span><span style=color:#f92672>();</span>
+</span></span><span style=display:flex><span>  element<span style=color:#f92672>.</span><span style=color:#a6e22e>sendKeys</span><span style=color:#f92672>(</span>value<span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>  <span style=color:#75715e>// onchange event will not fire until a different element is selected
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>  element<span style=color:#f92672>.</span><span style=color:#a6e22e>sendKeys</span><span style=color:#f92672>(</span>Keys<span style=color:#f92672>.</span><span style=color:#a6e22e>chord</span><span style=color:#f92672>(</span>Keys<span style=color:#f92672>.</span><span style=color:#a6e22e>SHIFT</span><span style=color:#f92672>,</span> Keys<span style=color:#f92672>.</span><span style=color:#a6e22e>TAB</span><span style=color:#f92672>));</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>}</span>
+</span></span></code></pre></div><p>So, fair enough, we have some helper methods.</p><p>To solve the scattered-selectors problem, we use the well-known <a href=https://github.com/SeleniumHQ/selenium/wiki/PageObjects class=external-link target=_blank rel=noopener>page objects</a> pattern:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=display:flex><span><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>FooPage</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>public</span> WebElement <span style=color:#a6e22e>getFirstName</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>    <span style=color:#75715e>// use a base class/helper method for findElement(By.cssSelector(...))
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>    <span style=color:#66d9ef>return</span> get<span style=color:#f92672>(</span><span style=color:#e6db74>&#34;.first-name&#34;</span><span style=color:#f92672>);</span> 
+</span></span><span style=display:flex><span>  <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>}</span>
+</span></span></code></pre></div><p>(Granted, a more strict page objects approach would be not expose any WebElements at all, as they are treated as internal implementation details that the test should not be coupled to, and instead the page object exposes bespoke methods for the test to use, like <code>public void setFirstname(...)</code>; I get the appeal of this, but IMO it risks creating huge page objects, with a ton of boilerplate helper methods, so I generally prefer to let tests directly poke the <code>WebElements</code>, but at least get them from the page object, and as needed add higher-level helper methods, like <code>fooPage.fillInDefaults()</code>, which are abstractions that are legitimately useful.)</p><p>Fair enough. Now, the nuances.</p><h2 id=implicit-waiting>Implicit Waiting
+<a class=heading-link href=#implicit-waiting><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h2><p>Note that, if at all possible, you should stay away from implicit waiting and use post-action waiting, e.g. see <a href=/2011/10/14/sane-selenium-testing.html>this post</a>. Knowing explicitly that your page has &ldquo;settled&rdquo; and all AJAX/deferred calls are done is the best way to get reliable selenium tests.</p><p>However, if your application does not have that instrumentation, you may want to enable implicit waiting:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=display:flex><span>  driver<span style=color:#f92672>.</span><span style=color:#a6e22e>manage</span><span style=color:#f92672>().</span><span style=color:#a6e22e>timeouts</span><span style=color:#f92672>().</span><span style=color:#a6e22e>implicitlyWait</span><span style=color:#f92672>(</span><span style=color:#ae81ff>30</span><span style=color:#f92672>,</span> TimeUnit<span style=color:#f92672>.</span><span style=color:#a6e22e>SECONDS</span><span style=color:#f92672>);</span>
+</span></span></code></pre></div><p>This is handy, because the wait is built-in as a first-class notion in the Selenium wire protocol, so if it takes ~5 seconds for an element to show up, instead of your selenium test making ~10-20 wire calls to the (say) Chrome process or Selenium grid, asking &ldquo;is it there?&rdquo;, &ldquo;is it there?&rdquo;, &ldquo;is it there?&rdquo;, you make a single blocking call, and the Chrome/Selenium grid will do the polling/waiting on it&rsquo;s side, and then return immediately.</p><p>So, if you have to use this, that&rsquo;s fine.</p><p>However, if you&rsquo;re using the page object pattern, that means every single call in your test will now get that implicit wait, e.g.:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=display:flex><span>  <span style=color:#75715e>// will implicit wait, good!
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>  setValue<span style=color:#f92672>(</span>page<span style=color:#f92672>.</span><span style=color:#a6e22e>getFirstName</span><span style=color:#f92672>(),</span> <span style=color:#e6db74>&#34;foo&#34;</span><span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#75715e>// will also implicit wait...we just wasted 30 seconds
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>  assertNotFound<span style=color:#f92672>(</span>page<span style=color:#f92672>.</span><span style=color:#a6e22e>getFirstName</span><span style=color:#f92672>());</span>
+</span></span></code></pre></div><p>We basically need to conditionally disable the implicit wait, if we know that we&rsquo;re doing a &ldquo;not found&rdquo; assertion.</p><p>A boilerplate way of doing that would be:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=display:flex><span>  disableImplicitWait<span style=color:#f92672>();</span>
+</span></span><span style=display:flex><span>  assertNotFound<span style=color:#f92672>(</span>page<span style=color:#f92672>.</span><span style=color:#a6e22e>getFirstName</span><span style=color:#f92672>());</span>
+</span></span><span style=display:flex><span>  renableImplicitWait<span style=color:#f92672>();</span>
+</span></span></code></pre></div><p>But this is pretty boilerplate. A better approach would be to use a lambda to make our look up lazy:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=display:flex><span>  assertEquals<span style=color:#f92672>(</span>isFound<span style=color:#f92672>(()</span> <span style=color:#f92672>-&gt;</span> page<span style=color:#f92672>.</span><span style=color:#a6e22e>getFirstName</span><span style=color:#f92672>()),</span> <span style=color:#66d9ef>false</span><span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>...</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>boolean</span> <span style=color:#a6e22e>isFound</span><span style=color:#f92672>(</span>Supplier<span style=color:#f92672>&lt;</span>WebElement<span style=color:#f92672>&gt;</span> f<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>try</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>      disableImplicitWait<span style=color:#f92672>();</span>
+</span></span><span style=display:flex><span>      <span style=color:#66d9ef>return</span> f<span style=color:#f92672>.</span><span style=color:#a6e22e>get</span><span style=color:#f92672>().</span><span style=color:#a6e22e>isDisplayed</span><span style=color:#f92672>();</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>}</span> <span style=color:#66d9ef>catch</span> <span style=color:#f92672>(</span>TimeoutException <span style=color:#f92672>|</span> StaleElementReferenceException <span style=color:#f92672>|</span> NotFoundException e<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>      <span style=color:#66d9ef>return</span> <span style=color:#66d9ef>false</span><span style=color:#f92672>;</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>}</span> <span style=color:#66d9ef>finally</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>      enableImplicitWait<span style=color:#f92672>();</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>}</span>
+</span></span></code></pre></div><h2 id=dealing-with-staleelementreferenceexceptions>Dealing with <code>StaleElementReferenceExceptions</code>
+<a class=heading-link href=#dealing-with-staleelementreferenceexceptions><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h2><p>So far, so good. We can occasionally make lookups lazy, e.g. for <code>isFound</code> calls, with a lambda.</p><p>Unfortunately, there is another, more pervasive, reason to make essentially all lookups lazy, which is StaleElementReferenceExceptions (again, unless you&rsquo;re posting post-action explicit &ldquo;settle&rdquo; waiting).</p><p>Obviously, stale exceptions can happen if you hold a <code>WebElement</code> for a long-time, e.g.:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=display:flex><span>  WebElement firstName <span style=color:#f92672>=</span> page<span style=color:#f92672>.</span><span style=color:#a6e22e>getFirstName</span><span style=color:#f92672>();</span>
+</span></span><span style=display:flex><span>  
+</span></span><span style=display:flex><span>  <span style=color:#75715e>// do something that causes a re-render
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>  setValue<span style=color:#f92672>(</span>firstName<span style=color:#f92672>,</span> <span style=color:#e6db74>&#34;blah&#34;</span><span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#75715e>// fails with StaleElementReferenceException, because WebElement
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>  <span style=color:#75715e>// was a pointer to a very specific DOM element that has since
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>  <span style=color:#75715e>// been thrown away and re-created
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>  assertTrue<span style=color:#f92672>(</span>firstName<span style=color:#f92672>.</span><span style=color:#a6e22e>isDisplayed</span><span style=color:#f92672>());</span>
+</span></span></code></pre></div><p>This is pretty easy to solve (in theory) by not keeping local variables of <code>WebElement</code>, e.g.:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=display:flex><span>  setValue<span style=color:#f92672>(</span>page<span style=color:#f92672>.</span><span style=color:#a6e22e>getFirstName</span><span style=color:#f92672>(),</span> <span style=color:#e6db74>&#34;blah&#34;</span><span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#75715e>// a re-render happened
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>
+</span></span><span style=display:flex><span>  <span style=color:#75715e>// re-lookup a fresh WebElement
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>  assertTrue<span style=color:#f92672>(</span>page<span style=color:#f92672>.</span><span style=color:#a6e22e>getFirstName</span><span style=color:#f92672>().</span><span style=color:#a6e22e>isDisplayed</span><span style=color:#f92672>());</span>
+</span></span></code></pre></div><p>Seems good. But in reality we&rsquo;ve only reduced the window where a stale exception can happen. E.g. pedantically if we did:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=display:flex><span>  setValue<span style=color:#f92672>(</span>page<span style=color:#f92672>.</span><span style=color:#a6e22e>getFirstName</span><span style=color:#f92672>(),</span> <span style=color:#e6db74>&#34;blah&#34;</span><span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#75715e>// actual flow could be:
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>  <span style=color:#75715e>// page.getFirstName() --&gt; returns a WebElement
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>  <span style=color:#75715e>// some pending rendered we didn&#39;t know about happens
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>  <span style=color:#75715e>// inside setValue, StaleElementReferenceException happens
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>  nowStaleElement<span style=color:#f92672>.</span><span style=color:#a6e22e>sendKeys</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;blah&#34;</span><span style=color:#f92672>);</span>
+</span></span></code></pre></div><p>Which, granted, this is a very tiny window, but still, we&rsquo;re shooting for 100% reliability.</p><p>So, without explicit post-action waiting, are we going to have to wrap <em>all</em> of our methods in &ldquo;try again&rdquo;? E.g.:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=display:flex><span>  setValue<span style=color:#f92672>(()</span> <span style=color:#f92672>-&gt;</span> page<span style=color:#f92672>.</span><span style=color:#a6e22e>getFirstName</span><span style=color:#f92672>(),</span> <span style=color:#e6db74>&#34;blah&#34;</span><span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>setValue</span><span style=color:#f92672>(</span>Supplier<span style=color:#f92672>&lt;</span>WebElement<span style=color:#f92672>&gt;</span> e<span style=color:#f92672>,</span> String value<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>    retryOnStaleElement<span style=color:#f92672>(()</span> <span style=color:#f92672>-&gt;</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>      setValue<span style=color:#f92672>(</span>e<span style=color:#f92672>.</span><span style=color:#a6e22e>get</span><span style=color:#f92672>(),</span> value<span style=color:#f92672>();</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>});</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>private</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>retryOnStaleElement</span><span style=color:#f92672>(</span>Runnable r<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>for</span> <span style=color:#f92672>(</span><span style=color:#66d9ef>int</span> i <span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span><span style=color:#f92672>;</span> i <span style=color:#f92672>&lt;</span> times<span style=color:#f92672>;</span> i<span style=color:#f92672>++)</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>      <span style=color:#66d9ef>try</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>        r<span style=color:#f92672>.</span><span style=color:#a6e22e>run</span><span style=color:#f92672>();</span>
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>return</span><span style=color:#f92672>;</span>
+</span></span><span style=display:flex><span>      <span style=color:#f92672>}</span> <span style=color:#66d9ef>catch</span> <span style=color:#f92672>(</span>StaleElementReferenceException e<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>        <span style=color:#75715e>// retry
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>      <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>throw</span> <span style=color:#66d9ef>new</span> RuntimeException<span style=color:#f92672>(</span><span style=color:#e6db74>&#34;Retries failed&#34;</span><span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>}</span>
+</span></span></code></pre></div><p>I think this is the most &ldquo;robust&rdquo;, but passing lambdas all over the place sucks. It makes our tests a lot messier.</p><h2 id=returning-something-else>Returning Something Else?
+<a class=heading-link href=#returning-something-else><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h2><p>So, maybe instead of returning <code>WebElement</code>, which is super-finicky and low-level, our page objects should return something else.</p><p>There are a few options.</p><h3 id=returning-by-objects>Returning <code>By</code> objects
+<a class=heading-link href=#returning-by-objects><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h3><p>To me, the most natural one would be to return the <code>By</code> type, which is Selenium&rsquo;s abstraction of &ldquo;find me an element&rdquo;. So that might look like:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=display:flex><span>  <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>FooPage</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>public</span> By <span style=color:#a6e22e>getFirstName</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>      <span style=color:#66d9ef>return</span> By<span style=color:#f92672>.</span><span style=color:#a6e22e>cssSelector</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;.first-name&#34;</span><span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#75715e>// in test
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>  setValue<span style=color:#f92672>(</span>page<span style=color:#f92672>.</span><span style=color:#a6e22e>getFirstName</span><span style=color:#f92672>(),</span> <span style=color:#e6db74>&#34;blah&#34;</span><span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#75715e>// in utils
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>  <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>setValue</span><span style=color:#f92672>(</span>By by<span style=color:#f92672>,</span> String value<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>    retryOnStaleElement<span style=color:#f92672>(()</span> <span style=color:#f92672>-&gt;</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>      setValue<span style=color:#f92672>(</span>driver<span style=color:#f92672>.</span><span style=color:#a6e22e>findElement</span><span style=color:#f92672>(</span>by<span style=color:#f92672>),</span> value<span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>});</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>}</span>
+</span></span></code></pre></div><p>Unfortunately, the biggest con to this is that <code>By</code> is not nestable.</p><p>What I mean if that sometimes (not often, but frequent enough) you want to find an element within an another, e.g. something like:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=display:flex><span>  WebElement table <span style=color:#f92672>=</span> driver<span style=color:#f92672>.</span><span style=color:#a6e22e>findElement</span><span style=color:#f92672>(</span>By<span style=color:#f92672>.</span><span style=color:#a6e22e>css</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;.table&#34;</span><span style=color:#f92672>));</span>
+</span></span><span style=display:flex><span>  WebElement cell <span style=color:#f92672>=</span> table<span style=color:#f92672>.</span><span style=color:#a6e22e>findElement</span><span style=color:#f92672>(</span>By<span style=color:#f92672>.</span><span style=color:#a6e22e>css</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;.cell&#34;</span><span style=color:#f92672>));</span>
+</span></span></code></pre></div><p>Granted, you can usually make this a single selector (if you&rsquo;re using CSS):</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=display:flex><span>  WebElement cell <span style=color:#f92672>=</span> driver<span style=color:#f92672>.</span><span style=color:#a6e22e>findElement</span><span style=color:#f92672>(</span>By<span style=color:#f92672>.</span><span style=color:#a6e22e>css</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;.table .cell&#34;</span><span style=color:#f92672>));</span>
+</span></span></code></pre></div><p>But you&rsquo;re duplicating the <code>.table</code> selector. If you have ~10-20 elements to find within the table, you&rsquo;re going to duplicate your <code>.table</code> string. Granted, you can do a constant like:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=display:flex><span>  <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>FooPage</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>private</span> <span style=color:#66d9ef>static</span> <span style=color:#66d9ef>final</span> String TABLE_SELECTOR <span style=color:#f92672>=</span> <span style=color:#e6db74>&#34;.table&#34;</span><span style=color:#f92672>;</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>public</span> WebElement <span style=color:#a6e22e>getTable</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>      <span style=color:#66d9ef>return</span> get<span style=color:#f92672>(</span>TABLE_SELECTOR<span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>public</span> WebElement <span style=color:#a6e22e>getCell</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>      <span style=color:#66d9ef>return</span> get<span style=color:#f92672>(</span>TABLE_SELECTOR <span style=color:#f92672>+</span> <span style=color:#e6db74>&#34; .cell&#34;</span><span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>}</span>
+</span></span></code></pre></div><p>Which, dunno, maybe I should just be fine with that. But it assumes you&rsquo;re using CSS selectors, and just seems a little ugly.</p><p>I&rsquo;d prefer first-class composition, like:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=display:flex><span>  <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>FooPage</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>public</span> WebElement <span style=color:#a6e22e>getTable</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>      <span style=color:#66d9ef>return</span> get<span style=color:#f92672>(</span><span style=color:#e6db74>&#34;.table&#34;</span><span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>public</span> WebElement <span style=color:#a6e22e>getCell</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>      <span style=color:#66d9ef>return</span> get<span style=color:#f92672>(</span>getTable<span style=color:#f92672>(),</span> <span style=color:#e6db74>&#34;.cell&#34;</span><span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>}</span>
+</span></span></code></pre></div><p>But we&rsquo;re back to the issue of <code>WebElement</code> being non-lazy, and there is no way, AFAIK to use <code>By</code> like:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=display:flex><span>  <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>FooPage</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>public</span> By <span style=color:#a6e22e>getTable</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>      <span style=color:#66d9ef>return</span> By<span style=color:#f92672>.</span><span style=color:#a6e22e>cssSelector</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;.table&#34;</span><span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>public</span> By <span style=color:#a6e22e>getCell</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>      <span style=color:#75715e>// returns a &#34;nested&#34; By...this API does not exist
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>      <span style=color:#66d9ef>return</span> getTable<span style=color:#f92672>().</span><span style=color:#a6e22e>find</span><span style=color:#f92672>(</span>By<span style=color:#f92672>.</span><span style=color:#a6e22e>cssSelector</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;.cell&#34;</span><span style=color:#f92672>));</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>}</span>
+</span></span></code></pre></div><h3 id=return-string-selectors>Return string selectors
+<a class=heading-link href=#return-string-selectors><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h3><p>A very low-tech approach would be to just return string selectors:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=display:flex><span>  <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>FooPage</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>public</span> String <span style=color:#a6e22e>getFirstName</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>      <span style=color:#66d9ef>return</span> <span style=color:#e6db74>&#34;.first-name&#34;</span><span style=color:#f92672>;</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>public</span> String <span style=color:#a6e22e>getTable</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>      <span style=color:#66d9ef>return</span> <span style=color:#e6db74>&#34;.table&#34;</span><span style=color:#f92672>;</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>public</span> String <span style=color:#a6e22e>getCell</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>      <span style=color:#66d9ef>return</span> getTable<span style=color:#f92672>()</span> <span style=color:#f92672>+</span> <span style=color:#e6db74>&#34; .cell&#34;</span><span style=color:#f92672>:</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#75715e>// in test
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>  setValue<span style=color:#f92672>(</span>page<span style=color:#f92672>.</span><span style=color:#a6e22e>getFirstName</span><span style=color:#f92672>(),</span> <span style=color:#e6db74>&#34;blah&#34;</span><span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#75715e>// in utils
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>  <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>setValue</span><span style=color:#f92672>(</span>String selector<span style=color:#f92672>,</span> String value<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>    retryOnStaleElement<span style=color:#f92672>(()</span> <span style=color:#f92672>-&gt;</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>      WebElement e <span style=color:#f92672>=</span> driver<span style=color:#f92672>.</span><span style=color:#a6e22e>findElement</span><span style=color:#f92672>(</span>By<span style=color:#f92672>.</span><span style=color:#a6e22e>cssSelector</span><span style=color:#f92672>(</span>selector<span style=color:#f92672>),</span> value<span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>      setValue<span style=color:#f92672>(</span>e<span style=color:#f92672>,</span> value<span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>});</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>}</span>
+</span></span></code></pre></div><p>This surprisingly solves a lot of our issues (it&rsquo;s inherently lazy, easily composable)&mldr;as long as all of your lookups use the same <code>By</code> lookup, e.g. <code>By.cssSelector</code>.</p><p>If you tried to use <code>By.cssSelector</code> sometimes and <code>By.xpath</code> others, this approach breaks down.</p><p>It&rsquo;s also just feels dirty, passing raw strings all over the place, but that is admittedly just my habitual gut reaction.</p><h3 id=return-element-objects>Return element objects
+<a class=heading-link href=#return-element-objects><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h3><p>One potential pattern is to introduce our own &ldquo;element objects&rdquo;, which move the deferred lookup and helper methods into a &ldquo;better-than-WebElement&rdquo; API.</p><p>E.g. it might look like:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=display:flex><span>  <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>FooPage</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>public</span> InputObject <span style=color:#a6e22e>getFirstName</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>      <span style=color:#66d9ef>return</span> <span style=color:#66d9ef>new</span> InputObject<span style=color:#f92672>(</span><span style=color:#e6db74>&#34;.first-name&#34;</span><span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>InputObject</span> <span style=color:#66d9ef>extends</span> ElementObject <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>public</span> <span style=color:#a6e22e>InputObject</span><span style=color:#f92672>(</span>String cssSelector<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>      <span style=color:#66d9ef>super</span><span style=color:#f92672>(</span>By<span style=color:#f92672>.</span><span style=color:#a6e22e>cssSelector</span><span style=color:#f92672>(</span>cssSelector<span style=color:#f92672>));</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#75715e>// now we put our util methods here
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>    <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>type</span><span style=color:#f92672>(</span>String value<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>      retryOnStaleElement<span style=color:#f92672>(()</span> <span style=color:#f92672>-&gt;</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>        WebElement e <span style=color:#f92672>=</span> <span style=color:#66d9ef>super</span><span style=color:#f92672>.</span><span style=color:#a6e22e>getElement</span><span style=color:#f92672>();</span>
+</span></span><span style=display:flex><span>        setValue<span style=color:#f92672>(</span>e<span style=color:#f92672>,</span> value<span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>      <span style=color:#f92672>});</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#75715e>// in the test, we get a nice API
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>  page<span style=color:#f92672>.</span><span style=color:#a6e22e>getFirstName</span><span style=color:#f92672>().</span><span style=color:#a6e22e>type</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;blah&#34;</span><span style=color:#f92672>);</span>
+</span></span></code></pre></div><p>I think this is my favorite abstraction, as it moves our tests away from knowing about <code>WebElement</code> all together.</p><p>I wrote a library that does this awhile back, unfortunately with a very unimaginative name, <a href=https://github.com/stephenh/pageobjects/tree/master/src/main/java/com/bizo/pageobjects class=external-link target=_blank rel=noopener>pageobjects</a> but have not been using it recently.</p><p>Note that the element object still has the composable problem, e.g. if we wanted to do:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=display:flex><span>  <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>FooPage</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>public</span> ElementObject <span style=color:#a6e22e>getTable</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>      <span style=color:#66d9ef>return</span> <span style=color:#66d9ef>new</span> ElementObject<span style=color:#f92672>(</span><span style=color:#e6db74>&#34;.table&#34;</span><span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>public</span> ElementObject <span style=color:#a6e22e>getCell</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>      <span style=color:#66d9ef>return</span> <span style=color:#66d9ef>new</span> ElementObject<span style=color:#f92672>(</span>getTable<span style=color:#f92672>(),</span> <span style=color:#e6db74>&#34;.cell&#34;</span><span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>}</span>
+</span></span></code></pre></div><p>We need some way to lazily represent &ldquo;look up element A, then element B&rdquo;.</p><p>My current guess is that both the &ldquo;return <code>By</code>&rdquo; approach and the element object approach fundamentally need a new type, currently/hackily called <code>Bys</code>, which knows how to add nested lookups on top of <code>By</code>, e.g. the API would be something like:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=display:flex><span>  <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>Bys</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>private</span> List<span style=color:#f92672>&lt;</span>By<span style=color:#f92672>&gt;</span> bys <span style=color:#f92672>=</span> <span style=color:#66d9ef>new</span> ArrayList<span style=color:#f92672>&lt;&gt;();</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>public</span> <span style=color:#a6e22e>Bys</span><span style=color:#f92672>(</span>By single<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>      bys<span style=color:#f92672>.</span><span style=color:#a6e22e>add</span><span style=color:#f92672>(</span>single<span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>public</span> <span style=color:#a6e22e>Bys</span><span style=color:#f92672>(</span>Bys existing<span style=color:#f92672>,</span> By nested<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>      bys<span style=color:#f92672>.</span><span style=color:#a6e22e>addAll</span><span style=color:#f92672>(</span>existing<span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>      bys<span style=color:#f92672>.</span><span style=color:#a6e22e>add</span><span style=color:#f92672>(</span>nested<span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>public</span> WebElement <span style=color:#a6e22e>findElement</span><span style=color:#f92672>(</span>WebDriver driver<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>      WebElement current <span style=color:#f92672>=</span> driver<span style=color:#f92672>.</span><span style=color:#a6e22e>findElement</span><span style=color:#f92672>(</span>bys<span style=color:#f92672>.</span><span style=color:#a6e22e>get</span><span style=color:#f92672>(</span><span style=color:#ae81ff>0</span><span style=color:#f92672>));</span>
+</span></span><span style=display:flex><span>      <span style=color:#66d9ef>for</span> <span style=color:#f92672>(</span><span style=color:#66d9ef>int</span> i <span style=color:#f92672>=</span> <span style=color:#ae81ff>1</span><span style=color:#f92672>;</span> i <span style=color:#f92672>&lt;</span> bys<span style=color:#f92672>.</span><span style=color:#a6e22e>size</span><span style=color:#f92672>();</span> i<span style=color:#f92672>++)</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>        current <span style=color:#f92672>=</span> current<span style=color:#f92672>.</span><span style=color:#a6e22e>findElement</span><span style=color:#f92672>(</span>bys<span style=color:#f92672>.</span><span style=color:#a6e22e>get</span><span style=color:#f92672>(</span>i<span style=color:#f92672>));</span>
+</span></span><span style=display:flex><span>      <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>      <span style=color:#66d9ef>return</span> current<span style=color:#f92672>;</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>public</span> Bys <span style=color:#a6e22e>then</span><span style=color:#f92672>(</span>By nested<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>      <span style=color:#66d9ef>return</span> <span style=color:#66d9ef>new</span> Bys<span style=color:#f92672>(</span>bys<span style=color:#f92672>,</span> nested<span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>}</span>
+</span></span></code></pre></div><p>Now our page objects can return it with easy nesting:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=display:flex><span>  <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>FooPage</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>public</span> Bys <span style=color:#a6e22e>getTable</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>      <span style=color:#75715e>// creates new Bys(By.cssSelector(...));
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>      <span style=color:#66d9ef>return</span> get<span style=color:#f92672>(</span><span style=color:#e6db74>&#34;.table&#34;</span><span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>public</span> Bys <span style=color:#a6e22e>getCell</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>      <span style=color:#75715e>// creates new Bys(table, By.cssSelector(...));
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>      <span style=color:#66d9ef>return</span> getTable<span style=color:#f92672>().</span><span style=color:#a6e22e>then</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;.cell&#34;</span><span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>}</span>
+</span></span></code></pre></div><p>I&rsquo;ve not actually used this yet, but I like it, and probably should.</p><h2 id=done>Done
+<a class=heading-link href=#done><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h2><p>So, anyway, that is my current thoughts on the various gotchas related to Selenium and the <code>WebElement</code> API.</p><p>Basically, in my opinion, you have to wrap the <code>WebElement</code> API with some sort of higher-level library to get good usability, test readability, and most importantly test reliability.</p><p>Note that I don&rsquo;t fault Selenium for this, I&rsquo;d prefer they focus on making a rock-solid core library, and defer to higher-level libraries to iterate on different styles, fluent DSLs, etc., where iteration can happen quickly/easily on top of their core.</p></div><footer><div id=disqus_thread></div><script>window.disqus_config=function(){},function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById("disqus_thread").innerHTML="Disqus comments not available by default when the website is previewed locally.";return}var t=document,e=t.createElement("script");e.async=!0,e.src="//draconianoverlord.disqus.com/embed.js",e.setAttribute("data-timestamp",+new Date),(t.head||t.body).appendChild(e)}(),document.addEventListener("themeChanged",function(){document.readyState=="complete"&&DISQUS.reset({reload:!0,config:disqus_config})})</script></footer></article></section></div><footer class=footer><section class=container>©
 2008 -
-2022
+2023
 Stephen Haberman
 ·
-Powered by <a href=https://gohugo.io/>Hugo</a> & <a href=https://github.com/luizdepra/hugo-coder/>Coder</a>.
-</section>
-</footer>
-</main>
-<script src=/js/coder.min.03b17769f4f91ae35667e1f2a1ca8c16f50562576cf90ff32b3179926914daa5.js integrity="sha256-A7F3afT5GuNWZ+HyocqMFvUFYlds+Q/zKzF5kmkU2qU="></script>
-</body>
-</html>
+Powered by <a href=https://gohugo.io/ target=_blank rel=noopener>Hugo</a> & <a href=https://github.com/luizdepra/hugo-coder/ target=_blank rel=noopener>Coder</a>.</section></footer></main><script src=/js/coder.min.6ae284be93d2d19dad1f02b0039508d9aab3180a12a06dcc71b0b0ef7825a317.js integrity="sha256-auKEvpPS0Z2tHwKwA5UI2aqzGAoSoG3McbCw73gloxc="></script></body></html>

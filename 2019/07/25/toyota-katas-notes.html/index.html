@@ -1,151 +1,22 @@
-<!doctype html><html lang=en>
-<head>
-<meta charset=utf-8>
-<meta name=viewport content="width=device-width,initial-scale=1">
-<meta http-equiv=content-language content="en">
-<meta name=color-scheme content="light dark">
-<meta name=author content="Stephen Haberman">
-<meta name=description content="I recently re-read Toyota Katas, which I&rsquo;d picked up awhile ago based on a recommendation in a book (I forget which).
-The very brief overview is the book asserts in the 1980s/90s, manufacturing in the US copied specific practices of the Toyota production system (&ldquo;oh, you do six sigma&rdquo;, &ldquo;oh, you do kanban&rdquo;, &ldquo;oh, you use cell manufacturing&rdquo; (other specific practices I don&rsquo;t really know), &ldquo;no problem, we can do that too!">
-<meta name=keywords content="blog,developer,personal">
-<meta name=twitter:card content="summary">
-<meta name=twitter:title content="Toyota Katas Notes">
-<meta name=twitter:description content="I recently re-read Toyota Katas, which I&rsquo;d picked up awhile ago based on a recommendation in a book (I forget which).
-The very brief overview is the book asserts in the 1980s/90s, manufacturing in the US copied specific practices of the Toyota production system (&ldquo;oh, you do six sigma&rdquo;, &ldquo;oh, you do kanban&rdquo;, &ldquo;oh, you use cell manufacturing&rdquo; (other specific practices I don&rsquo;t really know), &ldquo;no problem, we can do that too!">
-<meta property="og:title" content="Toyota Katas Notes">
-<meta property="og:description" content="I recently re-read Toyota Katas, which I&rsquo;d picked up awhile ago based on a recommendation in a book (I forget which).
-The very brief overview is the book asserts in the 1980s/90s, manufacturing in the US copied specific practices of the Toyota production system (&ldquo;oh, you do six sigma&rdquo;, &ldquo;oh, you do kanban&rdquo;, &ldquo;oh, you use cell manufacturing&rdquo; (other specific practices I don&rsquo;t really know), &ldquo;no problem, we can do that too!">
-<meta property="og:type" content="article">
-<meta property="og:url" content="https://www.draconianoverlord.com/2019/07/25/toyota-katas-notes.html/"><meta property="article:section" content="posts">
-<meta property="article:published_time" content="2019-07-25T00:00:00+00:00">
-<meta property="article:modified_time" content="2019-07-25T00:00:00+00:00">
-<title>
-Toyota Katas Notes · Draconian Overlord
-</title>
-<link rel=canonical href=https://www.draconianoverlord.com/2019/07/25/toyota-katas-notes.html/>
-<link rel=preload href="/fonts/forkawesome-webfont.woff2?v=1.2.0" as=font type=font/woff2 crossorigin>
-<link rel=stylesheet href=/css/coder.min.d9fddbffe6f27e69985dc5fe0471cdb0e57fbf4775714bc3d847accb08f4a1f6.css integrity="sha256-2f3b/+byfmmYXcX+BHHNsOV/v0d1cUvD2Eesywj0ofY=" crossorigin=anonymous media=screen>
-<link rel=stylesheet href=/css/coder-dark.min.aa883b9ce35a8ff4a2a5008619005175e842bb18a8a9f9cc2bbcf44dab2d91fa.css integrity="sha256-qog7nONaj/SipQCGGQBRdehCuxioqfnMK7z0Tastkfo=" crossorigin=anonymous media=screen>
-<link rel=icon type=image/png href=/images/favicon-32x32.png sizes=32x32>
-<link rel=icon type=image/png href=/images/favicon-16x16.png sizes=16x16>
-<link rel=apple-touch-icon href=/images/apple-touch-icon.png>
-<link rel=apple-touch-icon sizes=180x180 href=/images/apple-touch-icon.png>
-<meta name=generator content="Hugo 0.92.0">
-</head>
-<body class="preload-transitions colorscheme-auto">
-<div class=float-container>
-<a id=dark-mode-toggle class=colorscheme-toggle>
-<i class="fa fa-adjust fa-fw" aria-hidden=true></i>
-</a>
-</div>
-<main class=wrapper>
-<nav class=navigation>
-<section class=container>
-<a class=navigation-title href=/>Draconian Overlord</a>
-Oppressing software entropy
-</section>
-</nav>
-<div class=content>
-<section class="container post">
-<article>
-<header>
-<div class=post-title>
-<h1 class=title>
-<a class=title-link href=https://www.draconianoverlord.com/2019/07/25/toyota-katas-notes.html/>
-Toyota Katas Notes
-</a>
-</h1>
-</div>
-<div class=post-meta>
-<div class=date>
-<span class=posted-on>
-<i class="fa fa-calendar" aria-hidden=true></i>
-<time datetime=2019-07-25T00:00:00Z>
-July 25, 2019
-</time>
-</span>
-<span class=reading-time>
-<i class="fa fa-clock-o" aria-hidden=true></i>
-5-minute read
-</span>
-</div>
-<div class=categories>
-<i class="fa fa-folder" aria-hidden=true></i>
-<a href=/categories/books/>Books</a></div>
-</div>
-</header>
-<div>
-<p>I recently re-read <a href=https://www.amazon.com/Toyota-Kata-Managing-Improvement-Adaptiveness/dp/0071635238>Toyota Katas</a>, which I&rsquo;d picked up awhile ago based on a recommendation in a book (I forget which).</p>
-<p>The very brief overview is the book asserts in the 1980s/90s, manufacturing in the US copied <em>specific practices</em> of the Toyota production system (&ldquo;oh, you do six sigma&rdquo;, &ldquo;oh, you do kanban&rdquo;, &ldquo;oh, you use cell manufacturing&rdquo; (other specific practices I don&rsquo;t really know), &ldquo;no problem, we can do that too!&rdquo;.</p>
-<p>When really those were just point-in-time innovations, and Toyota&rsquo;s actual competitive advantage was a culture and approach (an &ldquo;improvement kata&rdquo;, a &ldquo;coaching kata&rdquo;, etc.) that kept finding <em>new</em> best practices (i.e. the author has several stories of returning to factories that were no longer doing a specific practice, and Toyota&rsquo;s staff would explain &ldquo;well, that approach doesn&rsquo;t make sense anymore&rdquo;).</p>
-<p>So the book tries to describe Toyota&rsquo;s continuous improvement culture.</p>
-<p>A few of my high-level takeaways/ahas:</p>
-<h2 id=kanban-is-not-the-goal>
-Kanban is Not the Goal
-<a class=heading-link href=#kanban-is-not-the-goal>
-<i class="fa fa-link" aria-hidden=true></i>
-</a>
-</h2>
-<p>For all the fan fair around Kanban in the software community, with the aurora of &ldquo;it comes from <em>The Toyota Production System</em>&rdquo;, I was surprised to hear that they regard kanban as a to-be-tolerated compromise and not the ideal goal.</p>
-<p>Their ideal goal is 1-by-1 flow, which is a production line of ~20-whatever machines, all handing off their part immediately to the next machine, exactly when that machine needs it, with no batching/inventory in between.</p>
-<p>In contrast, kanban is a &ldquo;supermarket&rdquo; for parts, where parts are placed in bins, and the bins are only refilled by upstream machines when they&rsquo;re &ldquo;bought&rdquo; from by downstream machines. This makes it a pull-based system, but the bins are inherently inventory/batching.</p>
-<p>That said, despite introducing inventory, kanban is still a net improvement over &ldquo;scheduled-based&rdquo; planning, where upstream machines would produce X parts/day, &ldquo;because the central planning schedule that management forecasted a few months ago says so&rdquo;, and be blithely unaware about downstream demand.</p>
-<p>So, kanban is a pragmatic compromise, but just not the end/ideal goal.</p>
-<h2 id=no-inventory-is-more-about-quality-not-just-cost>
-&lsquo;No Inventory&rsquo; is More About Quality, Not Just Cost
-<a class=heading-link href=#no-inventory-is-more-about-quality-not-just-cost>
-<i class="fa fa-link" aria-hidden=true></i>
-</a>
-</h2>
-<p>From American popular press, I&rsquo;d generally picked up &ldquo;Toyota&rsquo;s Just-In-Time manufacturing was amazing because it has no/less inventory, and inventory is expensive&rdquo;.</p>
-<p>This is true, but the book asserts that no inventory is, as far as I understand, even more so about quality.</p>
-<p>When a machine produces a bad part, and it immediately goes to the next machine, if that part doesn&rsquo;t work, there is an immediate &ldquo;hey wait, what happened?&rdquo; feedback loop. The line stops (the cord pulls), and a team lead (manager-ish) can walk back to the offending machine and diagnose (in a blameless retro) what happened/why the system failed.</p>
-<p>But, if a machine produces a bad part, and it goes in a box with 1,000 other parts, and a few days later when it&rsquo;s taken out, we learn that part is bad, tying that back to what happened is pretty hard. So, meh, grab another part and keep going. Hence inventory hampers output quality.</p>
-<p>Similarly, if a machine + operator usually produce ~5 parts/hour, but then something odd happens every now and then, and they drop to ~2 parts/hour, if there is no inventory (buffer), that is a big deal, we&rsquo;re missing 3 parts/hour, and we have to diagnose/fix the bump now. But with inventory, meh we don&rsquo;t see the bump yet, the downstream machine is fine. Hence inventory hampers process quality.</p>
-<p>So, ironically, inventory can be seen as a good thing, i.e. a buffer against variability, but that is also precisely why the Toyota system considers it bad: it hides both output quality and process quality behind the veil of &ldquo;meh, there is a buffer&rdquo;.</p>
-<h2 id=team-leads-spend-50-of-their-time-on-improvement>
-Team Leads Spend 50% of their Time on Improvement
-<a class=heading-link href=#team-leads-spend-50-of-their-time-on-improvement>
-<i class="fa fa-link" aria-hidden=true></i>
-</a>
-</h2>
-<p>The book asserts there are two view-points on continuous improvement, one being &ldquo;operator-driven&rdquo; (i.e. as the operator is producing ~X parts/hour, they&rsquo;ll also figure out &ldquo;oh hey, my process is not great here&rdquo;) or &ldquo;team lead-driven&rdquo; (i.e. a team lead watches over the operator&rsquo;s shoulder, or more precisely walks up when the &lsquo;stop&rsquo; chord is pulled).</p>
-<p>The assertion is that it&rsquo;s not fair to expect operators to both produce ~X parts/hour + do meta-thinking/planning about process improvement (although they&rsquo;re certainly a source of ideas too, they&rsquo;re not the primary driver).</p>
-<p>So, team leads (kinda/sorta managers) spend <strong>50% of their time</strong> specifically on process improvement.</p>
-<p>As far as I understand, these team leads are an entire layer of the organization that other manufacturers don&rsquo;t/didn&rsquo;t have, which seems expensive, but it pays off b/c the rest of Toyota&rsquo;s operators are more efficient (due to better processes), so there are less operators (so actually net less personnel). And also the work output is higher quality.</p>
-<h2 id=applications-to-software>
-Applications to Software
-<a class=heading-link href=#applications-to-software>
-<i class="fa fa-link" aria-hidden=true></i>
-</a>
-</h2>
-<p>I can&rsquo;t help but think of applications to software.</p>
-<p>Or, if anything, non-applications; reading a book written by a manufacturing expert, for other manufacturing experts (albeit still for a lay audience), drives home how repetitive manufacturing processes are. The same part, on the same machine, multiple times <em>per minute</em>, for days and weeks. It&rsquo;s just nothing like software development.</p>
-<p>But this repetition is why they can focus so much on optimization and reducing variability.</p>
-<p>(That said, I suppose while our build-time environment is very different, at runtime our software systems look pretty similar to manufacturing systems, i.e. request processing is the same request, thousands of times per minute, for days and weeks; and we want the same optimizations and reductions in variability; just at runtime.)</p>
-<p>Having team leads spend 50% of their time on process improvement is perhaps the most intriguing and potentially applicable practice. I.e. I could see something where any time an engineer on a team got &ldquo;stuck&rdquo; (i.e. their task took too long, their tests ran too slow, there was a bug due to a language/tooling/framework issue), a team lead would have 50% of their time available to diagnose/refactor/fix the issue.</p>
-<p>Which really is just refactoring, but with a senior, per-team person dedicating a non-trivial amount of their time to it, as their specific job/responsibility. I imagine that would result in some pretty great systems, and teams that could then move extremely quickly.</p>
-</div>
-<footer>
-<div id=disqus_thread></div>
-<script type=application/javascript>var disqus_config=function(){};(function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById('disqus_thread').innerHTML='Disqus comments not available by default when the website is previewed locally.';return}var b=document,a=b.createElement('script');a.async=!0,a.src='//draconianoverlord.disqus.com/embed.js',a.setAttribute('data-timestamp',+new Date),(b.head||b.body).appendChild(a)})()</script>
-<noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript>
-<a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a>
-</footer>
-</article>
-</section>
-</div>
-<footer class=footer>
-<section class=container>
-©
+<!doctype html><html lang=en><head><title>Toyota Katas Notes · Draconian Overlord</title><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=color-scheme content="light dark"><meta name=author content="Stephen Haberman"><meta name=description content="I recently re-read Toyota Katas, which I&rsquo;d picked up awhile ago based on a recommendation in a book (I forget which).
+The very brief overview is the book asserts in the 1980s/90s, manufacturing in the US copied specific practices of the Toyota production system (&ldquo;oh, you do six sigma&rdquo;, &ldquo;oh, you do kanban&rdquo;, &ldquo;oh, you use cell manufacturing&rdquo; (other specific practices I don&rsquo;t really know), &ldquo;no problem, we can do that too!"><meta name=keywords content="blog,developer,personal"><meta name=twitter:card content="summary"><meta name=twitter:title content="Toyota Katas Notes"><meta name=twitter:description content="I recently re-read Toyota Katas, which I&rsquo;d picked up awhile ago based on a recommendation in a book (I forget which).
+The very brief overview is the book asserts in the 1980s/90s, manufacturing in the US copied specific practices of the Toyota production system (&ldquo;oh, you do six sigma&rdquo;, &ldquo;oh, you do kanban&rdquo;, &ldquo;oh, you use cell manufacturing&rdquo; (other specific practices I don&rsquo;t really know), &ldquo;no problem, we can do that too!"><meta property="og:title" content="Toyota Katas Notes"><meta property="og:description" content="I recently re-read Toyota Katas, which I&rsquo;d picked up awhile ago based on a recommendation in a book (I forget which).
+The very brief overview is the book asserts in the 1980s/90s, manufacturing in the US copied specific practices of the Toyota production system (&ldquo;oh, you do six sigma&rdquo;, &ldquo;oh, you do kanban&rdquo;, &ldquo;oh, you use cell manufacturing&rdquo; (other specific practices I don&rsquo;t really know), &ldquo;no problem, we can do that too!"><meta property="og:type" content="article"><meta property="og:url" content="https://www.draconianoverlord.com/2019/07/25/toyota-katas-notes.html/"><meta property="article:section" content="posts"><meta property="article:published_time" content="2019-07-25T00:00:00+00:00"><meta property="article:modified_time" content="2019-07-25T00:00:00+00:00"><link rel=canonical href=https://www.draconianoverlord.com/2019/07/25/toyota-katas-notes.html/><link rel=preload href="/fonts/forkawesome-webfont.woff2?v=1.2.0" as=font type=font/woff2 crossorigin><link rel=stylesheet href=/css/coder.min.65236a6d834b26194eed04a2a3b45e44d9194ef9e620253705d4bef03bd7ef81.css integrity="sha256-ZSNqbYNLJhlO7QSio7ReRNkZTvnmICU3BdS+8DvX74E=" crossorigin=anonymous media=screen><link rel=stylesheet href=/css/coder-dark.min.f6534b0b446b75d9b6ad77a97d43ede2ddaeff1b6e2361fb7198d6f8fcb7f83f.css integrity="sha256-9lNLC0Rrddm2rXepfUPt4t2u/xtuI2H7cZjW+Py3+D8=" crossorigin=anonymous media=screen><link rel=icon type=image/png href=/images/favicon-32x32.png sizes=32x32><link rel=icon type=image/png href=/images/favicon-16x16.png sizes=16x16><link rel=apple-touch-icon href=/images/apple-touch-icon.png><link rel=apple-touch-icon sizes=180x180 href=/images/apple-touch-icon.png><link rel=manifest href=/site.webmanifest><link rel=mask-icon href=/images/safari-pinned-tab.svg color=#5bbad5></head><body class="preload-transitions colorscheme-auto"><div class=float-container><a id=dark-mode-toggle class=colorscheme-toggle><i class="fa fa-adjust fa-fw" aria-hidden=true></i></a></div><main class=wrapper><nav class=navigation><section class=container><a class=navigation-title href=/>Draconian Overlord</a>
+Oppressing software entropy</section></nav><div class=content><section class="container post"><article><header><div class=post-title><h1 class=title><a class=title-link href=https://www.draconianoverlord.com/2019/07/25/toyota-katas-notes.html/>Toyota Katas Notes</a></h1></div><div class=post-meta><div class=date><span class=posted-on><i class="fa fa-calendar" aria-hidden=true></i>
+<time datetime=2019-07-25T00:00:00Z>July 25, 2019</time></span>
+<span class=reading-time><i class="fa fa-clock-o" aria-hidden=true></i>
+5-minute read</span></div><div class=categories><i class="fa fa-folder" aria-hidden=true></i>
+<a href=/categories/books/>Books</a></div></div></header><div class=post-content><p>I recently re-read <a href=https://www.amazon.com/Toyota-Kata-Managing-Improvement-Adaptiveness/dp/0071635238 class=external-link target=_blank rel=noopener>Toyota Katas</a>, which I&rsquo;d picked up awhile ago based on a recommendation in a book (I forget which).</p><p>The very brief overview is the book asserts in the 1980s/90s, manufacturing in the US copied <em>specific practices</em> of the Toyota production system (&ldquo;oh, you do six sigma&rdquo;, &ldquo;oh, you do kanban&rdquo;, &ldquo;oh, you use cell manufacturing&rdquo; (other specific practices I don&rsquo;t really know), &ldquo;no problem, we can do that too!&rdquo;.</p><p>When really those were just point-in-time innovations, and Toyota&rsquo;s actual competitive advantage was a culture and approach (an &ldquo;improvement kata&rdquo;, a &ldquo;coaching kata&rdquo;, etc.) that kept finding <em>new</em> best practices (i.e. the author has several stories of returning to factories that were no longer doing a specific practice, and Toyota&rsquo;s staff would explain &ldquo;well, that approach doesn&rsquo;t make sense anymore&rdquo;).</p><p>So the book tries to describe Toyota&rsquo;s continuous improvement culture.</p><p>A few of my high-level takeaways/ahas:</p><h2 id=kanban-is-not-the-goal>Kanban is Not the Goal
+<a class=heading-link href=#kanban-is-not-the-goal><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h2><p>For all the fan fair around Kanban in the software community, with the aurora of &ldquo;it comes from <em>The Toyota Production System</em>&rdquo;, I was surprised to hear that they regard kanban as a to-be-tolerated compromise and not the ideal goal.</p><p>Their ideal goal is 1-by-1 flow, which is a production line of ~20-whatever machines, all handing off their part immediately to the next machine, exactly when that machine needs it, with no batching/inventory in between.</p><p>In contrast, kanban is a &ldquo;supermarket&rdquo; for parts, where parts are placed in bins, and the bins are only refilled by upstream machines when they&rsquo;re &ldquo;bought&rdquo; from by downstream machines. This makes it a pull-based system, but the bins are inherently inventory/batching.</p><p>That said, despite introducing inventory, kanban is still a net improvement over &ldquo;scheduled-based&rdquo; planning, where upstream machines would produce X parts/day, &ldquo;because the central planning schedule that management forecasted a few months ago says so&rdquo;, and be blithely unaware about downstream demand.</p><p>So, kanban is a pragmatic compromise, but just not the end/ideal goal.</p><h2 id=no-inventory-is-more-about-quality-not-just-cost>&lsquo;No Inventory&rsquo; is More About Quality, Not Just Cost
+<a class=heading-link href=#no-inventory-is-more-about-quality-not-just-cost><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h2><p>From American popular press, I&rsquo;d generally picked up &ldquo;Toyota&rsquo;s Just-In-Time manufacturing was amazing because it has no/less inventory, and inventory is expensive&rdquo;.</p><p>This is true, but the book asserts that no inventory is, as far as I understand, even more so about quality.</p><p>When a machine produces a bad part, and it immediately goes to the next machine, if that part doesn&rsquo;t work, there is an immediate &ldquo;hey wait, what happened?&rdquo; feedback loop. The line stops (the cord pulls), and a team lead (manager-ish) can walk back to the offending machine and diagnose (in a blameless retro) what happened/why the system failed.</p><p>But, if a machine produces a bad part, and it goes in a box with 1,000 other parts, and a few days later when it&rsquo;s taken out, we learn that part is bad, tying that back to what happened is pretty hard. So, meh, grab another part and keep going. Hence inventory hampers output quality.</p><p>Similarly, if a machine + operator usually produce ~5 parts/hour, but then something odd happens every now and then, and they drop to ~2 parts/hour, if there is no inventory (buffer), that is a big deal, we&rsquo;re missing 3 parts/hour, and we have to diagnose/fix the bump now. But with inventory, meh we don&rsquo;t see the bump yet, the downstream machine is fine. Hence inventory hampers process quality.</p><p>So, ironically, inventory can be seen as a good thing, i.e. a buffer against variability, but that is also precisely why the Toyota system considers it bad: it hides both output quality and process quality behind the veil of &ldquo;meh, there is a buffer&rdquo;.</p><h2 id=team-leads-spend-50-of-their-time-on-improvement>Team Leads Spend 50% of their Time on Improvement
+<a class=heading-link href=#team-leads-spend-50-of-their-time-on-improvement><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h2><p>The book asserts there are two view-points on continuous improvement, one being &ldquo;operator-driven&rdquo; (i.e. as the operator is producing ~X parts/hour, they&rsquo;ll also figure out &ldquo;oh hey, my process is not great here&rdquo;) or &ldquo;team lead-driven&rdquo; (i.e. a team lead watches over the operator&rsquo;s shoulder, or more precisely walks up when the &lsquo;stop&rsquo; chord is pulled).</p><p>The assertion is that it&rsquo;s not fair to expect operators to both produce ~X parts/hour + do meta-thinking/planning about process improvement (although they&rsquo;re certainly a source of ideas too, they&rsquo;re not the primary driver).</p><p>So, team leads (kinda/sorta managers) spend <strong>50% of their time</strong> specifically on process improvement.</p><p>As far as I understand, these team leads are an entire layer of the organization that other manufacturers don&rsquo;t/didn&rsquo;t have, which seems expensive, but it pays off b/c the rest of Toyota&rsquo;s operators are more efficient (due to better processes), so there are less operators (so actually net less personnel). And also the work output is higher quality.</p><h2 id=applications-to-software>Applications to Software
+<a class=heading-link href=#applications-to-software><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h2><p>I can&rsquo;t help but think of applications to software.</p><p>Or, if anything, non-applications; reading a book written by a manufacturing expert, for other manufacturing experts (albeit still for a lay audience), drives home how repetitive manufacturing processes are. The same part, on the same machine, multiple times <em>per minute</em>, for days and weeks. It&rsquo;s just nothing like software development.</p><p>But this repetition is why they can focus so much on optimization and reducing variability.</p><p>(That said, I suppose while our build-time environment is very different, at runtime our software systems look pretty similar to manufacturing systems, i.e. request processing is the same request, thousands of times per minute, for days and weeks; and we want the same optimizations and reductions in variability; just at runtime.)</p><p>Having team leads spend 50% of their time on process improvement is perhaps the most intriguing and potentially applicable practice. I.e. I could see something where any time an engineer on a team got &ldquo;stuck&rdquo; (i.e. their task took too long, their tests ran too slow, there was a bug due to a language/tooling/framework issue), a team lead would have 50% of their time available to diagnose/refactor/fix the issue.</p><p>Which really is just refactoring, but with a senior, per-team person dedicating a non-trivial amount of their time to it, as their specific job/responsibility. I imagine that would result in some pretty great systems, and teams that could then move extremely quickly.</p></div><footer><div id=disqus_thread></div><script>window.disqus_config=function(){},function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById("disqus_thread").innerHTML="Disqus comments not available by default when the website is previewed locally.";return}var t=document,e=t.createElement("script");e.async=!0,e.src="//draconianoverlord.disqus.com/embed.js",e.setAttribute("data-timestamp",+new Date),(t.head||t.body).appendChild(e)}(),document.addEventListener("themeChanged",function(){document.readyState=="complete"&&DISQUS.reset({reload:!0,config:disqus_config})})</script></footer></article></section></div><footer class=footer><section class=container>©
 2008 -
-2022
+2023
 Stephen Haberman
 ·
-Powered by <a href=https://gohugo.io/>Hugo</a> & <a href=https://github.com/luizdepra/hugo-coder/>Coder</a>.
-</section>
-</footer>
-</main>
-<script src=/js/coder.min.03b17769f4f91ae35667e1f2a1ca8c16f50562576cf90ff32b3179926914daa5.js integrity="sha256-A7F3afT5GuNWZ+HyocqMFvUFYlds+Q/zKzF5kmkU2qU="></script>
-</body>
-</html>
+Powered by <a href=https://gohugo.io/ target=_blank rel=noopener>Hugo</a> & <a href=https://github.com/luizdepra/hugo-coder/ target=_blank rel=noopener>Coder</a>.</section></footer></main><script src=/js/coder.min.6ae284be93d2d19dad1f02b0039508d9aab3180a12a06dcc71b0b0ef7825a317.js integrity="sha256-auKEvpPS0Z2tHwKwA5UI2aqzGAoSoG3McbCw73gloxc="></script></body></html>

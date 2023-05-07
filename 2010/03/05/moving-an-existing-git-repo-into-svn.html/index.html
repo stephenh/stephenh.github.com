@@ -1,193 +1,83 @@
-<!doctype html><html lang=en>
-<head>
-<meta charset=utf-8>
-<meta name=viewport content="width=device-width,initial-scale=1">
-<meta http-equiv=content-language content="en">
-<meta name=color-scheme content="light dark">
-<meta name=author content="Stephen Haberman">
-<meta name=description content="I&rsquo;ve found myself lately making local git repositories to prototype things that I later need to promote into Bizo&rsquo;s internal Subversion repository.
+<!doctype html><html lang=en><head><title>Moving an existing git repo into svn · Draconian Overlord</title><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=color-scheme content="light dark"><meta name=author content="Stephen Haberman"><meta name=description content="I&rsquo;ve found myself lately making local git repositories to prototype things that I later need to promote into Bizo&rsquo;s internal Subversion repository.
 git-svn supports this really well, with just a slight variation on the usual git svn clone.
 Instead of the standard project/trunk|branches|tags we use a slightly different parent/trunk|branches|tags/project so you&rsquo;ll see I specify the -T/-t/-b flags.
-git svn init    Here is what I do, from the existing local git repo:">
-<meta name=keywords content="blog,developer,personal">
-<meta name=twitter:card content="summary">
-<meta name=twitter:title content="Moving an existing git repo into svn">
-<meta name=twitter:description content="I&rsquo;ve found myself lately making local git repositories to prototype things that I later need to promote into Bizo&rsquo;s internal Subversion repository.
+git svn init Link to heading Here is what I do, from the existing local git repo:"><meta name=keywords content="blog,developer,personal"><meta name=twitter:card content="summary"><meta name=twitter:title content="Moving an existing git repo into svn"><meta name=twitter:description content="I&rsquo;ve found myself lately making local git repositories to prototype things that I later need to promote into Bizo&rsquo;s internal Subversion repository.
 git-svn supports this really well, with just a slight variation on the usual git svn clone.
 Instead of the standard project/trunk|branches|tags we use a slightly different parent/trunk|branches|tags/project so you&rsquo;ll see I specify the -T/-t/-b flags.
-git svn init    Here is what I do, from the existing local git repo:">
-<meta property="og:title" content="Moving an existing git repo into svn">
-<meta property="og:description" content="I&rsquo;ve found myself lately making local git repositories to prototype things that I later need to promote into Bizo&rsquo;s internal Subversion repository.
+git svn init Link to heading Here is what I do, from the existing local git repo:"><meta property="og:title" content="Moving an existing git repo into svn"><meta property="og:description" content="I&rsquo;ve found myself lately making local git repositories to prototype things that I later need to promote into Bizo&rsquo;s internal Subversion repository.
 git-svn supports this really well, with just a slight variation on the usual git svn clone.
 Instead of the standard project/trunk|branches|tags we use a slightly different parent/trunk|branches|tags/project so you&rsquo;ll see I specify the -T/-t/-b flags.
-git svn init    Here is what I do, from the existing local git repo:">
-<meta property="og:type" content="article">
-<meta property="og:url" content="https://www.draconianoverlord.com/2010/03/05/moving-an-existing-git-repo-into-svn.html/"><meta property="article:section" content="posts">
-<meta property="article:published_time" content="2010-03-05T00:00:00+00:00">
-<meta property="article:modified_time" content="2010-03-05T00:00:00+00:00">
-<title>
-Moving an existing git repo into svn · Draconian Overlord
-</title>
-<link rel=canonical href=https://www.draconianoverlord.com/2010/03/05/moving-an-existing-git-repo-into-svn.html/>
-<link rel=preload href="/fonts/forkawesome-webfont.woff2?v=1.2.0" as=font type=font/woff2 crossorigin>
-<link rel=stylesheet href=/css/coder.min.d9fddbffe6f27e69985dc5fe0471cdb0e57fbf4775714bc3d847accb08f4a1f6.css integrity="sha256-2f3b/+byfmmYXcX+BHHNsOV/v0d1cUvD2Eesywj0ofY=" crossorigin=anonymous media=screen>
-<link rel=stylesheet href=/css/coder-dark.min.aa883b9ce35a8ff4a2a5008619005175e842bb18a8a9f9cc2bbcf44dab2d91fa.css integrity="sha256-qog7nONaj/SipQCGGQBRdehCuxioqfnMK7z0Tastkfo=" crossorigin=anonymous media=screen>
-<link rel=icon type=image/png href=/images/favicon-32x32.png sizes=32x32>
-<link rel=icon type=image/png href=/images/favicon-16x16.png sizes=16x16>
-<link rel=apple-touch-icon href=/images/apple-touch-icon.png>
-<link rel=apple-touch-icon sizes=180x180 href=/images/apple-touch-icon.png>
-<meta name=generator content="Hugo 0.92.0">
-</head>
-<body class="preload-transitions colorscheme-auto">
-<div class=float-container>
-<a id=dark-mode-toggle class=colorscheme-toggle>
-<i class="fa fa-adjust fa-fw" aria-hidden=true></i>
-</a>
-</div>
-<main class=wrapper>
-<nav class=navigation>
-<section class=container>
-<a class=navigation-title href=/>Draconian Overlord</a>
-Oppressing software entropy
-</section>
-</nav>
-<div class=content>
-<section class="container post">
-<article>
-<header>
-<div class=post-title>
-<h1 class=title>
-<a class=title-link href=https://www.draconianoverlord.com/2010/03/05/moving-an-existing-git-repo-into-svn.html/>
-Moving an existing git repo into svn
-</a>
-</h1>
-</div>
-<div class=post-meta>
-<div class=date>
-<span class=posted-on>
-<i class="fa fa-calendar" aria-hidden=true></i>
-<time datetime=2010-03-05T00:00:00Z>
-March 5, 2010
-</time>
-</span>
-<span class=reading-time>
-<i class="fa fa-clock-o" aria-hidden=true></i>
-3-minute read
-</span>
-</div>
-<div class=categories>
-<i class="fa fa-folder" aria-hidden=true></i>
-<a href=/categories/productivity/>Productivity</a></div>
-</div>
-</header>
-<div>
-<p>I&rsquo;ve found myself lately making local git repositories to prototype things that I later need to promote into <a href=http://www.bizo.com>Bizo</a>&rsquo;s internal Subversion repository.</p>
-<p><code>git-svn</code> supports this really well, with just a slight variation on the usual <code>git svn clone</code>.</p>
-<p>Instead of the standard <code>project/trunk|branches|tags</code> we use a slightly different <code>parent/trunk|branches|tags/project</code> so you&rsquo;ll see I specify the <code>-T/-t/-b</code> flags.</p>
-<h2 id=git-svn-init>
-git svn init
-<a class=heading-link href=#git-svn-init>
-<i class="fa fa-link" aria-hidden=true></i>
-</a>
-</h2>
-<p>Here is what I do, from the existing local git repo:</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=color:#75715e># Create the project directory in subversion</span>
-$ /usr/bin/svn mkdir
-  https://foo.com/svn/parent/trunk/project
-  -m <span style=color:#e6db74>&#34;Make project directory.&#34;</span>
-Committed revision 200.
-
-<span style=color:#75715e># Initialize git-svn, doesn&#39;t fetch anything yet</span>
-$ git svn init https://foo.com/svn/
-  -T parent/trunk/project
-  -t parent/tags/project
-  -b parent/branches/project
-  --prefix<span style=color:#f92672>=</span>svn/
-
-<span style=color:#75715e># Set authors so we get prettier authors</span>
-$ git config svn.authorsfile ../authors
-
-<span style=color:#75715e># Now pull down the svn commits</span>
-$ git svn fetch
-W: Ignoring error from SVN, ...
-W: Do not be alarmed at the above message git-svn ...
-This may take a <span style=color:#66d9ef>while</span> on large repositories
-r200 <span style=color:#f92672>=</span> <span style=color:#f92672>(</span>guid<span style=color:#f92672>)</span> <span style=color:#f92672>(</span>refs/remotes/svn/trunk<span style=color:#f92672>)</span>
-
-<span style=color:#75715e># We should now see our svn trunk setup under our svn remote</span>
-$ git branch -av
-* master            c3a7161 The latest git commit.
-  remotes/svn/trunk 3b7fed6 Make project directory.
-
-<span style=color:#75715e># Now we want to take all of our local commits and </span>
-<span style=color:#75715e># rebase them on top of the new svn/trunk</span>
-$ git rebase svn/trunk
-First, rewinding head to replay your work on top of it...
-Applying: First git commit
-Applying: The latest git commit
-
-<span style=color:#75715e># Now we should see our local commits applied</span>
-<span style=color:#75715e># on top of svn/trunk</span>
-$ git lg
-* 52b7977 <span style=color:#f92672>(</span>HEAD, master<span style=color:#f92672>)</span> The latest git commit
-* a34e162 First git commit
-* 3b7fed6 <span style=color:#f92672>(</span>svn/trunk<span style=color:#f92672>)</span> Make project directory.
-
-<span style=color:#75715e># Everything is cool, push it back to svn</span>
-$ git svn dcommit
-Committing to https://foo.com/svn/parent/trunk/project
-...
-</code></pre></div><h2 id=--prefixsvn>
-&ndash;prefix=svn
-<a class=heading-link href=#--prefixsvn>
-<i class="fa fa-link" aria-hidden=true></i>
-</a>
-</h2>
-<p>One flag I especially like lately, which you can also use with <code>git svn clone</code>, is <code>--prefix=svn/</code>.</p>
-<p>This will prefix all of your tracking branches of the remote Subversion branches, tags, and trunk with <code>svn/</code>, making it look a whole lot like the usual <code>origin/</code> idiom used by regular git remotes.</p>
-<p>With the tracking branches having a prefix, you can also use them as local branch names, e.g.:</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=color:#75715e># Name your copy of svn/trunk &#34;trunk&#34; instead of &#34;master&#34;</span>
-$ git checkout -b trunk master
-Switched to a new branch <span style=color:#e6db74>&#39;trunk&#39;</span>
-
-$ git branch -d master
-Deleted branch master <span style=color:#f92672>(</span>was 33c3136<span style=color:#f92672>)</span>.
-
-$ git branch -av
-* trunk             33c3136 Latest svn commit
-* remotes/svn/trunk 33c3136 Latest svn commit
-</code></pre></div><p>Then if you have other branches you want to track:</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>$ git checkout -b featurea svn/featurea
-</code></pre></div><h2 id=almost-really-sweet>
-Almost Really Sweet
-<a class=heading-link href=#almost-really-sweet>
-<i class="fa fa-link" aria-hidden=true></i>
-</a>
-</h2>
-<p>Overly, I&rsquo;ve been very pleased with <code>git-svn</code> over the last few years I&rsquo;ve been using it.</p>
-<p>My one regret is that <code>git-svn</code> will not push merges back to <code>svn</code>, so I have to break down and use the <code>svn</code> command line client to do that.</p>
-<p>Surprisingly, Bazaar actually <a href=http://wiki.bazaar.canonical.com/BzrForeignBranches/Subversion>writes back svn:mergeinfo</a>, which I&rsquo;m very jealous of. Assuming it works well, it&rsquo;s pretty nifty.</p>
-</div>
-<footer>
-<div id=disqus_thread></div>
-<script type=application/javascript>var disqus_config=function(){};(function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById('disqus_thread').innerHTML='Disqus comments not available by default when the website is previewed locally.';return}var b=document,a=b.createElement('script');a.async=!0,a.src='//draconianoverlord.disqus.com/embed.js',a.setAttribute('data-timestamp',+new Date),(b.head||b.body).appendChild(a)})()</script>
-<noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript>
-<a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a>
-</footer>
-</article>
-</section>
-</div>
-<footer class=footer>
-<section class=container>
-©
+git svn init Link to heading Here is what I do, from the existing local git repo:"><meta property="og:type" content="article"><meta property="og:url" content="https://www.draconianoverlord.com/2010/03/05/moving-an-existing-git-repo-into-svn.html/"><meta property="article:section" content="posts"><meta property="article:published_time" content="2010-03-05T00:00:00+00:00"><meta property="article:modified_time" content="2010-03-05T00:00:00+00:00"><link rel=canonical href=https://www.draconianoverlord.com/2010/03/05/moving-an-existing-git-repo-into-svn.html/><link rel=preload href="/fonts/forkawesome-webfont.woff2?v=1.2.0" as=font type=font/woff2 crossorigin><link rel=stylesheet href=/css/coder.min.65236a6d834b26194eed04a2a3b45e44d9194ef9e620253705d4bef03bd7ef81.css integrity="sha256-ZSNqbYNLJhlO7QSio7ReRNkZTvnmICU3BdS+8DvX74E=" crossorigin=anonymous media=screen><link rel=stylesheet href=/css/coder-dark.min.f6534b0b446b75d9b6ad77a97d43ede2ddaeff1b6e2361fb7198d6f8fcb7f83f.css integrity="sha256-9lNLC0Rrddm2rXepfUPt4t2u/xtuI2H7cZjW+Py3+D8=" crossorigin=anonymous media=screen><link rel=icon type=image/png href=/images/favicon-32x32.png sizes=32x32><link rel=icon type=image/png href=/images/favicon-16x16.png sizes=16x16><link rel=apple-touch-icon href=/images/apple-touch-icon.png><link rel=apple-touch-icon sizes=180x180 href=/images/apple-touch-icon.png><link rel=manifest href=/site.webmanifest><link rel=mask-icon href=/images/safari-pinned-tab.svg color=#5bbad5></head><body class="preload-transitions colorscheme-auto"><div class=float-container><a id=dark-mode-toggle class=colorscheme-toggle><i class="fa fa-adjust fa-fw" aria-hidden=true></i></a></div><main class=wrapper><nav class=navigation><section class=container><a class=navigation-title href=/>Draconian Overlord</a>
+Oppressing software entropy</section></nav><div class=content><section class="container post"><article><header><div class=post-title><h1 class=title><a class=title-link href=https://www.draconianoverlord.com/2010/03/05/moving-an-existing-git-repo-into-svn.html/>Moving an existing git repo into svn</a></h1></div><div class=post-meta><div class=date><span class=posted-on><i class="fa fa-calendar" aria-hidden=true></i>
+<time datetime=2010-03-05T00:00:00Z>March 5, 2010</time></span>
+<span class=reading-time><i class="fa fa-clock-o" aria-hidden=true></i>
+3-minute read</span></div><div class=categories><i class="fa fa-folder" aria-hidden=true></i>
+<a href=/categories/productivity/>Productivity</a></div></div></header><div class=post-content><p>I&rsquo;ve found myself lately making local git repositories to prototype things that I later need to promote into <a href=http://www.bizo.com class=external-link target=_blank rel=noopener>Bizo</a>&rsquo;s internal Subversion repository.</p><p><code>git-svn</code> supports this really well, with just a slight variation on the usual <code>git svn clone</code>.</p><p>Instead of the standard <code>project/trunk|branches|tags</code> we use a slightly different <code>parent/trunk|branches|tags/project</code> so you&rsquo;ll see I specify the <code>-T/-t/-b</code> flags.</p><h2 id=git-svn-init>git svn init
+<a class=heading-link href=#git-svn-init><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h2><p>Here is what I do, from the existing local git repo:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span><span style=color:#75715e># Create the project directory in subversion</span>
+</span></span><span style=display:flex><span>$ /usr/bin/svn mkdir
+</span></span><span style=display:flex><span>  https://foo.com/svn/parent/trunk/project
+</span></span><span style=display:flex><span>  -m <span style=color:#e6db74>&#34;Make project directory.&#34;</span>
+</span></span><span style=display:flex><span>Committed revision 200.
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#75715e># Initialize git-svn, doesn&#39;t fetch anything yet</span>
+</span></span><span style=display:flex><span>$ git svn init https://foo.com/svn/
+</span></span><span style=display:flex><span>  -T parent/trunk/project
+</span></span><span style=display:flex><span>  -t parent/tags/project
+</span></span><span style=display:flex><span>  -b parent/branches/project
+</span></span><span style=display:flex><span>  --prefix<span style=color:#f92672>=</span>svn/
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#75715e># Set authors so we get prettier authors</span>
+</span></span><span style=display:flex><span>$ git config svn.authorsfile ../authors
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#75715e># Now pull down the svn commits</span>
+</span></span><span style=display:flex><span>$ git svn fetch
+</span></span><span style=display:flex><span>W: Ignoring error from SVN, ...
+</span></span><span style=display:flex><span>W: Do not be alarmed at the above message git-svn ...
+</span></span><span style=display:flex><span>This may take a <span style=color:#66d9ef>while</span> on large repositories
+</span></span><span style=display:flex><span>r200 <span style=color:#f92672>=</span> <span style=color:#f92672>(</span>guid<span style=color:#f92672>)</span> <span style=color:#f92672>(</span>refs/remotes/svn/trunk<span style=color:#f92672>)</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#75715e># We should now see our svn trunk setup under our svn remote</span>
+</span></span><span style=display:flex><span>$ git branch -av
+</span></span><span style=display:flex><span>* master            c3a7161 The latest git commit.
+</span></span><span style=display:flex><span>  remotes/svn/trunk 3b7fed6 Make project directory.
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#75715e># Now we want to take all of our local commits and </span>
+</span></span><span style=display:flex><span><span style=color:#75715e># rebase them on top of the new svn/trunk</span>
+</span></span><span style=display:flex><span>$ git rebase svn/trunk
+</span></span><span style=display:flex><span>First, rewinding head to replay your work on top of it...
+</span></span><span style=display:flex><span>Applying: First git commit
+</span></span><span style=display:flex><span>Applying: The latest git commit
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#75715e># Now we should see our local commits applied</span>
+</span></span><span style=display:flex><span><span style=color:#75715e># on top of svn/trunk</span>
+</span></span><span style=display:flex><span>$ git lg
+</span></span><span style=display:flex><span>* 52b7977 <span style=color:#f92672>(</span>HEAD, master<span style=color:#f92672>)</span> The latest git commit
+</span></span><span style=display:flex><span>* a34e162 First git commit
+</span></span><span style=display:flex><span>* 3b7fed6 <span style=color:#f92672>(</span>svn/trunk<span style=color:#f92672>)</span> Make project directory.
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#75715e># Everything is cool, push it back to svn</span>
+</span></span><span style=display:flex><span>$ git svn dcommit
+</span></span><span style=display:flex><span>Committing to https://foo.com/svn/parent/trunk/project
+</span></span><span style=display:flex><span>...
+</span></span></code></pre></div><h2 id=--prefixsvn>&ndash;prefix=svn
+<a class=heading-link href=#--prefixsvn><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h2><p>One flag I especially like lately, which you can also use with <code>git svn clone</code>, is <code>--prefix=svn/</code>.</p><p>This will prefix all of your tracking branches of the remote Subversion branches, tags, and trunk with <code>svn/</code>, making it look a whole lot like the usual <code>origin/</code> idiom used by regular git remotes.</p><p>With the tracking branches having a prefix, you can also use them as local branch names, e.g.:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span><span style=color:#75715e># Name your copy of svn/trunk &#34;trunk&#34; instead of &#34;master&#34;</span>
+</span></span><span style=display:flex><span>$ git checkout -b trunk master
+</span></span><span style=display:flex><span>Switched to a new branch <span style=color:#e6db74>&#39;trunk&#39;</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>$ git branch -d master
+</span></span><span style=display:flex><span>Deleted branch master <span style=color:#f92672>(</span>was 33c3136<span style=color:#f92672>)</span>.
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>$ git branch -av
+</span></span><span style=display:flex><span>* trunk             33c3136 Latest svn commit
+</span></span><span style=display:flex><span>* remotes/svn/trunk 33c3136 Latest svn commit
+</span></span></code></pre></div><p>Then if you have other branches you want to track:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span>$ git checkout -b featurea svn/featurea
+</span></span></code></pre></div><h2 id=almost-really-sweet>Almost Really Sweet
+<a class=heading-link href=#almost-really-sweet><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h2><p>Overly, I&rsquo;ve been very pleased with <code>git-svn</code> over the last few years I&rsquo;ve been using it.</p><p>My one regret is that <code>git-svn</code> will not push merges back to <code>svn</code>, so I have to break down and use the <code>svn</code> command line client to do that.</p><p>Surprisingly, Bazaar actually <a href=http://wiki.bazaar.canonical.com/BzrForeignBranches/Subversion class=external-link target=_blank rel=noopener>writes back svn:mergeinfo</a>, which I&rsquo;m very jealous of. Assuming it works well, it&rsquo;s pretty nifty.</p></div><footer><div id=disqus_thread></div><script>window.disqus_config=function(){},function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById("disqus_thread").innerHTML="Disqus comments not available by default when the website is previewed locally.";return}var t=document,e=t.createElement("script");e.async=!0,e.src="//draconianoverlord.disqus.com/embed.js",e.setAttribute("data-timestamp",+new Date),(t.head||t.body).appendChild(e)}(),document.addEventListener("themeChanged",function(){document.readyState=="complete"&&DISQUS.reset({reload:!0,config:disqus_config})})</script></footer></article></section></div><footer class=footer><section class=container>©
 2008 -
-2022
+2023
 Stephen Haberman
 ·
-Powered by <a href=https://gohugo.io/>Hugo</a> & <a href=https://github.com/luizdepra/hugo-coder/>Coder</a>.
-</section>
-</footer>
-</main>
-<script src=/js/coder.min.03b17769f4f91ae35667e1f2a1ca8c16f50562576cf90ff32b3179926914daa5.js integrity="sha256-A7F3afT5GuNWZ+HyocqMFvUFYlds+Q/zKzF5kmkU2qU="></script>
-</body>
-</html>
+Powered by <a href=https://gohugo.io/ target=_blank rel=noopener>Hugo</a> & <a href=https://github.com/luizdepra/hugo-coder/ target=_blank rel=noopener>Coder</a>.</section></footer></main><script src=/js/coder.min.6ae284be93d2d19dad1f02b0039508d9aab3180a12a06dcc71b0b0ef7825a317.js integrity="sha256-auKEvpPS0Z2tHwKwA5UI2aqzGAoSoG3McbCw73gloxc="></script></body></html>

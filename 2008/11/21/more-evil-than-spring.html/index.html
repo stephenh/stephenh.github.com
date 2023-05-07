@@ -1,115 +1,22 @@
-<!doctype html><html lang=en>
-<head>
-<meta charset=utf-8>
-<meta name=viewport content="width=device-width,initial-scale=1">
-<meta http-equiv=content-language content="en">
-<meta name=color-scheme content="light dark">
-<meta name=author content="Stephen Haberman">
-<meta name=description content="As if Spring does not give us enough interfaces: Qi4j.
+<!doctype html><html lang=en><head><title>More Evil Than Spring · Draconian Overlord</title><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=color-scheme content="light dark"><meta name=author content="Stephen Haberman"><meta name=description content="As if Spring does not give us enough interfaces: Qi4j.
 And one of its core principles: &ldquo;Classes are dead, long live interfaces&rdquo;.
 Not this again.
 Perhaps the author can, as I would hope Spring&rsquo;s authors can as well, build supremely elegant systems with their tools.
-But for the rest of us, it means yet more codebases with tens and tens of interfaces, all of them having only 1 implementation, all in the name of future flexibility/injection/proxy/something magic.">
-<meta name=keywords content="blog,developer,personal">
-<meta name=twitter:card content="summary">
-<meta name=twitter:title content="More Evil Than Spring">
-<meta name=twitter:description content="As if Spring does not give us enough interfaces: Qi4j.
+But for the rest of us, it means yet more codebases with tens and tens of interfaces, all of them having only 1 implementation, all in the name of future flexibility/injection/proxy/something magic."><meta name=keywords content="blog,developer,personal"><meta name=twitter:card content="summary"><meta name=twitter:title content="More Evil Than Spring"><meta name=twitter:description content="As if Spring does not give us enough interfaces: Qi4j.
 And one of its core principles: &ldquo;Classes are dead, long live interfaces&rdquo;.
 Not this again.
 Perhaps the author can, as I would hope Spring&rsquo;s authors can as well, build supremely elegant systems with their tools.
-But for the rest of us, it means yet more codebases with tens and tens of interfaces, all of them having only 1 implementation, all in the name of future flexibility/injection/proxy/something magic.">
-<meta property="og:title" content="More Evil Than Spring">
-<meta property="og:description" content="As if Spring does not give us enough interfaces: Qi4j.
+But for the rest of us, it means yet more codebases with tens and tens of interfaces, all of them having only 1 implementation, all in the name of future flexibility/injection/proxy/something magic."><meta property="og:title" content="More Evil Than Spring"><meta property="og:description" content="As if Spring does not give us enough interfaces: Qi4j.
 And one of its core principles: &ldquo;Classes are dead, long live interfaces&rdquo;.
 Not this again.
 Perhaps the author can, as I would hope Spring&rsquo;s authors can as well, build supremely elegant systems with their tools.
-But for the rest of us, it means yet more codebases with tens and tens of interfaces, all of them having only 1 implementation, all in the name of future flexibility/injection/proxy/something magic.">
-<meta property="og:type" content="article">
-<meta property="og:url" content="https://www.draconianoverlord.com/2008/11/21/more-evil-than-spring.html/"><meta property="article:section" content="posts">
-<meta property="article:published_time" content="2008-11-21T00:00:00+00:00">
-<meta property="article:modified_time" content="2008-11-21T00:00:00+00:00">
-<title>
-More Evil Than Spring · Draconian Overlord
-</title>
-<link rel=canonical href=https://www.draconianoverlord.com/2008/11/21/more-evil-than-spring.html/>
-<link rel=preload href="/fonts/forkawesome-webfont.woff2?v=1.2.0" as=font type=font/woff2 crossorigin>
-<link rel=stylesheet href=/css/coder.min.d9fddbffe6f27e69985dc5fe0471cdb0e57fbf4775714bc3d847accb08f4a1f6.css integrity="sha256-2f3b/+byfmmYXcX+BHHNsOV/v0d1cUvD2Eesywj0ofY=" crossorigin=anonymous media=screen>
-<link rel=stylesheet href=/css/coder-dark.min.aa883b9ce35a8ff4a2a5008619005175e842bb18a8a9f9cc2bbcf44dab2d91fa.css integrity="sha256-qog7nONaj/SipQCGGQBRdehCuxioqfnMK7z0Tastkfo=" crossorigin=anonymous media=screen>
-<link rel=icon type=image/png href=/images/favicon-32x32.png sizes=32x32>
-<link rel=icon type=image/png href=/images/favicon-16x16.png sizes=16x16>
-<link rel=apple-touch-icon href=/images/apple-touch-icon.png>
-<link rel=apple-touch-icon sizes=180x180 href=/images/apple-touch-icon.png>
-<meta name=generator content="Hugo 0.92.0">
-</head>
-<body class="preload-transitions colorscheme-auto">
-<div class=float-container>
-<a id=dark-mode-toggle class=colorscheme-toggle>
-<i class="fa fa-adjust fa-fw" aria-hidden=true></i>
-</a>
-</div>
-<main class=wrapper>
-<nav class=navigation>
-<section class=container>
-<a class=navigation-title href=/>Draconian Overlord</a>
-Oppressing software entropy
-</section>
-</nav>
-<div class=content>
-<section class="container post">
-<article>
-<header>
-<div class=post-title>
-<h1 class=title>
-<a class=title-link href=https://www.draconianoverlord.com/2008/11/21/more-evil-than-spring.html/>
-More Evil Than Spring
-</a>
-</h1>
-</div>
-<div class=post-meta>
-<div class=date>
-<span class=posted-on>
-<i class="fa fa-calendar" aria-hidden=true></i>
-<time datetime=2008-11-21T00:00:00Z>
-November 21, 2008
-</time>
-</span>
-<span class=reading-time>
-<i class="fa fa-clock-o" aria-hidden=true></i>
-One-minute read
-</span>
-</div>
-</div>
-</header>
-<div>
-<p>As if Spring does not give us enough interfaces: <a href=http://www.qi4j.org>Qi4j</a>.</p>
-<p>And one of its core principles: &ldquo;Classes are dead, long live interfaces&rdquo;.</p>
-<p>Not this again.</p>
-<p>Perhaps the author can, as I would hope Spring&rsquo;s authors can as well, build supremely elegant systems with their tools.</p>
-<p>But for the rest of us, it means yet more codebases with tens and tens of interfaces, all of them having only 1 implementation, all in the name of future flexibility/injection/proxy/something magic.</p>
-<p>You never know when our <code>Employee</code> class is going to need to mixin some <code>Claim</code> functionality, so we better just support it now. After we go 1.0 and are in production, we will only be allowed to re-organize mixins, not, you know, just change the model and code as appropriate.</p>
-<p>Rather than throwing a bunch of interfaces around up front, I propose we wait until the reuse/proxy/whatever scenario actually happens, and then we&rsquo;ll deal with it. And when it doesn&rsquo;t 90% of the time, we all win.</p>
-<p>That being said, Qi4j looks technically spiffy. And I&rsquo;m sure the author makes very judicious use of interfaces. I just don&rsquo;t look forward to working on any Qi4j codebase that isn&rsquo;t written by him.</p>
-</div>
-<footer>
-<div id=disqus_thread></div>
-<script type=application/javascript>var disqus_config=function(){};(function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById('disqus_thread').innerHTML='Disqus comments not available by default when the website is previewed locally.';return}var b=document,a=b.createElement('script');a.async=!0,a.src='//draconianoverlord.disqus.com/embed.js',a.setAttribute('data-timestamp',+new Date),(b.head||b.body).appendChild(a)})()</script>
-<noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript>
-<a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a>
-</footer>
-</article>
-</section>
-</div>
-<footer class=footer>
-<section class=container>
-©
+But for the rest of us, it means yet more codebases with tens and tens of interfaces, all of them having only 1 implementation, all in the name of future flexibility/injection/proxy/something magic."><meta property="og:type" content="article"><meta property="og:url" content="https://www.draconianoverlord.com/2008/11/21/more-evil-than-spring.html/"><meta property="article:section" content="posts"><meta property="article:published_time" content="2008-11-21T00:00:00+00:00"><meta property="article:modified_time" content="2008-11-21T00:00:00+00:00"><link rel=canonical href=https://www.draconianoverlord.com/2008/11/21/more-evil-than-spring.html/><link rel=preload href="/fonts/forkawesome-webfont.woff2?v=1.2.0" as=font type=font/woff2 crossorigin><link rel=stylesheet href=/css/coder.min.65236a6d834b26194eed04a2a3b45e44d9194ef9e620253705d4bef03bd7ef81.css integrity="sha256-ZSNqbYNLJhlO7QSio7ReRNkZTvnmICU3BdS+8DvX74E=" crossorigin=anonymous media=screen><link rel=stylesheet href=/css/coder-dark.min.f6534b0b446b75d9b6ad77a97d43ede2ddaeff1b6e2361fb7198d6f8fcb7f83f.css integrity="sha256-9lNLC0Rrddm2rXepfUPt4t2u/xtuI2H7cZjW+Py3+D8=" crossorigin=anonymous media=screen><link rel=icon type=image/png href=/images/favicon-32x32.png sizes=32x32><link rel=icon type=image/png href=/images/favicon-16x16.png sizes=16x16><link rel=apple-touch-icon href=/images/apple-touch-icon.png><link rel=apple-touch-icon sizes=180x180 href=/images/apple-touch-icon.png><link rel=manifest href=/site.webmanifest><link rel=mask-icon href=/images/safari-pinned-tab.svg color=#5bbad5></head><body class="preload-transitions colorscheme-auto"><div class=float-container><a id=dark-mode-toggle class=colorscheme-toggle><i class="fa fa-adjust fa-fw" aria-hidden=true></i></a></div><main class=wrapper><nav class=navigation><section class=container><a class=navigation-title href=/>Draconian Overlord</a>
+Oppressing software entropy</section></nav><div class=content><section class="container post"><article><header><div class=post-title><h1 class=title><a class=title-link href=https://www.draconianoverlord.com/2008/11/21/more-evil-than-spring.html/>More Evil Than Spring</a></h1></div><div class=post-meta><div class=date><span class=posted-on><i class="fa fa-calendar" aria-hidden=true></i>
+<time datetime=2008-11-21T00:00:00Z>November 21, 2008</time></span>
+<span class=reading-time><i class="fa fa-clock-o" aria-hidden=true></i>
+One-minute read</span></div></div></header><div class=post-content><p>As if Spring does not give us enough interfaces: <a href=http://www.qi4j.org class=external-link target=_blank rel=noopener>Qi4j</a>.</p><p>And one of its core principles: &ldquo;Classes are dead, long live interfaces&rdquo;.</p><p>Not this again.</p><p>Perhaps the author can, as I would hope Spring&rsquo;s authors can as well, build supremely elegant systems with their tools.</p><p>But for the rest of us, it means yet more codebases with tens and tens of interfaces, all of them having only 1 implementation, all in the name of future flexibility/injection/proxy/something magic.</p><p>You never know when our <code>Employee</code> class is going to need to mixin some <code>Claim</code> functionality, so we better just support it now. After we go 1.0 and are in production, we will only be allowed to re-organize mixins, not, you know, just change the model and code as appropriate.</p><p>Rather than throwing a bunch of interfaces around up front, I propose we wait until the reuse/proxy/whatever scenario actually happens, and then we&rsquo;ll deal with it. And when it doesn&rsquo;t 90% of the time, we all win.</p><p>That being said, Qi4j looks technically spiffy. And I&rsquo;m sure the author makes very judicious use of interfaces. I just don&rsquo;t look forward to working on any Qi4j codebase that isn&rsquo;t written by him.</p></div><footer><div id=disqus_thread></div><script>window.disqus_config=function(){},function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById("disqus_thread").innerHTML="Disqus comments not available by default when the website is previewed locally.";return}var t=document,e=t.createElement("script");e.async=!0,e.src="//draconianoverlord.disqus.com/embed.js",e.setAttribute("data-timestamp",+new Date),(t.head||t.body).appendChild(e)}(),document.addEventListener("themeChanged",function(){document.readyState=="complete"&&DISQUS.reset({reload:!0,config:disqus_config})})</script></footer></article></section></div><footer class=footer><section class=container>©
 2008 -
-2022
+2023
 Stephen Haberman
 ·
-Powered by <a href=https://gohugo.io/>Hugo</a> & <a href=https://github.com/luizdepra/hugo-coder/>Coder</a>.
-</section>
-</footer>
-</main>
-<script src=/js/coder.min.03b17769f4f91ae35667e1f2a1ca8c16f50562576cf90ff32b3179926914daa5.js integrity="sha256-A7F3afT5GuNWZ+HyocqMFvUFYlds+Q/zKzF5kmkU2qU="></script>
-</body>
-</html>
+Powered by <a href=https://gohugo.io/ target=_blank rel=noopener>Hugo</a> & <a href=https://github.com/luizdepra/hugo-coder/ target=_blank rel=noopener>Coder</a>.</section></footer></main><script src=/js/coder.min.6ae284be93d2d19dad1f02b0039508d9aab3180a12a06dcc71b0b0ef7825a317.js integrity="sha256-auKEvpPS0Z2tHwKwA5UI2aqzGAoSoG3McbCw73gloxc="></script></body></html>

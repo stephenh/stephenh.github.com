@@ -1,455 +1,220 @@
-<!doctype html><html lang=en>
-<head>
-<meta charset=utf-8>
-<meta name=viewport content="width=device-width,initial-scale=1">
-<meta http-equiv=content-language content="en">
-<meta name=color-scheme content="light dark">
-<meta name=author content="Stephen Haberman">
-<meta name=description content="Update: After having angst about this for a good week or so (i.e. writing the post), I came across Dan Abramov&rsquo;s well-articulated post on function components. Specifically I liked that he: a) directly talked about how obviously-similar FP and OO components are, and b) gave a very specific articulation of the goal FP&rsquo;s are trying to solve, which is capturing a snapshot of the entire props+state during each render.
-I&rsquo;m still skeptical that &ldquo;hacking cross-render state back in to FP components&rdquo; vs.">
-<meta name=keywords content="blog,developer,personal">
-<meta name=twitter:card content="summary">
-<meta name=twitter:title content="Hooks Don't Have To Be Functional">
-<meta name=twitter:description content="Update: After having angst about this for a good week or so (i.e. writing the post), I came across Dan Abramov&rsquo;s well-articulated post on function components. Specifically I liked that he: a) directly talked about how obviously-similar FP and OO components are, and b) gave a very specific articulation of the goal FP&rsquo;s are trying to solve, which is capturing a snapshot of the entire props+state during each render.
-I&rsquo;m still skeptical that &ldquo;hacking cross-render state back in to FP components&rdquo; vs.">
-<meta property="og:title" content="Hooks Don't Have To Be Functional">
-<meta property="og:description" content="Update: After having angst about this for a good week or so (i.e. writing the post), I came across Dan Abramov&rsquo;s well-articulated post on function components. Specifically I liked that he: a) directly talked about how obviously-similar FP and OO components are, and b) gave a very specific articulation of the goal FP&rsquo;s are trying to solve, which is capturing a snapshot of the entire props+state during each render.
-I&rsquo;m still skeptical that &ldquo;hacking cross-render state back in to FP components&rdquo; vs.">
-<meta property="og:type" content="article">
-<meta property="og:url" content="https://www.draconianoverlord.com/2019/09/05/hooks-dont-have-to-be-functional.html/"><meta property="article:section" content="posts">
-<meta property="article:published_time" content="2019-09-05T00:00:00+00:00">
-<meta property="article:modified_time" content="2019-09-05T00:00:00+00:00">
-<title>
-Hooks Don't Have To Be Functional · Draconian Overlord
-</title>
-<link rel=canonical href=https://www.draconianoverlord.com/2019/09/05/hooks-dont-have-to-be-functional.html/>
-<link rel=preload href="/fonts/forkawesome-webfont.woff2?v=1.2.0" as=font type=font/woff2 crossorigin>
-<link rel=stylesheet href=/css/coder.min.d9fddbffe6f27e69985dc5fe0471cdb0e57fbf4775714bc3d847accb08f4a1f6.css integrity="sha256-2f3b/+byfmmYXcX+BHHNsOV/v0d1cUvD2Eesywj0ofY=" crossorigin=anonymous media=screen>
-<link rel=stylesheet href=/css/coder-dark.min.aa883b9ce35a8ff4a2a5008619005175e842bb18a8a9f9cc2bbcf44dab2d91fa.css integrity="sha256-qog7nONaj/SipQCGGQBRdehCuxioqfnMK7z0Tastkfo=" crossorigin=anonymous media=screen>
-<link rel=icon type=image/png href=/images/favicon-32x32.png sizes=32x32>
-<link rel=icon type=image/png href=/images/favicon-16x16.png sizes=16x16>
-<link rel=apple-touch-icon href=/images/apple-touch-icon.png>
-<link rel=apple-touch-icon sizes=180x180 href=/images/apple-touch-icon.png>
-<meta name=generator content="Hugo 0.92.0">
-</head>
-<body class="preload-transitions colorscheme-auto">
-<div class=float-container>
-<a id=dark-mode-toggle class=colorscheme-toggle>
-<i class="fa fa-adjust fa-fw" aria-hidden=true></i>
-</a>
-</div>
-<main class=wrapper>
-<nav class=navigation>
-<section class=container>
-<a class=navigation-title href=/>Draconian Overlord</a>
-Oppressing software entropy
-</section>
-</nav>
-<div class=content>
-<section class="container post">
-<article>
-<header>
-<div class=post-title>
-<h1 class=title>
-<a class=title-link href=https://www.draconianoverlord.com/2019/09/05/hooks-dont-have-to-be-functional.html/>
-Hooks Don't Have To Be Functional
-</a>
-</h1>
-</div>
-<div class=post-meta>
-<div class=date>
-<span class=posted-on>
-<i class="fa fa-calendar" aria-hidden=true></i>
-<time datetime=2019-09-05T00:00:00Z>
-September 5, 2019
-</time>
-</span>
-<span class=reading-time>
-<i class="fa fa-clock-o" aria-hidden=true></i>
-18-minute read
-</span>
-</div>
-<div class=categories>
-<i class="fa fa-folder" aria-hidden=true></i>
-<a href=/categories/typescript/>TypeScript</a></div>
-</div>
-</header>
-<div>
-<p><strong>Update</strong>: After having angst about this for a good week or so (i.e. writing the post), I came across Dan Abramov&rsquo;s well-articulated <a href=https://overreacted.io/how-are-function-components-different-from-classes/>post on function components</a>. Specifically I liked that he: a) directly talked about how obviously-similar FP and OO components are, and b) gave a very specific articulation of the goal FP&rsquo;s are trying to solve, which is capturing a snapshot of the entire props+state during each render.</p>
-<p>I&rsquo;m still skeptical that &ldquo;hacking cross-render state back in to FP components&rdquo; vs. &ldquo;just use OO components with nice non-HOC/non-render prop &lsquo;hooks&rsquo;-style APIs&rdquo; is necessarily the best choice, but I can at least now appreciate what they&rsquo;re trying to do.</p>
-<p>And, personally, it is somewhat annoying that I found Dan&rsquo;s one post much more helpful than the several pages of the official React hooks/FP/etc. docs I&rsquo;d read, especially with their &ldquo;trigger words&rdquo; that &ldquo;classes suck&rdquo;, without a more thorough/detailed explanation (as Dan provided).</p>
-<hr>
-<p>Hooks have made a big splash in the React ecosystem, and I&rsquo;d been procrastinating taking a look at them. But I finally got a chance and have what I think is a unique-ish way of thinking/modeling them, if only to help understand how they work/what their benefits are.</p>
-<p>As an up-front disclaimer/bias, I&rsquo;ve had a nagging suspicion that hooks are over-hyped, as some of their marketing material leads to a &ldquo;raised eyebrow of suspicion&rdquo;, i.e. sections like <a href=https://reactjs.org/docs/hooks-intro.html#classes-confuse-both-people-and-machines>Classes confuse both people and machines</a>. So in this post, I may just be chasing a self-confirming bias.</p>
-<p>That said, statements like these, for me, require a ton of empirical evidence to back-up, because after doing this awhile, I&rsquo;ve personally seen classes usually win out as &ldquo;actually a pretty intuitive way for most people to model/think about the world&rdquo;.</p>
-<p>I.e. when &ldquo;OOP won&rdquo; in the 90s (which I just missed), or (what I more directly witnessed) when &ldquo;ES6 classes won&rdquo; in the 2010s, despite much proclamations of &ldquo;prototypes are superior&mldr;in theory&rdquo;, and yet everyone had their own bespoke &ldquo;add classes to JavaScript&rdquo; library in practice.</p>
-<p>As a balance to this stated bias, I have become much more appreciative of FP (i.e. in many ways &ldquo;FP has won&rdquo; too), initially by working with Scala&rsquo;s collections and pattern matching, and more lately TypeScript&rsquo;s ADTs/etc. And I&rsquo;ve started naturally preferring &ldquo;just data + transformations&rdquo; for domain/entity data, vs. &ldquo;everything must be a class&rdquo; (see <a href=https://github.com/stephenh/ts-proto>ts-proto</a>).</p>
-<p>So, I can see both pros/cons of the OOP/FP idioms and happily play both sides of the fence.</p>
-<p>Anyway, back to the hooks.</p>
-<h2 id=what-are-hooks-good-for>
-What Are Hooks Good For?
-<a class=heading-link href=#what-are-hooks-good-for>
-<i class="fa fa-link" aria-hidden=true></i>
-</a>
-</h2>
-<p>I&rsquo;m going to assume general knowledge of hooks, and jump straight to the &ldquo;oh I get&rdquo; <a href=https://reactjs.org/docs/hooks-intro.html>raison detre</a>:</p>
-<blockquote>
-<p>Each [class] lifecycle method often contains a mix of unrelated logic. For example, components might perform some data fetching in componentDidMount and componentDidUpdate. However, the same componentDidMount method might also contain some unrelated logic that sets up event listeners, with cleanup performed in componentWillUnmount.</p>
-<p>&mldr;</p>
-<p>To solve this, Hooks let you split one component into smaller functions based on what pieces are related (such as setting up a subscription or fetching data), rather than forcing a split based on lifecycle methods.</p>
-</blockquote>
-<p>Ah, okay. That actually makes sense.</p>
-<p>What they&rsquo;re saying is that a class like:</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-typescript data-lang=typescript><span style=color:#66d9ef>class</span> <span style=color:#a6e22e>MyComponent</span> {
-  <span style=color:#a6e22e>componentDidMount() {</span>
-    <span style=color:#75715e>// do thing 1
-</span><span style=color:#75715e></span>    <span style=color:#75715e>// do thing 2
-</span><span style=color:#75715e></span>  }
-
-  <span style=color:#a6e22e>componentWillUnmount() {</span>
-    <span style=color:#75715e>// undo thing 1
-</span><span style=color:#75715e></span>    <span style=color:#75715e>// undo thing 2
-</span><span style=color:#75715e></span>  }
-}
-</code></pre></div><p>Is complicated because you&rsquo;re organizing code by life cycle methods (&ldquo;all mounts are in <code>componentDidMount</code>, all unmounts are in <code>componentWillUnmount</code>") vs. organizing by abstraction/purpose (&ldquo;all thing 1 code&rdquo; is in one spot and &ldquo;all thing 2 code&rdquo; is in another).</p>
-<h2 id=do-we-need-to-kill-classes>
-Do We Need to Kill Classes?
-<a class=heading-link href=#do-we-need-to-kill-classes>
-<i class="fa fa-link" aria-hidden=true></i>
-</a>
-</h2>
-<p>So, just as a thought experiment, I wanted to balance &ldquo;okay, I get the goal of a different axis of organization&rdquo; vs. &ldquo;going all-in on functional components&rdquo;.</p>
-<p>When I read their problem, it makes me think that we want to give discrete sets of business logic (i.e hook-using code, the &ldquo;thing 1&rdquo; and &ldquo;thing 2&rdquo; from our example above) two things:</p>
-<ol>
-<li>Their own namespaced spot within the component&rsquo;s state</li>
-<li>Their own callbacks (&ldquo;hooks&rdquo;) of the component&rsquo;s lifecycle.</li>
-</ol>
-<p>So, let&rsquo;s try and model that.</p>
-<h2 id=recreating-useeffect-in-classes>
-Recreating <code>useEffect</code> in Classes
-<a class=heading-link href=#recreating-useeffect-in-classes>
-<i class="fa fa-link" aria-hidden=true></i>
-</a>
-</h2>
-<p>I think <code>useEffect</code> is the easiest to recreate; we just want a list of functions to run as part of the lifecycle, i.e.:</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-typescript data-lang=typescript><span style=color:#66d9ef>class</span> <span style=color:#a6e22e>HookableComponent</span> <span style=color:#66d9ef>extends</span> <span style=color:#a6e22e>Component</span> {
-  <span style=color:#66d9ef>private</span> <span style=color:#a6e22e>effects</span>: <span style=color:#66d9ef>Array</span>&lt;<span style=color:#f92672>Function</span>&gt; <span style=color:#f92672>=</span> [];
-  <span style=color:#66d9ef>private</span> <span style=color:#a6e22e>lastEffects</span>: <span style=color:#66d9ef>Array</span>&lt;<span style=color:#f92672>Function</span>&gt; <span style=color:#f92672>=</span> [];
-
-  <span style=color:#66d9ef>public</span> <span style=color:#a6e22e>componentDidMount</span>()<span style=color:#f92672>:</span> <span style=color:#66d9ef>void</span> {
-    <span style=color:#66d9ef>this</span>.<span style=color:#a6e22e>cancelAndRunEffects</span>();
-  }
-
-  <span style=color:#66d9ef>public</span> <span style=color:#a6e22e>componentDidUpdate</span>()<span style=color:#f92672>:</span> <span style=color:#66d9ef>void</span> {
-    <span style=color:#66d9ef>this</span>.<span style=color:#a6e22e>cancelAndRunEffects</span>();
-  }
-
-  <span style=color:#66d9ef>public</span> <span style=color:#a6e22e>addEffect</span>(<span style=color:#a6e22e>effect</span><span style=color:#f92672>:</span> () <span style=color:#f92672>=&gt;</span> <span style=color:#66d9ef>void</span>)<span style=color:#f92672>:</span> <span style=color:#66d9ef>void</span> {
-    <span style=color:#66d9ef>this</span>.<span style=color:#a6e22e>effects</span>.<span style=color:#a6e22e>push</span>(<span style=color:#a6e22e>effect</span>);
-  }
-
-  <span style=color:#66d9ef>private</span> <span style=color:#a6e22e>cancelAndRunEffects</span>()<span style=color:#f92672>:</span> <span style=color:#66d9ef>void</span> {
-    <span style=color:#75715e>// If any effects returned functions, cancel them
-</span><span style=color:#75715e></span>    <span style=color:#66d9ef>this</span>.<span style=color:#a6e22e>lastEffects</span>.<span style=color:#a6e22e>forEach</span>(<span style=color:#a6e22e>e</span> <span style=color:#f92672>=&gt;</span> <span style=color:#a6e22e>e</span>());
-    <span style=color:#75715e>// Invoke the effects, and keep any return values that are functions
-</span><span style=color:#75715e></span>    <span style=color:#66d9ef>this</span>.<span style=color:#a6e22e>lastEffects</span> <span style=color:#f92672>=</span> <span style=color:#66d9ef>this</span>.<span style=color:#a6e22e>effects</span>.<span style=color:#a6e22e>map</span>(<span style=color:#a6e22e>e</span> <span style=color:#f92672>=&gt;</span> <span style=color:#a6e22e>e</span>()).<span style=color:#a6e22e>filter</span>(<span style=color:#a6e22e>e</span> <span style=color:#f92672>=&gt;</span> <span style=color:#a6e22e>e</span> <span style=color:#66d9ef>instanceof</span> Function);
-  }
-</code></pre></div><p>This &ldquo;class-based hook&rdquo; extension of <code>Component</code> let&rsquo;s us write our own (very naive, proof-of-concept) <code>useEffect</code>:</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-typescript data-lang=typescript><span style=color:#66d9ef>function</span> <span style=color:#a6e22e>useEffect</span>(
-  <span style=color:#a6e22e>component</span>: <span style=color:#66d9ef>HookableComponent</span>,
-  <span style=color:#a6e22e>effect</span><span style=color:#f92672>:</span> () <span style=color:#f92672>=&gt;</span> <span style=color:#66d9ef>void</span>
-)<span style=color:#f92672>:</span> <span style=color:#66d9ef>void</span> {
-  <span style=color:#a6e22e>component</span>.<span style=color:#a6e22e>addEffect</span>(<span style=color:#a6e22e>effect</span>);
-}
-</code></pre></div><p>And now our usage is extremely similar; here is out-of-the-box with a FP component and React hook:</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-typescript data-lang=typescript><span style=color:#66d9ef>export</span> <span style=color:#66d9ef>function</span> <span style=color:#a6e22e>useFriendStatus</span>(<span style=color:#a6e22e>friendID</span>: <span style=color:#66d9ef>string</span>)<span style=color:#f92672>:</span> <span style=color:#66d9ef>string</span> {
-  ...
-
-  <span style=color:#a6e22e>useEffect</span>(() <span style=color:#f92672>=&gt;</span> {
-    ...
-  });
-
-}
-</code></pre></div><p>And here is our class-based approach:</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-typescript data-lang=typescript><span style=color:#66d9ef>export</span> <span style=color:#66d9ef>function</span> <span style=color:#a6e22e>useFriendStatus</span>(
-  <span style=color:#a6e22e>component</span>: <span style=color:#66d9ef>HookableComponent</span>,
-  <span style=color:#a6e22e>friendID</span>: <span style=color:#66d9ef>string</span>
-)<span style=color:#f92672>:</span> <span style=color:#66d9ef>string</span> {
-  ...
-
-  <span style=color:#a6e22e>useEffect</span>(<span style=color:#a6e22e>component</span>, () <span style=color:#f92672>=&gt;</span> {
-    ...
-  });
-
-}
-</code></pre></div><p>Note that we have to pass <code>component</code>, but I&rsquo;m going to gloss over that for now.</p>
-<p>So, all things considered, this was really pretty trivial: our <code>HookableComponent</code> just provides an API for snippets of code (<code>useEffect</code>, <code>useFriendStatus</code>, etc.) to subscribe to our lifecycle events.</p>
-<p>In general, maintaining a list of callbacks like this is really pretty common in UI frameworks, so this is not terribly novel; although if anything what is novel is making <code>addEffect</code> a public API, and exposing an &ldquo;implementation detail&rdquo; like our lifecycle to just any random snippet of code.</p>
-<p>(Note that, part of the benefit of modeling hooks this way (could we do this class-based?) is precisely because they bring up interesting correlations like this: the FP-based <code>useEffect</code> is effectively providing a public API for random snippets of code. Which is not bad, it is actually precisely the point that allows scattered (decoupled) logic to still coordinate around the component&rsquo;s lifecycle, and just interesting to think of it that way.)</p>
-<h2 id=recreating-the-usestate-in-classes>
-Recreating the <code>useState</code> in Classes
-<a class=heading-link href=#recreating-the-usestate-in-classes>
-<i class="fa fa-link" aria-hidden=true></i>
-</a>
-</h2>
-<p>Making a class-friendly <code>useState</code> is just a little more intricate.</p>
-<p>My first pass at this tried to use the component&rsquo;s regular <code>state</code>/<code>setState</code> methods, just with &ldquo;hidden&rdquo;/unique-per-hook keys, but this would conflict with the component&rsquo;s actual state usage, particularly in the constructor when they do <code>this.state = { ... }</code>.</p>
-<p>So, instead I ended up adding a dedicated <code>hookState</code> field:</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-typescript data-lang=typescript><span style=color:#66d9ef>class</span> <span style=color:#a6e22e>HookableComponent</span> <span style=color:#66d9ef>extends</span> <span style=color:#a6e22e>Component</span> {
-
-  <span style=color:#66d9ef>private</span> <span style=color:#a6e22e>nextHookId</span> <span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span>;
-  <span style=color:#75715e>// would probably not be public but this is proof-of-concept
-</span><span style=color:#75715e></span>  <span style=color:#66d9ef>public</span> <span style=color:#a6e22e>hookState</span><span style=color:#f92672>:</span> { [<span style=color:#a6e22e>hookId</span>: <span style=color:#66d9ef>string</span>]<span style=color:#f92672>:</span> <span style=color:#66d9ef>any</span> } <span style=color:#f92672>=</span> {};
-
-  <span style=color:#66d9ef>public</span> <span style=color:#a6e22e>newHookId</span>()<span style=color:#f92672>:</span> <span style=color:#66d9ef>number</span> {
-    <span style=color:#66d9ef>return</span> <span style=color:#f92672>++</span><span style=color:#66d9ef>this</span>.<span style=color:#a6e22e>nextHookId</span>;
-  }
-}
-</code></pre></div><p>Which when the class-based <code>useState</code> secures itself a unique key in:</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-typescript data-lang=typescript><span style=color:#66d9ef>function</span> <span style=color:#a6e22e>useState</span>&lt;<span style=color:#f92672>T</span>&gt;(
-  <span style=color:#a6e22e>component</span>: <span style=color:#66d9ef>HookableComponent</span>,
-  <span style=color:#a6e22e>def?</span>: <span style=color:#66d9ef>T</span>
-)<span style=color:#f92672>:</span> <span style=color:#a6e22e>State</span>&lt;<span style=color:#f92672>T</span>&gt; {
-  <span style=color:#66d9ef>const</span> <span style=color:#a6e22e>hookId</span> <span style=color:#f92672>=</span> <span style=color:#a6e22e>component</span>.<span style=color:#a6e22e>newHookId</span>();
-  <span style=color:#66d9ef>const</span> <span style=color:#a6e22e>stateKey</span> <span style=color:#f92672>=</span> <span style=color:#e6db74>`hook-</span><span style=color:#e6db74>${</span><span style=color:#a6e22e>hookId</span><span style=color:#e6db74>}</span><span style=color:#e6db74>`</span>;
-  <span style=color:#66d9ef>if</span> (<span style=color:#a6e22e>def</span>) {
-    <span style=color:#a6e22e>component</span>.<span style=color:#a6e22e>hookState</span>[<span style=color:#a6e22e>stateKey</span>] <span style=color:#f92672>=</span> <span style=color:#a6e22e>def</span>;
-  }
-  <span style=color:#66d9ef>return</span> {
-    <span style=color:#66d9ef>get</span>()<span style=color:#f92672>:</span> <span style=color:#a6e22e>T</span> {
-      <span style=color:#66d9ef>return</span> <span style=color:#a6e22e>component</span>.<span style=color:#a6e22e>hookState</span>[<span style=color:#a6e22e>stateKey</span>];
-    },
-    <span style=color:#66d9ef>set</span>(<span style=color:#a6e22e>v</span>: <span style=color:#66d9ef>T</span>)<span style=color:#f92672>:</span> <span style=color:#66d9ef>void</span> {
-      <span style=color:#a6e22e>component</span>.<span style=color:#a6e22e>hookState</span>[<span style=color:#a6e22e>stateKey</span>] <span style=color:#f92672>=</span> <span style=color:#a6e22e>v</span>;
-      <span style=color:#a6e22e>component</span>.<span style=color:#a6e22e>forceUpdate</span>();
-    }
-  };
-}
-</code></pre></div><p>Similar to the class-based <code>useEffect</code>, this function takes a reference to the <code>component</code>.</p>
-<p>In contrast to the FP-based <code>useState</code>, the return value is slightly different, it&rsquo;s a single <code>State</code> interface, with two <code>get</code> and <code>set</code> methods, instead of the <code>value</code> + <code>Setter</code> tuple.</p>
-<p>This is because of the instantiation differences between my class-based hooks and the FP-based originals: I assumed mine would generally be instantiated <em>outside of <code>render</code></em>, i.e. in a constructor or field initialization, and these run just once. So, instead of returning the value itself, we need to return a handle to the value, than then can be invoked in <code>render</code>, i.e. usage ends up looking like:</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-typescript data-lang=typescript><span style=color:#66d9ef>export</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>AppClass</span> <span style=color:#66d9ef>extends</span> <span style=color:#a6e22e>HookableComponent</span> {
-  <span style=color:#66d9ef>private</span> <span style=color:#a6e22e>status</span> <span style=color:#f92672>=</span> <span style=color:#a6e22e>useState</span>(<span style=color:#66d9ef>this</span>);
-
-  <span style=color:#66d9ef>public</span> <span style=color:#a6e22e>render() {</span>
-    <span style=color:#66d9ef>return</span> &lt;<span style=color:#f92672>div</span>&gt; {<span style=color:#66d9ef>this</span>.<span style=color:#a6e22e>status</span>.<span style=color:#66d9ef>get</span>()} &lt;/<span style=color:#f92672>div</span>&gt;
-  }
-}
-</code></pre></div><p>I dunno, personally I think a single <code>State</code> return value with <code>get()</code> and <code>set()</code> methods is a more natural representation of what&rsquo;s happening, and it doesn&rsquo;t rely on the FP-based &ldquo;this <code>useState</code> call happens to be invoked in the middle of (implicit FP component&rsquo;s) <code>render</code>, so we can go ahead return the concrete value&rdquo; nuance/implementation detail. But, all things considered it&rsquo;s not a huge deal.</p>
-<p>What&rsquo;s also interesting about my tiny/naive re-implementation is that it immediately highlights why the FP hook rule of &ldquo;you must instantiate hooks in order&rdquo; exists: because hooks don&rsquo;t have an identifiable, programmer-provided id, their &ldquo;key in the bag of hook-based state&rdquo; is based on implicit execution order. If you reorder hook calls, both my naive implementation, and the real FP implementation, will assign different hook ids.</p>
-<h2 id=other-effects>
-Other Effects
-<a class=heading-link href=#other-effects>
-<i class="fa fa-link" aria-hidden=true></i>
-</a>
-</h2>
-<p>I&rsquo;ve not had a chance to create the other effects use, i.e. <code>useContext</code>, <code>useCallback</code>, etc., but I imagine the approach would be similar: just make a more concrete representation of how the effect is mutating the component, have the base <code>HookableComponent</code> keep the appropriate bookkeeping, and then invoke the effect&rsquo;s lambda at the appropriate time.</p>
-<h2 id=composing-class-hooks>
-Composing Class Hooks
-<a class=heading-link href=#composing-class-hooks>
-<i class="fa fa-link" aria-hidden=true></i>
-</a>
-</h2>
-<p>Just like the FP hooks, our class-based hooks compose very naturally.</p>
-<p>Here is the (simplified with timers and <code>console.log</code>s) <code>useFriendStatus</code> example from the hook tutorial:</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-typescript data-lang=typescript><span style=color:#66d9ef>export</span> <span style=color:#66d9ef>function</span> <span style=color:#a6e22e>useFriendStatus</span>(<span style=color:#a6e22e>friendID</span>: <span style=color:#66d9ef>string</span>)<span style=color:#f92672>:</span> <span style=color:#66d9ef>string</span> {
-  <span style=color:#66d9ef>const</span> [<span style=color:#a6e22e>isOnline</span>, <span style=color:#a6e22e>setIsOnline</span>] <span style=color:#f92672>=</span> <span style=color:#a6e22e>useState</span>(<span style=color:#e6db74>&#39;offline&#39;</span>);
-
-  <span style=color:#66d9ef>function</span> <span style=color:#a6e22e>handleStatusChange</span>(<span style=color:#a6e22e>status</span>: <span style=color:#66d9ef>string</span>) {
-    <span style=color:#a6e22e>setIsOnline</span>(<span style=color:#a6e22e>status</span>);
-  }
-
-  <span style=color:#a6e22e>useEffect</span>(() <span style=color:#f92672>=&gt;</span> {
-    <span style=color:#a6e22e>console</span>.<span style=color:#a6e22e>log</span>(<span style=color:#e6db74>&#39;Subscribing&#39;</span>);
-    <span style=color:#66d9ef>const</span> <span style=color:#a6e22e>timer</span> <span style=color:#f92672>=</span> <span style=color:#a6e22e>setInterval</span>(() <span style=color:#f92672>=&gt;</span> {
-      <span style=color:#a6e22e>handleStatusChange</span>(<span style=color:#e6db74>`</span><span style=color:#e6db74>${</span><span style=color:#a6e22e>friendID</span><span style=color:#e6db74>}</span><span style=color:#e6db74> </span><span style=color:#e6db74>${</span><span style=color:#66d9ef>new</span> Date().<span style=color:#a6e22e>getTime</span>().<span style=color:#a6e22e>toString</span>()<span style=color:#e6db74>}</span><span style=color:#e6db74>`</span>);
-    }, <span style=color:#ae81ff>1000</span>);
-
-    <span style=color:#66d9ef>return</span> () <span style=color:#f92672>=&gt;</span> {
-      <span style=color:#a6e22e>console</span>.<span style=color:#a6e22e>log</span>(<span style=color:#e6db74>&#39;Unsubscribing&#39;</span>);
-      <span style=color:#a6e22e>clearInterval</span>(<span style=color:#a6e22e>timer</span>);
-    };
-  });
-
-  <span style=color:#66d9ef>return</span> <span style=color:#a6e22e>isOnline</span>;
-}
-</code></pre></div><p>And here is the class hook version:</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-typescript data-lang=typescript><span style=color:#66d9ef>export</span> <span style=color:#66d9ef>function</span> <span style=color:#a6e22e>useFriendStatus</span>(
-  <span style=color:#a6e22e>component</span>: <span style=color:#66d9ef>HookableComponent</span>,
-  <span style=color:#a6e22e>friendID</span>: <span style=color:#66d9ef>string</span>
-)<span style=color:#f92672>:</span> <span style=color:#a6e22e>State</span>&lt;<span style=color:#f92672>string</span>&gt; {
-  <span style=color:#66d9ef>const</span> <span style=color:#a6e22e>online</span> <span style=color:#f92672>=</span> <span style=color:#a6e22e>useState</span>(<span style=color:#a6e22e>component</span>, <span style=color:#e6db74>&#39;offline&#39;</span>);
-
-  <span style=color:#66d9ef>function</span> <span style=color:#a6e22e>handleStatusChange</span>(<span style=color:#a6e22e>status</span>: <span style=color:#66d9ef>string</span>) {
-    <span style=color:#a6e22e>online</span>.<span style=color:#66d9ef>set</span>(<span style=color:#a6e22e>status</span>);
-  }
-
-  <span style=color:#a6e22e>useEffect</span>(<span style=color:#a6e22e>component</span>, () <span style=color:#f92672>=&gt;</span> {
-    <span style=color:#a6e22e>console</span>.<span style=color:#a6e22e>log</span>(<span style=color:#e6db74>&#39;Subscribing&#39;</span>);
-    <span style=color:#66d9ef>const</span> <span style=color:#a6e22e>timer</span> <span style=color:#f92672>=</span> <span style=color:#a6e22e>setInterval</span>(() <span style=color:#f92672>=&gt;</span> {
-      <span style=color:#a6e22e>handleStatusChange</span>(<span style=color:#e6db74>`</span><span style=color:#e6db74>${</span><span style=color:#a6e22e>friendID</span><span style=color:#e6db74>}</span><span style=color:#e6db74> </span><span style=color:#e6db74>${</span><span style=color:#66d9ef>new</span> Date().<span style=color:#a6e22e>getTime</span>().<span style=color:#a6e22e>toString</span>()<span style=color:#e6db74>}</span><span style=color:#e6db74>`</span>);
-    }, <span style=color:#ae81ff>1000</span>);
-
-    <span style=color:#66d9ef>return</span> () <span style=color:#f92672>=&gt;</span> {
-      <span style=color:#a6e22e>console</span>.<span style=color:#a6e22e>log</span>(<span style=color:#e6db74>&#39;Unsubscribing&#39;</span>);
-      <span style=color:#a6e22e>clearInterval</span>(<span style=color:#a6e22e>timer</span>);
-    };
-  });
-
-  <span style=color:#66d9ef>return</span> <span style=color:#a6e22e>online</span>;
-}
-
-</code></pre></div><p>They are essentially identical.</p>
-<h2 id=passing-around-the-component>
-Passing Around the Component
-<a class=heading-link href=#passing-around-the-component>
-<i class="fa fa-link" aria-hidden=true></i>
-</a>
-</h2>
-<p>One big difference in the APIs between the FP React hooks and my naive spike is that I&rsquo;m currently passing around a <code>component</code> parameter as the 1st argument to any hook method.</p>
-<p>Honestly, I solely did this for expediency, as it&rsquo;s quicker/easier to prototype by passing it around explicitly than figuring out an implicit global state trick (more discussion below). But it&rsquo;s also an interesting design question.</p>
-<p>Passing the component explicitly makes for a more verbose API, and it is admittedly boilerplate: yes, each hook call is going to need a <code>component</code>, why should we repeat ourselves every single time?</p>
-<p>I&rsquo;ve gone back and forth on this issue over the years, as it&rsquo;s an extremely common scenario when designing DSLs: a child piece of logic (here the hook) wants to know about the parent (here the class-based component, or in FP hooks the implicit FP component). So do you explicitly pass the parent, or somehow implicitly access it?</p>
-<p>If you implicitly pass it, it means you store the parent in global state somewhere (usually in a stack to handle recursive instantiations), where the caller doesn&rsquo;t have to assign it, but once inside the child logic, the child logic can immediately grab it.</p>
-<p>I.e. my naive class-based hooks could do something like this via:</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-typescript data-lang=typescript><span style=color:#66d9ef>class</span> <span style=color:#a6e22e>HookableComponent</span> {
-  <span style=color:#66d9ef>static</span> <span style=color:#a6e22e>currentComponent</span>;
-
-  <span style=color:#66d9ef>constructor</span>() {
-    <span style=color:#a6e22e>currentComponent</span> <span style=color:#f92672>=</span> <span style=color:#66d9ef>this</span>;
-    <span style=color:#75715e>// let sub class&#39;s constructor run, which means any
-</span><span style=color:#75715e></span>    <span style=color:#75715e>// hooks they create during their constructor can &#39;see&#39; our
-</span><span style=color:#75715e></span>    <span style=color:#75715e>// static currentComponent value.
-</span><span style=color:#75715e></span>  }
-}
-</code></pre></div><p>Now our hooks can have the same shorter API as React&rsquo;s FP hooks:</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-typescript data-lang=typescript><span style=color:#66d9ef>function</span> <span style=color:#a6e22e>useState</span>&lt;<span style=color:#f92672>T</span>&gt;(<span style=color:#a6e22e>def</span>: <span style=color:#66d9ef>T</span>) {
-  <span style=color:#66d9ef>const</span> <span style=color:#a6e22e>component</span> <span style=color:#f92672>=</span> <span style=color:#a6e22e>HookableComponent</span>.<span style=color:#a6e22e>currentComponent</span>;
-  <span style=color:#75715e>// our existing code as usual
-</span><span style=color:#75715e></span>  <span style=color:#66d9ef>const</span> <span style=color:#a6e22e>hookId</span> <span style=color:#f92672>=</span> <span style=color:#a6e22e>component</span>.<span style=color:#a6e22e>newHookId</span>();
-}
-</code></pre></div><p>Once you know this &ldquo;is this parent passed explicitly or implicitly&rdquo; pattern, it shows up in many DSLs.</p>
-<p>I.e. here is the <a href=https://docs.aws.amazon.com/cdk/latest/guide/home.html>aws-cdk</a> DSL for creating an AWS Lambda in CloudFormation:</p>
-<pre tabindex=0><code>class MyStack extends Stack {
+<!doctype html><html lang=en><head><title>Hooks Don't Have To Be Functional · Draconian Overlord</title><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=color-scheme content="light dark"><meta name=author content="Stephen Haberman"><meta name=description content="Update: After having angst about this for a good week or so (i.e. writing the post), I came across Dan Abramov&rsquo;s well-articulated post on function components. Specifically I liked that he: a) directly talked about how obviously-similar FP and OO components are, and b) gave a very specific articulation of the goal FP&rsquo;s are trying to solve, which is capturing a snapshot of the entire props+state during each render.
+I&rsquo;m still skeptical that &ldquo;hacking cross-render state back in to FP components&rdquo; vs."><meta name=keywords content="blog,developer,personal"><meta name=twitter:card content="summary"><meta name=twitter:title content="Hooks Don't Have To Be Functional"><meta name=twitter:description content="Update: After having angst about this for a good week or so (i.e. writing the post), I came across Dan Abramov&rsquo;s well-articulated post on function components. Specifically I liked that he: a) directly talked about how obviously-similar FP and OO components are, and b) gave a very specific articulation of the goal FP&rsquo;s are trying to solve, which is capturing a snapshot of the entire props+state during each render.
+I&rsquo;m still skeptical that &ldquo;hacking cross-render state back in to FP components&rdquo; vs."><meta property="og:title" content="Hooks Don't Have To Be Functional"><meta property="og:description" content="Update: After having angst about this for a good week or so (i.e. writing the post), I came across Dan Abramov&rsquo;s well-articulated post on function components. Specifically I liked that he: a) directly talked about how obviously-similar FP and OO components are, and b) gave a very specific articulation of the goal FP&rsquo;s are trying to solve, which is capturing a snapshot of the entire props+state during each render.
+I&rsquo;m still skeptical that &ldquo;hacking cross-render state back in to FP components&rdquo; vs."><meta property="og:type" content="article"><meta property="og:url" content="https://www.draconianoverlord.com/2019/09/05/hooks-dont-have-to-be-functional.html/"><meta property="article:section" content="posts"><meta property="article:published_time" content="2019-09-05T00:00:00+00:00"><meta property="article:modified_time" content="2019-09-05T00:00:00+00:00"><link rel=canonical href=https://www.draconianoverlord.com/2019/09/05/hooks-dont-have-to-be-functional.html/><link rel=preload href="/fonts/forkawesome-webfont.woff2?v=1.2.0" as=font type=font/woff2 crossorigin><link rel=stylesheet href=/css/coder.min.65236a6d834b26194eed04a2a3b45e44d9194ef9e620253705d4bef03bd7ef81.css integrity="sha256-ZSNqbYNLJhlO7QSio7ReRNkZTvnmICU3BdS+8DvX74E=" crossorigin=anonymous media=screen><link rel=stylesheet href=/css/coder-dark.min.f6534b0b446b75d9b6ad77a97d43ede2ddaeff1b6e2361fb7198d6f8fcb7f83f.css integrity="sha256-9lNLC0Rrddm2rXepfUPt4t2u/xtuI2H7cZjW+Py3+D8=" crossorigin=anonymous media=screen><link rel=icon type=image/png href=/images/favicon-32x32.png sizes=32x32><link rel=icon type=image/png href=/images/favicon-16x16.png sizes=16x16><link rel=apple-touch-icon href=/images/apple-touch-icon.png><link rel=apple-touch-icon sizes=180x180 href=/images/apple-touch-icon.png><link rel=manifest href=/site.webmanifest><link rel=mask-icon href=/images/safari-pinned-tab.svg color=#5bbad5></head><body class="preload-transitions colorscheme-auto"><div class=float-container><a id=dark-mode-toggle class=colorscheme-toggle><i class="fa fa-adjust fa-fw" aria-hidden=true></i></a></div><main class=wrapper><nav class=navigation><section class=container><a class=navigation-title href=/>Draconian Overlord</a>
+Oppressing software entropy</section></nav><div class=content><section class="container post"><article><header><div class=post-title><h1 class=title><a class=title-link href=https://www.draconianoverlord.com/2019/09/05/hooks-dont-have-to-be-functional.html/>Hooks Don't Have To Be Functional</a></h1></div><div class=post-meta><div class=date><span class=posted-on><i class="fa fa-calendar" aria-hidden=true></i>
+<time datetime=2019-09-05T00:00:00Z>September 5, 2019</time></span>
+<span class=reading-time><i class="fa fa-clock-o" aria-hidden=true></i>
+18-minute read</span></div><div class=categories><i class="fa fa-folder" aria-hidden=true></i>
+<a href=/categories/typescript/>TypeScript</a></div></div></header><div class=post-content><p><strong>Update</strong>: After having angst about this for a good week or so (i.e. writing the post), I came across Dan Abramov&rsquo;s well-articulated <a href=https://overreacted.io/how-are-function-components-different-from-classes/ class=external-link target=_blank rel=noopener>post on function components</a>. Specifically I liked that he: a) directly talked about how obviously-similar FP and OO components are, and b) gave a very specific articulation of the goal FP&rsquo;s are trying to solve, which is capturing a snapshot of the entire props+state during each render.</p><p>I&rsquo;m still skeptical that &ldquo;hacking cross-render state back in to FP components&rdquo; vs. &ldquo;just use OO components with nice non-HOC/non-render prop &lsquo;hooks&rsquo;-style APIs&rdquo; is necessarily the best choice, but I can at least now appreciate what they&rsquo;re trying to do.</p><p>And, personally, it is somewhat annoying that I found Dan&rsquo;s one post much more helpful than the several pages of the official React hooks/FP/etc. docs I&rsquo;d read, especially with their &ldquo;trigger words&rdquo; that &ldquo;classes suck&rdquo;, without a more thorough/detailed explanation (as Dan provided).</p><hr><p>Hooks have made a big splash in the React ecosystem, and I&rsquo;d been procrastinating taking a look at them. But I finally got a chance and have what I think is a unique-ish way of thinking/modeling them, if only to help understand how they work/what their benefits are.</p><p>As an up-front disclaimer/bias, I&rsquo;ve had a nagging suspicion that hooks are over-hyped, as some of their marketing material leads to a &ldquo;raised eyebrow of suspicion&rdquo;, i.e. sections like <a href=https://reactjs.org/docs/hooks-intro.html#classes-confuse-both-people-and-machines class=external-link target=_blank rel=noopener>Classes confuse both people and machines</a>. So in this post, I may just be chasing a self-confirming bias.</p><p>That said, statements like these, for me, require a ton of empirical evidence to back-up, because after doing this awhile, I&rsquo;ve personally seen classes usually win out as &ldquo;actually a pretty intuitive way for most people to model/think about the world&rdquo;.</p><p>I.e. when &ldquo;OOP won&rdquo; in the 90s (which I just missed), or (what I more directly witnessed) when &ldquo;ES6 classes won&rdquo; in the 2010s, despite much proclamations of &ldquo;prototypes are superior&mldr;in theory&rdquo;, and yet everyone had their own bespoke &ldquo;add classes to JavaScript&rdquo; library in practice.</p><p>As a balance to this stated bias, I have become much more appreciative of FP (i.e. in many ways &ldquo;FP has won&rdquo; too), initially by working with Scala&rsquo;s collections and pattern matching, and more lately TypeScript&rsquo;s ADTs/etc. And I&rsquo;ve started naturally preferring &ldquo;just data + transformations&rdquo; for domain/entity data, vs. &ldquo;everything must be a class&rdquo; (see <a href=https://github.com/stephenh/ts-proto class=external-link target=_blank rel=noopener>ts-proto</a>).</p><p>So, I can see both pros/cons of the OOP/FP idioms and happily play both sides of the fence.</p><p>Anyway, back to the hooks.</p><h2 id=what-are-hooks-good-for>What Are Hooks Good For?
+<a class=heading-link href=#what-are-hooks-good-for><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h2><p>I&rsquo;m going to assume general knowledge of hooks, and jump straight to the &ldquo;oh I get&rdquo; <a href=https://reactjs.org/docs/hooks-intro.html class=external-link target=_blank rel=noopener>raison detre</a>:</p><blockquote><p>Each [class] lifecycle method often contains a mix of unrelated logic. For example, components might perform some data fetching in componentDidMount and componentDidUpdate. However, the same componentDidMount method might also contain some unrelated logic that sets up event listeners, with cleanup performed in componentWillUnmount.</p><p>&mldr;</p><p>To solve this, Hooks let you split one component into smaller functions based on what pieces are related (such as setting up a subscription or fetching data), rather than forcing a split based on lifecycle methods.</p></blockquote><p>Ah, okay. That actually makes sense.</p><p>What they&rsquo;re saying is that a class like:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-typescript data-lang=typescript><span style=display:flex><span><span style=color:#66d9ef>class</span> <span style=color:#a6e22e>MyComponent</span> {
+</span></span><span style=display:flex><span>  <span style=color:#a6e22e>componentDidMount() {</span>
+</span></span><span style=display:flex><span>    <span style=color:#75715e>// do thing 1
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>    <span style=color:#75715e>// do thing 2
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>  }
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#a6e22e>componentWillUnmount() {</span>
+</span></span><span style=display:flex><span>    <span style=color:#75715e>// undo thing 1
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>    <span style=color:#75715e>// undo thing 2
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>  }
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>Is complicated because you&rsquo;re organizing code by life cycle methods (&ldquo;all mounts are in <code>componentDidMount</code>, all unmounts are in <code>componentWillUnmount</code>&rdquo;) vs. organizing by abstraction/purpose (&ldquo;all thing 1 code&rdquo; is in one spot and &ldquo;all thing 2 code&rdquo; is in another).</p><h2 id=do-we-need-to-kill-classes>Do We Need to Kill Classes?
+<a class=heading-link href=#do-we-need-to-kill-classes><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h2><p>So, just as a thought experiment, I wanted to balance &ldquo;okay, I get the goal of a different axis of organization&rdquo; vs. &ldquo;going all-in on functional components&rdquo;.</p><p>When I read their problem, it makes me think that we want to give discrete sets of business logic (i.e hook-using code, the &ldquo;thing 1&rdquo; and &ldquo;thing 2&rdquo; from our example above) two things:</p><ol><li>Their own namespaced spot within the component&rsquo;s state</li><li>Their own callbacks (&ldquo;hooks&rdquo;) of the component&rsquo;s lifecycle.</li></ol><p>So, let&rsquo;s try and model that.</p><h2 id=recreating-useeffect-in-classes>Recreating <code>useEffect</code> in Classes
+<a class=heading-link href=#recreating-useeffect-in-classes><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h2><p>I think <code>useEffect</code> is the easiest to recreate; we just want a list of functions to run as part of the lifecycle, i.e.:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-typescript data-lang=typescript><span style=display:flex><span><span style=color:#66d9ef>class</span> <span style=color:#a6e22e>HookableComponent</span> <span style=color:#66d9ef>extends</span> <span style=color:#a6e22e>Component</span> {
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>private</span> <span style=color:#a6e22e>effects</span>: <span style=color:#66d9ef>Array</span>&lt;<span style=color:#f92672>Function</span>&gt; <span style=color:#f92672>=</span> [];
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>private</span> <span style=color:#a6e22e>lastEffects</span>: <span style=color:#66d9ef>Array</span>&lt;<span style=color:#f92672>Function</span>&gt; <span style=color:#f92672>=</span> [];
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>public</span> <span style=color:#a6e22e>componentDidMount</span>()<span style=color:#f92672>:</span> <span style=color:#66d9ef>void</span> {
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>this</span>.<span style=color:#a6e22e>cancelAndRunEffects</span>();
+</span></span><span style=display:flex><span>  }
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>public</span> <span style=color:#a6e22e>componentDidUpdate</span>()<span style=color:#f92672>:</span> <span style=color:#66d9ef>void</span> {
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>this</span>.<span style=color:#a6e22e>cancelAndRunEffects</span>();
+</span></span><span style=display:flex><span>  }
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>public</span> <span style=color:#a6e22e>addEffect</span>(<span style=color:#a6e22e>effect</span><span style=color:#f92672>:</span> () <span style=color:#f92672>=&gt;</span> <span style=color:#66d9ef>void</span>)<span style=color:#f92672>:</span> <span style=color:#66d9ef>void</span> {
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>this</span>.<span style=color:#a6e22e>effects</span>.<span style=color:#a6e22e>push</span>(<span style=color:#a6e22e>effect</span>);
+</span></span><span style=display:flex><span>  }
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>private</span> <span style=color:#a6e22e>cancelAndRunEffects</span>()<span style=color:#f92672>:</span> <span style=color:#66d9ef>void</span> {
+</span></span><span style=display:flex><span>    <span style=color:#75715e>// If any effects returned functions, cancel them
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>    <span style=color:#66d9ef>this</span>.<span style=color:#a6e22e>lastEffects</span>.<span style=color:#a6e22e>forEach</span>(<span style=color:#a6e22e>e</span> <span style=color:#f92672>=&gt;</span> <span style=color:#a6e22e>e</span>());
+</span></span><span style=display:flex><span>    <span style=color:#75715e>// Invoke the effects, and keep any return values that are functions
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>    <span style=color:#66d9ef>this</span>.<span style=color:#a6e22e>lastEffects</span> <span style=color:#f92672>=</span> <span style=color:#66d9ef>this</span>.<span style=color:#a6e22e>effects</span>.<span style=color:#a6e22e>map</span>(<span style=color:#a6e22e>e</span> <span style=color:#f92672>=&gt;</span> <span style=color:#a6e22e>e</span>()).<span style=color:#a6e22e>filter</span>(<span style=color:#a6e22e>e</span> <span style=color:#f92672>=&gt;</span> <span style=color:#a6e22e>e</span> <span style=color:#66d9ef>instanceof</span> Function);
+</span></span><span style=display:flex><span>  }
+</span></span></code></pre></div><p>This &ldquo;class-based hook&rdquo; extension of <code>Component</code> let&rsquo;s us write our own (very naive, proof-of-concept) <code>useEffect</code>:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-typescript data-lang=typescript><span style=display:flex><span><span style=color:#66d9ef>function</span> <span style=color:#a6e22e>useEffect</span>(
+</span></span><span style=display:flex><span>  <span style=color:#a6e22e>component</span>: <span style=color:#66d9ef>HookableComponent</span>,
+</span></span><span style=display:flex><span>  <span style=color:#a6e22e>effect</span><span style=color:#f92672>:</span> () <span style=color:#f92672>=&gt;</span> <span style=color:#66d9ef>void</span>
+</span></span><span style=display:flex><span>)<span style=color:#f92672>:</span> <span style=color:#66d9ef>void</span> {
+</span></span><span style=display:flex><span>  <span style=color:#a6e22e>component</span>.<span style=color:#a6e22e>addEffect</span>(<span style=color:#a6e22e>effect</span>);
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>And now our usage is extremely similar; here is out-of-the-box with a FP component and React hook:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-typescript data-lang=typescript><span style=display:flex><span><span style=color:#66d9ef>export</span> <span style=color:#66d9ef>function</span> <span style=color:#a6e22e>useFriendStatus</span>(<span style=color:#a6e22e>friendID</span>: <span style=color:#66d9ef>string</span>)<span style=color:#f92672>:</span> <span style=color:#66d9ef>string</span> {
+</span></span><span style=display:flex><span>  ...
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#a6e22e>useEffect</span>(() <span style=color:#f92672>=&gt;</span> {
+</span></span><span style=display:flex><span>    ...
+</span></span><span style=display:flex><span>  });
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>And here is our class-based approach:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-typescript data-lang=typescript><span style=display:flex><span><span style=color:#66d9ef>export</span> <span style=color:#66d9ef>function</span> <span style=color:#a6e22e>useFriendStatus</span>(
+</span></span><span style=display:flex><span>  <span style=color:#a6e22e>component</span>: <span style=color:#66d9ef>HookableComponent</span>,
+</span></span><span style=display:flex><span>  <span style=color:#a6e22e>friendID</span>: <span style=color:#66d9ef>string</span>
+</span></span><span style=display:flex><span>)<span style=color:#f92672>:</span> <span style=color:#66d9ef>string</span> {
+</span></span><span style=display:flex><span>  ...
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#a6e22e>useEffect</span>(<span style=color:#a6e22e>component</span>, () <span style=color:#f92672>=&gt;</span> {
+</span></span><span style=display:flex><span>    ...
+</span></span><span style=display:flex><span>  });
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>Note that we have to pass <code>component</code>, but I&rsquo;m going to gloss over that for now.</p><p>So, all things considered, this was really pretty trivial: our <code>HookableComponent</code> just provides an API for snippets of code (<code>useEffect</code>, <code>useFriendStatus</code>, etc.) to subscribe to our lifecycle events.</p><p>In general, maintaining a list of callbacks like this is really pretty common in UI frameworks, so this is not terribly novel; although if anything what is novel is making <code>addEffect</code> a public API, and exposing an &ldquo;implementation detail&rdquo; like our lifecycle to just any random snippet of code.</p><p>(Note that, part of the benefit of modeling hooks this way (could we do this class-based?) is precisely because they bring up interesting correlations like this: the FP-based <code>useEffect</code> is effectively providing a public API for random snippets of code. Which is not bad, it is actually precisely the point that allows scattered (decoupled) logic to still coordinate around the component&rsquo;s lifecycle, and just interesting to think of it that way.)</p><h2 id=recreating-the-usestate-in-classes>Recreating the <code>useState</code> in Classes
+<a class=heading-link href=#recreating-the-usestate-in-classes><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h2><p>Making a class-friendly <code>useState</code> is just a little more intricate.</p><p>My first pass at this tried to use the component&rsquo;s regular <code>state</code>/<code>setState</code> methods, just with &ldquo;hidden&rdquo;/unique-per-hook keys, but this would conflict with the component&rsquo;s actual state usage, particularly in the constructor when they do <code>this.state = { ... }</code>.</p><p>So, instead I ended up adding a dedicated <code>hookState</code> field:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-typescript data-lang=typescript><span style=display:flex><span><span style=color:#66d9ef>class</span> <span style=color:#a6e22e>HookableComponent</span> <span style=color:#66d9ef>extends</span> <span style=color:#a6e22e>Component</span> {
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>private</span> <span style=color:#a6e22e>nextHookId</span> <span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span>;
+</span></span><span style=display:flex><span>  <span style=color:#75715e>// would probably not be public but this is proof-of-concept
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>  <span style=color:#66d9ef>public</span> <span style=color:#a6e22e>hookState</span><span style=color:#f92672>:</span> { [<span style=color:#a6e22e>hookId</span>: <span style=color:#66d9ef>string</span>]<span style=color:#f92672>:</span> <span style=color:#66d9ef>any</span> } <span style=color:#f92672>=</span> {};
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>public</span> <span style=color:#a6e22e>newHookId</span>()<span style=color:#f92672>:</span> <span style=color:#66d9ef>number</span> {
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>return</span> <span style=color:#f92672>++</span><span style=color:#66d9ef>this</span>.<span style=color:#a6e22e>nextHookId</span>;
+</span></span><span style=display:flex><span>  }
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>Which when the class-based <code>useState</code> secures itself a unique key in:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-typescript data-lang=typescript><span style=display:flex><span><span style=color:#66d9ef>function</span> <span style=color:#a6e22e>useState</span>&lt;<span style=color:#f92672>T</span>&gt;(
+</span></span><span style=display:flex><span>  <span style=color:#a6e22e>component</span>: <span style=color:#66d9ef>HookableComponent</span>,
+</span></span><span style=display:flex><span>  <span style=color:#a6e22e>def?</span>: <span style=color:#66d9ef>T</span>
+</span></span><span style=display:flex><span>)<span style=color:#f92672>:</span> <span style=color:#a6e22e>State</span>&lt;<span style=color:#f92672>T</span>&gt; {
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>const</span> <span style=color:#a6e22e>hookId</span> <span style=color:#f92672>=</span> <span style=color:#a6e22e>component</span>.<span style=color:#a6e22e>newHookId</span>();
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>const</span> <span style=color:#a6e22e>stateKey</span> <span style=color:#f92672>=</span> <span style=color:#e6db74>`hook-</span><span style=color:#e6db74>${</span><span style=color:#a6e22e>hookId</span><span style=color:#e6db74>}</span><span style=color:#e6db74>`</span>;
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>if</span> (<span style=color:#a6e22e>def</span>) {
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>component</span>.<span style=color:#a6e22e>hookState</span>[<span style=color:#a6e22e>stateKey</span>] <span style=color:#f92672>=</span> <span style=color:#a6e22e>def</span>;
+</span></span><span style=display:flex><span>  }
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>return</span> {
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>get</span>()<span style=color:#f92672>:</span> <span style=color:#a6e22e>T</span> {
+</span></span><span style=display:flex><span>      <span style=color:#66d9ef>return</span> <span style=color:#a6e22e>component</span>.<span style=color:#a6e22e>hookState</span>[<span style=color:#a6e22e>stateKey</span>];
+</span></span><span style=display:flex><span>    },
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>set</span>(<span style=color:#a6e22e>v</span>: <span style=color:#66d9ef>T</span>)<span style=color:#f92672>:</span> <span style=color:#66d9ef>void</span> {
+</span></span><span style=display:flex><span>      <span style=color:#a6e22e>component</span>.<span style=color:#a6e22e>hookState</span>[<span style=color:#a6e22e>stateKey</span>] <span style=color:#f92672>=</span> <span style=color:#a6e22e>v</span>;
+</span></span><span style=display:flex><span>      <span style=color:#a6e22e>component</span>.<span style=color:#a6e22e>forceUpdate</span>();
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>  };
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>Similar to the class-based <code>useEffect</code>, this function takes a reference to the <code>component</code>.</p><p>In contrast to the FP-based <code>useState</code>, the return value is slightly different, it&rsquo;s a single <code>State</code> interface, with two <code>get</code> and <code>set</code> methods, instead of the <code>value</code> + <code>Setter</code> tuple.</p><p>This is because of the instantiation differences between my class-based hooks and the FP-based originals: I assumed mine would generally be instantiated <em>outside of <code>render</code></em>, i.e. in a constructor or field initialization, and these run just once. So, instead of returning the value itself, we need to return a handle to the value, than then can be invoked in <code>render</code>, i.e. usage ends up looking like:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-typescript data-lang=typescript><span style=display:flex><span><span style=color:#66d9ef>export</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>AppClass</span> <span style=color:#66d9ef>extends</span> <span style=color:#a6e22e>HookableComponent</span> {
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>private</span> <span style=color:#a6e22e>status</span> <span style=color:#f92672>=</span> <span style=color:#a6e22e>useState</span>(<span style=color:#66d9ef>this</span>);
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>public</span> <span style=color:#a6e22e>render() {</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>return</span> &lt;<span style=color:#f92672>div</span>&gt; {<span style=color:#66d9ef>this</span>.<span style=color:#a6e22e>status</span>.<span style=color:#66d9ef>get</span>()} &lt;/<span style=color:#f92672>div</span>&gt;
+</span></span><span style=display:flex><span>  }
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>I dunno, personally I think a single <code>State</code> return value with <code>get()</code> and <code>set()</code> methods is a more natural representation of what&rsquo;s happening, and it doesn&rsquo;t rely on the FP-based &ldquo;this <code>useState</code> call happens to be invoked in the middle of (implicit FP component&rsquo;s) <code>render</code>, so we can go ahead return the concrete value&rdquo; nuance/implementation detail. But, all things considered it&rsquo;s not a huge deal.</p><p>What&rsquo;s also interesting about my tiny/naive re-implementation is that it immediately highlights why the FP hook rule of &ldquo;you must instantiate hooks in order&rdquo; exists: because hooks don&rsquo;t have an identifiable, programmer-provided id, their &ldquo;key in the bag of hook-based state&rdquo; is based on implicit execution order. If you reorder hook calls, both my naive implementation, and the real FP implementation, will assign different hook ids.</p><h2 id=other-effects>Other Effects
+<a class=heading-link href=#other-effects><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h2><p>I&rsquo;ve not had a chance to create the other effects use, i.e. <code>useContext</code>, <code>useCallback</code>, etc., but I imagine the approach would be similar: just make a more concrete representation of how the effect is mutating the component, have the base <code>HookableComponent</code> keep the appropriate bookkeeping, and then invoke the effect&rsquo;s lambda at the appropriate time.</p><h2 id=composing-class-hooks>Composing Class Hooks
+<a class=heading-link href=#composing-class-hooks><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h2><p>Just like the FP hooks, our class-based hooks compose very naturally.</p><p>Here is the (simplified with timers and <code>console.log</code>s) <code>useFriendStatus</code> example from the hook tutorial:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-typescript data-lang=typescript><span style=display:flex><span><span style=color:#66d9ef>export</span> <span style=color:#66d9ef>function</span> <span style=color:#a6e22e>useFriendStatus</span>(<span style=color:#a6e22e>friendID</span>: <span style=color:#66d9ef>string</span>)<span style=color:#f92672>:</span> <span style=color:#66d9ef>string</span> {
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>const</span> [<span style=color:#a6e22e>isOnline</span>, <span style=color:#a6e22e>setIsOnline</span>] <span style=color:#f92672>=</span> <span style=color:#a6e22e>useState</span>(<span style=color:#e6db74>&#39;offline&#39;</span>);
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>function</span> <span style=color:#a6e22e>handleStatusChange</span>(<span style=color:#a6e22e>status</span>: <span style=color:#66d9ef>string</span>) {
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>setIsOnline</span>(<span style=color:#a6e22e>status</span>);
+</span></span><span style=display:flex><span>  }
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#a6e22e>useEffect</span>(() <span style=color:#f92672>=&gt;</span> {
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>console</span>.<span style=color:#a6e22e>log</span>(<span style=color:#e6db74>&#39;Subscribing&#39;</span>);
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>const</span> <span style=color:#a6e22e>timer</span> <span style=color:#f92672>=</span> <span style=color:#a6e22e>setInterval</span>(() <span style=color:#f92672>=&gt;</span> {
+</span></span><span style=display:flex><span>      <span style=color:#a6e22e>handleStatusChange</span>(<span style=color:#e6db74>`</span><span style=color:#e6db74>${</span><span style=color:#a6e22e>friendID</span><span style=color:#e6db74>}</span><span style=color:#e6db74> </span><span style=color:#e6db74>${</span><span style=color:#66d9ef>new</span> Date().<span style=color:#a6e22e>getTime</span>().<span style=color:#a6e22e>toString</span>()<span style=color:#e6db74>}</span><span style=color:#e6db74>`</span>);
+</span></span><span style=display:flex><span>    }, <span style=color:#ae81ff>1000</span>);
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>return</span> () <span style=color:#f92672>=&gt;</span> {
+</span></span><span style=display:flex><span>      <span style=color:#a6e22e>console</span>.<span style=color:#a6e22e>log</span>(<span style=color:#e6db74>&#39;Unsubscribing&#39;</span>);
+</span></span><span style=display:flex><span>      <span style=color:#a6e22e>clearInterval</span>(<span style=color:#a6e22e>timer</span>);
+</span></span><span style=display:flex><span>    };
+</span></span><span style=display:flex><span>  });
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>return</span> <span style=color:#a6e22e>isOnline</span>;
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>And here is the class hook version:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-typescript data-lang=typescript><span style=display:flex><span><span style=color:#66d9ef>export</span> <span style=color:#66d9ef>function</span> <span style=color:#a6e22e>useFriendStatus</span>(
+</span></span><span style=display:flex><span>  <span style=color:#a6e22e>component</span>: <span style=color:#66d9ef>HookableComponent</span>,
+</span></span><span style=display:flex><span>  <span style=color:#a6e22e>friendID</span>: <span style=color:#66d9ef>string</span>
+</span></span><span style=display:flex><span>)<span style=color:#f92672>:</span> <span style=color:#a6e22e>State</span>&lt;<span style=color:#f92672>string</span>&gt; {
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>const</span> <span style=color:#a6e22e>online</span> <span style=color:#f92672>=</span> <span style=color:#a6e22e>useState</span>(<span style=color:#a6e22e>component</span>, <span style=color:#e6db74>&#39;offline&#39;</span>);
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>function</span> <span style=color:#a6e22e>handleStatusChange</span>(<span style=color:#a6e22e>status</span>: <span style=color:#66d9ef>string</span>) {
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>online</span>.<span style=color:#66d9ef>set</span>(<span style=color:#a6e22e>status</span>);
+</span></span><span style=display:flex><span>  }
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#a6e22e>useEffect</span>(<span style=color:#a6e22e>component</span>, () <span style=color:#f92672>=&gt;</span> {
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>console</span>.<span style=color:#a6e22e>log</span>(<span style=color:#e6db74>&#39;Subscribing&#39;</span>);
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>const</span> <span style=color:#a6e22e>timer</span> <span style=color:#f92672>=</span> <span style=color:#a6e22e>setInterval</span>(() <span style=color:#f92672>=&gt;</span> {
+</span></span><span style=display:flex><span>      <span style=color:#a6e22e>handleStatusChange</span>(<span style=color:#e6db74>`</span><span style=color:#e6db74>${</span><span style=color:#a6e22e>friendID</span><span style=color:#e6db74>}</span><span style=color:#e6db74> </span><span style=color:#e6db74>${</span><span style=color:#66d9ef>new</span> Date().<span style=color:#a6e22e>getTime</span>().<span style=color:#a6e22e>toString</span>()<span style=color:#e6db74>}</span><span style=color:#e6db74>`</span>);
+</span></span><span style=display:flex><span>    }, <span style=color:#ae81ff>1000</span>);
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>return</span> () <span style=color:#f92672>=&gt;</span> {
+</span></span><span style=display:flex><span>      <span style=color:#a6e22e>console</span>.<span style=color:#a6e22e>log</span>(<span style=color:#e6db74>&#39;Unsubscribing&#39;</span>);
+</span></span><span style=display:flex><span>      <span style=color:#a6e22e>clearInterval</span>(<span style=color:#a6e22e>timer</span>);
+</span></span><span style=display:flex><span>    };
+</span></span><span style=display:flex><span>  });
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>return</span> <span style=color:#a6e22e>online</span>;
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>They are essentially identical.</p><h2 id=passing-around-the-component>Passing Around the Component
+<a class=heading-link href=#passing-around-the-component><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h2><p>One big difference in the APIs between the FP React hooks and my naive spike is that I&rsquo;m currently passing around a <code>component</code> parameter as the 1st argument to any hook method.</p><p>Honestly, I solely did this for expediency, as it&rsquo;s quicker/easier to prototype by passing it around explicitly than figuring out an implicit global state trick (more discussion below). But it&rsquo;s also an interesting design question.</p><p>Passing the component explicitly makes for a more verbose API, and it is admittedly boilerplate: yes, each hook call is going to need a <code>component</code>, why should we repeat ourselves every single time?</p><p>I&rsquo;ve gone back and forth on this issue over the years, as it&rsquo;s an extremely common scenario when designing DSLs: a child piece of logic (here the hook) wants to know about the parent (here the class-based component, or in FP hooks the implicit FP component). So do you explicitly pass the parent, or somehow implicitly access it?</p><p>If you implicitly pass it, it means you store the parent in global state somewhere (usually in a stack to handle recursive instantiations), where the caller doesn&rsquo;t have to assign it, but once inside the child logic, the child logic can immediately grab it.</p><p>I.e. my naive class-based hooks could do something like this via:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-typescript data-lang=typescript><span style=display:flex><span><span style=color:#66d9ef>class</span> <span style=color:#a6e22e>HookableComponent</span> {
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>static</span> <span style=color:#a6e22e>currentComponent</span>;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>constructor</span>() {
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>currentComponent</span> <span style=color:#f92672>=</span> <span style=color:#66d9ef>this</span>;
+</span></span><span style=display:flex><span>    <span style=color:#75715e>// let sub class&#39;s constructor run, which means any
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>    <span style=color:#75715e>// hooks they create during their constructor can &#39;see&#39; our
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>    <span style=color:#75715e>// static currentComponent value.
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>  }
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>Now our hooks can have the same shorter API as React&rsquo;s FP hooks:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-typescript data-lang=typescript><span style=display:flex><span><span style=color:#66d9ef>function</span> <span style=color:#a6e22e>useState</span>&lt;<span style=color:#f92672>T</span>&gt;(<span style=color:#a6e22e>def</span>: <span style=color:#66d9ef>T</span>) {
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>const</span> <span style=color:#a6e22e>component</span> <span style=color:#f92672>=</span> <span style=color:#a6e22e>HookableComponent</span>.<span style=color:#a6e22e>currentComponent</span>;
+</span></span><span style=display:flex><span>  <span style=color:#75715e>// our existing code as usual
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>  <span style=color:#66d9ef>const</span> <span style=color:#a6e22e>hookId</span> <span style=color:#f92672>=</span> <span style=color:#a6e22e>component</span>.<span style=color:#a6e22e>newHookId</span>();
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>Once you know this &ldquo;is this parent passed explicitly or implicitly&rdquo; pattern, it shows up in many DSLs.</p><p>I.e. here is the <a href=https://docs.aws.amazon.com/cdk/latest/guide/home.html class=external-link target=_blank rel=noopener>aws-cdk</a> DSL for creating an AWS Lambda in CloudFormation:</p><pre tabindex=0><code>class MyStack extends Stack {
   constructor() {
     super();
-    const api = new LambdaRestApi(this, &quot;graphql-service&quot;, {
+    const api = new LambdaRestApi(this, &#34;graphql-service&#34;, {
       handler,
       domainName: {
         domainName: `graphql.${domainTld}`,
-        certificate: Certificate.fromCertificateArn(this, &quot;cerf&quot;, certArn),
+        certificate: Certificate.fromCertificateArn(this, &#34;cerf&#34;, certArn),
       },
       proxy: true,
     });
   }
 }
-</code></pre><p>The <code>LambdaRestApi</code> child component needs to know what parent it is part of (the <code>MyStack</code> instance), so we pass along the <code>this</code> explicitly.</p>
-<p>&mldr;actually a third way is to have <code>add</code> methods in the parent component, i.e. something like:</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-typescript data-lang=typescript><span style=color:#66d9ef>class</span> <span style=color:#a6e22e>HookableComponent</span> {
-  <span style=color:#66d9ef>constructor</span>() {
-  }
-  
-  <span style=color:#66d9ef>public</span> <span style=color:#a6e22e>addHook</span>(<span style=color:#a6e22e>hook</span>: <span style=color:#66d9ef>Hook</span>) {
-    <span style=color:#a6e22e>hook</span>.<span style=color:#a6e22e>setup</span>(<span style=color:#66d9ef>this</span>);
-  }
-}
-
-<span style=color:#75715e>// now in client code
-</span><span style=color:#75715e></span><span style=color:#66d9ef>class</span> <span style=color:#a6e22e>MyComponent</span> <span style=color:#66d9ef>extends</span> <span style=color:#a6e22e>HookableComponent</span> {
-  <span style=color:#66d9ef>constructor</span>() {
-    <span style=color:#66d9ef>this</span>.<span style=color:#a6e22e>addHook</span>(<span style=color:#a6e22e>useState</span>(...));
-  }
-}
-</code></pre></div><p>So, <code>useState</code> doesn&rsquo;t immediately create a hook, but instead waits just a little bit until <code>addHook</code> pushes the <code>parent</code> into it via a follow-up <code>setup</code> call. But, anyway, just mentioning for exhaustiveness.</p>
-<p>Which approach is better? Explicit or implicit?</p>
-<p>It&rsquo;s hard to say.</p>
-<p>When learning how things work, I prefer the explicit approach because it really highlights &ldquo;ah sure, this <code>useState(component, ...)</code> is &ldquo;attaching&rdquo; itself to <code>component</code> as a side-effect&rdquo;. Without that hint, I&rsquo;m left wondering about how these two unrelated things, the <code>component</code> and the <code>useState</code>, are magically woven together. (Granted, it&rsquo;s almost always a global variable, but still just makes me stop and think.)</p>
-<p>However, admittedly when churning out 1000s of components, as Facebook engineers are wont to do, I could see the repetitiveness being a little annoying, and once you know how it works, having the bookkeeping done automatically can be enticing.</p>
-<p>I think all things considered, I&rsquo;d probably keep explicit. Maybe.</p>
-<h2 id=few-downsides-of-the-class-based-hooks>
-Few Downsides of the Class-Based Hooks
-<a class=heading-link href=#few-downsides-of-the-class-based-hooks>
-<i class="fa fa-link" aria-hidden=true></i>
-</a>
-</h2>
-<p>I&rsquo;ll explicitly call out a few downsides of my current <code>HookableComponent</code> spike.</p>
-<p>For one, it is based on inheritance, which I maintain &ldquo;is not evil when used well/in-the-small&rdquo;, but will mean the usual &ldquo;oh right&rdquo; OO-isms like if a child overrides <code>componentDidMount()</code> and doesn&rsquo;t call <code>super.componentDidMount()</code>, then none of our effect hooks will work (the <code>useState</code> hooks would be fine in this scenario).</p>
-<p>(Although if class-based hooks were built into React, they could invoke them in a safer/not-accidentally-override-able manner.)</p>
-<p>I don&rsquo;t think we have a great way to mitigate this: TypeScript doesn&rsquo;t let us mark our <code>componentDidMount</code> as final, nor are there other JavaScript/language-provided semantics (although there are probably ways of enforcing this at runtime, i.e putting &ldquo;marker&rdquo; code in the base <code>componentDidMount</code> and then failing at some later when we notice &ldquo;hey wait, the marker didn&rsquo;t get run&rdquo;).</p>
-<p>More generically, our API surface is generally more tied to implementation details of the <code>HookableComponent</code>.</p>
-<p>I.e. in FP hooks, especially with the implicit passing of the component, the calling code has no idea/coupling to how <code>useState</code> works. Callers pass very little parameters, and can (within the rules), invoke it whenever/however they want. It is more declarative.</p>
-<p>This really tiny API surface is enticing for React maintainers, as it means there would be less breaking changes as React needs to refactor things down the road.</p>
-<p>&mldr;although, now that I think about it, with an implicit-passing API and &ldquo;hiding&rdquo; the <code>HookableComponent</code> implementation details (i.e. <code>addEffect</code>, <code>hookState</code>, etc.) directly into <code>Component</code> as hidden implementation details (which is similar to how FP hooks are baked directly into FP components), the API surface may really not be that different.</p>
-<h2 id=so-are-fp-based-or-class-based-hooks-better>
-So Are FP-Based or Class-Based Hooks Better?
-<a class=heading-link href=#so-are-fp-based-or-class-based-hooks-better>
-<i class="fa fa-link" aria-hidden=true></i>
-</a>
-</h2>
-<p>This admittedly is a trick question, because I think it depends on your preferences/biases.</p>
-<p>If you&rsquo;ve already decided you want FP-only components as an end-goal/true north (which, perhaps putting words in their mouth, but I think the React team has), and need to access the React state/lifecycle, etc., FP hooks look like a great way of doing that.</p>
-<p>But, vice versa, if you&rsquo;ve decided you don&rsquo;t mind class-based components, I think I&rsquo;ve shown (at least to myself) that you can achieve the very valid points of &ldquo;decoupling chunks of state/lifecycle logic from class method layout&rdquo; with a few additions to the existing class-based component API, and not have to give up on classes.</p>
-<p>I do have a somewhat pedantic quibble that I think the React Hook literature goes a bit too far in it&rsquo;s anti-class push, by somewhat zealously pursuing FP even when its not really FP. I.e. hooks very explicitly have side-effects. They are mutating &ldquo;something&rdquo;. The &ldquo;not class&rdquo;/functional component is still there, just behind the scenes, effectively still creating a &ldquo;combination of state + behavior&rdquo; (&mldr;sounds like a class&mldr;), although not through the language-/spec-provided syntax, keywords, and semantics that we all already know, but through a DSL that is effectively recreating it.</p>
-<p>Which at some point I worry that it becomes a leaky abstraction, and somewhat of a <a href=https://en.wikipedia.org/wiki/Greenspun%27s_tenth_rule>Greenspun-ism</a> where they&rsquo;re trying really hard to not use classes; but when you invoke a functional component, but then have to provide side-effecting/global-accessing functions that are going to stitch back together what is effectively a class, you may not have something that is inherently a bug-ridden/half-implemented/etc. version of OO&mldr;but is it really better?</p>
-<p>Although, who knows, maybe it is.</p>
-<p>I have my biases, and plan on sticking with class-based components indefinitely-ish, but the React team is paid to think about these issues full-time, across a huge React codebase within Facebook, and they&rsquo;re pretty smart. So, I should given them the benefit of the doubt (while also thinking critically/independently about their own biases/etc.).</p>
-<p>And, even if React&rsquo;s hooks are &ldquo;meh, something you can do with classes&rdquo;, pushing state-of-the-art thinking and implementations, and providing options, to approach something more FP is not bad either. Progress takes experimentation.</p>
-<h2 id=hmwhy-not-support-both-fp-and-class-components>
-Hm&mldr;Why Not Support Both FP and Class Components?
-<a class=heading-link href=#hmwhy-not-support-both-fp-and-class-components>
-<i class="fa fa-link" aria-hidden=true></i>
-</a>
-</h2>
-<p>Now that I&rsquo;ve kicked the tires a bit, I&rsquo;m actually curious whether React could/should just support hooks in both component styles (i.e. using hooks from either FP-based or class-based components).</p>
-<p>Right now hooks blow up if you&rsquo;re not in a FP component (using that implicit global state as an indicator); but they could just as well use the same state to flip from FP-mode to class-mode, and add all of the same hooks they&rsquo;re adding to the FP component to the user&rsquo;s class component (granted, with some caveats/compromises/contracts about how it interacts with any explicit logic the user has hand-coded in their own <code>componentDidMount</code>/etc. methods).</p>
-<p>And if you change my naive prototypes to use the implicit passing style, the <code>useState</code>, <code>useEffect</code> usage code is 100% the same (&mldr;almost, see the next paragraph). I.e. the <code>useFriendStatus</code> meta-hook still builds on the <code>useState</code> and <code>useEffect</code> hook primitives and none of them have to be any wiser about whether they were used in a FP-based component or a class-based component.</p>
-<p>The biggest compromise (i.e. breaking change) would be the <code>useState</code> return values changing from <code>[value, setter]</code> to <code>State</code>, to unlock/allow class-based components to instantiate their hooks outside of the <code>render</code> cycle. Perhaps it is too late for such a breaking change, but it would be unfortunate if a &ldquo;only very slightly worse&rdquo; API for FP components (i.e. they need to call <code>state.get()</code> now) would mean now an entire class of components (class-based) are locked out of hook-based APIs and business logic (which is the case today).</p>
-<p>I dunno, it just seems like a boon for libraries (like Apollo, etc.) to have a single way of supporting all of their clients (FP-using and class-using), without the maintenance, documentation, and learning overhead of providing separate APIs for each style.</p>
-<p>&mldr;given how easy I think this <em>should</em> be, I have to imagine this design consideration came up during the Hooks design process (i.e. &ldquo;hey if we made a few small compromises, then class components could use hooks too, so why not?"), and they must have explicitly decided <em>not</em> to support hooks in class-based components.</p>
-<p>That seems irksome if so, because it supports the somewhat-tin-foil-but-perhaps-not-really theory that React&rsquo;s long term view is to deprecate class-based components all together. Which I don&rsquo;t want to immediately/knee-jerk dislike&mldr;but seems like it (throwing out class-based components) could another &ldquo;HoCs are amazing&mldr;two years later&mldr;oh wait&rdquo; type things.</p>
-<p>Or, alternatively and more realistically, there is a lot more nuance to supporting hooks in both styles in a first-class/best-in-class manner.</p>
-<h2 id=hacking-invitation>
-Hacking Invitation
-<a class=heading-link href=#hacking-invitation>
-<i class="fa fa-link" aria-hidden=true></i>
-</a>
-</h2>
-<p>If you&rsquo;d like to play with, spike, fork, add tests, pull request any of the &ldquo;hooks-for-classes&rdquo; code, it&rsquo;s currently <a href=https://github.com/stephenh/hooks-sandbox>here</a>.</p>
-<h2 id=post-draft-thoughts>
-Post-Draft Thoughts
-<a class=heading-link href=#post-draft-thoughts>
-<i class="fa fa-link" aria-hidden=true></i>
-</a>
-</h2>
-<p>After writing this up, I did a few days of thinking and prototyping.</p>
-<p>I&rsquo;m hooking up React Apollo in our app, so gave Higher-Order-Components a try. After reading <a href=https://medium.com/@jrwebdev/react-higher-order-component-patterns-in-typescript-42278f7590fb>this great post</a>, I don&rsquo;t think HOC&rsquo;s are <em>that</em> bad in theory. Instead, I blame the React Apollo HOC implementation specifically for trying to have too jank of &ldquo;sometimes we flatten, sometimes we alias&rdquo; semantics in which props it injects, which turns out yes is hard to type. I&rsquo;m tempted to think that just making the semantics simpler (not only to type but then also use), the backlash against HOC would not have been so bad. (That and also more widespread use the <code>Subtract</code> type mentioned in that post, which as far as I understand is essentially required to make the HOC types work.)</p>
-<p>I very briefly looked at porting the React Apollo <code>useQuery</code> / <code>useMutation</code> FP hooks to my very-naive/WIP class-based versions, but that sucks, I don&rsquo;t want to be continually porting over every FP-based hook I want to use to my (again naive) class-based hook primitives, just to prove it&rsquo;s possible. Even if it&rsquo;s (ideally) very trivial due to how similar the mine-vs-theirs APIs are, they are not exact.</p>
-<p>And, as I think about compromising and &ldquo;fine, I&rsquo;ll write FP-based components&rdquo;, it strikes me as annoying how <em>similar</em> they will be to OO components: they&rsquo;ll have a bunch of local state (hooks) defined at the start (like OO fields) with a bunch of small functions (like methods) broken up to handle the rendering. They will essentially be isomorphic, or as a friend put it: &ldquo;classes vs functions is a misnomer - classes are just bundles of (organized) functions that close over mutable state&rdquo;.</p>
-<p>Which is exactly what FP components + hooks are reinventing.</p>
-<p>That said, I think I&rsquo;m caving; fine, I&rsquo;ll use FP components. I&rsquo;m honestly fairly resentful, given I like to use both OO and FP, where each is appropriate, but, even just while playing with React Apollo, it&rsquo;s apparent that React really is effectively forcing everyone to use FP components by locking up all of the &ldquo;non-shitty ways of using libraries&rdquo; behind the &ldquo;FP only&rdquo; hooks paradigm.</p>
-<p>If this was purposeful, it was well-played. I seem to be the only one complaining &ldquo;wtf hooks, no classes?"; the wider ecosystem seems to be thrilled with hooks, which having fought React Apollo&rsquo;s HOC, I get.</p>
-<p>Perhaps I am missing something about why hooks could not have been implemented into both class-based component and FP-based components; I wasn&rsquo;t paying enough attention at the time they were proposed/talked about/released to have watched for any design docs with &ldquo;could we support classes too?&rdquo; rationale.</p>
-</div>
-<footer>
-<div id=disqus_thread></div>
-<script type=application/javascript>var disqus_config=function(){};(function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById('disqus_thread').innerHTML='Disqus comments not available by default when the website is previewed locally.';return}var b=document,a=b.createElement('script');a.async=!0,a.src='//draconianoverlord.disqus.com/embed.js',a.setAttribute('data-timestamp',+new Date),(b.head||b.body).appendChild(a)})()</script>
-<noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript>
-<a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a>
-</footer>
-</article>
-</section>
-</div>
-<footer class=footer>
-<section class=container>
-©
+</code></pre><p>The <code>LambdaRestApi</code> child component needs to know what parent it is part of (the <code>MyStack</code> instance), so we pass along the <code>this</code> explicitly.</p><p>&mldr;actually a third way is to have <code>add</code> methods in the parent component, i.e. something like:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-typescript data-lang=typescript><span style=display:flex><span><span style=color:#66d9ef>class</span> <span style=color:#a6e22e>HookableComponent</span> {
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>constructor</span>() {
+</span></span><span style=display:flex><span>  }
+</span></span><span style=display:flex><span>  
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>public</span> <span style=color:#a6e22e>addHook</span>(<span style=color:#a6e22e>hook</span>: <span style=color:#66d9ef>Hook</span>) {
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>hook</span>.<span style=color:#a6e22e>setup</span>(<span style=color:#66d9ef>this</span>);
+</span></span><span style=display:flex><span>  }
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#75715e>// now in client code
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span><span style=color:#66d9ef>class</span> <span style=color:#a6e22e>MyComponent</span> <span style=color:#66d9ef>extends</span> <span style=color:#a6e22e>HookableComponent</span> {
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>constructor</span>() {
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>this</span>.<span style=color:#a6e22e>addHook</span>(<span style=color:#a6e22e>useState</span>(...));
+</span></span><span style=display:flex><span>  }
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>So, <code>useState</code> doesn&rsquo;t immediately create a hook, but instead waits just a little bit until <code>addHook</code> pushes the <code>parent</code> into it via a follow-up <code>setup</code> call. But, anyway, just mentioning for exhaustiveness.</p><p>Which approach is better? Explicit or implicit?</p><p>It&rsquo;s hard to say.</p><p>When learning how things work, I prefer the explicit approach because it really highlights &ldquo;ah sure, this <code>useState(component, ...)</code> is &ldquo;attaching&rdquo; itself to <code>component</code> as a side-effect&rdquo;. Without that hint, I&rsquo;m left wondering about how these two unrelated things, the <code>component</code> and the <code>useState</code>, are magically woven together. (Granted, it&rsquo;s almost always a global variable, but still just makes me stop and think.)</p><p>However, admittedly when churning out 1000s of components, as Facebook engineers are wont to do, I could see the repetitiveness being a little annoying, and once you know how it works, having the bookkeeping done automatically can be enticing.</p><p>I think all things considered, I&rsquo;d probably keep explicit. Maybe.</p><h2 id=few-downsides-of-the-class-based-hooks>Few Downsides of the Class-Based Hooks
+<a class=heading-link href=#few-downsides-of-the-class-based-hooks><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h2><p>I&rsquo;ll explicitly call out a few downsides of my current <code>HookableComponent</code> spike.</p><p>For one, it is based on inheritance, which I maintain &ldquo;is not evil when used well/in-the-small&rdquo;, but will mean the usual &ldquo;oh right&rdquo; OO-isms like if a child overrides <code>componentDidMount()</code> and doesn&rsquo;t call <code>super.componentDidMount()</code>, then none of our effect hooks will work (the <code>useState</code> hooks would be fine in this scenario).</p><p>(Although if class-based hooks were built into React, they could invoke them in a safer/not-accidentally-override-able manner.)</p><p>I don&rsquo;t think we have a great way to mitigate this: TypeScript doesn&rsquo;t let us mark our <code>componentDidMount</code> as final, nor are there other JavaScript/language-provided semantics (although there are probably ways of enforcing this at runtime, i.e putting &ldquo;marker&rdquo; code in the base <code>componentDidMount</code> and then failing at some later when we notice &ldquo;hey wait, the marker didn&rsquo;t get run&rdquo;).</p><p>More generically, our API surface is generally more tied to implementation details of the <code>HookableComponent</code>.</p><p>I.e. in FP hooks, especially with the implicit passing of the component, the calling code has no idea/coupling to how <code>useState</code> works. Callers pass very little parameters, and can (within the rules), invoke it whenever/however they want. It is more declarative.</p><p>This really tiny API surface is enticing for React maintainers, as it means there would be less breaking changes as React needs to refactor things down the road.</p><p>&mldr;although, now that I think about it, with an implicit-passing API and &ldquo;hiding&rdquo; the <code>HookableComponent</code> implementation details (i.e. <code>addEffect</code>, <code>hookState</code>, etc.) directly into <code>Component</code> as hidden implementation details (which is similar to how FP hooks are baked directly into FP components), the API surface may really not be that different.</p><h2 id=so-are-fp-based-or-class-based-hooks-better>So Are FP-Based or Class-Based Hooks Better?
+<a class=heading-link href=#so-are-fp-based-or-class-based-hooks-better><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h2><p>This admittedly is a trick question, because I think it depends on your preferences/biases.</p><p>If you&rsquo;ve already decided you want FP-only components as an end-goal/true north (which, perhaps putting words in their mouth, but I think the React team has), and need to access the React state/lifecycle, etc., FP hooks look like a great way of doing that.</p><p>But, vice versa, if you&rsquo;ve decided you don&rsquo;t mind class-based components, I think I&rsquo;ve shown (at least to myself) that you can achieve the very valid points of &ldquo;decoupling chunks of state/lifecycle logic from class method layout&rdquo; with a few additions to the existing class-based component API, and not have to give up on classes.</p><p>I do have a somewhat pedantic quibble that I think the React Hook literature goes a bit too far in it&rsquo;s anti-class push, by somewhat zealously pursuing FP even when its not really FP. I.e. hooks very explicitly have side-effects. They are mutating &ldquo;something&rdquo;. The &ldquo;not class&rdquo;/functional component is still there, just behind the scenes, effectively still creating a &ldquo;combination of state + behavior&rdquo; (&mldr;sounds like a class&mldr;), although not through the language-/spec-provided syntax, keywords, and semantics that we all already know, but through a DSL that is effectively recreating it.</p><p>Which at some point I worry that it becomes a leaky abstraction, and somewhat of a <a href=https://en.wikipedia.org/wiki/Greenspun%27s_tenth_rule class=external-link target=_blank rel=noopener>Greenspun-ism</a> where they&rsquo;re trying really hard to not use classes; but when you invoke a functional component, but then have to provide side-effecting/global-accessing functions that are going to stitch back together what is effectively a class, you may not have something that is inherently a bug-ridden/half-implemented/etc. version of OO&mldr;but is it really better?</p><p>Although, who knows, maybe it is.</p><p>I have my biases, and plan on sticking with class-based components indefinitely-ish, but the React team is paid to think about these issues full-time, across a huge React codebase within Facebook, and they&rsquo;re pretty smart. So, I should given them the benefit of the doubt (while also thinking critically/independently about their own biases/etc.).</p><p>And, even if React&rsquo;s hooks are &ldquo;meh, something you can do with classes&rdquo;, pushing state-of-the-art thinking and implementations, and providing options, to approach something more FP is not bad either. Progress takes experimentation.</p><h2 id=hmwhy-not-support-both-fp-and-class-components>Hm&mldr;Why Not Support Both FP and Class Components?
+<a class=heading-link href=#hmwhy-not-support-both-fp-and-class-components><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h2><p>Now that I&rsquo;ve kicked the tires a bit, I&rsquo;m actually curious whether React could/should just support hooks in both component styles (i.e. using hooks from either FP-based or class-based components).</p><p>Right now hooks blow up if you&rsquo;re not in a FP component (using that implicit global state as an indicator); but they could just as well use the same state to flip from FP-mode to class-mode, and add all of the same hooks they&rsquo;re adding to the FP component to the user&rsquo;s class component (granted, with some caveats/compromises/contracts about how it interacts with any explicit logic the user has hand-coded in their own <code>componentDidMount</code>/etc. methods).</p><p>And if you change my naive prototypes to use the implicit passing style, the <code>useState</code>, <code>useEffect</code> usage code is 100% the same (&mldr;almost, see the next paragraph). I.e. the <code>useFriendStatus</code> meta-hook still builds on the <code>useState</code> and <code>useEffect</code> hook primitives and none of them have to be any wiser about whether they were used in a FP-based component or a class-based component.</p><p>The biggest compromise (i.e. breaking change) would be the <code>useState</code> return values changing from <code>[value, setter]</code> to <code>State</code>, to unlock/allow class-based components to instantiate their hooks outside of the <code>render</code> cycle. Perhaps it is too late for such a breaking change, but it would be unfortunate if a &ldquo;only very slightly worse&rdquo; API for FP components (i.e. they need to call <code>state.get()</code> now) would mean now an entire class of components (class-based) are locked out of hook-based APIs and business logic (which is the case today).</p><p>I dunno, it just seems like a boon for libraries (like Apollo, etc.) to have a single way of supporting all of their clients (FP-using and class-using), without the maintenance, documentation, and learning overhead of providing separate APIs for each style.</p><p>&mldr;given how easy I think this <em>should</em> be, I have to imagine this design consideration came up during the Hooks design process (i.e. &ldquo;hey if we made a few small compromises, then class components could use hooks too, so why not?&rdquo;), and they must have explicitly decided <em>not</em> to support hooks in class-based components.</p><p>That seems irksome if so, because it supports the somewhat-tin-foil-but-perhaps-not-really theory that React&rsquo;s long term view is to deprecate class-based components all together. Which I don&rsquo;t want to immediately/knee-jerk dislike&mldr;but seems like it (throwing out class-based components) could another &ldquo;HoCs are amazing&mldr;two years later&mldr;oh wait&rdquo; type things.</p><p>Or, alternatively and more realistically, there is a lot more nuance to supporting hooks in both styles in a first-class/best-in-class manner.</p><h2 id=hacking-invitation>Hacking Invitation
+<a class=heading-link href=#hacking-invitation><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h2><p>If you&rsquo;d like to play with, spike, fork, add tests, pull request any of the &ldquo;hooks-for-classes&rdquo; code, it&rsquo;s currently <a href=https://github.com/stephenh/hooks-sandbox class=external-link target=_blank rel=noopener>here</a>.</p><h2 id=post-draft-thoughts>Post-Draft Thoughts
+<a class=heading-link href=#post-draft-thoughts><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h2><p>After writing this up, I did a few days of thinking and prototyping.</p><p>I&rsquo;m hooking up React Apollo in our app, so gave Higher-Order-Components a try. After reading <a href=https://medium.com/@jrwebdev/react-higher-order-component-patterns-in-typescript-42278f7590fb class=external-link target=_blank rel=noopener>this great post</a>, I don&rsquo;t think HOC&rsquo;s are <em>that</em> bad in theory. Instead, I blame the React Apollo HOC implementation specifically for trying to have too jank of &ldquo;sometimes we flatten, sometimes we alias&rdquo; semantics in which props it injects, which turns out yes is hard to type. I&rsquo;m tempted to think that just making the semantics simpler (not only to type but then also use), the backlash against HOC would not have been so bad. (That and also more widespread use the <code>Subtract</code> type mentioned in that post, which as far as I understand is essentially required to make the HOC types work.)</p><p>I very briefly looked at porting the React Apollo <code>useQuery</code> / <code>useMutation</code> FP hooks to my very-naive/WIP class-based versions, but that sucks, I don&rsquo;t want to be continually porting over every FP-based hook I want to use to my (again naive) class-based hook primitives, just to prove it&rsquo;s possible. Even if it&rsquo;s (ideally) very trivial due to how similar the mine-vs-theirs APIs are, they are not exact.</p><p>And, as I think about compromising and &ldquo;fine, I&rsquo;ll write FP-based components&rdquo;, it strikes me as annoying how <em>similar</em> they will be to OO components: they&rsquo;ll have a bunch of local state (hooks) defined at the start (like OO fields) with a bunch of small functions (like methods) broken up to handle the rendering. They will essentially be isomorphic, or as a friend put it: &ldquo;classes vs functions is a misnomer - classes are just bundles of (organized) functions that close over mutable state&rdquo;.</p><p>Which is exactly what FP components + hooks are reinventing.</p><p>That said, I think I&rsquo;m caving; fine, I&rsquo;ll use FP components. I&rsquo;m honestly fairly resentful, given I like to use both OO and FP, where each is appropriate, but, even just while playing with React Apollo, it&rsquo;s apparent that React really is effectively forcing everyone to use FP components by locking up all of the &ldquo;non-shitty ways of using libraries&rdquo; behind the &ldquo;FP only&rdquo; hooks paradigm.</p><p>If this was purposeful, it was well-played. I seem to be the only one complaining &ldquo;wtf hooks, no classes?&rdquo;; the wider ecosystem seems to be thrilled with hooks, which having fought React Apollo&rsquo;s HOC, I get.</p><p>Perhaps I am missing something about why hooks could not have been implemented into both class-based component and FP-based components; I wasn&rsquo;t paying enough attention at the time they were proposed/talked about/released to have watched for any design docs with &ldquo;could we support classes too?&rdquo; rationale.</p></div><footer><div id=disqus_thread></div><script>window.disqus_config=function(){},function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById("disqus_thread").innerHTML="Disqus comments not available by default when the website is previewed locally.";return}var t=document,e=t.createElement("script");e.async=!0,e.src="//draconianoverlord.disqus.com/embed.js",e.setAttribute("data-timestamp",+new Date),(t.head||t.body).appendChild(e)}(),document.addEventListener("themeChanged",function(){document.readyState=="complete"&&DISQUS.reset({reload:!0,config:disqus_config})})</script></footer></article></section></div><footer class=footer><section class=container>©
 2008 -
-2022
+2023
 Stephen Haberman
 ·
-Powered by <a href=https://gohugo.io/>Hugo</a> & <a href=https://github.com/luizdepra/hugo-coder/>Coder</a>.
-</section>
-</footer>
-</main>
-<script src=/js/coder.min.03b17769f4f91ae35667e1f2a1ca8c16f50562576cf90ff32b3179926914daa5.js integrity="sha256-A7F3afT5GuNWZ+HyocqMFvUFYlds+Q/zKzF5kmkU2qU="></script>
-</body>
-</html>
+Powered by <a href=https://gohugo.io/ target=_blank rel=noopener>Hugo</a> & <a href=https://github.com/luizdepra/hugo-coder/ target=_blank rel=noopener>Coder</a>.</section></footer></main><script src=/js/coder.min.6ae284be93d2d19dad1f02b0039508d9aab3180a12a06dcc71b0b0ef7825a317.js integrity="sha256-auKEvpPS0Z2tHwKwA5UI2aqzGAoSoG3McbCw73gloxc="></script></body></html>

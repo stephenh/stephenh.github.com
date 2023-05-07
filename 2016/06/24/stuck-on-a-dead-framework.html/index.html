@@ -1,205 +1,32 @@
-<!doctype html><html lang=en>
-<head>
-<meta charset=utf-8>
-<meta name=viewport content="width=device-width,initial-scale=1">
-<meta http-equiv=content-language content="en">
-<meta name=color-scheme content="light dark">
-<meta name=author content="Stephen Haberman">
-<meta name=description content="I&rsquo;ve been thinking about/discussing frameworks recently with some coworkers.
+<!doctype html><html lang=en><head><title>Stuck on a Dead Framework · Draconian Overlord</title><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=color-scheme content="light dark"><meta name=author content="Stephen Haberman"><meta name=description content="I&rsquo;ve been thinking about/discussing frameworks recently with some coworkers.
 The topic came up because after being comfortably isolated from a lot of the front-end/JavaScript ecosystem for the last ~5 years (by quietly staying productive on a GWT + Tessell codebase), I&rsquo;m getting more exposure to other codebases and frameworks.
 Obviously talking about frameworks, and especially JavaScript frameworks, is nothing new these days.
-But I still wanted to type up my thoughts, with the rationalization that I&rsquo;m not talking about anything JavaScript-specific, and instead am thinking through the pros/cons of framework choice for any long-term codebase, whether front-end or back-end, e.">
-<meta name=keywords content="blog,developer,personal">
-<meta name=twitter:card content="summary">
-<meta name=twitter:title content="Stuck on a Dead Framework">
-<meta name=twitter:description content="I&rsquo;ve been thinking about/discussing frameworks recently with some coworkers.
+But I still wanted to type up my thoughts, with the rationalization that I&rsquo;m not talking about anything JavaScript-specific, and instead am thinking through the pros/cons of framework choice for any long-term codebase, whether front-end or back-end, e."><meta name=keywords content="blog,developer,personal"><meta name=twitter:card content="summary"><meta name=twitter:title content="Stuck on a Dead Framework"><meta name=twitter:description content="I&rsquo;ve been thinking about/discussing frameworks recently with some coworkers.
 The topic came up because after being comfortably isolated from a lot of the front-end/JavaScript ecosystem for the last ~5 years (by quietly staying productive on a GWT + Tessell codebase), I&rsquo;m getting more exposure to other codebases and frameworks.
 Obviously talking about frameworks, and especially JavaScript frameworks, is nothing new these days.
-But I still wanted to type up my thoughts, with the rationalization that I&rsquo;m not talking about anything JavaScript-specific, and instead am thinking through the pros/cons of framework choice for any long-term codebase, whether front-end or back-end, e.">
-<meta property="og:title" content="Stuck on a Dead Framework">
-<meta property="og:description" content="I&rsquo;ve been thinking about/discussing frameworks recently with some coworkers.
+But I still wanted to type up my thoughts, with the rationalization that I&rsquo;m not talking about anything JavaScript-specific, and instead am thinking through the pros/cons of framework choice for any long-term codebase, whether front-end or back-end, e."><meta property="og:title" content="Stuck on a Dead Framework"><meta property="og:description" content="I&rsquo;ve been thinking about/discussing frameworks recently with some coworkers.
 The topic came up because after being comfortably isolated from a lot of the front-end/JavaScript ecosystem for the last ~5 years (by quietly staying productive on a GWT + Tessell codebase), I&rsquo;m getting more exposure to other codebases and frameworks.
 Obviously talking about frameworks, and especially JavaScript frameworks, is nothing new these days.
-But I still wanted to type up my thoughts, with the rationalization that I&rsquo;m not talking about anything JavaScript-specific, and instead am thinking through the pros/cons of framework choice for any long-term codebase, whether front-end or back-end, e.">
-<meta property="og:type" content="article">
-<meta property="og:url" content="https://www.draconianoverlord.com/2016/06/24/stuck-on-a-dead-framework.html/"><meta property="article:section" content="posts">
-<meta property="article:published_time" content="2016-06-24T00:00:00+00:00">
-<meta property="article:modified_time" content="2016-06-24T00:00:00+00:00">
-<title>
-Stuck on a Dead Framework · Draconian Overlord
-</title>
-<link rel=canonical href=https://www.draconianoverlord.com/2016/06/24/stuck-on-a-dead-framework.html/>
-<link rel=preload href="/fonts/forkawesome-webfont.woff2?v=1.2.0" as=font type=font/woff2 crossorigin>
-<link rel=stylesheet href=/css/coder.min.d9fddbffe6f27e69985dc5fe0471cdb0e57fbf4775714bc3d847accb08f4a1f6.css integrity="sha256-2f3b/+byfmmYXcX+BHHNsOV/v0d1cUvD2Eesywj0ofY=" crossorigin=anonymous media=screen>
-<link rel=stylesheet href=/css/coder-dark.min.aa883b9ce35a8ff4a2a5008619005175e842bb18a8a9f9cc2bbcf44dab2d91fa.css integrity="sha256-qog7nONaj/SipQCGGQBRdehCuxioqfnMK7z0Tastkfo=" crossorigin=anonymous media=screen>
-<link rel=icon type=image/png href=/images/favicon-32x32.png sizes=32x32>
-<link rel=icon type=image/png href=/images/favicon-16x16.png sizes=16x16>
-<link rel=apple-touch-icon href=/images/apple-touch-icon.png>
-<link rel=apple-touch-icon sizes=180x180 href=/images/apple-touch-icon.png>
-<meta name=generator content="Hugo 0.92.0">
-</head>
-<body class="preload-transitions colorscheme-auto">
-<div class=float-container>
-<a id=dark-mode-toggle class=colorscheme-toggle>
-<i class="fa fa-adjust fa-fw" aria-hidden=true></i>
-</a>
-</div>
-<main class=wrapper>
-<nav class=navigation>
-<section class=container>
-<a class=navigation-title href=/>Draconian Overlord</a>
-Oppressing software entropy
-</section>
-</nav>
-<div class=content>
-<section class="container post">
-<article>
-<header>
-<div class=post-title>
-<h1 class=title>
-<a class=title-link href=https://www.draconianoverlord.com/2016/06/24/stuck-on-a-dead-framework.html/>
-Stuck on a Dead Framework
-</a>
-</h1>
-</div>
-<div class=post-meta>
-<div class=date>
-<span class=posted-on>
-<i class="fa fa-calendar" aria-hidden=true></i>
-<time datetime=2016-06-24T00:00:00Z>
-June 24, 2016
-</time>
-</span>
-<span class=reading-time>
-<i class="fa fa-clock-o" aria-hidden=true></i>
-7-minute read
-</span>
-</div>
-<div class=categories>
-<i class="fa fa-folder" aria-hidden=true></i>
-<a href=/categories/architecture/>Architecture</a></div>
-</div>
-</header>
-<div>
-<p>I&rsquo;ve been thinking about/discussing frameworks recently with some coworkers.</p>
-<p>The topic came up because after being comfortably isolated from a lot of the front-end/JavaScript ecosystem for the last ~5 years (by quietly staying productive on a <a href=http://www.gwtproject.org/>GWT</a> + <a href=http://tessell.org/>Tessell</a> codebase), I&rsquo;m getting more exposure to other codebases and frameworks.</p>
-<p>Obviously talking about frameworks, and especially JavaScript frameworks, is nothing new these days.</p>
-<p>But I still wanted to type up my thoughts, with the rationalization that I&rsquo;m not talking about anything JavaScript-specific, and instead am thinking through the pros/cons of framework choice for any long-term codebase, whether front-end or back-end, e.g. even your ORMs, J2EEs, etc.</p>
-<p>Note that, for the context of this post, my experience is mostly with medium-sized applications: e.g. a team size of ~5-10 people, working on basically the same project/product (granted with ever evolving features) over a ~5+ year lifetime, meaning that the overall codebase will probably hit the low ~100k LOC.</p>
-<h2 id=the-framework-life-cycle>
-The Framework Life Cycle
-<a class=heading-link href=#the-framework-life-cycle>
-<i class="fa fa-link" aria-hidden=true></i>
-</a>
-</h2>
-<p>I think the first step in thinking objectively about frameworks is to realize that they will all eventually be old, crufty, and dead.</p>
-<p>Assuming a framework starts out life well (e.g. is well designed and adopted), it will go through a predictable life cycle of Hype, Adoption, Maturation, Stagnation, Disillusionment. (I won&rsquo;t spend any time describing each stage/transition, because that&rsquo;s not the focus of the article, and I basically just made it up off the top of my head, but anecdotally it seems like an accurate model.)</p>
-<p>Given this, it should not be a surprise when a current framework hits the Stagnation or Disillusionment stage, nor should it be a surprise when a new one hits the Hype or Adoption stages.</p>
-<p>This is going to happen. There will always be new frameworks, and always be aging frameworks. So we should just plan for it.</p>
-<p>Granted, life for your codebase is (hopefully) just fine during the Adoption and Maturation stages of your chosen framework. You write your application, the framework makes you more productive, everything is good.</p>
-<p>However, what becomes very frustrating (and likely what is more common in the JavaScript ecosystem vs. older/non-JS ecosystems), is when the framework life cycle moves <em>more quickly than your codebase&rsquo;s life cycle</em>.</p>
-<p>You are now stuck with an application written on top of a dead framework. (Granted, maybe not &ldquo;dead dead&rdquo;, but I&rsquo;m using the word &ldquo;dead&rdquo; as an illustration, and basically mean &ldquo;dead&rdquo; as in &ldquo;new hires hear what your stack is and wrinkle their nose&rdquo;.)</p>
-<h2 id=what-to-do-now>
-What to do Now?
-<a class=heading-link href=#what-to-do-now>
-<i class="fa fa-link" aria-hidden=true></i>
-</a>
-</h2>
-<p>There are many pros/cons/topics on frameworks, but this is what I&rsquo;d like to focus on: the risk/what happens when you&rsquo;re on a dead framework.</p>
-<p>When faced with this scenario, I think there are the three possible reactions developers might have:</p>
-<ol>
-<li>Avoid frameworks: &ldquo;Forget frameworks, I&rsquo;m not falling for that again.&rdquo;</li>
-<li>Just rewrite: &ldquo;Ah well, let&rsquo;s just rewrite on top of the next framework.&rdquo;</li>
-<li>Continue on: &ldquo;Our codebase is fine, let&rsquo;s carry on.&rdquo;</li>
-</ol>
-<p>I&rsquo;ll touch on each one.</p>
-<h3 id=reaction-1-avoid-frameworks-all-together>
-Reaction 1: Avoid Frameworks All Together
-<a class=heading-link href=#reaction-1-avoid-frameworks-all-together>
-<i class="fa fa-link" aria-hidden=true></i>
-</a>
-</h3>
-<p>Personally, I think this reaction is fairly naive; IMO if you don&rsquo;t use a framework, there are three potential outcomes:</p>
-<ol>
-<li>Your codebase is so small that it doesn&rsquo;t matter (which is great, don&rsquo;t bother)</li>
-<li>Your codebase becomes tangled and hard to understand</li>
-<li>Your codebase basically has a custom framework in it anyway</li>
-</ol>
-<p>The 3rd option I think is especially cute: I&rsquo;ll read an article that says &ldquo;bah, I don&rsquo;t need a framework, I just do this!&rdquo;&mldr;and then proceeds to outline the beginnings of a framework.</p>
-<p>So, it&rsquo;s great if you don&rsquo;t need a framework, but I don&rsquo;t think that&rsquo;s a realistic option for most large software projects.</p>
-<p>You use one, you build one, or you end up with a mess. (Granted, a framework does not mean you <em>won&rsquo;t</em> still end up with a mess, it just slightly changes the odds in your favor.)</p>
-<h3 id=reaction-2-rewrite-on-the-next-framework>
-Reaction 2: Rewrite On the Next Framework
-<a class=heading-link href=#reaction-2-rewrite-on-the-next-framework>
-<i class="fa fa-link" aria-hidden=true></i>
-</a>
-</h3>
-<p>So, you&rsquo;ve got a codebase where productivity is dropping, and your framework is past its prime, so obviously it&rsquo;s the framework&rsquo;s fault, and a rewrite is in order.</p>
-<p>There are several risks here:</p>
-<ol>
-<li>
-<p>It is expensive.</p>
-<p>Granted, if done well, you can do these sort of things in a phased approach, so you spread the risk and cost over time. But it still involves touching a lot of functionality that was considered &ldquo;done and paid for&rdquo; by the organization.</p>
-</li>
-<li>
-<p>You loose credibility with your product owners/customers.</p>
-<p>A &ldquo;move to a new framework&rdquo; rewrite defacto affects velocity, and your product owners are not going to appreciate that, especially if you have a fairly new codebase in the first place.</p>
-<p>(Interestingly, <a href=http://www.svpg.com/>SVPG</a> posits an interesting idea: developers should be given 20% of their time to do ongoing technical maintenance. E.g. on a team of 5, this would be 1 person. Full time. The trade off for being given this 20% is that the application should never need a from-scratch rewrite. I find this a very interesting proposal, but haven&rsquo;t had the opportunity to try it out.)</p>
-</li>
-<li>
-<p>There is no guarantee that your next codebase will be any better.</p>
-<p>It is easy to think a rewrite will fix things. When you start the rewrite, you&rsquo;re back in a small codebase. Everything is new and fresh. Things are easy to reason about, easy to change. Surely this new codebase will be amazing forever.</p>
-<p>But inevitably the new codebase gets more features, pretty soon all the features of your old codebase, and now it&rsquo;s just as large, and just as complex, as the previous codebase.</p>
-<p>How do you really know the &ldquo;just moving to the new framework&rdquo; is going to fix this problem? &ldquo;Using framework X/Y/Z&rdquo; does not automatically mean &ldquo;my 10k, 20k, 50k LOC codebase is pleasant to work in&rdquo;.</p>
-</li>
-</ol>
-<p>If you find yourself on a dead framework, <em>and</em> the productivity/quality of your codebase is dramatically low, a rewrite might actually be the right idea. However, I think the goal of a well-designed application should be the next reaction: &ldquo;eh, no big deal&rdquo;.</p>
-<h3 id=reaction-3-continue-on>
-Reaction 3: Continue On
-<a class=heading-link href=#reaction-3-continue-on>
-<i class="fa fa-link" aria-hidden=true></i>
-</a>
-</h3>
-<p>Ideally, your framework becoming passe should be a non-event.</p>
-<p>This is because: a) the framework you initially choose had good architectural choices, and b) since then you&rsquo;ve structured your codebase well enough that your productivity remains high, regardless of the release/blog post velocity of your underlying framework.</p>
-<p>My primary indicator of productivity is: how fast is your TDD cycle? Can a developer easily write unit tests (that are easy to read, easy to write, and test the right things) and quickly see a green/red cycle?</p>
-<p>If so, a lot of other things usually take care of themselves. And I think you can go a long way delivering useful functionality (quickly and productively) on a &ldquo;dead&rdquo; stack, if you have quality and are able to keep quality as you go.</p>
-<p>Granted, the TDD cycle is not the sole requirement, but I think it&rsquo;s a pretty good indicator.</p>
-<p>Of course there are other indicators: have you had quality from day one? Tests from day one? Is refactoring easy? Are developers happy with their workflow? If so, you&rsquo;re hopefully in good shape.</p>
-<p>Otherwise it&rsquo;s extremely hard to recover quality, short of a herculean effort that trends close to a rewrite anyway.</p>
-<h2 id=basically-is-your-codebase-productive>
-Basically: Is Your Codebase Productive?
-<a class=heading-link href=#basically-is-your-codebase-productive>
-<i class="fa fa-link" aria-hidden=true></i>
-</a>
-</h2>
-<p>Perhaps this is obvious, but I think the core question is pretty simple: are you still productive?</p>
-<p>I&rsquo;ve been on teams that, 5 years into the project, are using &ldquo;old&rdquo; technologies (because any technology around when the project started is defacto old by that point), and are still productive.</p>
-<p>I&rsquo;ve also been on teams (awhile ago) that were using brand new technologies, their codebase hadn&rsquo;t even shipped 1.0, and they still weren&rsquo;t productive. They already needed a rewrite.</p>
-<p>If you have a productive codebase, of course the answer is easy: keep doing what you&rsquo;re doing. If you don&rsquo;t have a productive codebase, unfortunately I don&rsquo;t really have a great answer. Is it the framework&rsquo;s fault? Maybe, maybe not. Will a rewrite help? Maybe, maybe not.</p>
-<p>It depends on your situation, and what the core productivity issues are (because there are probably several). In theory I should have something intelligent to say about this, but I don&rsquo;t at this point.</p>
-<p>Which is such an inconclusive ending that I&rsquo;m tempted to not even publish this post, but at this point I need to call it done and move on.</p>
-</div>
-<footer>
-<div id=disqus_thread></div>
-<script type=application/javascript>var disqus_config=function(){};(function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById('disqus_thread').innerHTML='Disqus comments not available by default when the website is previewed locally.';return}var b=document,a=b.createElement('script');a.async=!0,a.src='//draconianoverlord.disqus.com/embed.js',a.setAttribute('data-timestamp',+new Date),(b.head||b.body).appendChild(a)})()</script>
-<noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript>
-<a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a>
-</footer>
-</article>
-</section>
-</div>
-<footer class=footer>
-<section class=container>
-©
+But I still wanted to type up my thoughts, with the rationalization that I&rsquo;m not talking about anything JavaScript-specific, and instead am thinking through the pros/cons of framework choice for any long-term codebase, whether front-end or back-end, e."><meta property="og:type" content="article"><meta property="og:url" content="https://www.draconianoverlord.com/2016/06/24/stuck-on-a-dead-framework.html/"><meta property="article:section" content="posts"><meta property="article:published_time" content="2016-06-24T00:00:00+00:00"><meta property="article:modified_time" content="2016-06-24T00:00:00+00:00"><link rel=canonical href=https://www.draconianoverlord.com/2016/06/24/stuck-on-a-dead-framework.html/><link rel=preload href="/fonts/forkawesome-webfont.woff2?v=1.2.0" as=font type=font/woff2 crossorigin><link rel=stylesheet href=/css/coder.min.65236a6d834b26194eed04a2a3b45e44d9194ef9e620253705d4bef03bd7ef81.css integrity="sha256-ZSNqbYNLJhlO7QSio7ReRNkZTvnmICU3BdS+8DvX74E=" crossorigin=anonymous media=screen><link rel=stylesheet href=/css/coder-dark.min.f6534b0b446b75d9b6ad77a97d43ede2ddaeff1b6e2361fb7198d6f8fcb7f83f.css integrity="sha256-9lNLC0Rrddm2rXepfUPt4t2u/xtuI2H7cZjW+Py3+D8=" crossorigin=anonymous media=screen><link rel=icon type=image/png href=/images/favicon-32x32.png sizes=32x32><link rel=icon type=image/png href=/images/favicon-16x16.png sizes=16x16><link rel=apple-touch-icon href=/images/apple-touch-icon.png><link rel=apple-touch-icon sizes=180x180 href=/images/apple-touch-icon.png><link rel=manifest href=/site.webmanifest><link rel=mask-icon href=/images/safari-pinned-tab.svg color=#5bbad5></head><body class="preload-transitions colorscheme-auto"><div class=float-container><a id=dark-mode-toggle class=colorscheme-toggle><i class="fa fa-adjust fa-fw" aria-hidden=true></i></a></div><main class=wrapper><nav class=navigation><section class=container><a class=navigation-title href=/>Draconian Overlord</a>
+Oppressing software entropy</section></nav><div class=content><section class="container post"><article><header><div class=post-title><h1 class=title><a class=title-link href=https://www.draconianoverlord.com/2016/06/24/stuck-on-a-dead-framework.html/>Stuck on a Dead Framework</a></h1></div><div class=post-meta><div class=date><span class=posted-on><i class="fa fa-calendar" aria-hidden=true></i>
+<time datetime=2016-06-24T00:00:00Z>June 24, 2016</time></span>
+<span class=reading-time><i class="fa fa-clock-o" aria-hidden=true></i>
+7-minute read</span></div><div class=categories><i class="fa fa-folder" aria-hidden=true></i>
+<a href=/categories/architecture/>Architecture</a></div></div></header><div class=post-content><p>I&rsquo;ve been thinking about/discussing frameworks recently with some coworkers.</p><p>The topic came up because after being comfortably isolated from a lot of the front-end/JavaScript ecosystem for the last ~5 years (by quietly staying productive on a <a href=http://www.gwtproject.org/ class=external-link target=_blank rel=noopener>GWT</a> + <a href=http://tessell.org/ class=external-link target=_blank rel=noopener>Tessell</a> codebase), I&rsquo;m getting more exposure to other codebases and frameworks.</p><p>Obviously talking about frameworks, and especially JavaScript frameworks, is nothing new these days.</p><p>But I still wanted to type up my thoughts, with the rationalization that I&rsquo;m not talking about anything JavaScript-specific, and instead am thinking through the pros/cons of framework choice for any long-term codebase, whether front-end or back-end, e.g. even your ORMs, J2EEs, etc.</p><p>Note that, for the context of this post, my experience is mostly with medium-sized applications: e.g. a team size of ~5-10 people, working on basically the same project/product (granted with ever evolving features) over a ~5+ year lifetime, meaning that the overall codebase will probably hit the low ~100k LOC.</p><h2 id=the-framework-life-cycle>The Framework Life Cycle
+<a class=heading-link href=#the-framework-life-cycle><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h2><p>I think the first step in thinking objectively about frameworks is to realize that they will all eventually be old, crufty, and dead.</p><p>Assuming a framework starts out life well (e.g. is well designed and adopted), it will go through a predictable life cycle of Hype, Adoption, Maturation, Stagnation, Disillusionment. (I won&rsquo;t spend any time describing each stage/transition, because that&rsquo;s not the focus of the article, and I basically just made it up off the top of my head, but anecdotally it seems like an accurate model.)</p><p>Given this, it should not be a surprise when a current framework hits the Stagnation or Disillusionment stage, nor should it be a surprise when a new one hits the Hype or Adoption stages.</p><p>This is going to happen. There will always be new frameworks, and always be aging frameworks. So we should just plan for it.</p><p>Granted, life for your codebase is (hopefully) just fine during the Adoption and Maturation stages of your chosen framework. You write your application, the framework makes you more productive, everything is good.</p><p>However, what becomes very frustrating (and likely what is more common in the JavaScript ecosystem vs. older/non-JS ecosystems), is when the framework life cycle moves <em>more quickly than your codebase&rsquo;s life cycle</em>.</p><p>You are now stuck with an application written on top of a dead framework. (Granted, maybe not &ldquo;dead dead&rdquo;, but I&rsquo;m using the word &ldquo;dead&rdquo; as an illustration, and basically mean &ldquo;dead&rdquo; as in &ldquo;new hires hear what your stack is and wrinkle their nose&rdquo;.)</p><h2 id=what-to-do-now>What to do Now?
+<a class=heading-link href=#what-to-do-now><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h2><p>There are many pros/cons/topics on frameworks, but this is what I&rsquo;d like to focus on: the risk/what happens when you&rsquo;re on a dead framework.</p><p>When faced with this scenario, I think there are the three possible reactions developers might have:</p><ol><li>Avoid frameworks: &ldquo;Forget frameworks, I&rsquo;m not falling for that again.&rdquo;</li><li>Just rewrite: &ldquo;Ah well, let&rsquo;s just rewrite on top of the next framework.&rdquo;</li><li>Continue on: &ldquo;Our codebase is fine, let&rsquo;s carry on.&rdquo;</li></ol><p>I&rsquo;ll touch on each one.</p><h3 id=reaction-1-avoid-frameworks-all-together>Reaction 1: Avoid Frameworks All Together
+<a class=heading-link href=#reaction-1-avoid-frameworks-all-together><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h3><p>Personally, I think this reaction is fairly naive; IMO if you don&rsquo;t use a framework, there are three potential outcomes:</p><ol><li>Your codebase is so small that it doesn&rsquo;t matter (which is great, don&rsquo;t bother)</li><li>Your codebase becomes tangled and hard to understand</li><li>Your codebase basically has a custom framework in it anyway</li></ol><p>The 3rd option I think is especially cute: I&rsquo;ll read an article that says &ldquo;bah, I don&rsquo;t need a framework, I just do this!&rdquo;&mldr;and then proceeds to outline the beginnings of a framework.</p><p>So, it&rsquo;s great if you don&rsquo;t need a framework, but I don&rsquo;t think that&rsquo;s a realistic option for most large software projects.</p><p>You use one, you build one, or you end up with a mess. (Granted, a framework does not mean you <em>won&rsquo;t</em> still end up with a mess, it just slightly changes the odds in your favor.)</p><h3 id=reaction-2-rewrite-on-the-next-framework>Reaction 2: Rewrite On the Next Framework
+<a class=heading-link href=#reaction-2-rewrite-on-the-next-framework><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h3><p>So, you&rsquo;ve got a codebase where productivity is dropping, and your framework is past its prime, so obviously it&rsquo;s the framework&rsquo;s fault, and a rewrite is in order.</p><p>There are several risks here:</p><ol><li><p>It is expensive.</p><p>Granted, if done well, you can do these sort of things in a phased approach, so you spread the risk and cost over time. But it still involves touching a lot of functionality that was considered &ldquo;done and paid for&rdquo; by the organization.</p></li><li><p>You loose credibility with your product owners/customers.</p><p>A &ldquo;move to a new framework&rdquo; rewrite defacto affects velocity, and your product owners are not going to appreciate that, especially if you have a fairly new codebase in the first place.</p><p>(Interestingly, <a href=http://www.svpg.com/ class=external-link target=_blank rel=noopener>SVPG</a> posits an interesting idea: developers should be given 20% of their time to do ongoing technical maintenance. E.g. on a team of 5, this would be 1 person. Full time. The trade off for being given this 20% is that the application should never need a from-scratch rewrite. I find this a very interesting proposal, but haven&rsquo;t had the opportunity to try it out.)</p></li><li><p>There is no guarantee that your next codebase will be any better.</p><p>It is easy to think a rewrite will fix things. When you start the rewrite, you&rsquo;re back in a small codebase. Everything is new and fresh. Things are easy to reason about, easy to change. Surely this new codebase will be amazing forever.</p><p>But inevitably the new codebase gets more features, pretty soon all the features of your old codebase, and now it&rsquo;s just as large, and just as complex, as the previous codebase.</p><p>How do you really know the &ldquo;just moving to the new framework&rdquo; is going to fix this problem? &ldquo;Using framework X/Y/Z&rdquo; does not automatically mean &ldquo;my 10k, 20k, 50k LOC codebase is pleasant to work in&rdquo;.</p></li></ol><p>If you find yourself on a dead framework, <em>and</em> the productivity/quality of your codebase is dramatically low, a rewrite might actually be the right idea. However, I think the goal of a well-designed application should be the next reaction: &ldquo;eh, no big deal&rdquo;.</p><h3 id=reaction-3-continue-on>Reaction 3: Continue On
+<a class=heading-link href=#reaction-3-continue-on><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h3><p>Ideally, your framework becoming passe should be a non-event.</p><p>This is because: a) the framework you initially choose had good architectural choices, and b) since then you&rsquo;ve structured your codebase well enough that your productivity remains high, regardless of the release/blog post velocity of your underlying framework.</p><p>My primary indicator of productivity is: how fast is your TDD cycle? Can a developer easily write unit tests (that are easy to read, easy to write, and test the right things) and quickly see a green/red cycle?</p><p>If so, a lot of other things usually take care of themselves. And I think you can go a long way delivering useful functionality (quickly and productively) on a &ldquo;dead&rdquo; stack, if you have quality and are able to keep quality as you go.</p><p>Granted, the TDD cycle is not the sole requirement, but I think it&rsquo;s a pretty good indicator.</p><p>Of course there are other indicators: have you had quality from day one? Tests from day one? Is refactoring easy? Are developers happy with their workflow? If so, you&rsquo;re hopefully in good shape.</p><p>Otherwise it&rsquo;s extremely hard to recover quality, short of a herculean effort that trends close to a rewrite anyway.</p><h2 id=basically-is-your-codebase-productive>Basically: Is Your Codebase Productive?
+<a class=heading-link href=#basically-is-your-codebase-productive><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h2><p>Perhaps this is obvious, but I think the core question is pretty simple: are you still productive?</p><p>I&rsquo;ve been on teams that, 5 years into the project, are using &ldquo;old&rdquo; technologies (because any technology around when the project started is defacto old by that point), and are still productive.</p><p>I&rsquo;ve also been on teams (awhile ago) that were using brand new technologies, their codebase hadn&rsquo;t even shipped 1.0, and they still weren&rsquo;t productive. They already needed a rewrite.</p><p>If you have a productive codebase, of course the answer is easy: keep doing what you&rsquo;re doing. If you don&rsquo;t have a productive codebase, unfortunately I don&rsquo;t really have a great answer. Is it the framework&rsquo;s fault? Maybe, maybe not. Will a rewrite help? Maybe, maybe not.</p><p>It depends on your situation, and what the core productivity issues are (because there are probably several). In theory I should have something intelligent to say about this, but I don&rsquo;t at this point.</p><p>Which is such an inconclusive ending that I&rsquo;m tempted to not even publish this post, but at this point I need to call it done and move on.</p></div><footer><div id=disqus_thread></div><script>window.disqus_config=function(){},function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById("disqus_thread").innerHTML="Disqus comments not available by default when the website is previewed locally.";return}var t=document,e=t.createElement("script");e.async=!0,e.src="//draconianoverlord.disqus.com/embed.js",e.setAttribute("data-timestamp",+new Date),(t.head||t.body).appendChild(e)}(),document.addEventListener("themeChanged",function(){document.readyState=="complete"&&DISQUS.reset({reload:!0,config:disqus_config})})</script></footer></article></section></div><footer class=footer><section class=container>©
 2008 -
-2022
+2023
 Stephen Haberman
 ·
-Powered by <a href=https://gohugo.io/>Hugo</a> & <a href=https://github.com/luizdepra/hugo-coder/>Coder</a>.
-</section>
-</footer>
-</main>
-<script src=/js/coder.min.03b17769f4f91ae35667e1f2a1ca8c16f50562576cf90ff32b3179926914daa5.js integrity="sha256-A7F3afT5GuNWZ+HyocqMFvUFYlds+Q/zKzF5kmkU2qU="></script>
-</body>
-</html>
+Powered by <a href=https://gohugo.io/ target=_blank rel=noopener>Hugo</a> & <a href=https://github.com/luizdepra/hugo-coder/ target=_blank rel=noopener>Coder</a>.</section></footer></main><script src=/js/coder.min.6ae284be93d2d19dad1f02b0039508d9aab3180a12a06dcc71b0b0ef7825a317.js integrity="sha256-auKEvpPS0Z2tHwKwA5UI2aqzGAoSoG3McbCw73gloxc="></script></body></html>

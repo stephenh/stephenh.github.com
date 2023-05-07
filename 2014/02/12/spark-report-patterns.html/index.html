@@ -1,513 +1,272 @@
-<!doctype html><html lang=en>
-<head>
-<meta charset=utf-8>
-<meta name=viewport content="width=device-width,initial-scale=1">
-<meta http-equiv=content-language content="en">
-<meta name=color-scheme content="light dark">
-<meta name=author content="Stephen Haberman">
-<meta name=description content="At Bizo, we&rsquo;ve been writing a lot of Spark jobs lately.
+<!doctype html><html lang=en><head><title>Spark Report Patterns · Draconian Overlord</title><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=color-scheme content="light dark"><meta name=author content="Stephen Haberman"><meta name=description content="At Bizo, we&rsquo;ve been writing a lot of Spark jobs lately.
 We are big fans of Spark, as it&rsquo;s basically a faster, testable, type-safe alternative to Hive.
 Over the course of writing many jobs, we&rsquo;ve established a few patterns that have been working well.
-Separate Job vs. Report Classes    Unit testing our reports is a big reason we like Spark, and being able to unit test Spark logic relies on feeding your logic &ldquo;fake&rdquo; RDDs, instead of real &ldquo;tons of real data from the cluster&rdquo; RDDs.">
-<meta name=keywords content="blog,developer,personal">
-<meta name=twitter:card content="summary">
-<meta name=twitter:title content="Spark Report Patterns">
-<meta name=twitter:description content="At Bizo, we&rsquo;ve been writing a lot of Spark jobs lately.
+Separate Job vs. Report Classes Link to heading Unit testing our reports is a big reason we like Spark, and being able to unit test Spark logic relies on feeding your logic &ldquo;fake&rdquo; RDDs, instead of real &ldquo;tons of real data from the cluster&rdquo; RDDs."><meta name=keywords content="blog,developer,personal"><meta name=twitter:card content="summary"><meta name=twitter:title content="Spark Report Patterns"><meta name=twitter:description content="At Bizo, we&rsquo;ve been writing a lot of Spark jobs lately.
 We are big fans of Spark, as it&rsquo;s basically a faster, testable, type-safe alternative to Hive.
 Over the course of writing many jobs, we&rsquo;ve established a few patterns that have been working well.
-Separate Job vs. Report Classes    Unit testing our reports is a big reason we like Spark, and being able to unit test Spark logic relies on feeding your logic &ldquo;fake&rdquo; RDDs, instead of real &ldquo;tons of real data from the cluster&rdquo; RDDs.">
-<meta property="og:title" content="Spark Report Patterns">
-<meta property="og:description" content="At Bizo, we&rsquo;ve been writing a lot of Spark jobs lately.
+Separate Job vs. Report Classes Link to heading Unit testing our reports is a big reason we like Spark, and being able to unit test Spark logic relies on feeding your logic &ldquo;fake&rdquo; RDDs, instead of real &ldquo;tons of real data from the cluster&rdquo; RDDs."><meta property="og:title" content="Spark Report Patterns"><meta property="og:description" content="At Bizo, we&rsquo;ve been writing a lot of Spark jobs lately.
 We are big fans of Spark, as it&rsquo;s basically a faster, testable, type-safe alternative to Hive.
 Over the course of writing many jobs, we&rsquo;ve established a few patterns that have been working well.
-Separate Job vs. Report Classes    Unit testing our reports is a big reason we like Spark, and being able to unit test Spark logic relies on feeding your logic &ldquo;fake&rdquo; RDDs, instead of real &ldquo;tons of real data from the cluster&rdquo; RDDs.">
-<meta property="og:type" content="article">
-<meta property="og:url" content="https://www.draconianoverlord.com/2014/02/12/spark-report-patterns.html/"><meta property="article:section" content="posts">
-<meta property="article:published_time" content="2014-02-12T00:00:00+00:00">
-<meta property="article:modified_time" content="2014-02-12T00:00:00+00:00">
-<title>
-Spark Report Patterns · Draconian Overlord
-</title>
-<link rel=canonical href=https://www.draconianoverlord.com/2014/02/12/spark-report-patterns.html/>
-<link rel=preload href="/fonts/forkawesome-webfont.woff2?v=1.2.0" as=font type=font/woff2 crossorigin>
-<link rel=stylesheet href=/css/coder.min.d9fddbffe6f27e69985dc5fe0471cdb0e57fbf4775714bc3d847accb08f4a1f6.css integrity="sha256-2f3b/+byfmmYXcX+BHHNsOV/v0d1cUvD2Eesywj0ofY=" crossorigin=anonymous media=screen>
-<link rel=stylesheet href=/css/coder-dark.min.aa883b9ce35a8ff4a2a5008619005175e842bb18a8a9f9cc2bbcf44dab2d91fa.css integrity="sha256-qog7nONaj/SipQCGGQBRdehCuxioqfnMK7z0Tastkfo=" crossorigin=anonymous media=screen>
-<link rel=icon type=image/png href=/images/favicon-32x32.png sizes=32x32>
-<link rel=icon type=image/png href=/images/favicon-16x16.png sizes=16x16>
-<link rel=apple-touch-icon href=/images/apple-touch-icon.png>
-<link rel=apple-touch-icon sizes=180x180 href=/images/apple-touch-icon.png>
-<meta name=generator content="Hugo 0.92.0">
-</head>
-<body class="preload-transitions colorscheme-auto">
-<div class=float-container>
-<a id=dark-mode-toggle class=colorscheme-toggle>
-<i class="fa fa-adjust fa-fw" aria-hidden=true></i>
-</a>
-</div>
-<main class=wrapper>
-<nav class=navigation>
-<section class=container>
-<a class=navigation-title href=/>Draconian Overlord</a>
-Oppressing software entropy
-</section>
-</nav>
-<div class=content>
-<section class="container post">
-<article>
-<header>
-<div class=post-title>
-<h1 class=title>
-<a class=title-link href=https://www.draconianoverlord.com/2014/02/12/spark-report-patterns.html/>
-Spark Report Patterns
-</a>
-</h1>
-</div>
-<div class=post-meta>
-<div class=date>
-<span class=posted-on>
-<i class="fa fa-calendar" aria-hidden=true></i>
-<time datetime=2014-02-12T00:00:00Z>
-February 12, 2014
-</time>
-</span>
-<span class=reading-time>
-<i class="fa fa-clock-o" aria-hidden=true></i>
-17-minute read
-</span>
-</div>
-<div class=categories>
-<i class="fa fa-folder" aria-hidden=true></i>
-<a href=/categories/scala/>Scala</a></div>
-</div>
-</header>
-<div>
-<p>At <a href=http://www.bizo.com>Bizo</a>, we&rsquo;ve been writing a lot of <a href=https://spark.incubator.apache.org/>Spark</a> jobs lately.</p>
-<p>We are big fans of Spark, as it&rsquo;s basically a faster, testable, type-safe alternative to Hive.</p>
-<p>Over the course of writing many jobs, we&rsquo;ve established a few patterns that have been working well.</p>
-<h2 id=separate-job-vs-report-classes>
-Separate Job vs. Report Classes
-<a class=heading-link href=#separate-job-vs-report-classes>
-<i class="fa fa-link" aria-hidden=true></i>
-</a>
-</h2>
-<p>Unit testing our reports is a big reason we like Spark, and being able to unit test Spark logic relies on feeding your logic &ldquo;fake&rdquo; RDDs, instead of real &ldquo;tons of real data from the cluster&rdquo; RDDs.</p>
-<p>So, while a naive Spark report might look like:</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-scala data-lang=scala><span style=color:#66d9ef>class</span> <span style=color:#a6e22e>SomeReport</span> <span style=color:#f92672>{</span>
-  <span style=color:#66d9ef>def</span> main<span style=color:#f92672>(</span>args<span style=color:#66d9ef>:</span> <span style=color:#66d9ef>Array</span><span style=color:#f92672>[</span><span style=color:#66d9ef>String</span><span style=color:#f92672>])</span> <span style=color:#f92672>{</span>
-    <span style=color:#66d9ef>val</span> sc <span style=color:#66d9ef>=</span> <span style=color:#f92672>...</span>
-    <span style=color:#75715e>// load data from cluster/S3
-</span><span style=color:#75715e></span>    <span style=color:#66d9ef>val</span> rdda <span style=color:#66d9ef>=</span> sc<span style=color:#f92672>.</span>textFile<span style=color:#f92672>(</span><span style=color:#e6db74>&#34;s3n://bucket/input/&#34;</span><span style=color:#f92672>)</span>
-
-    <span style=color:#75715e>// apply report logic
-</span><span style=color:#75715e></span>    <span style=color:#66d9ef>val</span> rddb <span style=color:#66d9ef>=</span> <span style=color:#f92672>...</span>
-
-    <span style=color:#75715e>// now save the result
-</span><span style=color:#75715e></span>    rddb<span style=color:#f92672>.</span>saveAsTextFile<span style=color:#f92672>(</span><span style=color:#e6db74>&#34;s3n://bucket/output/&#34;</span><span style=color:#f92672>)</span>
-  <span style=color:#f92672>}</span>
-<span style=color:#f92672>}</span>
-</code></pre></div><p>The code above is actually reminiscent of Hive code: some S3/HDFS URLs with input, interspersed with some logic, followed up by more S3/HDFS URLs for output.</p>
-<p>It is short and sweet, but extremely untestable.</p>
-<p>Spark allows you to create &ldquo;fake&rdquo; RDDs quite easily, and so what we&rsquo;d really like to do is divorce the notion of &ldquo;where the data in an RDD exists&rdquo; from &ldquo;what logic we apply to the RDD&rdquo;.</p>
-<p>So, we settled onto having a &ldquo;Job&rdquo; class, which handles loading/saving RDDs, and a &ldquo;Report&rdquo; class, which is just the logic:</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-scala data-lang=scala><span style=color:#66d9ef>class</span> <span style=color:#a6e22e>SomeJob</span> <span style=color:#f92672>{</span>
-  <span style=color:#66d9ef>def</span> main<span style=color:#f92672>(</span>args<span style=color:#66d9ef>:</span> <span style=color:#66d9ef>Array</span><span style=color:#f92672>[</span><span style=color:#66d9ef>String</span><span style=color:#f92672>])</span> <span style=color:#f92672>{</span>
-    <span style=color:#66d9ef>val</span> sc <span style=color:#66d9ef>=</span> <span style=color:#f92672>...</span>
-    <span style=color:#75715e>// load data from cluster/S3
-</span><span style=color:#75715e></span>    <span style=color:#66d9ef>val</span> rdda <span style=color:#66d9ef>=</span> sc<span style=color:#f92672>.</span>textFile<span style=color:#f92672>(</span><span style=color:#e6db74>&#34;s3n://bucket/input/&#34;</span><span style=color:#f92672>)</span>
-
-    <span style=color:#75715e>// apply report logic
-</span><span style=color:#75715e></span>    <span style=color:#66d9ef>val</span> rddb <span style=color:#66d9ef>=</span> <span style=color:#66d9ef>new</span> <span style=color:#a6e22e>SomeReport</span><span style=color:#f92672>(...).</span>run<span style=color:#f92672>(</span>rdda<span style=color:#f92672>)</span>
-
-    <span style=color:#75715e>// now save the result
-</span><span style=color:#75715e></span>    rddb<span style=color:#f92672>.</span>saveAsTextFile<span style=color:#f92672>(</span><span style=color:#e6db74>&#34;s3n://bucket/output/&#34;</span><span style=color:#f92672>)</span>
-  <span style=color:#f92672>}</span>
-<span style=color:#f92672>}</span>
-
-<span style=color:#66d9ef>class</span> <span style=color:#a6e22e>SomeReport</span> <span style=color:#f92672>{</span>
-  <span style=color:#66d9ef>def</span> run<span style=color:#f92672>(</span>rdda<span style=color:#66d9ef>:</span> <span style=color:#66d9ef>RDD</span><span style=color:#f92672>[</span><span style=color:#66d9ef>String</span><span style=color:#f92672>])</span><span style=color:#66d9ef>:</span> <span style=color:#66d9ef>RDD</span><span style=color:#f92672>[</span><span style=color:#66d9ef>String</span><span style=color:#f92672>]</span> <span style=color:#66d9ef>=</span> <span style=color:#f92672>{</span>
-    rdda<span style=color:#f92672>.</span>filter <span style=color:#f92672>{</span> <span style=color:#66d9ef>_</span><span style=color:#f92672>.</span>contains<span style=color:#f92672>(</span><span style=color:#e6db74>&#34;user1&#34;</span><span style=color:#f92672>)</span> <span style=color:#f92672>}</span>
-  <span style=color:#f92672>}</span>
-<span style=color:#f92672>}</span>
-</code></pre></div><p>The upshot is that <code>SomeReport</code> now only takes and returns RDDs, without any cluster/S3 coupling.</p>
-<p>This allows us to write a unit test:</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-scala data-lang=scala><span style=color:#66d9ef>class</span> <span style=color:#a6e22e>SomeReportTest</span> <span style=color:#f92672>{</span>
-  <span style=color:#66d9ef>val</span> sc <span style=color:#66d9ef>=</span> <span style=color:#66d9ef>new</span> <span style=color:#a6e22e>SparkContext</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;local&#34;</span><span style=color:#f92672>,</span> <span style=color:#e6db74>&#34;SomeReportTest&#34;</span><span style=color:#f92672>)</span>
-  <span style=color:#66d9ef>val</span> report <span style=color:#66d9ef>=</span> <span style=color:#66d9ef>new</span> <span style=color:#a6e22e>SomeReport</span><span style=color:#f92672>(...)</span>
-
-  <span style=color:#a6e22e>@Test</span>
-  <span style=color:#66d9ef>def</span> shouldFindUser1<span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
-    <span style=color:#75715e>// given we saw user1 and user2 in the logs
-</span><span style=color:#75715e></span>    <span style=color:#66d9ef>val</span> input <span style=color:#66d9ef>=</span> <span style=color:#a6e22e>Seq</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;line1 user1 ...&#34;</span><span style=color:#f92672>,</span> <span style=color:#e6db74>&#34;line2 user2 ...&#34;</span><span style=color:#f92672>)</span>
-
-    <span style=color:#75715e>// then only user1 is in the output
-</span><span style=color:#75715e></span>    <span style=color:#66d9ef>val</span> result <span style=color:#66d9ef>=</span> run<span style=color:#f92672>(</span>input<span style=color:#f92672>)</span>
-    result<span style=color:#f92672>.</span>size shouldBe <span style=color:#ae81ff>1</span>
-  <span style=color:#f92672>}</span>
-
-  <span style=color:#66d9ef>private</span> <span style=color:#66d9ef>def</span> run<span style=color:#f92672>(</span>fakeInput<span style=color:#66d9ef>:</span> <span style=color:#66d9ef>Seq</span><span style=color:#f92672>[</span><span style=color:#66d9ef>String</span><span style=color:#f92672>])</span><span style=color:#66d9ef>:</span> <span style=color:#66d9ef>Seq</span><span style=color:#f92672>[</span><span style=color:#66d9ef>String</span><span style=color:#f92672>]</span> <span style=color:#66d9ef>=</span> <span style=color:#f92672>{</span>
-    <span style=color:#66d9ef>val</span> input<span style=color:#66d9ef>:</span> <span style=color:#66d9ef>RDD</span><span style=color:#f92672>[</span><span style=color:#66d9ef>String</span><span style=color:#f92672>]</span> <span style=color:#66d9ef>=</span> sc<span style=color:#f92672>.</span>parallelize<span style=color:#f92672>(</span>fakeInput<span style=color:#f92672>)</span>
-    <span style=color:#66d9ef>val</span> result<span style=color:#66d9ef>:</span> <span style=color:#66d9ef>RDD</span><span style=color:#f92672>[</span><span style=color:#66d9ef>String</span><span style=color:#f92672>]</span> <span style=color:#66d9ef>=</span> report<span style=color:#f92672>.</span>run<span style=color:#f92672>(</span>input<span style=color:#f92672>)</span>
-    result<span style=color:#f92672>.</span>collect<span style=color:#f92672>().</span>toList<span style=color:#f92672>.</span>sorted
-  <span style=color:#f92672>}</span>
-<span style=color:#f92672>}</span>
-</code></pre></div><p>Looking at <code>shouldFindUser1</code>, the idea is that we want a really easy to read test:</p>
-<ul>
-<li>Given this really small input/boundary case</li>
-<li>When the report runs</li>
-<li>Then we should see a really small/easy to verify result</li>
-</ul>
-<p>The test accomplishes this by having the <code>run</code> method translate the lists of fake log lines (<code>Seq[String]</code>) into Spark&rsquo;s RDD data structure, and then back again.</p>
-<p>The beauty of Spark&rsquo;s RDD is that, since it models report steps as mutating every line in a collection by applying some closure/logic (<code>map</code>, <code>filter</code>, <code>reduce</code>, etc.), Spark will hide the details of whether this happens on these 2 test lines all in memory, or 100 million lines loaded from S3.</p>
-<p>Specifically for our unit test, with Spark in local mode, this means our test runs in Eclipse/ant/etc. in seconds and will not touch any external data.</p>
-<p>As any TDD/etc. zealot will tell you, this is a huge boon for developer productivity, as we can ruthlessly refactor our Spark jobs, and have confidence that we&rsquo;re not breaking existing functionality.</p>
-<h2 id=log-line-case-classes>
-Log Line Case Classes
-<a class=heading-link href=#log-line-case-classes>
-<i class="fa fa-link" aria-hidden=true></i>
-</a>
-</h2>
-<p>After getting the job/report separation in place, we wanted to make both the report and the unit tests even easier to write.</p>
-<p>In the example above, <code>SomeReport</code> was taking an <code>RDD[String]</code>, where each string is a raw line from the log file. This means two things:</p>
-<ol>
-<li>
-<p><code>SomeReport</code> is responsible for parsing the raw string into meaningful values.</p>
-<p>This means <code>SomeReport</code> is concerning itself with implementation details (the format of the logs), instead of the business logic around their content.</p>
-</li>
-<li>
-<p><code>SomeReportTest</code> must synthesize valid raw strings for <code>SomeReport</code> to parse.</p>
-<p>This can get especially ugly if, say, your log line is a 50 column tab-separated file, when really each test is hopefully only filling into 2-3 columns that are specific to its boundary case.</p>
-<p>Since <code>SomeReport</code> is still going to do a <code>.split("\t")(x)</code> for each column, the test needs to fill in 45+ dummy values.</p>
-</li>
-</ol>
-<p>To better encapsulate the log implementation details, we started using &ldquo;Line&rdquo; case classes. The report and unit test then concern themselves with the Line, instead of Strings. This would look like:</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-scala data-lang=scala><span style=color:#75715e>/** Line for our &#34;request&#34; logs. */</span>
-<span style=color:#66d9ef>case</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>RequestLine</span><span style=color:#f92672>(</span>line<span style=color:#66d9ef>:</span> <span style=color:#66d9ef>String</span><span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
-  <span style=color:#66d9ef>def</span> timestamp<span style=color:#66d9ef>:</span> <span style=color:#66d9ef>Long</span> <span style=color:#f92672>=</span> parse<span style=color:#f92672>(</span><span style=color:#ae81ff>0</span><span style=color:#f92672>).</span>toLong
-  <span style=color:#66d9ef>def</span> userId<span style=color:#66d9ef>:</span> <span style=color:#66d9ef>String</span> <span style=color:#f92672>=</span> parse<span style=color:#f92672>(</span><span style=color:#ae81ff>1</span><span style=color:#f92672>)</span>
-
-  <span style=color:#66d9ef>private</span> <span style=color:#66d9ef>def</span> parse<span style=color:#f92672>(</span>index<span style=color:#66d9ef>:</span> <span style=color:#66d9ef>Int</span><span style=color:#f92672>)</span> <span style=color:#66d9ef>=</span> <span style=color:#f92672>{</span>
-   <span style=color:#75715e>// Do some smart/efficient parsing of line; e.g. if it&#39;s
-</span><span style=color:#75715e></span>   <span style=color:#75715e>// tab-separated, lazily pull out columns, instead of
-</span><span style=color:#75715e></span>   <span style=color:#75715e>// creating 50-some substrings when 48 end up unused. 
-</span><span style=color:#75715e></span>   <span style=color:#75715e>// For now, being naive:
-</span><span style=color:#75715e></span>   <span style=color:#66d9ef>return</span> line<span style=color:#f92672>.</span>split<span style=color:#f92672>(</span><span style=color:#e6db74>&#34;\t&#34;</span><span style=color:#f92672>)(</span>index<span style=color:#f92672>)</span>
-<span style=color:#f92672>}</span>
-
-<span style=color:#75715e>// now the report codes against the case class
-</span><span style=color:#75715e></span><span style=color:#66d9ef>class</span> <span style=color:#a6e22e>SomeReport</span> <span style=color:#f92672>{</span>
-  <span style=color:#66d9ef>def</span> run<span style=color:#f92672>(</span>rdd<span style=color:#66d9ef>:</span> <span style=color:#66d9ef>RDD</span><span style=color:#f92672>[</span><span style=color:#66d9ef>RequestLine</span><span style=color:#f92672>])</span> <span style=color:#66d9ef>=</span> <span style=color:#f92672>{</span>
-    rdd<span style=color:#f92672>.</span>filter <span style=color:#f92672>{</span> <span style=color:#66d9ef>_</span><span style=color:#f92672>.</span>userId <span style=color:#f92672>==</span> <span style=color:#e6db74>&#34;user1&#34;</span> <span style=color:#f92672>}</span>
-  <span style=color:#f92672>}</span>
-<span style=color:#f92672>}</span>
-</code></pre></div><p>This is better, as we&rsquo;ve moved any notion of parsing out of <code>SomeReport</code>, and it just calls type-safe methods (<code>userId</code>, <code>timestamp</code>) on our <code>RequestLine</code>.</p>
-<p>So, now our testing, we usually define a companion object for <code>RequestLine</code> to make constructing fake test lines super easy:</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-scala data-lang=scala><span style=color:#66d9ef>object</span> <span style=color:#a6e22e>RequestLine</span> <span style=color:#f92672>{</span>
-  <span style=color:#66d9ef>def</span> apply<span style=color:#f92672>(</span>
-    userId<span style=color:#66d9ef>:</span> <span style=color:#66d9ef>String</span> <span style=color:#f92672>=</span> <span style=color:#e6db74>&#34;user1&#34;</span><span style=color:#f92672>,</span>
-    timestamp<span style=color:#66d9ef>:</span> <span style=color:#66d9ef>Long</span> <span style=color:#f92672>=</span> <span style=color:#ae81ff>1L</span><span style=color:#f92672>)</span> <span style=color:#66d9ef>=</span> <span style=color:#f92672>{</span>
-    <span style=color:#66d9ef>new</span> <span style=color:#a6e22e>RequestLine</span><span style=color:#f92672>(</span><span style=color:#a6e22e>Seq</span><span style=color:#f92672>(</span>timestamp<span style=color:#f92672>,</span> userId<span style=color:#f92672>).</span>mkString<span style=color:#f92672>(</span><span style=color:#e6db74>&#34;\t&#34;</span><span style=color:#f92672>))</span>
-  <span style=color:#f92672>}</span>
-<span style=color:#f92672>}</span>
-</code></pre></div><p>Using method parameter default values, this allows the test case to only fill in the columns it cares about. When there are 50 columns, and your boundary case only covers 2, this is very handy. The test then looks like:</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-scala data-lang=scala><span style=color:#66d9ef>class</span> <span style=color:#a6e22e>SomeReportTest</span> <span style=color:#f92672>{</span>
-  <span style=color:#66d9ef>val</span> sc <span style=color:#66d9ef>=</span> <span style=color:#66d9ef>new</span> <span style=color:#a6e22e>SparkContext</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;local&#34;</span><span style=color:#f92672>,</span> <span style=color:#e6db74>&#34;SomeReportTest&#34;</span><span style=color:#f92672>)</span>
-  <span style=color:#66d9ef>val</span> report <span style=color:#66d9ef>=</span> <span style=color:#66d9ef>new</span> <span style=color:#a6e22e>SomeReport</span><span style=color:#f92672>(...)</span>
-
-  <span style=color:#a6e22e>@Test</span>
-  <span style=color:#66d9ef>def</span> shouldFindUser1<span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
-    <span style=color:#75715e>// given we saw user1 and user2 in the logs
-</span><span style=color:#75715e></span>    <span style=color:#66d9ef>val</span> input <span style=color:#66d9ef>=</span> <span style=color:#a6e22e>Seq</span><span style=color:#f92672>(</span>
-      <span style=color:#a6e22e>RequestLine</span><span style=color:#f92672>(</span>userId <span style=color:#66d9ef>=</span> <span style=color:#e6db74>&#34;user1&#34;</span><span style=color:#f92672>),</span>
-      <span style=color:#a6e22e>RequestLine</span><span style=color:#f92672>(</span>userId <span style=color:#66d9ef>=</span> <span style=color:#e6db74>&#34;user2&#34;</span><span style=color:#f92672>))</span>
-
-    <span style=color:#75715e>// then only user1 is in the output
-</span><span style=color:#75715e></span>    <span style=color:#66d9ef>val</span> result <span style=color:#66d9ef>=</span> run<span style=color:#f92672>(</span>input<span style=color:#f92672>)</span>
-    result<span style=color:#f92672>.</span>size shouldBe <span style=color:#ae81ff>1</span>
-  <span style=color:#f92672>}</span>
-
-  <span style=color:#66d9ef>private</span> <span style=color:#66d9ef>def</span> run<span style=color:#f92672>(</span>fakeInput<span style=color:#66d9ef>:</span> <span style=color:#66d9ef>Seq</span><span style=color:#f92672>[</span><span style=color:#66d9ef>RequestLine</span><span style=color:#f92672>])</span><span style=color:#66d9ef>:</span>
-      <span style=color:#66d9ef>Seq</span><span style=color:#f92672>[</span><span style=color:#66d9ef>RequestLine</span><span style=color:#f92672>]</span> <span style=color:#66d9ef>=</span> <span style=color:#f92672>{</span>
-    <span style=color:#66d9ef>val</span> input<span style=color:#66d9ef>:</span> <span style=color:#66d9ef>RDD</span><span style=color:#f92672>[</span><span style=color:#66d9ef>RequestLine</span><span style=color:#f92672>]</span> <span style=color:#66d9ef>=</span> sc<span style=color:#f92672>.</span>parallelize<span style=color:#f92672>(</span>fakeInput<span style=color:#f92672>)</span>
-    <span style=color:#66d9ef>val</span> result<span style=color:#66d9ef>:</span> <span style=color:#66d9ef>RDD</span><span style=color:#f92672>[</span><span style=color:#66d9ef>RequestLine</span><span style=color:#f92672>]</span> <span style=color:#66d9ef>=</span> report<span style=color:#f92672>.</span>run<span style=color:#f92672>(</span>input<span style=color:#f92672>)</span>
-    result<span style=color:#f92672>.</span>collect<span style=color:#f92672>().</span>toList<span style=color:#f92672>.</span>sorted
-  <span style=color:#f92672>}</span>
-<span style=color:#f92672>}</span>
-</code></pre></div><p>Since we have the <code>RequestLine</code> object already, we also go ahead and add factory methods for the real data:</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-scala data-lang=scala><span style=color:#66d9ef>object</span> <span style=color:#a6e22e>RequestLine</span> <span style=color:#f92672>{</span>
-  <span style=color:#66d9ef>def</span> newRDD<span style=color:#f92672>(</span>
-      sc<span style=color:#66d9ef>:</span> <span style=color:#66d9ef>SparkContext</span><span style=color:#f92672>,</span>
-      range<span style=color:#66d9ef>:</span> <span style=color:#66d9ef>CalendarInterval</span><span style=color:#f92672>)</span><span style=color:#66d9ef>:</span> <span style=color:#66d9ef>RDD</span><span style=color:#f92672>[</span><span style=color:#66d9ef>RequestLine</span><span style=color:#f92672>]</span> <span style=color:#66d9ef>=</span> <span style=color:#f92672>{</span>
-    <span style=color:#66d9ef>val</span> paths <span style=color:#66d9ef>=</span> range<span style=color:#f92672>.</span>map <span style=color:#f92672>{</span> day <span style=color:#66d9ef>=&gt;</span>
-      <span style=color:#e6db74>&#34;s3n://bucket/input/year=...,month=...,day=.../&#34;</span>
-    <span style=color:#f92672>}.</span>mkString<span style=color:#f92672>(</span><span style=color:#e6db74>&#34;,&#34;</span><span style=color:#f92672>)</span>
-    sc<span style=color:#f92672>.</span>textFile<span style=color:#f92672>(</span>paths<span style=color:#f92672>).</span>map <span style=color:#f92672>{</span> <span style=color:#a6e22e>RequestLine</span><span style=color:#f92672>(</span><span style=color:#66d9ef>_</span><span style=color:#f92672>)</span> <span style=color:#f92672>}</span>
-  <span style=color:#f92672>}</span>
-<span style=color:#f92672>}</span>
-
-<span style=color:#75715e>// now various ReportJob classes can reuse `newRDD`:
-</span><span style=color:#75715e></span><span style=color:#66d9ef>class</span> <span style=color:#a6e22e>SomeReport</span> <span style=color:#f92672>{</span>
-  <span style=color:#66d9ef>def</span> main<span style=color:#f92672>(</span>args<span style=color:#66d9ef>:</span> <span style=color:#66d9ef>Array</span><span style=color:#f92672>[</span><span style=color:#66d9ef>String</span><span style=color:#f92672>])</span> <span style=color:#f92672>{</span>
-    <span style=color:#66d9ef>val</span> sc <span style=color:#66d9ef>=</span> <span style=color:#f92672>...</span>
-    <span style=color:#66d9ef>val</span> range <span style=color:#66d9ef>=</span> <span style=color:#75715e>// parse from args
-</span><span style=color:#75715e></span>
-    <span style=color:#75715e>// load data from cluster/S3
-</span><span style=color:#75715e></span>    <span style=color:#66d9ef>val</span> rdda <span style=color:#66d9ef>=</span> <span style=color:#a6e22e>RequestLine</span><span style=color:#f92672>.</span>newRDD<span style=color:#f92672>(</span>sc<span style=color:#f92672>,</span> range<span style=color:#f92672>)</span>
-
-    <span style=color:#75715e>// apply report logic
-</span><span style=color:#75715e></span>    <span style=color:#66d9ef>val</span> rddb <span style=color:#66d9ef>=</span> <span style=color:#f92672>...</span>
-
-    <span style=color:#75715e>// now save the result
-</span><span style=color:#75715e></span>    rddb<span style=color:#f92672>.</span>saveAsTextFile<span style=color:#f92672>(</span><span style=color:#e6db74>&#34;s3n://bucket/output/&#34;</span><span style=color:#f92672>)</span>
-  <span style=color:#f92672>}</span>
-<span style=color:#f92672>}</span>
-</code></pre></div><p>The <code>newRDD</code> method here is fairly trivial, but the encapsulation becomes nice as it becomes more sophisticated (e.g. we have a generic &ldquo;repartition data loaded from S3&rdquo; routine that our <code>newRDD</code> methods reuse to try to jockey our data into the right partition sizes).</p>
-<p>So, the upshots of the Log Line pattern are:</p>
-<ol>
-<li>Gives the report class type-safe getters (<code>.userId</code>) that hide the log format</li>
-<li>Gives the report tests type-safe way of creating test data (<code>userId = ...</code>), with default values for what they don&rsquo;t care about</li>
-<li>Moves the S3/cluster path location out of job classes, into a single <code>newRDD</code> method</li>
-</ol>
-<p>We use this pattern for basically all of our log files now.</p>
-<h2 id=type-aliases-for-everything>
-Type Aliases for Everything
-<a class=heading-link href=#type-aliases-for-everything>
-<i class="fa fa-link" aria-hidden=true></i>
-</a>
-</h2>
-<p>A lot of times in Spark, you&rsquo;ll read in some raw log lines, and then throw away 90% of the columns, because you only care about one or two.</p>
-<p>This is fine, and the initial way we did this was pretty simple:</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-scala data-lang=scala><span style=color:#66d9ef>val</span> input<span style=color:#66d9ef>:</span> <span style=color:#66d9ef>RDD</span><span style=color:#f92672>[</span><span style=color:#66d9ef>RequestLine</span><span style=color:#f92672>]</span> <span style=color:#66d9ef>=</span> <span style=color:#f92672>...</span>
-<span style=color:#66d9ef>val</span> idAndTime<span style=color:#66d9ef>:</span> <span style=color:#66d9ef>RDD</span><span style=color:#f92672>[(</span><span style=color:#66d9ef>String</span>, <span style=color:#66d9ef>Long</span><span style=color:#f92672>)]</span> <span style=color:#66d9ef>=</span> input<span style=color:#f92672>.</span>map <span style=color:#f92672>{</span> line <span style=color:#66d9ef>=&gt;</span>
-  <span style=color:#f92672>(</span>line<span style=color:#f92672>.</span>userId<span style=color:#f92672>,</span> line<span style=color:#f92672>.</span>timestamp<span style=color:#f92672>)</span>
-<span style=color:#f92672>}</span>
-
-<span style=color:#75715e>// later on call a helper method
-</span><span style=color:#75715e></span>doSomeMoreWith<span style=color:#f92672>(</span>idAndTime<span style=color:#f92672>)</span>
-
-<span style=color:#66d9ef>def</span> doSomeMoreWith<span style=color:#f92672>(</span>idAndTime<span style=color:#66d9ef>:</span> <span style=color:#66d9ef>RDD</span><span style=color:#f92672>[(</span><span style=color:#66d9ef>String</span>, <span style=color:#66d9ef>Long</span><span style=color:#f92672>)]</span> <span style=color:#66d9ef>=</span> <span style=color:#f92672>{</span>
-  <span style=color:#f92672>...</span> 
-<span style=color:#f92672>}</span>
-</code></pre></div><p>The problem with this is, after passing around <code>idAndTime</code> as just a <code>RDD[(String, Long)]</code>, it can become really, really easy to forget what exactly that <code>String</code> is. Was it&mldr;user id? Client id? Browser id?</p>
-<p>Readers may see where this is going; the underlying problem is <a href=http://c2.com/cgi/wiki?PrimitiveObsession>Primitive Obsession</a>, which is nothing new. We&rsquo;re using the type <code>String</code> when really we mean &ldquo;User Id&rdquo;.</p>
-<p>That said, in most systems I&rsquo;ve worked on, primitive obsession has not historically been a big deal to me. Yes, there is usually a <code>Money</code> type, or a <code>Dollars</code> type, and probably a <code>CalendarDate</code>. But I don&rsquo;t usually go so far as to have <code>UserId</code> types, <code>Email</code> types, or <code>PhoneNumber</code> types, as usually the overhead of making the type outweighs the benefit.</p>
-<p>With Spark reports, we&rsquo;ve found the opposite is true; with Scala type aliases (which really easy to declare), and lots of <code>RDD[...]</code> type parameters floating around, using type aliases for basically everything is very handy.</p>
-<p>So, our type alias might look like:</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-scala data-lang=scala><span style=color:#75715e>// in the com/bizo/types/package.scala file
-</span><span style=color:#75715e></span><span style=color:#66d9ef>package</span> com.bizo <span style=color:#f92672>{</span>
-  <span style=color:#66d9ef>package</span> object types <span style=color:#f92672>{</span>
-    <span style=color:#66d9ef>type</span> <span style=color:#66d9ef>UserId</span> <span style=color:#f92672>=</span> <span style=color:#a6e22e>String</span>
-    <span style=color:#66d9ef>type</span> <span style=color:#66d9ef>Timestamp</span> <span style=color:#f92672>=</span> <span style=color:#a6e22e>Long</span>
-    <span style=color:#66d9ef>type</span> <span style=color:#66d9ef>ClientId</span> <span style=color:#f92672>=</span> <span style=color:#a6e22e>String</span>
-  <span style=color:#f92672>}</span>
-<span style=color:#f92672>}</span>
-</code></pre></div><p>Then we&rsquo;ll use these aliases in our report:</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-scala data-lang=scala><span style=color:#66d9ef>val</span> input<span style=color:#66d9ef>:</span> <span style=color:#66d9ef>RDD</span><span style=color:#f92672>[</span><span style=color:#66d9ef>RequestLine</span><span style=color:#f92672>]</span> <span style=color:#66d9ef>=</span> <span style=color:#f92672>...</span>
-<span style=color:#66d9ef>val</span> idAndTime<span style=color:#66d9ef>:</span> <span style=color:#66d9ef>RDD</span><span style=color:#f92672>[(</span><span style=color:#66d9ef>UserId</span>, <span style=color:#66d9ef>Timestamp</span><span style=color:#f92672>)]</span> <span style=color:#66d9ef>=</span> input<span style=color:#f92672>.</span>map <span style=color:#f92672>{</span> line <span style=color:#66d9ef>=&gt;</span>
-  <span style=color:#f92672>(</span>line<span style=color:#f92672>.</span>userId<span style=color:#f92672>,</span> line<span style=color:#f92672>.</span>timestamp<span style=color:#f92672>)</span>
-<span style=color:#f92672>}</span>
-
-<span style=color:#75715e>// later on call a helper method
-</span><span style=color:#75715e></span>doSomeMoreWith<span style=color:#f92672>(</span>idAndTime<span style=color:#f92672>)</span>
-
-<span style=color:#66d9ef>def</span> doSomeMoreWith<span style=color:#f92672>(</span>idAndTime<span style=color:#66d9ef>:</span> <span style=color:#66d9ef>RDD</span><span style=color:#f92672>[(</span><span style=color:#66d9ef>UserId</span>, <span style=color:#66d9ef>Timestamp</span><span style=color:#f92672>)]</span> <span style=color:#66d9ef>=</span> <span style=color:#f92672>{</span>
-  <span style=color:#f92672>...</span> 
-<span style=color:#f92672>}</span>
-</code></pre></div><p>And, wow, look at how much more readable that <code>doSomeMoreWith</code> signature is. Applied across larger Spark reports, it has dramatically increased their readability.</p>
-<p>My only (minor) complaint here is that Scala&rsquo;s type aliases are just symbolic, in that if both <code>UserId</code> and <code>ClientId</code> are really strings, you can pass in a <code>UserId</code> variable where the type signature is actually <code>ClientId</code> and the compiler will not complain. They probably have a good reason for this, but it actually surprised me&ndash;I would have assumed it would not be allowed.</p>
-<p><strong>Update 2/15/2014:</strong> Josh Carver, another Bizo dev, pointed at using <a href=https://gist.github.com/jcarver989/2fbb1ee926f57373aac5>this type tag approach</a> as a more type-safe way of doing aliases. We are probably going to try it out and see how it goes.</p>
-<h2 id=liberal-use-of-collect>
-Liberal use of <code>collect</code>
-<a class=heading-link href=#liberal-use-of-collect>
-<i class="fa fa-link" aria-hidden=true></i>
-</a>
-</h2>
-<p>One of my few criticisms of Spark is that it (understandably) heavily relies on Scala&rsquo;s tuples whenever you change the &ldquo;shape&rdquo; of your data.</p>
-<p>This is what we were doing in the previous example, by only keeping user id and timestamp:</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-scala data-lang=scala><span style=color:#66d9ef>val</span> input<span style=color:#66d9ef>:</span> <span style=color:#66d9ef>RDD</span><span style=color:#f92672>[</span><span style=color:#66d9ef>RequestLine</span><span style=color:#f92672>]</span> <span style=color:#66d9ef>=</span> <span style=color:#f92672>...</span>
-<span style=color:#66d9ef>val</span> idAndTime<span style=color:#66d9ef>:</span> <span style=color:#66d9ef>RDD</span><span style=color:#f92672>[(</span><span style=color:#66d9ef>UserId</span>, <span style=color:#66d9ef>Timestamp</span><span style=color:#f92672>)]</span> <span style=color:#66d9ef>=</span> input<span style=color:#f92672>.</span>map <span style=color:#f92672>{</span> line <span style=color:#66d9ef>=&gt;</span>
-  <span style=color:#f92672>(</span>line<span style=color:#f92672>.</span>userId<span style=color:#f92672>,</span> line<span style=color:#f92672>.</span>timestamp<span style=color:#f92672>)</span>
-<span style=color:#f92672>}</span>
-<span style=color:#75715e>// later on...
-</span><span style=color:#75715e></span>idAndTime<span style=color:#f92672>.</span>filter <span style=color:#f92672>{</span> l <span style=color:#66d9ef>=&gt;</span> l<span style=color:#f92672>.</span>_1 <span style=color:#f92672>==</span> <span style=color:#e6db74>&#34;user1&#34;</span> <span style=color:#f92672>}</span>
-</code></pre></div><p>When we select just the user id and timestamp, we use the Scala syntax of <code>(line.userId, line.timestamp)</code>. This is just syntax sugar for <code>new Tuple2(line.userId, line.timestamp)</code>. (If we were selecting three things, it would be a <code>Tuple3</code>.)</p>
-<p>So, the type of our RDD is <code>RDD[(UserId, Timestamp)]</code>, which is again just syntax sugar for <code>RDD[Tuple2[UserId, Timestamp]]</code>.</p>
-<p>Because the <code>Tuple2</code> class is generic, the methods for accessing the user id is not <code>l.userId</code>&ndash;it&rsquo;s <code>l._1</code>. And for timestamp, it&rsquo;s not <code>l.timestamp</code>&ndash;it&rsquo;s <code>l._2</code>.</p>
-<p>So, if you look at our filter, this is obviously not very readable: <code>l._1 == "user"</code>.</p>
-<p>What we usually try and do, and I think is a common Scala idiom, is use pattern matching to re-introduce meaningful variable names. So, instead of <code>filter</code>, we&rsquo;d write:</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-scala data-lang=scala>idAndTime<span style=color:#f92672>.</span>collect <span style=color:#f92672>{</span> 
-  <span style=color:#66d9ef>case</span> <span style=color:#f92672>(</span>userId<span style=color:#f92672>,</span> <span style=color:#66d9ef>_</span><span style=color:#f92672>)</span> <span style=color:#66d9ef>=&gt;</span> userId <span style=color:#f92672>==</span> <span style=color:#e6db74>&#34;user1&#34;</span>
-<span style=color:#f92672>}</span>
-</code></pre></div><p>This uses Scala&rsquo;s pattern matching to &ldquo;match&rdquo; against the <code>Tuple2</code> (it again uses the parens as syntax sugar), and introduces <code>userId</code> as a variable that is equivalent to <code>_1</code>. And since we aren&rsquo;t using <code>_2</code>, we just use <code>_</code> to mean &ldquo;we don&rsquo;t care about this one&rdquo;.</p>
-<p>This has actually served as pretty well, and we continue to use it. We also use it a lot for joins:</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-scala data-lang=scala>logFooByUserId<span style=color:#f92672>.</span>cogroup<span style=color:#f92672>(</span>logBarByUserId<span style=color:#f92672>).</span>collect <span style=color:#f92672>{</span> 
-  <span style=color:#66d9ef>case</span> <span style=color:#f92672>(</span>userId<span style=color:#f92672>,</span> <span style=color:#f92672>(</span>foos<span style=color:#f92672>,</span> bars<span style=color:#f92672>))</span> <span style=color:#66d9ef>=&gt;</span> <span style=color:#f92672>...</span>
-<span style=color:#f92672>}</span>
-</code></pre></div><p>Technically, this &ldquo;use <code>collect</code>&rdquo; idiom is not perfect&ndash;it is more verbose as we have to re-introduce <code>userId</code>, etc. as more variables.</p>
-<p>C# actually handles this scenario better than Scala by using <a href=http://geekswithblogs.net/BlackRabbitCoder/archive/2012/06/21/c.net-little-wonders-the-joy-of-anonymous-types.aspx>Anonymous Types</a>. It allows LINQ to do very similar things as <code>map</code>, but to introduce mini-classes along the way (from previous link):</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java>transactions
-  <span style=color:#f92672>.</span><span style=color:#a6e22e>GroupBy</span><span style=color:#f92672>(</span>tx <span style=color:#f92672>=&gt;</span> <span style=color:#66d9ef>new</span> <span style=color:#f92672>{</span> tx<span style=color:#f92672>.</span><span style=color:#a6e22e>UserId</span><span style=color:#f92672>,</span> tx<span style=color:#f92672>.</span><span style=color:#a6e22e>At</span><span style=color:#f92672>.</span><span style=color:#a6e22e>Date</span> <span style=color:#f92672>})</span>
-  <span style=color:#f92672>.</span><span style=color:#a6e22e>OrderBy</span><span style=color:#f92672>(</span>grp <span style=color:#f92672>=&gt;</span> grp<span style=color:#f92672>.</span><span style=color:#a6e22e>Key</span><span style=color:#f92672>.</span><span style=color:#a6e22e>Date</span><span style=color:#f92672>)</span>
-  <span style=color:#f92672>.</span><span style=color:#a6e22e>ThenBy</span><span style=color:#f92672>(</span>grp <span style=color:#f92672>=&gt;</span> grp<span style=color:#f92672>.</span><span style=color:#a6e22e>Key</span><span style=color:#f92672>.</span><span style=color:#a6e22e>UserId</span><span style=color:#f92672>);</span>
-</code></pre></div><p>This means that, after the <code>new { tx.UserId, tx.At.Date }</code> line, LINQ has &ldquo;kept&rdquo; the <code>Date</code> and <code>UserId</code> accessors for use later in the query.</p>
-<p>You could do kind of the same thing in Scala, but you&rsquo;d have to write a new case class for each intermediate &ldquo;shape&rdquo;, which is basically what LINQ is doing automatically.</p>
-<p>Perhaps Scala macros will eventually do this (or perhaps already do?), but for now we have <code>collect</code>. And it&rsquo;s really not too bad.</p>
-<h2 id=for-comprehensions-for-filtering-logs>
-For Comprehensions for Filtering Logs
-<a class=heading-link href=#for-comprehensions-for-filtering-logs>
-<i class="fa fa-link" aria-hidden=true></i>
-</a>
-</h2>
-<p>Another construct we use quite a bit, although more an idiom than a pattern, is Scala&rsquo;s for compressions for applying multiple filters to log files. For example:</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-scala data-lang=scala><span style=color:#66d9ef>val</span> lines<span style=color:#66d9ef>:</span> <span style=color:#66d9ef>RDD</span><span style=color:#f92672>[</span><span style=color:#66d9ef>RequestLine</span><span style=color:#f92672>]</span> <span style=color:#66d9ef>=</span> <span style=color:#f92672>...</span>
-
-<span style=color:#66d9ef>val</span> views<span style=color:#66d9ef>:</span> <span style=color:#66d9ef>RDD</span><span style=color:#f92672>[(</span><span style=color:#66d9ef>UserId</span>, <span style=color:#66d9ef>ClientId</span>, <span style=color:#66d9ef>Domain</span>, <span style=color:#66d9ef>Timestamp</span><span style=color:#f92672>)]</span> <span style=color:#66d9ef>=</span> <span style=color:#66d9ef>for</span> <span style=color:#f92672>{</span>
-  line <span style=color:#66d9ef>&lt;-</span> lines
-  clientId <span style=color:#66d9ef>&lt;-</span> line<span style=color:#f92672>.</span>clientId <span style=color:#66d9ef>if</span> activeClientIds<span style=color:#f92672>.</span>contains<span style=color:#f92672>(</span>clientId<span style=color:#f92672>)</span>
-  domain <span style=color:#66d9ef>&lt;-</span> parseDomain<span style=color:#f92672>(</span>line<span style=color:#f92672>.</span>url<span style=color:#f92672>)</span>
-  userId <span style=color:#66d9ef>&lt;-</span> line<span style=color:#f92672>.</span>userId
-  timestamp <span style=color:#66d9ef>&lt;-</span> line<span style=color:#f92672>.</span>timestamp
-<span style=color:#f92672>}</span> <span style=color:#66d9ef>yield</span> <span style=color:#f92672>(</span>userId<span style=color:#f92672>,</span> clientId<span style=color:#f92672>,</span> domain<span style=color:#f92672>,</span> timestamp<span style=color:#f92672>)</span>
-
-<span style=color:#75715e>// this assumes a slightly different RequestLine:
-</span><span style=color:#75715e></span><span style=color:#66d9ef>case</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>RequestLine</span><span style=color:#f92672>(...)</span>
-  <span style=color:#66d9ef>def</span> clientId<span style=color:#66d9ef>:</span> <span style=color:#66d9ef>Option</span><span style=color:#f92672>[</span><span style=color:#66d9ef>ClientId</span><span style=color:#f92672>]</span> <span style=color:#66d9ef>=</span> <span style=color:#f92672>...</span>
-  <span style=color:#66d9ef>def</span> userId<span style=color:#66d9ef>:</span> <span style=color:#66d9ef>Option</span><span style=color:#f92672>[</span><span style=color:#66d9ef>UserId</span><span style=color:#f92672>]</span> <span style=color:#66d9ef>=</span> <span style=color:#f92672>...</span>
-  <span style=color:#66d9ef>def</span> timestamp<span style=color:#66d9ef>:</span> <span style=color:#66d9ef>Option</span><span style=color:#f92672>[</span><span style=color:#66d9ef>Timestamp</span><span style=color:#f92672>]</span> <span style=color:#66d9ef>=</span> <span style=color:#f92672>...</span>
-  <span style=color:#66d9ef>def</span> url<span style=color:#66d9ef>:</span> <span style=color:#66d9ef>Option</span><span style=color:#f92672>[</span><span style=color:#66d9ef>Url</span><span style=color:#f92672>]</span> <span style=color:#66d9ef>=</span> <span style=color:#f92672>...</span>
-<span style=color:#f92672>}</span>
-
-<span style=color:#75715e>// returns None if can&#39;t be parsed
-</span><span style=color:#75715e></span><span style=color:#66d9ef>def</span> parseDomain<span style=color:#f92672>(</span>url<span style=color:#66d9ef>:</span> <span style=color:#66d9ef>Url</span><span style=color:#f92672>)</span><span style=color:#66d9ef>:</span> <span style=color:#66d9ef>Option</span><span style=color:#f92672>[</span><span style=color:#66d9ef>Domain</span><span style=color:#f92672>]</span> <span style=color:#66d9ef>=</span> <span style=color:#f92672>...</span>
-</code></pre></div><p>The change to <code>RequestLine</code> to return <code>Options</code> is mainly because that, for some of our logs, some columns are optional. However, hopefully very rarely, a log may be corrupted (perhaps due to application logic) and we just don&rsquo;t have a usable value for a certain column.</p>
-<p>Spark will blow up the whole job if one row fails (repeatedly due to report logic, not just a transient I/O error), so having <code>RequestLine</code> return <code>Options</code> with the for comprehension is our way of having the rest of the Spark job continue on if we have a few lines that happen to be invalid.</p>
-<p>And besides handling invalid lines, it also gives a nice way to skip lines for other reasons, e.g. inactive clients/other report business logic conditions.</p>
-<p>Just to highlight the nifty Scala feature here, we&rsquo;re using a <code>for { ... }</code> and <code>yield (...)</code>, but the return value of the for expression is not a built-in Scala type (like <code>Seq</code>), but Spark&rsquo;s own <code>RDD</code> type.</p>
-<p>Which means that this for expression is captured as <code>map</code>/<code>filter</code> invocations, just like any other <code>RDD</code> operation, and will be shipped off around the cluster to evaluate against incoming data.</p>
-<h2 id=up-front-dynamic-coalescing>
-Up-Front Dynamic Coalescing
-<a class=heading-link href=#up-front-dynamic-coalescing>
-<i class="fa fa-link" aria-hidden=true></i>
-</a>
-</h2>
-<p>One of our long-standing pain points with Spark (currently/pre-1.0) is that picking the right partition size is critical for job performance.</p>
-<p>(Brief background: partitions are where if you have 100gb of data &ldquo;in&rdquo; an RDD, Spark will break it up into tiny, say, 50-100mb partitions, and process each partition individually. This allows the work to be distributed and to recover more easily from errors.)</p>
-<p>If any partition ends up being too big, your job will throw <code>OutOfMemoryError</code>s during shuffles (technically this is/has already changed in Spark master, but we haven&rsquo;t tried it out). But if your partitions are too small, the per-partition/per-task overhead can make your job take dramatically longer.</p>
-<p>As a side note, I think we are more sensitive to this than most Spark users, as our data <em>always</em> comes from S3, which has no real notion of partitions&ndash;it&rsquo;s just flat files. Most Spark users, who load likely data from HDFS, will get partition sizes that &ldquo;just work&rdquo;, since HDFS was built specifically for map/reduce and storing large files in small-ish chunks (splits).</p>
-<p>So, anyway, since we use S3, we have to provide our own partitioning hints.</p>
-<p>The Spark API does have <code>coalesce</code> and <code>repartition</code> methods, but, unfortunately (currently/pre-1.0), they only take a desired number of partitions.</p>
-<p>But what we really want to shoot for is not number of partitions, by size of partitions.</p>
-<p>And ideally the repartitioning should &ldquo;just happen&rdquo; for the programmer, without them having to worry &ldquo;am I loading 1 week of data? 1 months? 6 months?&rdquo;. Each of these would have a drastically different number of partitions.</p>
-<p>To handle this, we&rsquo;ve built dynamic-coalescing into our shared <code>newRDD</code> logic.</p>
-<p>The basic idea is to:</p>
-<ol>
-<li>Look at the file metadata in S3 to come up with total incoming size</li>
-<li>Divide incoming size by our &ldquo;goal partition size&rdquo; (currently 128mb)</li>
-<li>Use the result to coalesce the RDD.</li>
-</ol>
-<p>The routine looks like:</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-scala data-lang=scala><span style=color:#75715e>/** Partitions `rdd` based on the total size of `paths`. */</span>
-<span style=color:#66d9ef>def</span> partitionRDD<span style=color:#f92672>[</span><span style=color:#66d9ef>T</span><span style=color:#f92672>](</span>
-    rdd<span style=color:#66d9ef>:</span> <span style=color:#66d9ef>RDD</span><span style=color:#f92672>[</span><span style=color:#66d9ef>T</span><span style=color:#f92672>],</span>
-    sourceData<span style=color:#66d9ef>:</span> <span style=color:#66d9ef>Seq</span><span style=color:#f92672>[</span><span style=color:#66d9ef>FilePath</span><span style=color:#f92672>])</span><span style=color:#66d9ef>:</span> <span style=color:#66d9ef>RDD</span><span style=color:#f92672>[</span><span style=color:#66d9ef>T</span><span style=color:#f92672>]</span> <span style=color:#66d9ef>=</span> <span style=color:#f92672>{</span>
-  <span style=color:#66d9ef>val</span> number <span style=color:#66d9ef>=</span> sourceData<span style=color:#f92672>.</span>map <span style=color:#f92672>{</span> <span style=color:#66d9ef>_</span><span style=color:#f92672>.</span>size <span style=color:#f92672>}.</span>sum <span style=color:#f92672>/</span> goalSize
-  rdd<span style=color:#f92672>.</span>coalesce<span style=color:#f92672>(</span>number<span style=color:#f92672>.</span>toInt<span style=color:#f92672>)</span>
-<span style=color:#f92672>}</span>
-</code></pre></div><p>Note that, technically, we&rsquo;re using <code>coalesce</code> instead of the new <code>repartition</code> method.</p>
-<p>This is because, for us, our incoming S3 files are almost always smaller than the goal size (by default the HDFS S3 backend will not group multiple S3 keys into one split), so we want to reduce the number of partitions. <code>coalesce</code> can do this without a shuffle, which is nice to avoid if we can.</p>
-<p>After fiddling with some settings (our goal size, using the Snappy compression codec, and setting the shuffle buffer to 10k), this auto-coalesce logic has handled basically any logs/date range we&rsquo;ve thrown at it for the past few months.</p>
-<p>Eventually, it would be nice if Spark just did this for us, both at the start of a job, and even during each shuffle. I&rsquo;ll wand wave on the implementation details, but &ldquo;something something sampling the current size of the partitions vs. the ideal size something&rdquo; would be awesome.</p>
-<h2 id=defining--in-case-classes-for-reducing>
-Defining <code>+</code> in Case Classes For Reducing
-<a class=heading-link href=#defining--in-case-classes-for-reducing>
-<i class="fa fa-link" aria-hidden=true></i>
-</a>
-</h2>
-<p>We frequently need to reduce the values of an RDD, either to <code>reduceByKey</code> to combine values for the same key, or just <code>reduce</code> to get a result across the whole RDD.</p>
-<p>If you have an RDD of key and just a tuple of stats, this can get pretty tedious:</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-scala data-lang=scala><span style=color:#66d9ef>val</span> rdda<span style=color:#66d9ef>:</span> <span style=color:#66d9ef>RDD</span><span style=color:#f92672>[(</span><span style=color:#66d9ef>UserId</span>, <span style=color:#f92672>(</span><span style=color:#66d9ef>Clicks</span>, <span style=color:#66d9ef>Imps</span>, <span style=color:#66d9ef>Convs</span><span style=color:#f92672>))]</span> <span style=color:#66d9ef>=</span> <span style=color:#f92672>...</span>
-<span style=color:#66d9ef>val</span> rddb <span style=color:#66d9ef>=</span> rdda<span style=color:#f92672>.</span>reduceByKey <span style=color:#f92672>{</span> <span style=color:#f92672>(</span>v1<span style=color:#f92672>,</span> v2<span style=color:#f92672>)</span> <span style=color:#66d9ef>=&gt;</span> 
-  <span style=color:#f92672>(</span>v1<span style=color:#f92672>.</span>_1 <span style=color:#f92672>+</span> v2<span style=color:#f92672>.</span>_1<span style=color:#f92672>,</span> v1<span style=color:#f92672>.</span>_2 <span style=color:#f92672>+</span> v2<span style=color:#f92672>.</span>_2<span style=color:#f92672>,</span> v1<span style=color:#f92672>.</span>_3 <span style=color:#f92672>+</span> v2<span style=color:#f92672>.</span>_3<span style=color:#f92672>)</span>
-<span style=color:#f92672>}</span>
-</code></pre></div><p>With all the <code>v1</code>, <code>v2</code>, <code>_1</code>, <code>_2</code>, etc., I made about 10 typos just typing that example for this post. Not pretty in a real job.</p>
-<p>What we like to do here is wrap the stats into a case class that defines an <code>+</code> operation:</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-scala data-lang=scala><span style=color:#66d9ef>case</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>Stats</span><span style=color:#f92672>(</span>clicks<span style=color:#66d9ef>:</span> <span style=color:#66d9ef>Long</span><span style=color:#f92672>,</span> imps<span style=color:#66d9ef>:</span> <span style=color:#66d9ef>Long</span><span style=color:#f92672>,</span> convs<span style=color:#66d9ef>:</span> <span style=color:#66d9ef>Long</span><span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
-  <span style=color:#66d9ef>def</span> <span style=color:#f92672>+(</span>other<span style=color:#66d9ef>:</span> <span style=color:#66d9ef>Stats</span><span style=color:#f92672>)</span><span style=color:#66d9ef>:</span> <span style=color:#66d9ef>Stats</span> <span style=color:#f92672>=</span> <span style=color:#f92672>{</span>
-    <span style=color:#a6e22e>Stats</span><span style=color:#f92672>(</span>
-      clicks <span style=color:#f92672>+</span> other<span style=color:#f92672>.</span>clicks<span style=color:#f92672>,</span>
-      imps <span style=color:#f92672>+</span> other<span style=color:#f92672>.</span>imps<span style=color:#f92672>,</span>
-      convs <span style=color:#f92672>+</span> other<span style=color:#f92672>.</span>convs<span style=color:#f92672>)</span>
-  <span style=color:#f92672>}</span>
-<span style=color:#f92672>}</span>
-
-<span style=color:#75715e>// now reduce is easy
-</span><span style=color:#75715e></span><span style=color:#66d9ef>val</span> rdda<span style=color:#66d9ef>:</span> <span style=color:#66d9ef>RDD</span><span style=color:#f92672>[(</span><span style=color:#66d9ef>UserId</span>, <span style=color:#66d9ef>Stats</span><span style=color:#f92672>)]</span> <span style=color:#66d9ef>=</span> <span style=color:#f92672>...</span>
-<span style=color:#66d9ef>val</span> rddb <span style=color:#66d9ef>=</span> rdda<span style=color:#f92672>.</span>reduceByKey <span style=color:#f92672>{</span> <span style=color:#66d9ef>_</span> <span style=color:#f92672>+</span> <span style=color:#66d9ef>_</span> <span style=color:#f92672>}</span>
-</code></pre></div><p>This moves the combination logic out into a specific method, and really makes the job read nicer.</p>
-<p>Granted, it is still somewhat tedious to define the <code>+</code> method by hand. But we usually don&rsquo;t have very many stats, so it hasn&rsquo;t been painful enough to look into alternatives (e.g. having macros/Algebird/etc. define <code>+</code> automatically).</p>
-<h2 id=using-spark-plug-for-launching-emr-clusters>
-Using Spark Plug for Launching EMR Clusters
-<a class=heading-link href=#using-spark-plug-for-launching-emr-clusters>
-<i class="fa fa-link" aria-hidden=true></i>
-</a>
-</h2>
-<p>At Bizo, none of our Spark clusters are persistent; instead we use Amazon EMR to spin up a new cluster for each report, run the report, save the result to S3, and shut the cluster down.</p>
-<p>For us, this has worked out very well. We really enjoy not having the headache of administering a long-running cluster, and dealing with growing/reducing/sharing it among our jobs. That&rsquo;s what EMR is for.</p>
-<p>However, this does result in launching a lot of clusters. To help with that, Larry on Bizo&rsquo;s infrastructure team built <a href=https://github.com/ogrodnek/spark-plug>spark-plug</a>, a Scala DSL for launching EMR clusters (ironically, the name &ldquo;spark-plug&rdquo; is completely coincidental, as spark-plug was originally built to launch our Hive EMR clusters).</p>
-<p>To use spark-plug, you create a &ldquo;plug&rdquo; that will launch your EMR cluster, e.g.:</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-scala data-lang=scala><span style=color:#66d9ef>object</span> <span style=color:#a6e22e>SomePlug</span> <span style=color:#66d9ef>extends</span> <span style=color:#a6e22e>AbstractPlug</span> <span style=color:#f92672>{</span>
-  <span style=color:#75715e>// args can be passed in from cron jobs/CLI
-</span><span style=color:#75715e></span>  <span style=color:#66d9ef>def</span> today <span style=color:#66d9ef>=</span> <span style=color:#a6e22e>CalendarDate</span><span style=color:#f92672>.</span>from<span style=color:#f92672>(</span>args<span style=color:#f92672>(</span><span style=color:#ae81ff>0</span><span style=color:#f92672>),</span> <span style=color:#e6db74>&#34;yyyyMMdd&#34;</span><span style=color:#f92672>)</span>
-
-  <span style=color:#75715e>// the name of the &#39;job&#39; class to run on the spark master
-</span><span style=color:#75715e></span>  <span style=color:#66d9ef>override</span> <span style=color:#66d9ef>def</span> job <span style=color:#66d9ef>=</span> <span style=color:#e6db74>&#34;SomeJob&#34;</span>
-  <span style=color:#66d9ef>override</span> <span style=color:#66d9ef>def</span> jobArgs <span style=color:#66d9ef>=</span> <span style=color:#a6e22e>Seq</span><span style=color:#f92672>(</span>today<span style=color:#f92672>.</span>toString<span style=color:#f92672>)</span>
-  <span style=color:#66d9ef>override</span> <span style=color:#66d9ef>def</span> numberOfMachines <span style=color:#66d9ef>=</span> <span style=color:#ae81ff>20</span>
-
-  <span style=color:#75715e>// these end up being EMR job steps
-</span><span style=color:#75715e></span>  <span style=color:#66d9ef>override</span> <span style=color:#66d9ef>def</span> steps <span style=color:#66d9ef>=</span> <span style=color:#f92672>{</span>
-    <span style=color:#66d9ef>val</span> checkpath <span style=color:#66d9ef>=</span> <span style=color:#66d9ef>new</span> <span style=color:#a6e22e>CheckS3Path</span><span style=color:#f92672>(</span><span style=color:#a6e22e>RequestLine</span><span style=color:#f92672>.</span>checkPath<span style=color:#f92672>(</span>today<span style=color:#f92672>))</span>
-    <span style=color:#66d9ef>val</span> jobStep <span style=color:#66d9ef>=</span> <span style=color:#a6e22e>RunSparkJob</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;com.bizo.&#34;</span> <span style=color:#f92672>+</span> job<span style=color:#f92672>,</span> jobArgs<span style=color:#f92672>)</span>
-    <span style=color:#66d9ef>val</span> otherSteps <span style=color:#66d9ef>=</span> <span style=color:#a6e22e>Seq</span><span style=color:#f92672>(...)</span>
-    <span style=color:#a6e22e>Seq</span><span style=color:#f92672>(</span>checkpath<span style=color:#f92672>,</span> jobStep<span style=color:#f92672>)</span> <span style=color:#f92672>++</span> otherSteps
-  <span style=color:#f92672>}</span>
-<span style=color:#f92672>}</span>
-</code></pre></div><p>A few notes about this:</p>
-<ul>
-<li>We use a <code>CheckS3Path</code> step to ensure the log files we&rsquo;re reading in actually exist</li>
-<li>By extending our (internal) <code>AbstractPlug</code> class, we can some Spark-related bootstrap actions for free (that take care of installing Spark with our <code>spark-env.sh</code> settings, downloading our job&rsquo;s JAR onto each node, then starting the master and slaves)</li>
-<li>The <code>RunSparkJob</code> step is what will, on the master, instantiate the <code>SomeJob</code> class from before, and kick off the loading/saving of our report RDDs</li>
-</ul>
-<p>Technically some of the steps here (<code>RunSparkJob</code>, <code>CheckS3Path</code>) are in our internal <code>spark-plug-bizo-ext</code> repository, but <code>spark-plug</code> itself is open source and has been really great to use.</p>
-<h2 id=conclusion>
-Conclusion
-<a class=heading-link href=#conclusion>
-<i class="fa fa-link" aria-hidden=true></i>
-</a>
-</h2>
-<p>We have enjoyed settling into Spark and developing some patterns around how we structure our reports.</p>
-<p>The very high levels of test coverage we&rsquo;re able to get are especially nice. Honestly, for all of Spark&rsquo;s reputation and marketing about being &ldquo;lightning fast&rdquo;, &ldquo;in-memory based&rdquo;, etc., for me, all of that pales in comparison to actually being able to put our non-trivial reporting code under test.</p>
-<p>We also have a few more patterns floating around, but they aren&rsquo;t quite nailed down yet, at least in my head, so I&rsquo;ll save those for a future post.</p>
-</div>
-<footer>
-<div id=disqus_thread></div>
-<script type=application/javascript>var disqus_config=function(){};(function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById('disqus_thread').innerHTML='Disqus comments not available by default when the website is previewed locally.';return}var b=document,a=b.createElement('script');a.async=!0,a.src='//draconianoverlord.disqus.com/embed.js',a.setAttribute('data-timestamp',+new Date),(b.head||b.body).appendChild(a)})()</script>
-<noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript>
-<a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a>
-</footer>
-</article>
-</section>
-</div>
-<footer class=footer>
-<section class=container>
-©
+Separate Job vs. Report Classes Link to heading Unit testing our reports is a big reason we like Spark, and being able to unit test Spark logic relies on feeding your logic &ldquo;fake&rdquo; RDDs, instead of real &ldquo;tons of real data from the cluster&rdquo; RDDs."><meta property="og:type" content="article"><meta property="og:url" content="https://www.draconianoverlord.com/2014/02/12/spark-report-patterns.html/"><meta property="article:section" content="posts"><meta property="article:published_time" content="2014-02-12T00:00:00+00:00"><meta property="article:modified_time" content="2014-02-12T00:00:00+00:00"><link rel=canonical href=https://www.draconianoverlord.com/2014/02/12/spark-report-patterns.html/><link rel=preload href="/fonts/forkawesome-webfont.woff2?v=1.2.0" as=font type=font/woff2 crossorigin><link rel=stylesheet href=/css/coder.min.65236a6d834b26194eed04a2a3b45e44d9194ef9e620253705d4bef03bd7ef81.css integrity="sha256-ZSNqbYNLJhlO7QSio7ReRNkZTvnmICU3BdS+8DvX74E=" crossorigin=anonymous media=screen><link rel=stylesheet href=/css/coder-dark.min.f6534b0b446b75d9b6ad77a97d43ede2ddaeff1b6e2361fb7198d6f8fcb7f83f.css integrity="sha256-9lNLC0Rrddm2rXepfUPt4t2u/xtuI2H7cZjW+Py3+D8=" crossorigin=anonymous media=screen><link rel=icon type=image/png href=/images/favicon-32x32.png sizes=32x32><link rel=icon type=image/png href=/images/favicon-16x16.png sizes=16x16><link rel=apple-touch-icon href=/images/apple-touch-icon.png><link rel=apple-touch-icon sizes=180x180 href=/images/apple-touch-icon.png><link rel=manifest href=/site.webmanifest><link rel=mask-icon href=/images/safari-pinned-tab.svg color=#5bbad5></head><body class="preload-transitions colorscheme-auto"><div class=float-container><a id=dark-mode-toggle class=colorscheme-toggle><i class="fa fa-adjust fa-fw" aria-hidden=true></i></a></div><main class=wrapper><nav class=navigation><section class=container><a class=navigation-title href=/>Draconian Overlord</a>
+Oppressing software entropy</section></nav><div class=content><section class="container post"><article><header><div class=post-title><h1 class=title><a class=title-link href=https://www.draconianoverlord.com/2014/02/12/spark-report-patterns.html/>Spark Report Patterns</a></h1></div><div class=post-meta><div class=date><span class=posted-on><i class="fa fa-calendar" aria-hidden=true></i>
+<time datetime=2014-02-12T00:00:00Z>February 12, 2014</time></span>
+<span class=reading-time><i class="fa fa-clock-o" aria-hidden=true></i>
+17-minute read</span></div><div class=categories><i class="fa fa-folder" aria-hidden=true></i>
+<a href=/categories/scala/>Scala</a></div></div></header><div class=post-content><p>At <a href=http://www.bizo.com class=external-link target=_blank rel=noopener>Bizo</a>, we&rsquo;ve been writing a lot of <a href=https://spark.incubator.apache.org/ class=external-link target=_blank rel=noopener>Spark</a> jobs lately.</p><p>We are big fans of Spark, as it&rsquo;s basically a faster, testable, type-safe alternative to Hive.</p><p>Over the course of writing many jobs, we&rsquo;ve established a few patterns that have been working well.</p><h2 id=separate-job-vs-report-classes>Separate Job vs. Report Classes
+<a class=heading-link href=#separate-job-vs-report-classes><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h2><p>Unit testing our reports is a big reason we like Spark, and being able to unit test Spark logic relies on feeding your logic &ldquo;fake&rdquo; RDDs, instead of real &ldquo;tons of real data from the cluster&rdquo; RDDs.</p><p>So, while a naive Spark report might look like:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-scala data-lang=scala><span style=display:flex><span><span style=color:#66d9ef>class</span> <span style=color:#a6e22e>SomeReport</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>def</span> main<span style=color:#f92672>(</span>args<span style=color:#66d9ef>:</span> <span style=color:#66d9ef>Array</span><span style=color:#f92672>[</span><span style=color:#66d9ef>String</span><span style=color:#f92672>])</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>val</span> sc <span style=color:#66d9ef>=</span> <span style=color:#f92672>...</span>
+</span></span><span style=display:flex><span>    <span style=color:#75715e>// load data from cluster/S3
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>    <span style=color:#66d9ef>val</span> rdda <span style=color:#66d9ef>=</span> sc<span style=color:#f92672>.</span>textFile<span style=color:#f92672>(</span><span style=color:#e6db74>&#34;s3n://bucket/input/&#34;</span><span style=color:#f92672>)</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#75715e>// apply report logic
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>    <span style=color:#66d9ef>val</span> rddb <span style=color:#66d9ef>=</span> <span style=color:#f92672>...</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#75715e>// now save the result
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>    rddb<span style=color:#f92672>.</span>saveAsTextFile<span style=color:#f92672>(</span><span style=color:#e6db74>&#34;s3n://bucket/output/&#34;</span><span style=color:#f92672>)</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>}</span>
+</span></span></code></pre></div><p>The code above is actually reminiscent of Hive code: some S3/HDFS URLs with input, interspersed with some logic, followed up by more S3/HDFS URLs for output.</p><p>It is short and sweet, but extremely untestable.</p><p>Spark allows you to create &ldquo;fake&rdquo; RDDs quite easily, and so what we&rsquo;d really like to do is divorce the notion of &ldquo;where the data in an RDD exists&rdquo; from &ldquo;what logic we apply to the RDD&rdquo;.</p><p>So, we settled onto having a &ldquo;Job&rdquo; class, which handles loading/saving RDDs, and a &ldquo;Report&rdquo; class, which is just the logic:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-scala data-lang=scala><span style=display:flex><span><span style=color:#66d9ef>class</span> <span style=color:#a6e22e>SomeJob</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>def</span> main<span style=color:#f92672>(</span>args<span style=color:#66d9ef>:</span> <span style=color:#66d9ef>Array</span><span style=color:#f92672>[</span><span style=color:#66d9ef>String</span><span style=color:#f92672>])</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>val</span> sc <span style=color:#66d9ef>=</span> <span style=color:#f92672>...</span>
+</span></span><span style=display:flex><span>    <span style=color:#75715e>// load data from cluster/S3
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>    <span style=color:#66d9ef>val</span> rdda <span style=color:#66d9ef>=</span> sc<span style=color:#f92672>.</span>textFile<span style=color:#f92672>(</span><span style=color:#e6db74>&#34;s3n://bucket/input/&#34;</span><span style=color:#f92672>)</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#75715e>// apply report logic
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>    <span style=color:#66d9ef>val</span> rddb <span style=color:#66d9ef>=</span> <span style=color:#66d9ef>new</span> <span style=color:#a6e22e>SomeReport</span><span style=color:#f92672>(...).</span>run<span style=color:#f92672>(</span>rdda<span style=color:#f92672>)</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#75715e>// now save the result
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>    rddb<span style=color:#f92672>.</span>saveAsTextFile<span style=color:#f92672>(</span><span style=color:#e6db74>&#34;s3n://bucket/output/&#34;</span><span style=color:#f92672>)</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>class</span> <span style=color:#a6e22e>SomeReport</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>def</span> run<span style=color:#f92672>(</span>rdda<span style=color:#66d9ef>:</span> <span style=color:#66d9ef>RDD</span><span style=color:#f92672>[</span><span style=color:#66d9ef>String</span><span style=color:#f92672>])</span><span style=color:#66d9ef>:</span> <span style=color:#66d9ef>RDD</span><span style=color:#f92672>[</span><span style=color:#66d9ef>String</span><span style=color:#f92672>]</span> <span style=color:#66d9ef>=</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>    rdda<span style=color:#f92672>.</span>filter <span style=color:#f92672>{</span> <span style=color:#66d9ef>_</span><span style=color:#f92672>.</span>contains<span style=color:#f92672>(</span><span style=color:#e6db74>&#34;user1&#34;</span><span style=color:#f92672>)</span> <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>}</span>
+</span></span></code></pre></div><p>The upshot is that <code>SomeReport</code> now only takes and returns RDDs, without any cluster/S3 coupling.</p><p>This allows us to write a unit test:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-scala data-lang=scala><span style=display:flex><span><span style=color:#66d9ef>class</span> <span style=color:#a6e22e>SomeReportTest</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>val</span> sc <span style=color:#66d9ef>=</span> <span style=color:#66d9ef>new</span> <span style=color:#a6e22e>SparkContext</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;local&#34;</span><span style=color:#f92672>,</span> <span style=color:#e6db74>&#34;SomeReportTest&#34;</span><span style=color:#f92672>)</span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>val</span> report <span style=color:#66d9ef>=</span> <span style=color:#66d9ef>new</span> <span style=color:#a6e22e>SomeReport</span><span style=color:#f92672>(...)</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#a6e22e>@Test</span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>def</span> shouldFindUser1<span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>    <span style=color:#75715e>// given we saw user1 and user2 in the logs
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>    <span style=color:#66d9ef>val</span> input <span style=color:#66d9ef>=</span> <span style=color:#a6e22e>Seq</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;line1 user1 ...&#34;</span><span style=color:#f92672>,</span> <span style=color:#e6db74>&#34;line2 user2 ...&#34;</span><span style=color:#f92672>)</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#75715e>// then only user1 is in the output
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>    <span style=color:#66d9ef>val</span> result <span style=color:#66d9ef>=</span> run<span style=color:#f92672>(</span>input<span style=color:#f92672>)</span>
+</span></span><span style=display:flex><span>    result<span style=color:#f92672>.</span>size shouldBe <span style=color:#ae81ff>1</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>private</span> <span style=color:#66d9ef>def</span> run<span style=color:#f92672>(</span>fakeInput<span style=color:#66d9ef>:</span> <span style=color:#66d9ef>Seq</span><span style=color:#f92672>[</span><span style=color:#66d9ef>String</span><span style=color:#f92672>])</span><span style=color:#66d9ef>:</span> <span style=color:#66d9ef>Seq</span><span style=color:#f92672>[</span><span style=color:#66d9ef>String</span><span style=color:#f92672>]</span> <span style=color:#66d9ef>=</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>val</span> input<span style=color:#66d9ef>:</span> <span style=color:#66d9ef>RDD</span><span style=color:#f92672>[</span><span style=color:#66d9ef>String</span><span style=color:#f92672>]</span> <span style=color:#66d9ef>=</span> sc<span style=color:#f92672>.</span>parallelize<span style=color:#f92672>(</span>fakeInput<span style=color:#f92672>)</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>val</span> result<span style=color:#66d9ef>:</span> <span style=color:#66d9ef>RDD</span><span style=color:#f92672>[</span><span style=color:#66d9ef>String</span><span style=color:#f92672>]</span> <span style=color:#66d9ef>=</span> report<span style=color:#f92672>.</span>run<span style=color:#f92672>(</span>input<span style=color:#f92672>)</span>
+</span></span><span style=display:flex><span>    result<span style=color:#f92672>.</span>collect<span style=color:#f92672>().</span>toList<span style=color:#f92672>.</span>sorted
+</span></span><span style=display:flex><span>  <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>}</span>
+</span></span></code></pre></div><p>Looking at <code>shouldFindUser1</code>, the idea is that we want a really easy to read test:</p><ul><li>Given this really small input/boundary case</li><li>When the report runs</li><li>Then we should see a really small/easy to verify result</li></ul><p>The test accomplishes this by having the <code>run</code> method translate the lists of fake log lines (<code>Seq[String]</code>) into Spark&rsquo;s RDD data structure, and then back again.</p><p>The beauty of Spark&rsquo;s RDD is that, since it models report steps as mutating every line in a collection by applying some closure/logic (<code>map</code>, <code>filter</code>, <code>reduce</code>, etc.), Spark will hide the details of whether this happens on these 2 test lines all in memory, or 100 million lines loaded from S3.</p><p>Specifically for our unit test, with Spark in local mode, this means our test runs in Eclipse/ant/etc. in seconds and will not touch any external data.</p><p>As any TDD/etc. zealot will tell you, this is a huge boon for developer productivity, as we can ruthlessly refactor our Spark jobs, and have confidence that we&rsquo;re not breaking existing functionality.</p><h2 id=log-line-case-classes>Log Line Case Classes
+<a class=heading-link href=#log-line-case-classes><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h2><p>After getting the job/report separation in place, we wanted to make both the report and the unit tests even easier to write.</p><p>In the example above, <code>SomeReport</code> was taking an <code>RDD[String]</code>, where each string is a raw line from the log file. This means two things:</p><ol><li><p><code>SomeReport</code> is responsible for parsing the raw string into meaningful values.</p><p>This means <code>SomeReport</code> is concerning itself with implementation details (the format of the logs), instead of the business logic around their content.</p></li><li><p><code>SomeReportTest</code> must synthesize valid raw strings for <code>SomeReport</code> to parse.</p><p>This can get especially ugly if, say, your log line is a 50 column tab-separated file, when really each test is hopefully only filling into 2-3 columns that are specific to its boundary case.</p><p>Since <code>SomeReport</code> is still going to do a <code>.split("\t")(x)</code> for each column, the test needs to fill in 45+ dummy values.</p></li></ol><p>To better encapsulate the log implementation details, we started using &ldquo;Line&rdquo; case classes. The report and unit test then concern themselves with the Line, instead of Strings. This would look like:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-scala data-lang=scala><span style=display:flex><span><span style=color:#75715e>/** Line for our &#34;request&#34; logs. */</span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>case</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>RequestLine</span><span style=color:#f92672>(</span>line<span style=color:#66d9ef>:</span> <span style=color:#66d9ef>String</span><span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>def</span> timestamp<span style=color:#66d9ef>:</span> <span style=color:#66d9ef>Long</span> <span style=color:#f92672>=</span> parse<span style=color:#f92672>(</span><span style=color:#ae81ff>0</span><span style=color:#f92672>).</span>toLong
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>def</span> userId<span style=color:#66d9ef>:</span> <span style=color:#66d9ef>String</span> <span style=color:#f92672>=</span> parse<span style=color:#f92672>(</span><span style=color:#ae81ff>1</span><span style=color:#f92672>)</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>private</span> <span style=color:#66d9ef>def</span> parse<span style=color:#f92672>(</span>index<span style=color:#66d9ef>:</span> <span style=color:#66d9ef>Int</span><span style=color:#f92672>)</span> <span style=color:#66d9ef>=</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>   <span style=color:#75715e>// Do some smart/efficient parsing of line; e.g. if it&#39;s
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>   <span style=color:#75715e>// tab-separated, lazily pull out columns, instead of
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>   <span style=color:#75715e>// creating 50-some substrings when 48 end up unused. 
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>   <span style=color:#75715e>// For now, being naive:
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>   <span style=color:#66d9ef>return</span> line<span style=color:#f92672>.</span>split<span style=color:#f92672>(</span><span style=color:#e6db74>&#34;\t&#34;</span><span style=color:#f92672>)(</span>index<span style=color:#f92672>)</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#75715e>// now the report codes against the case class
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span><span style=color:#66d9ef>class</span> <span style=color:#a6e22e>SomeReport</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>def</span> run<span style=color:#f92672>(</span>rdd<span style=color:#66d9ef>:</span> <span style=color:#66d9ef>RDD</span><span style=color:#f92672>[</span><span style=color:#66d9ef>RequestLine</span><span style=color:#f92672>])</span> <span style=color:#66d9ef>=</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>    rdd<span style=color:#f92672>.</span>filter <span style=color:#f92672>{</span> <span style=color:#66d9ef>_</span><span style=color:#f92672>.</span>userId <span style=color:#f92672>==</span> <span style=color:#e6db74>&#34;user1&#34;</span> <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>}</span>
+</span></span></code></pre></div><p>This is better, as we&rsquo;ve moved any notion of parsing out of <code>SomeReport</code>, and it just calls type-safe methods (<code>userId</code>, <code>timestamp</code>) on our <code>RequestLine</code>.</p><p>So, now our testing, we usually define a companion object for <code>RequestLine</code> to make constructing fake test lines super easy:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-scala data-lang=scala><span style=display:flex><span><span style=color:#66d9ef>object</span> <span style=color:#a6e22e>RequestLine</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>def</span> apply<span style=color:#f92672>(</span>
+</span></span><span style=display:flex><span>    userId<span style=color:#66d9ef>:</span> <span style=color:#66d9ef>String</span> <span style=color:#f92672>=</span> <span style=color:#e6db74>&#34;user1&#34;</span><span style=color:#f92672>,</span>
+</span></span><span style=display:flex><span>    timestamp<span style=color:#66d9ef>:</span> <span style=color:#66d9ef>Long</span> <span style=color:#f92672>=</span> <span style=color:#ae81ff>1L</span><span style=color:#f92672>)</span> <span style=color:#66d9ef>=</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>new</span> <span style=color:#a6e22e>RequestLine</span><span style=color:#f92672>(</span><span style=color:#a6e22e>Seq</span><span style=color:#f92672>(</span>timestamp<span style=color:#f92672>,</span> userId<span style=color:#f92672>).</span>mkString<span style=color:#f92672>(</span><span style=color:#e6db74>&#34;\t&#34;</span><span style=color:#f92672>))</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>}</span>
+</span></span></code></pre></div><p>Using method parameter default values, this allows the test case to only fill in the columns it cares about. When there are 50 columns, and your boundary case only covers 2, this is very handy. The test then looks like:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-scala data-lang=scala><span style=display:flex><span><span style=color:#66d9ef>class</span> <span style=color:#a6e22e>SomeReportTest</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>val</span> sc <span style=color:#66d9ef>=</span> <span style=color:#66d9ef>new</span> <span style=color:#a6e22e>SparkContext</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;local&#34;</span><span style=color:#f92672>,</span> <span style=color:#e6db74>&#34;SomeReportTest&#34;</span><span style=color:#f92672>)</span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>val</span> report <span style=color:#66d9ef>=</span> <span style=color:#66d9ef>new</span> <span style=color:#a6e22e>SomeReport</span><span style=color:#f92672>(...)</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#a6e22e>@Test</span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>def</span> shouldFindUser1<span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>    <span style=color:#75715e>// given we saw user1 and user2 in the logs
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>    <span style=color:#66d9ef>val</span> input <span style=color:#66d9ef>=</span> <span style=color:#a6e22e>Seq</span><span style=color:#f92672>(</span>
+</span></span><span style=display:flex><span>      <span style=color:#a6e22e>RequestLine</span><span style=color:#f92672>(</span>userId <span style=color:#66d9ef>=</span> <span style=color:#e6db74>&#34;user1&#34;</span><span style=color:#f92672>),</span>
+</span></span><span style=display:flex><span>      <span style=color:#a6e22e>RequestLine</span><span style=color:#f92672>(</span>userId <span style=color:#66d9ef>=</span> <span style=color:#e6db74>&#34;user2&#34;</span><span style=color:#f92672>))</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#75715e>// then only user1 is in the output
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>    <span style=color:#66d9ef>val</span> result <span style=color:#66d9ef>=</span> run<span style=color:#f92672>(</span>input<span style=color:#f92672>)</span>
+</span></span><span style=display:flex><span>    result<span style=color:#f92672>.</span>size shouldBe <span style=color:#ae81ff>1</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>private</span> <span style=color:#66d9ef>def</span> run<span style=color:#f92672>(</span>fakeInput<span style=color:#66d9ef>:</span> <span style=color:#66d9ef>Seq</span><span style=color:#f92672>[</span><span style=color:#66d9ef>RequestLine</span><span style=color:#f92672>])</span><span style=color:#66d9ef>:</span>
+</span></span><span style=display:flex><span>      <span style=color:#66d9ef>Seq</span><span style=color:#f92672>[</span><span style=color:#66d9ef>RequestLine</span><span style=color:#f92672>]</span> <span style=color:#66d9ef>=</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>val</span> input<span style=color:#66d9ef>:</span> <span style=color:#66d9ef>RDD</span><span style=color:#f92672>[</span><span style=color:#66d9ef>RequestLine</span><span style=color:#f92672>]</span> <span style=color:#66d9ef>=</span> sc<span style=color:#f92672>.</span>parallelize<span style=color:#f92672>(</span>fakeInput<span style=color:#f92672>)</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>val</span> result<span style=color:#66d9ef>:</span> <span style=color:#66d9ef>RDD</span><span style=color:#f92672>[</span><span style=color:#66d9ef>RequestLine</span><span style=color:#f92672>]</span> <span style=color:#66d9ef>=</span> report<span style=color:#f92672>.</span>run<span style=color:#f92672>(</span>input<span style=color:#f92672>)</span>
+</span></span><span style=display:flex><span>    result<span style=color:#f92672>.</span>collect<span style=color:#f92672>().</span>toList<span style=color:#f92672>.</span>sorted
+</span></span><span style=display:flex><span>  <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>}</span>
+</span></span></code></pre></div><p>Since we have the <code>RequestLine</code> object already, we also go ahead and add factory methods for the real data:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-scala data-lang=scala><span style=display:flex><span><span style=color:#66d9ef>object</span> <span style=color:#a6e22e>RequestLine</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>def</span> newRDD<span style=color:#f92672>(</span>
+</span></span><span style=display:flex><span>      sc<span style=color:#66d9ef>:</span> <span style=color:#66d9ef>SparkContext</span><span style=color:#f92672>,</span>
+</span></span><span style=display:flex><span>      range<span style=color:#66d9ef>:</span> <span style=color:#66d9ef>CalendarInterval</span><span style=color:#f92672>)</span><span style=color:#66d9ef>:</span> <span style=color:#66d9ef>RDD</span><span style=color:#f92672>[</span><span style=color:#66d9ef>RequestLine</span><span style=color:#f92672>]</span> <span style=color:#66d9ef>=</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>val</span> paths <span style=color:#66d9ef>=</span> range<span style=color:#f92672>.</span>map <span style=color:#f92672>{</span> day <span style=color:#66d9ef>=&gt;</span>
+</span></span><span style=display:flex><span>      <span style=color:#e6db74>&#34;s3n://bucket/input/year=...,month=...,day=.../&#34;</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>}.</span>mkString<span style=color:#f92672>(</span><span style=color:#e6db74>&#34;,&#34;</span><span style=color:#f92672>)</span>
+</span></span><span style=display:flex><span>    sc<span style=color:#f92672>.</span>textFile<span style=color:#f92672>(</span>paths<span style=color:#f92672>).</span>map <span style=color:#f92672>{</span> <span style=color:#a6e22e>RequestLine</span><span style=color:#f92672>(</span><span style=color:#66d9ef>_</span><span style=color:#f92672>)</span> <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#75715e>// now various ReportJob classes can reuse `newRDD`:
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span><span style=color:#66d9ef>class</span> <span style=color:#a6e22e>SomeReport</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>def</span> main<span style=color:#f92672>(</span>args<span style=color:#66d9ef>:</span> <span style=color:#66d9ef>Array</span><span style=color:#f92672>[</span><span style=color:#66d9ef>String</span><span style=color:#f92672>])</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>val</span> sc <span style=color:#66d9ef>=</span> <span style=color:#f92672>...</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>val</span> range <span style=color:#66d9ef>=</span> <span style=color:#75715e>// parse from args
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>
+</span></span><span style=display:flex><span>    <span style=color:#75715e>// load data from cluster/S3
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>    <span style=color:#66d9ef>val</span> rdda <span style=color:#66d9ef>=</span> <span style=color:#a6e22e>RequestLine</span><span style=color:#f92672>.</span>newRDD<span style=color:#f92672>(</span>sc<span style=color:#f92672>,</span> range<span style=color:#f92672>)</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#75715e>// apply report logic
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>    <span style=color:#66d9ef>val</span> rddb <span style=color:#66d9ef>=</span> <span style=color:#f92672>...</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#75715e>// now save the result
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>    rddb<span style=color:#f92672>.</span>saveAsTextFile<span style=color:#f92672>(</span><span style=color:#e6db74>&#34;s3n://bucket/output/&#34;</span><span style=color:#f92672>)</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>}</span>
+</span></span></code></pre></div><p>The <code>newRDD</code> method here is fairly trivial, but the encapsulation becomes nice as it becomes more sophisticated (e.g. we have a generic &ldquo;repartition data loaded from S3&rdquo; routine that our <code>newRDD</code> methods reuse to try to jockey our data into the right partition sizes).</p><p>So, the upshots of the Log Line pattern are:</p><ol><li>Gives the report class type-safe getters (<code>.userId</code>) that hide the log format</li><li>Gives the report tests type-safe way of creating test data (<code>userId = ...</code>), with default values for what they don&rsquo;t care about</li><li>Moves the S3/cluster path location out of job classes, into a single <code>newRDD</code> method</li></ol><p>We use this pattern for basically all of our log files now.</p><h2 id=type-aliases-for-everything>Type Aliases for Everything
+<a class=heading-link href=#type-aliases-for-everything><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h2><p>A lot of times in Spark, you&rsquo;ll read in some raw log lines, and then throw away 90% of the columns, because you only care about one or two.</p><p>This is fine, and the initial way we did this was pretty simple:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-scala data-lang=scala><span style=display:flex><span><span style=color:#66d9ef>val</span> input<span style=color:#66d9ef>:</span> <span style=color:#66d9ef>RDD</span><span style=color:#f92672>[</span><span style=color:#66d9ef>RequestLine</span><span style=color:#f92672>]</span> <span style=color:#66d9ef>=</span> <span style=color:#f92672>...</span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>val</span> idAndTime<span style=color:#66d9ef>:</span> <span style=color:#66d9ef>RDD</span><span style=color:#f92672>[(</span><span style=color:#66d9ef>String</span>, <span style=color:#66d9ef>Long</span><span style=color:#f92672>)]</span> <span style=color:#66d9ef>=</span> input<span style=color:#f92672>.</span>map <span style=color:#f92672>{</span> line <span style=color:#66d9ef>=&gt;</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>(</span>line<span style=color:#f92672>.</span>userId<span style=color:#f92672>,</span> line<span style=color:#f92672>.</span>timestamp<span style=color:#f92672>)</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#75715e>// later on call a helper method
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>doSomeMoreWith<span style=color:#f92672>(</span>idAndTime<span style=color:#f92672>)</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>def</span> doSomeMoreWith<span style=color:#f92672>(</span>idAndTime<span style=color:#66d9ef>:</span> <span style=color:#66d9ef>RDD</span><span style=color:#f92672>[(</span><span style=color:#66d9ef>String</span>, <span style=color:#66d9ef>Long</span><span style=color:#f92672>)]</span> <span style=color:#66d9ef>=</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>...</span> 
+</span></span><span style=display:flex><span><span style=color:#f92672>}</span>
+</span></span></code></pre></div><p>The problem with this is, after passing around <code>idAndTime</code> as just a <code>RDD[(String, Long)]</code>, it can become really, really easy to forget what exactly that <code>String</code> is. Was it&mldr;user id? Client id? Browser id?</p><p>Readers may see where this is going; the underlying problem is <a href=http://c2.com/cgi/wiki?PrimitiveObsession class=external-link target=_blank rel=noopener>Primitive Obsession</a>, which is nothing new. We&rsquo;re using the type <code>String</code> when really we mean &ldquo;User Id&rdquo;.</p><p>That said, in most systems I&rsquo;ve worked on, primitive obsession has not historically been a big deal to me. Yes, there is usually a <code>Money</code> type, or a <code>Dollars</code> type, and probably a <code>CalendarDate</code>. But I don&rsquo;t usually go so far as to have <code>UserId</code> types, <code>Email</code> types, or <code>PhoneNumber</code> types, as usually the overhead of making the type outweighs the benefit.</p><p>With Spark reports, we&rsquo;ve found the opposite is true; with Scala type aliases (which really easy to declare), and lots of <code>RDD[...]</code> type parameters floating around, using type aliases for basically everything is very handy.</p><p>So, our type alias might look like:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-scala data-lang=scala><span style=display:flex><span><span style=color:#75715e>// in the com/bizo/types/package.scala file
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span><span style=color:#66d9ef>package</span> com.bizo <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>package</span> object types <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>type</span> <span style=color:#66d9ef>UserId</span> <span style=color:#f92672>=</span> <span style=color:#a6e22e>String</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>type</span> <span style=color:#66d9ef>Timestamp</span> <span style=color:#f92672>=</span> <span style=color:#a6e22e>Long</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>type</span> <span style=color:#66d9ef>ClientId</span> <span style=color:#f92672>=</span> <span style=color:#a6e22e>String</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>}</span>
+</span></span></code></pre></div><p>Then we&rsquo;ll use these aliases in our report:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-scala data-lang=scala><span style=display:flex><span><span style=color:#66d9ef>val</span> input<span style=color:#66d9ef>:</span> <span style=color:#66d9ef>RDD</span><span style=color:#f92672>[</span><span style=color:#66d9ef>RequestLine</span><span style=color:#f92672>]</span> <span style=color:#66d9ef>=</span> <span style=color:#f92672>...</span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>val</span> idAndTime<span style=color:#66d9ef>:</span> <span style=color:#66d9ef>RDD</span><span style=color:#f92672>[(</span><span style=color:#66d9ef>UserId</span>, <span style=color:#66d9ef>Timestamp</span><span style=color:#f92672>)]</span> <span style=color:#66d9ef>=</span> input<span style=color:#f92672>.</span>map <span style=color:#f92672>{</span> line <span style=color:#66d9ef>=&gt;</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>(</span>line<span style=color:#f92672>.</span>userId<span style=color:#f92672>,</span> line<span style=color:#f92672>.</span>timestamp<span style=color:#f92672>)</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#75715e>// later on call a helper method
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>doSomeMoreWith<span style=color:#f92672>(</span>idAndTime<span style=color:#f92672>)</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>def</span> doSomeMoreWith<span style=color:#f92672>(</span>idAndTime<span style=color:#66d9ef>:</span> <span style=color:#66d9ef>RDD</span><span style=color:#f92672>[(</span><span style=color:#66d9ef>UserId</span>, <span style=color:#66d9ef>Timestamp</span><span style=color:#f92672>)]</span> <span style=color:#66d9ef>=</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>...</span> 
+</span></span><span style=display:flex><span><span style=color:#f92672>}</span>
+</span></span></code></pre></div><p>And, wow, look at how much more readable that <code>doSomeMoreWith</code> signature is. Applied across larger Spark reports, it has dramatically increased their readability.</p><p>My only (minor) complaint here is that Scala&rsquo;s type aliases are just symbolic, in that if both <code>UserId</code> and <code>ClientId</code> are really strings, you can pass in a <code>UserId</code> variable where the type signature is actually <code>ClientId</code> and the compiler will not complain. They probably have a good reason for this, but it actually surprised me&ndash;I would have assumed it would not be allowed.</p><p><strong>Update 2/15/2014:</strong> Josh Carver, another Bizo dev, pointed at using <a href=https://gist.github.com/jcarver989/2fbb1ee926f57373aac5 class=external-link target=_blank rel=noopener>this type tag approach</a> as a more type-safe way of doing aliases. We are probably going to try it out and see how it goes.</p><h2 id=liberal-use-of-collect>Liberal use of <code>collect</code>
+<a class=heading-link href=#liberal-use-of-collect><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h2><p>One of my few criticisms of Spark is that it (understandably) heavily relies on Scala&rsquo;s tuples whenever you change the &ldquo;shape&rdquo; of your data.</p><p>This is what we were doing in the previous example, by only keeping user id and timestamp:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-scala data-lang=scala><span style=display:flex><span><span style=color:#66d9ef>val</span> input<span style=color:#66d9ef>:</span> <span style=color:#66d9ef>RDD</span><span style=color:#f92672>[</span><span style=color:#66d9ef>RequestLine</span><span style=color:#f92672>]</span> <span style=color:#66d9ef>=</span> <span style=color:#f92672>...</span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>val</span> idAndTime<span style=color:#66d9ef>:</span> <span style=color:#66d9ef>RDD</span><span style=color:#f92672>[(</span><span style=color:#66d9ef>UserId</span>, <span style=color:#66d9ef>Timestamp</span><span style=color:#f92672>)]</span> <span style=color:#66d9ef>=</span> input<span style=color:#f92672>.</span>map <span style=color:#f92672>{</span> line <span style=color:#66d9ef>=&gt;</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>(</span>line<span style=color:#f92672>.</span>userId<span style=color:#f92672>,</span> line<span style=color:#f92672>.</span>timestamp<span style=color:#f92672>)</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span><span style=color:#75715e>// later on...
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>idAndTime<span style=color:#f92672>.</span>filter <span style=color:#f92672>{</span> l <span style=color:#66d9ef>=&gt;</span> l<span style=color:#f92672>.</span>_1 <span style=color:#f92672>==</span> <span style=color:#e6db74>&#34;user1&#34;</span> <span style=color:#f92672>}</span>
+</span></span></code></pre></div><p>When we select just the user id and timestamp, we use the Scala syntax of <code>(line.userId, line.timestamp)</code>. This is just syntax sugar for <code>new Tuple2(line.userId, line.timestamp)</code>. (If we were selecting three things, it would be a <code>Tuple3</code>.)</p><p>So, the type of our RDD is <code>RDD[(UserId, Timestamp)]</code>, which is again just syntax sugar for <code>RDD[Tuple2[UserId, Timestamp]]</code>.</p><p>Because the <code>Tuple2</code> class is generic, the methods for accessing the user id is not <code>l.userId</code>&ndash;it&rsquo;s <code>l._1</code>. And for timestamp, it&rsquo;s not <code>l.timestamp</code>&ndash;it&rsquo;s <code>l._2</code>.</p><p>So, if you look at our filter, this is obviously not very readable: <code>l._1 == "user"</code>.</p><p>What we usually try and do, and I think is a common Scala idiom, is use pattern matching to re-introduce meaningful variable names. So, instead of <code>filter</code>, we&rsquo;d write:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-scala data-lang=scala><span style=display:flex><span>idAndTime<span style=color:#f92672>.</span>collect <span style=color:#f92672>{</span> 
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>case</span> <span style=color:#f92672>(</span>userId<span style=color:#f92672>,</span> <span style=color:#66d9ef>_</span><span style=color:#f92672>)</span> <span style=color:#66d9ef>=&gt;</span> userId <span style=color:#f92672>==</span> <span style=color:#e6db74>&#34;user1&#34;</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>}</span>
+</span></span></code></pre></div><p>This uses Scala&rsquo;s pattern matching to &ldquo;match&rdquo; against the <code>Tuple2</code> (it again uses the parens as syntax sugar), and introduces <code>userId</code> as a variable that is equivalent to <code>_1</code>. And since we aren&rsquo;t using <code>_2</code>, we just use <code>_</code> to mean &ldquo;we don&rsquo;t care about this one&rdquo;.</p><p>This has actually served as pretty well, and we continue to use it. We also use it a lot for joins:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-scala data-lang=scala><span style=display:flex><span>logFooByUserId<span style=color:#f92672>.</span>cogroup<span style=color:#f92672>(</span>logBarByUserId<span style=color:#f92672>).</span>collect <span style=color:#f92672>{</span> 
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>case</span> <span style=color:#f92672>(</span>userId<span style=color:#f92672>,</span> <span style=color:#f92672>(</span>foos<span style=color:#f92672>,</span> bars<span style=color:#f92672>))</span> <span style=color:#66d9ef>=&gt;</span> <span style=color:#f92672>...</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>}</span>
+</span></span></code></pre></div><p>Technically, this &ldquo;use <code>collect</code>&rdquo; idiom is not perfect&ndash;it is more verbose as we have to re-introduce <code>userId</code>, etc. as more variables.</p><p>C# actually handles this scenario better than Scala by using <a href=http://geekswithblogs.net/BlackRabbitCoder/archive/2012/06/21/c.net-little-wonders-the-joy-of-anonymous-types.aspx class=external-link target=_blank rel=noopener>Anonymous Types</a>. It allows LINQ to do very similar things as <code>map</code>, but to introduce mini-classes along the way (from previous link):</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=display:flex><span>transactions
+</span></span><span style=display:flex><span>  <span style=color:#f92672>.</span><span style=color:#a6e22e>GroupBy</span><span style=color:#f92672>(</span>tx <span style=color:#f92672>=&gt;</span> <span style=color:#66d9ef>new</span> <span style=color:#f92672>{</span> tx<span style=color:#f92672>.</span><span style=color:#a6e22e>UserId</span><span style=color:#f92672>,</span> tx<span style=color:#f92672>.</span><span style=color:#a6e22e>At</span><span style=color:#f92672>.</span><span style=color:#a6e22e>Date</span> <span style=color:#f92672>})</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>.</span><span style=color:#a6e22e>OrderBy</span><span style=color:#f92672>(</span>grp <span style=color:#f92672>=&gt;</span> grp<span style=color:#f92672>.</span><span style=color:#a6e22e>Key</span><span style=color:#f92672>.</span><span style=color:#a6e22e>Date</span><span style=color:#f92672>)</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>.</span><span style=color:#a6e22e>ThenBy</span><span style=color:#f92672>(</span>grp <span style=color:#f92672>=&gt;</span> grp<span style=color:#f92672>.</span><span style=color:#a6e22e>Key</span><span style=color:#f92672>.</span><span style=color:#a6e22e>UserId</span><span style=color:#f92672>);</span>
+</span></span></code></pre></div><p>This means that, after the <code>new { tx.UserId, tx.At.Date }</code> line, LINQ has &ldquo;kept&rdquo; the <code>Date</code> and <code>UserId</code> accessors for use later in the query.</p><p>You could do kind of the same thing in Scala, but you&rsquo;d have to write a new case class for each intermediate &ldquo;shape&rdquo;, which is basically what LINQ is doing automatically.</p><p>Perhaps Scala macros will eventually do this (or perhaps already do?), but for now we have <code>collect</code>. And it&rsquo;s really not too bad.</p><h2 id=for-comprehensions-for-filtering-logs>For Comprehensions for Filtering Logs
+<a class=heading-link href=#for-comprehensions-for-filtering-logs><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h2><p>Another construct we use quite a bit, although more an idiom than a pattern, is Scala&rsquo;s for compressions for applying multiple filters to log files. For example:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-scala data-lang=scala><span style=display:flex><span><span style=color:#66d9ef>val</span> lines<span style=color:#66d9ef>:</span> <span style=color:#66d9ef>RDD</span><span style=color:#f92672>[</span><span style=color:#66d9ef>RequestLine</span><span style=color:#f92672>]</span> <span style=color:#66d9ef>=</span> <span style=color:#f92672>...</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>val</span> views<span style=color:#66d9ef>:</span> <span style=color:#66d9ef>RDD</span><span style=color:#f92672>[(</span><span style=color:#66d9ef>UserId</span>, <span style=color:#66d9ef>ClientId</span>, <span style=color:#66d9ef>Domain</span>, <span style=color:#66d9ef>Timestamp</span><span style=color:#f92672>)]</span> <span style=color:#66d9ef>=</span> <span style=color:#66d9ef>for</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>  line <span style=color:#66d9ef>&lt;-</span> lines
+</span></span><span style=display:flex><span>  clientId <span style=color:#66d9ef>&lt;-</span> line<span style=color:#f92672>.</span>clientId <span style=color:#66d9ef>if</span> activeClientIds<span style=color:#f92672>.</span>contains<span style=color:#f92672>(</span>clientId<span style=color:#f92672>)</span>
+</span></span><span style=display:flex><span>  domain <span style=color:#66d9ef>&lt;-</span> parseDomain<span style=color:#f92672>(</span>line<span style=color:#f92672>.</span>url<span style=color:#f92672>)</span>
+</span></span><span style=display:flex><span>  userId <span style=color:#66d9ef>&lt;-</span> line<span style=color:#f92672>.</span>userId
+</span></span><span style=display:flex><span>  timestamp <span style=color:#66d9ef>&lt;-</span> line<span style=color:#f92672>.</span>timestamp
+</span></span><span style=display:flex><span><span style=color:#f92672>}</span> <span style=color:#66d9ef>yield</span> <span style=color:#f92672>(</span>userId<span style=color:#f92672>,</span> clientId<span style=color:#f92672>,</span> domain<span style=color:#f92672>,</span> timestamp<span style=color:#f92672>)</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#75715e>// this assumes a slightly different RequestLine:
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span><span style=color:#66d9ef>case</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>RequestLine</span><span style=color:#f92672>(...)</span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>def</span> clientId<span style=color:#66d9ef>:</span> <span style=color:#66d9ef>Option</span><span style=color:#f92672>[</span><span style=color:#66d9ef>ClientId</span><span style=color:#f92672>]</span> <span style=color:#66d9ef>=</span> <span style=color:#f92672>...</span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>def</span> userId<span style=color:#66d9ef>:</span> <span style=color:#66d9ef>Option</span><span style=color:#f92672>[</span><span style=color:#66d9ef>UserId</span><span style=color:#f92672>]</span> <span style=color:#66d9ef>=</span> <span style=color:#f92672>...</span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>def</span> timestamp<span style=color:#66d9ef>:</span> <span style=color:#66d9ef>Option</span><span style=color:#f92672>[</span><span style=color:#66d9ef>Timestamp</span><span style=color:#f92672>]</span> <span style=color:#66d9ef>=</span> <span style=color:#f92672>...</span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>def</span> url<span style=color:#66d9ef>:</span> <span style=color:#66d9ef>Option</span><span style=color:#f92672>[</span><span style=color:#66d9ef>Url</span><span style=color:#f92672>]</span> <span style=color:#66d9ef>=</span> <span style=color:#f92672>...</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#75715e>// returns None if can&#39;t be parsed
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span><span style=color:#66d9ef>def</span> parseDomain<span style=color:#f92672>(</span>url<span style=color:#66d9ef>:</span> <span style=color:#66d9ef>Url</span><span style=color:#f92672>)</span><span style=color:#66d9ef>:</span> <span style=color:#66d9ef>Option</span><span style=color:#f92672>[</span><span style=color:#66d9ef>Domain</span><span style=color:#f92672>]</span> <span style=color:#66d9ef>=</span> <span style=color:#f92672>...</span>
+</span></span></code></pre></div><p>The change to <code>RequestLine</code> to return <code>Options</code> is mainly because that, for some of our logs, some columns are optional. However, hopefully very rarely, a log may be corrupted (perhaps due to application logic) and we just don&rsquo;t have a usable value for a certain column.</p><p>Spark will blow up the whole job if one row fails (repeatedly due to report logic, not just a transient I/O error), so having <code>RequestLine</code> return <code>Options</code> with the for comprehension is our way of having the rest of the Spark job continue on if we have a few lines that happen to be invalid.</p><p>And besides handling invalid lines, it also gives a nice way to skip lines for other reasons, e.g. inactive clients/other report business logic conditions.</p><p>Just to highlight the nifty Scala feature here, we&rsquo;re using a <code>for { ... }</code> and <code>yield (...)</code>, but the return value of the for expression is not a built-in Scala type (like <code>Seq</code>), but Spark&rsquo;s own <code>RDD</code> type.</p><p>Which means that this for expression is captured as <code>map</code>/<code>filter</code> invocations, just like any other <code>RDD</code> operation, and will be shipped off around the cluster to evaluate against incoming data.</p><h2 id=up-front-dynamic-coalescing>Up-Front Dynamic Coalescing
+<a class=heading-link href=#up-front-dynamic-coalescing><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h2><p>One of our long-standing pain points with Spark (currently/pre-1.0) is that picking the right partition size is critical for job performance.</p><p>(Brief background: partitions are where if you have 100gb of data &ldquo;in&rdquo; an RDD, Spark will break it up into tiny, say, 50-100mb partitions, and process each partition individually. This allows the work to be distributed and to recover more easily from errors.)</p><p>If any partition ends up being too big, your job will throw <code>OutOfMemoryError</code>s during shuffles (technically this is/has already changed in Spark master, but we haven&rsquo;t tried it out). But if your partitions are too small, the per-partition/per-task overhead can make your job take dramatically longer.</p><p>As a side note, I think we are more sensitive to this than most Spark users, as our data <em>always</em> comes from S3, which has no real notion of partitions&ndash;it&rsquo;s just flat files. Most Spark users, who load likely data from HDFS, will get partition sizes that &ldquo;just work&rdquo;, since HDFS was built specifically for map/reduce and storing large files in small-ish chunks (splits).</p><p>So, anyway, since we use S3, we have to provide our own partitioning hints.</p><p>The Spark API does have <code>coalesce</code> and <code>repartition</code> methods, but, unfortunately (currently/pre-1.0), they only take a desired number of partitions.</p><p>But what we really want to shoot for is not number of partitions, by size of partitions.</p><p>And ideally the repartitioning should &ldquo;just happen&rdquo; for the programmer, without them having to worry &ldquo;am I loading 1 week of data? 1 months? 6 months?&rdquo;. Each of these would have a drastically different number of partitions.</p><p>To handle this, we&rsquo;ve built dynamic-coalescing into our shared <code>newRDD</code> logic.</p><p>The basic idea is to:</p><ol><li>Look at the file metadata in S3 to come up with total incoming size</li><li>Divide incoming size by our &ldquo;goal partition size&rdquo; (currently 128mb)</li><li>Use the result to coalesce the RDD.</li></ol><p>The routine looks like:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-scala data-lang=scala><span style=display:flex><span><span style=color:#75715e>/** Partitions `rdd` based on the total size of `paths`. */</span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>def</span> partitionRDD<span style=color:#f92672>[</span><span style=color:#66d9ef>T</span><span style=color:#f92672>](</span>
+</span></span><span style=display:flex><span>    rdd<span style=color:#66d9ef>:</span> <span style=color:#66d9ef>RDD</span><span style=color:#f92672>[</span><span style=color:#66d9ef>T</span><span style=color:#f92672>],</span>
+</span></span><span style=display:flex><span>    sourceData<span style=color:#66d9ef>:</span> <span style=color:#66d9ef>Seq</span><span style=color:#f92672>[</span><span style=color:#66d9ef>FilePath</span><span style=color:#f92672>])</span><span style=color:#66d9ef>:</span> <span style=color:#66d9ef>RDD</span><span style=color:#f92672>[</span><span style=color:#66d9ef>T</span><span style=color:#f92672>]</span> <span style=color:#66d9ef>=</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>val</span> number <span style=color:#66d9ef>=</span> sourceData<span style=color:#f92672>.</span>map <span style=color:#f92672>{</span> <span style=color:#66d9ef>_</span><span style=color:#f92672>.</span>size <span style=color:#f92672>}.</span>sum <span style=color:#f92672>/</span> goalSize
+</span></span><span style=display:flex><span>  rdd<span style=color:#f92672>.</span>coalesce<span style=color:#f92672>(</span>number<span style=color:#f92672>.</span>toInt<span style=color:#f92672>)</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>}</span>
+</span></span></code></pre></div><p>Note that, technically, we&rsquo;re using <code>coalesce</code> instead of the new <code>repartition</code> method.</p><p>This is because, for us, our incoming S3 files are almost always smaller than the goal size (by default the HDFS S3 backend will not group multiple S3 keys into one split), so we want to reduce the number of partitions. <code>coalesce</code> can do this without a shuffle, which is nice to avoid if we can.</p><p>After fiddling with some settings (our goal size, using the Snappy compression codec, and setting the shuffle buffer to 10k), this auto-coalesce logic has handled basically any logs/date range we&rsquo;ve thrown at it for the past few months.</p><p>Eventually, it would be nice if Spark just did this for us, both at the start of a job, and even during each shuffle. I&rsquo;ll wand wave on the implementation details, but &ldquo;something something sampling the current size of the partitions vs. the ideal size something&rdquo; would be awesome.</p><h2 id=defining--in-case-classes-for-reducing>Defining <code>+</code> in Case Classes For Reducing
+<a class=heading-link href=#defining--in-case-classes-for-reducing><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h2><p>We frequently need to reduce the values of an RDD, either to <code>reduceByKey</code> to combine values for the same key, or just <code>reduce</code> to get a result across the whole RDD.</p><p>If you have an RDD of key and just a tuple of stats, this can get pretty tedious:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-scala data-lang=scala><span style=display:flex><span><span style=color:#66d9ef>val</span> rdda<span style=color:#66d9ef>:</span> <span style=color:#66d9ef>RDD</span><span style=color:#f92672>[(</span><span style=color:#66d9ef>UserId</span>, <span style=color:#f92672>(</span><span style=color:#66d9ef>Clicks</span>, <span style=color:#66d9ef>Imps</span>, <span style=color:#66d9ef>Convs</span><span style=color:#f92672>))]</span> <span style=color:#66d9ef>=</span> <span style=color:#f92672>...</span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>val</span> rddb <span style=color:#66d9ef>=</span> rdda<span style=color:#f92672>.</span>reduceByKey <span style=color:#f92672>{</span> <span style=color:#f92672>(</span>v1<span style=color:#f92672>,</span> v2<span style=color:#f92672>)</span> <span style=color:#66d9ef>=&gt;</span> 
+</span></span><span style=display:flex><span>  <span style=color:#f92672>(</span>v1<span style=color:#f92672>.</span>_1 <span style=color:#f92672>+</span> v2<span style=color:#f92672>.</span>_1<span style=color:#f92672>,</span> v1<span style=color:#f92672>.</span>_2 <span style=color:#f92672>+</span> v2<span style=color:#f92672>.</span>_2<span style=color:#f92672>,</span> v1<span style=color:#f92672>.</span>_3 <span style=color:#f92672>+</span> v2<span style=color:#f92672>.</span>_3<span style=color:#f92672>)</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>}</span>
+</span></span></code></pre></div><p>With all the <code>v1</code>, <code>v2</code>, <code>_1</code>, <code>_2</code>, etc., I made about 10 typos just typing that example for this post. Not pretty in a real job.</p><p>What we like to do here is wrap the stats into a case class that defines an <code>+</code> operation:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-scala data-lang=scala><span style=display:flex><span><span style=color:#66d9ef>case</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>Stats</span><span style=color:#f92672>(</span>clicks<span style=color:#66d9ef>:</span> <span style=color:#66d9ef>Long</span><span style=color:#f92672>,</span> imps<span style=color:#66d9ef>:</span> <span style=color:#66d9ef>Long</span><span style=color:#f92672>,</span> convs<span style=color:#66d9ef>:</span> <span style=color:#66d9ef>Long</span><span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>def</span> <span style=color:#f92672>+(</span>other<span style=color:#66d9ef>:</span> <span style=color:#66d9ef>Stats</span><span style=color:#f92672>)</span><span style=color:#66d9ef>:</span> <span style=color:#66d9ef>Stats</span> <span style=color:#f92672>=</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>Stats</span><span style=color:#f92672>(</span>
+</span></span><span style=display:flex><span>      clicks <span style=color:#f92672>+</span> other<span style=color:#f92672>.</span>clicks<span style=color:#f92672>,</span>
+</span></span><span style=display:flex><span>      imps <span style=color:#f92672>+</span> other<span style=color:#f92672>.</span>imps<span style=color:#f92672>,</span>
+</span></span><span style=display:flex><span>      convs <span style=color:#f92672>+</span> other<span style=color:#f92672>.</span>convs<span style=color:#f92672>)</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#75715e>// now reduce is easy
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span><span style=color:#66d9ef>val</span> rdda<span style=color:#66d9ef>:</span> <span style=color:#66d9ef>RDD</span><span style=color:#f92672>[(</span><span style=color:#66d9ef>UserId</span>, <span style=color:#66d9ef>Stats</span><span style=color:#f92672>)]</span> <span style=color:#66d9ef>=</span> <span style=color:#f92672>...</span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>val</span> rddb <span style=color:#66d9ef>=</span> rdda<span style=color:#f92672>.</span>reduceByKey <span style=color:#f92672>{</span> <span style=color:#66d9ef>_</span> <span style=color:#f92672>+</span> <span style=color:#66d9ef>_</span> <span style=color:#f92672>}</span>
+</span></span></code></pre></div><p>This moves the combination logic out into a specific method, and really makes the job read nicer.</p><p>Granted, it is still somewhat tedious to define the <code>+</code> method by hand. But we usually don&rsquo;t have very many stats, so it hasn&rsquo;t been painful enough to look into alternatives (e.g. having macros/Algebird/etc. define <code>+</code> automatically).</p><h2 id=using-spark-plug-for-launching-emr-clusters>Using Spark Plug for Launching EMR Clusters
+<a class=heading-link href=#using-spark-plug-for-launching-emr-clusters><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h2><p>At Bizo, none of our Spark clusters are persistent; instead we use Amazon EMR to spin up a new cluster for each report, run the report, save the result to S3, and shut the cluster down.</p><p>For us, this has worked out very well. We really enjoy not having the headache of administering a long-running cluster, and dealing with growing/reducing/sharing it among our jobs. That&rsquo;s what EMR is for.</p><p>However, this does result in launching a lot of clusters. To help with that, Larry on Bizo&rsquo;s infrastructure team built <a href=https://github.com/ogrodnek/spark-plug class=external-link target=_blank rel=noopener>spark-plug</a>, a Scala DSL for launching EMR clusters (ironically, the name &ldquo;spark-plug&rdquo; is completely coincidental, as spark-plug was originally built to launch our Hive EMR clusters).</p><p>To use spark-plug, you create a &ldquo;plug&rdquo; that will launch your EMR cluster, e.g.:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-scala data-lang=scala><span style=display:flex><span><span style=color:#66d9ef>object</span> <span style=color:#a6e22e>SomePlug</span> <span style=color:#66d9ef>extends</span> <span style=color:#a6e22e>AbstractPlug</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>  <span style=color:#75715e>// args can be passed in from cron jobs/CLI
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>  <span style=color:#66d9ef>def</span> today <span style=color:#66d9ef>=</span> <span style=color:#a6e22e>CalendarDate</span><span style=color:#f92672>.</span>from<span style=color:#f92672>(</span>args<span style=color:#f92672>(</span><span style=color:#ae81ff>0</span><span style=color:#f92672>),</span> <span style=color:#e6db74>&#34;yyyyMMdd&#34;</span><span style=color:#f92672>)</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#75715e>// the name of the &#39;job&#39; class to run on the spark master
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>  <span style=color:#66d9ef>override</span> <span style=color:#66d9ef>def</span> job <span style=color:#66d9ef>=</span> <span style=color:#e6db74>&#34;SomeJob&#34;</span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>override</span> <span style=color:#66d9ef>def</span> jobArgs <span style=color:#66d9ef>=</span> <span style=color:#a6e22e>Seq</span><span style=color:#f92672>(</span>today<span style=color:#f92672>.</span>toString<span style=color:#f92672>)</span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>override</span> <span style=color:#66d9ef>def</span> numberOfMachines <span style=color:#66d9ef>=</span> <span style=color:#ae81ff>20</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#75715e>// these end up being EMR job steps
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>  <span style=color:#66d9ef>override</span> <span style=color:#66d9ef>def</span> steps <span style=color:#66d9ef>=</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>val</span> checkpath <span style=color:#66d9ef>=</span> <span style=color:#66d9ef>new</span> <span style=color:#a6e22e>CheckS3Path</span><span style=color:#f92672>(</span><span style=color:#a6e22e>RequestLine</span><span style=color:#f92672>.</span>checkPath<span style=color:#f92672>(</span>today<span style=color:#f92672>))</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>val</span> jobStep <span style=color:#66d9ef>=</span> <span style=color:#a6e22e>RunSparkJob</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;com.bizo.&#34;</span> <span style=color:#f92672>+</span> job<span style=color:#f92672>,</span> jobArgs<span style=color:#f92672>)</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>val</span> otherSteps <span style=color:#66d9ef>=</span> <span style=color:#a6e22e>Seq</span><span style=color:#f92672>(...)</span>
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>Seq</span><span style=color:#f92672>(</span>checkpath<span style=color:#f92672>,</span> jobStep<span style=color:#f92672>)</span> <span style=color:#f92672>++</span> otherSteps
+</span></span><span style=display:flex><span>  <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>}</span>
+</span></span></code></pre></div><p>A few notes about this:</p><ul><li>We use a <code>CheckS3Path</code> step to ensure the log files we&rsquo;re reading in actually exist</li><li>By extending our (internal) <code>AbstractPlug</code> class, we can some Spark-related bootstrap actions for free (that take care of installing Spark with our <code>spark-env.sh</code> settings, downloading our job&rsquo;s JAR onto each node, then starting the master and slaves)</li><li>The <code>RunSparkJob</code> step is what will, on the master, instantiate the <code>SomeJob</code> class from before, and kick off the loading/saving of our report RDDs</li></ul><p>Technically some of the steps here (<code>RunSparkJob</code>, <code>CheckS3Path</code>) are in our internal <code>spark-plug-bizo-ext</code> repository, but <code>spark-plug</code> itself is open source and has been really great to use.</p><h2 id=conclusion>Conclusion
+<a class=heading-link href=#conclusion><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h2><p>We have enjoyed settling into Spark and developing some patterns around how we structure our reports.</p><p>The very high levels of test coverage we&rsquo;re able to get are especially nice. Honestly, for all of Spark&rsquo;s reputation and marketing about being &ldquo;lightning fast&rdquo;, &ldquo;in-memory based&rdquo;, etc., for me, all of that pales in comparison to actually being able to put our non-trivial reporting code under test.</p><p>We also have a few more patterns floating around, but they aren&rsquo;t quite nailed down yet, at least in my head, so I&rsquo;ll save those for a future post.</p></div><footer><div id=disqus_thread></div><script>window.disqus_config=function(){},function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById("disqus_thread").innerHTML="Disqus comments not available by default when the website is previewed locally.";return}var t=document,e=t.createElement("script");e.async=!0,e.src="//draconianoverlord.disqus.com/embed.js",e.setAttribute("data-timestamp",+new Date),(t.head||t.body).appendChild(e)}(),document.addEventListener("themeChanged",function(){document.readyState=="complete"&&DISQUS.reset({reload:!0,config:disqus_config})})</script></footer></article></section></div><footer class=footer><section class=container>©
 2008 -
-2022
+2023
 Stephen Haberman
 ·
-Powered by <a href=https://gohugo.io/>Hugo</a> & <a href=https://github.com/luizdepra/hugo-coder/>Coder</a>.
-</section>
-</footer>
-</main>
-<script src=/js/coder.min.03b17769f4f91ae35667e1f2a1ca8c16f50562576cf90ff32b3179926914daa5.js integrity="sha256-A7F3afT5GuNWZ+HyocqMFvUFYlds+Q/zKzF5kmkU2qU="></script>
-</body>
-</html>
+Powered by <a href=https://gohugo.io/ target=_blank rel=noopener>Hugo</a> & <a href=https://github.com/luizdepra/hugo-coder/ target=_blank rel=noopener>Coder</a>.</section></footer></main><script src=/js/coder.min.6ae284be93d2d19dad1f02b0039508d9aab3180a12a06dcc71b0b0ef7825a317.js integrity="sha256-auKEvpPS0Z2tHwKwA5UI2aqzGAoSoG3McbCw73gloxc="></script></body></html>

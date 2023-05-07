@@ -1,114 +1,20 @@
-<!doctype html><html lang=en>
-<head>
-<meta charset=utf-8>
-<meta name=viewport content="width=device-width,initial-scale=1">
-<meta http-equiv=content-language content="en">
-<meta name=color-scheme content="light dark">
-<meta name=author content="Stephen Haberman">
-<meta name=description content="I saw this go by on Twitter the other day:
+<!doctype html><html lang=en><head><title>Brief Dependency Injection Skeptic · Draconian Overlord</title><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=color-scheme content="light dark"><meta name=author content="Stephen Haberman"><meta name=description content="I saw this go by on Twitter the other day:
 &ldquo;Someone needs to know how my collaborators get wired up, but it doesn&rsquo;t need to be me. Now you&rsquo;re ready for Dependency Injection.&rdquo; (link)
 This leads to a very succinct description of why I&rsquo;m a DI-skeptic: I actually do care about how my collaborators get wired up.
-Perhaps I&rsquo;m naive, or haven&rsquo;t worked in a system large enough, or complicated enough, or whatever, but so far my opinion and experience has been any that overhead or tedium that comes from manual wiring (which is little if done well, IMO) is a wash compared to fighting a framework to get it to do the same thing for you.">
-<meta name=keywords content="blog,developer,personal">
-<meta name=twitter:card content="summary">
-<meta name=twitter:title content="Brief Dependency Injection Skeptic">
-<meta name=twitter:description content="I saw this go by on Twitter the other day:
+Perhaps I&rsquo;m naive, or haven&rsquo;t worked in a system large enough, or complicated enough, or whatever, but so far my opinion and experience has been any that overhead or tedium that comes from manual wiring (which is little if done well, IMO) is a wash compared to fighting a framework to get it to do the same thing for you."><meta name=keywords content="blog,developer,personal"><meta name=twitter:card content="summary"><meta name=twitter:title content="Brief Dependency Injection Skeptic"><meta name=twitter:description content="I saw this go by on Twitter the other day:
 &ldquo;Someone needs to know how my collaborators get wired up, but it doesn&rsquo;t need to be me. Now you&rsquo;re ready for Dependency Injection.&rdquo; (link)
 This leads to a very succinct description of why I&rsquo;m a DI-skeptic: I actually do care about how my collaborators get wired up.
-Perhaps I&rsquo;m naive, or haven&rsquo;t worked in a system large enough, or complicated enough, or whatever, but so far my opinion and experience has been any that overhead or tedium that comes from manual wiring (which is little if done well, IMO) is a wash compared to fighting a framework to get it to do the same thing for you.">
-<meta property="og:title" content="Brief Dependency Injection Skeptic">
-<meta property="og:description" content="I saw this go by on Twitter the other day:
+Perhaps I&rsquo;m naive, or haven&rsquo;t worked in a system large enough, or complicated enough, or whatever, but so far my opinion and experience has been any that overhead or tedium that comes from manual wiring (which is little if done well, IMO) is a wash compared to fighting a framework to get it to do the same thing for you."><meta property="og:title" content="Brief Dependency Injection Skeptic"><meta property="og:description" content="I saw this go by on Twitter the other day:
 &ldquo;Someone needs to know how my collaborators get wired up, but it doesn&rsquo;t need to be me. Now you&rsquo;re ready for Dependency Injection.&rdquo; (link)
 This leads to a very succinct description of why I&rsquo;m a DI-skeptic: I actually do care about how my collaborators get wired up.
-Perhaps I&rsquo;m naive, or haven&rsquo;t worked in a system large enough, or complicated enough, or whatever, but so far my opinion and experience has been any that overhead or tedium that comes from manual wiring (which is little if done well, IMO) is a wash compared to fighting a framework to get it to do the same thing for you.">
-<meta property="og:type" content="article">
-<meta property="og:url" content="https://www.draconianoverlord.com/2012/10/07/brief-dependency-injection-skeptic.html/"><meta property="article:section" content="posts">
-<meta property="article:published_time" content="2012-10-07T00:00:00+00:00">
-<meta property="article:modified_time" content="2012-10-07T00:00:00+00:00">
-<title>
-Brief Dependency Injection Skeptic · Draconian Overlord
-</title>
-<link rel=canonical href=https://www.draconianoverlord.com/2012/10/07/brief-dependency-injection-skeptic.html/>
-<link rel=preload href="/fonts/forkawesome-webfont.woff2?v=1.2.0" as=font type=font/woff2 crossorigin>
-<link rel=stylesheet href=/css/coder.min.d9fddbffe6f27e69985dc5fe0471cdb0e57fbf4775714bc3d847accb08f4a1f6.css integrity="sha256-2f3b/+byfmmYXcX+BHHNsOV/v0d1cUvD2Eesywj0ofY=" crossorigin=anonymous media=screen>
-<link rel=stylesheet href=/css/coder-dark.min.aa883b9ce35a8ff4a2a5008619005175e842bb18a8a9f9cc2bbcf44dab2d91fa.css integrity="sha256-qog7nONaj/SipQCGGQBRdehCuxioqfnMK7z0Tastkfo=" crossorigin=anonymous media=screen>
-<link rel=icon type=image/png href=/images/favicon-32x32.png sizes=32x32>
-<link rel=icon type=image/png href=/images/favicon-16x16.png sizes=16x16>
-<link rel=apple-touch-icon href=/images/apple-touch-icon.png>
-<link rel=apple-touch-icon sizes=180x180 href=/images/apple-touch-icon.png>
-<meta name=generator content="Hugo 0.92.0">
-</head>
-<body class="preload-transitions colorscheme-auto">
-<div class=float-container>
-<a id=dark-mode-toggle class=colorscheme-toggle>
-<i class="fa fa-adjust fa-fw" aria-hidden=true></i>
-</a>
-</div>
-<main class=wrapper>
-<nav class=navigation>
-<section class=container>
-<a class=navigation-title href=/>Draconian Overlord</a>
-Oppressing software entropy
-</section>
-</nav>
-<div class=content>
-<section class="container post">
-<article>
-<header>
-<div class=post-title>
-<h1 class=title>
-<a class=title-link href=https://www.draconianoverlord.com/2012/10/07/brief-dependency-injection-skeptic.html/>
-Brief Dependency Injection Skeptic
-</a>
-</h1>
-</div>
-<div class=post-meta>
-<div class=date>
-<span class=posted-on>
-<i class="fa fa-calendar" aria-hidden=true></i>
-<time datetime=2012-10-07T00:00:00Z>
-October 7, 2012
-</time>
-</span>
-<span class=reading-time>
-<i class="fa fa-clock-o" aria-hidden=true></i>
-One-minute read
-</span>
-</div>
-<div class=categories>
-<i class="fa fa-folder" aria-hidden=true></i>
-<a href=/categories/architecture/>Architecture</a></div>
-</div>
-</header>
-<div>
-<p>I saw this go by on Twitter the other day:</p>
-<p>&ldquo;Someone needs to know how my collaborators get wired up, but it doesn&rsquo;t need to be me. Now you&rsquo;re ready for Dependency Injection.&rdquo; (<a href=https://twitter.com/dws/status/25391735782993510://twitter.com/dws/status/253917357829935105>link</a>)</p>
-<p>This leads to a very succinct description of why I&rsquo;m a DI-skeptic: I actually do care about how my collaborators get wired up.</p>
-<p>Perhaps I&rsquo;m naive, or haven&rsquo;t worked in a system large enough, or complicated enough, or whatever, but so far my opinion and experience has been any that overhead or tedium that comes from manual wiring (which is little if <a href=http://www.draconianoverlord.com/2011/03/17/frameworkless-di.html>done well</a>, IMO) is a wash compared to fighting a framework to get it to do the same thing for you.</p>
-<p>This is especially true of legacy DI containers, e.g. Spring.</p>
-<p>Perhaps Guice is better, but I am still skeptical.</p>
-<p><a href=https://github.com/square/dagger>Dagger</a> has potential though. The biggest reason I think so is that code generation makes the magic visible. And statically verified at build-time. Then both myself and the compiler can see what is happening. And trust it.</p>
-</div>
-<footer>
-<div id=disqus_thread></div>
-<script type=application/javascript>var disqus_config=function(){};(function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById('disqus_thread').innerHTML='Disqus comments not available by default when the website is previewed locally.';return}var b=document,a=b.createElement('script');a.async=!0,a.src='//draconianoverlord.disqus.com/embed.js',a.setAttribute('data-timestamp',+new Date),(b.head||b.body).appendChild(a)})()</script>
-<noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript>
-<a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a>
-</footer>
-</article>
-</section>
-</div>
-<footer class=footer>
-<section class=container>
-©
+Perhaps I&rsquo;m naive, or haven&rsquo;t worked in a system large enough, or complicated enough, or whatever, but so far my opinion and experience has been any that overhead or tedium that comes from manual wiring (which is little if done well, IMO) is a wash compared to fighting a framework to get it to do the same thing for you."><meta property="og:type" content="article"><meta property="og:url" content="https://www.draconianoverlord.com/2012/10/07/brief-dependency-injection-skeptic.html/"><meta property="article:section" content="posts"><meta property="article:published_time" content="2012-10-07T00:00:00+00:00"><meta property="article:modified_time" content="2012-10-07T00:00:00+00:00"><link rel=canonical href=https://www.draconianoverlord.com/2012/10/07/brief-dependency-injection-skeptic.html/><link rel=preload href="/fonts/forkawesome-webfont.woff2?v=1.2.0" as=font type=font/woff2 crossorigin><link rel=stylesheet href=/css/coder.min.65236a6d834b26194eed04a2a3b45e44d9194ef9e620253705d4bef03bd7ef81.css integrity="sha256-ZSNqbYNLJhlO7QSio7ReRNkZTvnmICU3BdS+8DvX74E=" crossorigin=anonymous media=screen><link rel=stylesheet href=/css/coder-dark.min.f6534b0b446b75d9b6ad77a97d43ede2ddaeff1b6e2361fb7198d6f8fcb7f83f.css integrity="sha256-9lNLC0Rrddm2rXepfUPt4t2u/xtuI2H7cZjW+Py3+D8=" crossorigin=anonymous media=screen><link rel=icon type=image/png href=/images/favicon-32x32.png sizes=32x32><link rel=icon type=image/png href=/images/favicon-16x16.png sizes=16x16><link rel=apple-touch-icon href=/images/apple-touch-icon.png><link rel=apple-touch-icon sizes=180x180 href=/images/apple-touch-icon.png><link rel=manifest href=/site.webmanifest><link rel=mask-icon href=/images/safari-pinned-tab.svg color=#5bbad5></head><body class="preload-transitions colorscheme-auto"><div class=float-container><a id=dark-mode-toggle class=colorscheme-toggle><i class="fa fa-adjust fa-fw" aria-hidden=true></i></a></div><main class=wrapper><nav class=navigation><section class=container><a class=navigation-title href=/>Draconian Overlord</a>
+Oppressing software entropy</section></nav><div class=content><section class="container post"><article><header><div class=post-title><h1 class=title><a class=title-link href=https://www.draconianoverlord.com/2012/10/07/brief-dependency-injection-skeptic.html/>Brief Dependency Injection Skeptic</a></h1></div><div class=post-meta><div class=date><span class=posted-on><i class="fa fa-calendar" aria-hidden=true></i>
+<time datetime=2012-10-07T00:00:00Z>October 7, 2012</time></span>
+<span class=reading-time><i class="fa fa-clock-o" aria-hidden=true></i>
+One-minute read</span></div><div class=categories><i class="fa fa-folder" aria-hidden=true></i>
+<a href=/categories/architecture/>Architecture</a></div></div></header><div class=post-content><p>I saw this go by on Twitter the other day:</p><p>&ldquo;Someone needs to know how my collaborators get wired up, but it doesn&rsquo;t need to be me. Now you&rsquo;re ready for Dependency Injection.&rdquo; (<a href=https://twitter.com/dws/status/25391735782993510://twitter.com/dws/status/253917357829935105 class=external-link target=_blank rel=noopener>link</a>)</p><p>This leads to a very succinct description of why I&rsquo;m a DI-skeptic: I actually do care about how my collaborators get wired up.</p><p>Perhaps I&rsquo;m naive, or haven&rsquo;t worked in a system large enough, or complicated enough, or whatever, but so far my opinion and experience has been any that overhead or tedium that comes from manual wiring (which is little if <a href=http://www.draconianoverlord.com/2011/03/17/frameworkless-di.html class=external-link target=_blank rel=noopener>done well</a>, IMO) is a wash compared to fighting a framework to get it to do the same thing for you.</p><p>This is especially true of legacy DI containers, e.g. Spring.</p><p>Perhaps Guice is better, but I am still skeptical.</p><p><a href=https://github.com/square/dagger class=external-link target=_blank rel=noopener>Dagger</a> has potential though. The biggest reason I think so is that code generation makes the magic visible. And statically verified at build-time. Then both myself and the compiler can see what is happening. And trust it.</p></div><footer><div id=disqus_thread></div><script>window.disqus_config=function(){},function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById("disqus_thread").innerHTML="Disqus comments not available by default when the website is previewed locally.";return}var t=document,e=t.createElement("script");e.async=!0,e.src="//draconianoverlord.disqus.com/embed.js",e.setAttribute("data-timestamp",+new Date),(t.head||t.body).appendChild(e)}(),document.addEventListener("themeChanged",function(){document.readyState=="complete"&&DISQUS.reset({reload:!0,config:disqus_config})})</script></footer></article></section></div><footer class=footer><section class=container>©
 2008 -
-2022
+2023
 Stephen Haberman
 ·
-Powered by <a href=https://gohugo.io/>Hugo</a> & <a href=https://github.com/luizdepra/hugo-coder/>Coder</a>.
-</section>
-</footer>
-</main>
-<script src=/js/coder.min.03b17769f4f91ae35667e1f2a1ca8c16f50562576cf90ff32b3179926914daa5.js integrity="sha256-A7F3afT5GuNWZ+HyocqMFvUFYlds+Q/zKzF5kmkU2qU="></script>
-</body>
-</html>
+Powered by <a href=https://gohugo.io/ target=_blank rel=noopener>Hugo</a> & <a href=https://github.com/luizdepra/hugo-coder/ target=_blank rel=noopener>Coder</a>.</section></footer></main><script src=/js/coder.min.6ae284be93d2d19dad1f02b0039508d9aab3180a12a06dcc71b0b0ef7825a317.js integrity="sha256-auKEvpPS0Z2tHwKwA5UI2aqzGAoSoG3McbCw73gloxc="></script></body></html>

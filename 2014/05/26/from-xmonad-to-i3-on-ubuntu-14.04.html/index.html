@@ -1,277 +1,49 @@
-<!doctype html><html lang=en>
-<head>
-<meta charset=utf-8>
-<meta name=viewport content="width=device-width,initial-scale=1">
-<meta http-equiv=content-language content="en">
-<meta name=color-scheme content="light dark">
-<meta name=author content="Stephen Haberman">
-<meta name=description content="For several years now, I&rsquo;ve been a faithful user of xmonad, the Linux tiling window manager that is written in Haskell but I just recently switched over to i3.
+<!doctype html><html lang=en><head><title>From xmonad to i3 on Ubuntu 14.04 · Draconian Overlord</title><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=color-scheme content="light dark"><meta name=author content="Stephen Haberman"><meta name=description content="For several years now, I&rsquo;ve been a faithful user of xmonad, the Linux tiling window manager that is written in Haskell but I just recently switched over to i3.
 (Update Dec 2016: I&rsquo;m still using i3, and here are the links to my config files: ~/.i3/config, ~/.config/i3status/config, and ~/.Xresources.
-Why Move From xmonad?    I really enjoyed xmonad, and want to still highly recommend it, but I consistently ran into two issues:">
-<meta name=keywords content="blog,developer,personal">
-<meta name=twitter:card content="summary">
-<meta name=twitter:title content="From xmonad to i3 on Ubuntu 14.04">
-<meta name=twitter:description content="For several years now, I&rsquo;ve been a faithful user of xmonad, the Linux tiling window manager that is written in Haskell but I just recently switched over to i3.
+Why Move From xmonad? Link to heading I really enjoyed xmonad, and want to still highly recommend it, but I consistently ran into two issues:"><meta name=keywords content="blog,developer,personal"><meta name=twitter:card content="summary"><meta name=twitter:title content="From xmonad to i3 on Ubuntu 14.04"><meta name=twitter:description content="For several years now, I&rsquo;ve been a faithful user of xmonad, the Linux tiling window manager that is written in Haskell but I just recently switched over to i3.
 (Update Dec 2016: I&rsquo;m still using i3, and here are the links to my config files: ~/.i3/config, ~/.config/i3status/config, and ~/.Xresources.
-Why Move From xmonad?    I really enjoyed xmonad, and want to still highly recommend it, but I consistently ran into two issues:">
-<meta property="og:title" content="From xmonad to i3 on Ubuntu 14.04">
-<meta property="og:description" content="For several years now, I&rsquo;ve been a faithful user of xmonad, the Linux tiling window manager that is written in Haskell but I just recently switched over to i3.
+Why Move From xmonad? Link to heading I really enjoyed xmonad, and want to still highly recommend it, but I consistently ran into two issues:"><meta property="og:title" content="From xmonad to i3 on Ubuntu 14.04"><meta property="og:description" content="For several years now, I&rsquo;ve been a faithful user of xmonad, the Linux tiling window manager that is written in Haskell but I just recently switched over to i3.
 (Update Dec 2016: I&rsquo;m still using i3, and here are the links to my config files: ~/.i3/config, ~/.config/i3status/config, and ~/.Xresources.
-Why Move From xmonad?    I really enjoyed xmonad, and want to still highly recommend it, but I consistently ran into two issues:">
-<meta property="og:type" content="article">
-<meta property="og:url" content="https://www.draconianoverlord.com/2014/05/26/from-xmonad-to-i3-on-ubuntu-14.04.html/"><meta property="article:section" content="posts">
-<meta property="article:published_time" content="2014-05-26T00:00:00+00:00">
-<meta property="article:modified_time" content="2014-05-26T00:00:00+00:00">
-<title>
-From xmonad to i3 on Ubuntu 14.04 · Draconian Overlord
-</title>
-<link rel=canonical href=https://www.draconianoverlord.com/2014/05/26/from-xmonad-to-i3-on-ubuntu-14.04.html/>
-<link rel=preload href="/fonts/forkawesome-webfont.woff2?v=1.2.0" as=font type=font/woff2 crossorigin>
-<link rel=stylesheet href=/css/coder.min.d9fddbffe6f27e69985dc5fe0471cdb0e57fbf4775714bc3d847accb08f4a1f6.css integrity="sha256-2f3b/+byfmmYXcX+BHHNsOV/v0d1cUvD2Eesywj0ofY=" crossorigin=anonymous media=screen>
-<link rel=stylesheet href=/css/coder-dark.min.aa883b9ce35a8ff4a2a5008619005175e842bb18a8a9f9cc2bbcf44dab2d91fa.css integrity="sha256-qog7nONaj/SipQCGGQBRdehCuxioqfnMK7z0Tastkfo=" crossorigin=anonymous media=screen>
-<link rel=icon type=image/png href=/images/favicon-32x32.png sizes=32x32>
-<link rel=icon type=image/png href=/images/favicon-16x16.png sizes=16x16>
-<link rel=apple-touch-icon href=/images/apple-touch-icon.png>
-<link rel=apple-touch-icon sizes=180x180 href=/images/apple-touch-icon.png>
-<meta name=generator content="Hugo 0.92.0">
-</head>
-<body class="preload-transitions colorscheme-auto">
-<div class=float-container>
-<a id=dark-mode-toggle class=colorscheme-toggle>
-<i class="fa fa-adjust fa-fw" aria-hidden=true></i>
-</a>
-</div>
-<main class=wrapper>
-<nav class=navigation>
-<section class=container>
-<a class=navigation-title href=/>Draconian Overlord</a>
-Oppressing software entropy
-</section>
-</nav>
-<div class=content>
-<section class="container post">
-<article>
-<header>
-<div class=post-title>
-<h1 class=title>
-<a class=title-link href=https://www.draconianoverlord.com/2014/05/26/from-xmonad-to-i3-on-ubuntu-14.04.html/>
-From xmonad to i3 on Ubuntu 14.04
-</a>
-</h1>
-</div>
-<div class=post-meta>
-<div class=date>
-<span class=posted-on>
-<i class="fa fa-calendar" aria-hidden=true></i>
-<time datetime=2014-05-26T00:00:00Z>
-May 26, 2014
-</time>
-</span>
-<span class=reading-time>
-<i class="fa fa-clock-o" aria-hidden=true></i>
-9-minute read
-</span>
-</div>
-<div class=categories>
-<i class="fa fa-folder" aria-hidden=true></i>
-<a href=/categories/productivity/>Productivity</a></div>
-</div>
-</header>
-<div>
-<p>For several years now, I&rsquo;ve been a faithful user of <a href=http://xmonad.org/>xmonad</a>, the Linux tiling window manager that is written in Haskell but I just recently switched over to <a href=http://www.i3wm.org/>i3</a>.</p>
-<p>(Update Dec 2016: I&rsquo;m still using i3, and here are the links to my config files: <a href=/files/i3-config.txt>~/.i3/config</a>, <a href=/files/i3-status-config.txt>~/.config/i3status/config</a>, and <a href=/files/Xresources.txt>~/.Xresources</a>.</p>
-<h2 id=why-move-from-xmonad>
-Why Move From xmonad?
-<a class=heading-link href=#why-move-from-xmonad>
-<i class="fa fa-link" aria-hidden=true></i>
-</a>
-</h2>
-<p>I really enjoyed xmonad, and want to still highly recommend it, but I consistently ran into two issues:</p>
-<ol>
-<li>
-<p>I consider myself an expert-level programmer, but even after years of using xmonad, I simply did not understand how my xmonad config file (which is a Haskell program) actually worked.</p>
-<p>Here is an example from my config file:</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-haskell data-lang=haskell><span style=color:#a6e22e>myKeys</span> <span style=color:#f92672>=</span>
-  [
-    <span style=color:#75715e>-- additional keys</span>
-  ]
-  <span style=color:#f92672>++</span>
-  [ (mask <span style=color:#f92672>++</span> <span style=color:#e6db74>&#34;M-&#34;</span> <span style=color:#f92672>++</span> [key], screenWorkspace scr <span style=color:#f92672>&gt;&gt;=</span> flip whenJust (windows <span style=color:#f92672>.</span> action))
-    <span style=color:#f92672>|</span> (key, scr)  <span style=color:#f92672>&lt;-</span> zip <span style=color:#e6db74>&#34;wer&#34;</span> [<span style=color:#ae81ff>2</span>,<span style=color:#ae81ff>0</span>,<span style=color:#ae81ff>1</span>]
-    , (action, mask) <span style=color:#f92672>&lt;-</span> [ (<span style=color:#66d9ef>W</span><span style=color:#f92672>.</span>view, <span style=color:#e6db74>&#34;&#34;</span>) , (<span style=color:#66d9ef>W</span><span style=color:#f92672>.</span>shift, <span style=color:#e6db74>&#34;S-&#34;</span>)]
-  ]
-</code></pre></div><p>This snippet of code maps the three shortcuts <code>Mod-w</code>, <code>Mod-e</code>, and <code>Mod-r</code> to my left, center, and right monitors, which unfortunately are not just magically in the right order when detected by machine at boot.</p>
-<p>I like to think I &ldquo;get&rdquo; functional programming&ndash;I know what <code>zip</code> does, I can guess that <code>++</code> is list concat&mldr;but otherwise the rest of this Haskell code is basically Greek to me.</p>
-<p>For several years I manged to use xmonad by copy/pasting and cargo culting code from other people&rsquo;s config files. But even trivial tasks, like &ldquo;take snippet 1 and combine it with snippet 2&rdquo;, I just couldn&rsquo;t do.</p>
-<p>Eventually I resigned myself from &ldquo;I&rsquo;m sure I&rsquo;ll understand this soon&mldr;&rdquo; to &ldquo;&mldr;okay, this just isn&rsquo;t going to happen without a significant time investment&rdquo;.</p>
-</li>
-<li>
-<p>xmonad just stopped working for Ubuntu 14.04</p>
-<p>xmonad has always been painful to setup, mostly due to my own admittedly personal preference of not running xmonad &ldquo;bare bones&rdquo;, but as the window manager within a still-basically-Gnome environment.</p>
-<p>Basically, I still wanted the Gnome panel (which is the top/bottom bar in an OS window environment that has the wireless status, message notifications, etc.), and I wanted that primarily because (somewhat embarrassingly) unless the Gnome panel started, the Network Manager applet wouldn&rsquo;t start, and so my wireless wouldn&rsquo;t connect.</p>
-<p>Yes, I must admit that I am not, nor really want to be, 1337 enough to manage my wireless connection solely from the CLI.</p>
-<p>Previously that was fine, as I&rsquo;d always been able to, eventually, get xmonad running within whatever Gnome environment was within Ubuntu (e.g. <a href=http://www.haskell.org/haskellwiki/Xmonad/Using_xmonad_in_Gnome>Using xmonad in Gnome</a>), and was quite happy.</p>
-<p>In Saucy, the xmonad install was actually really slick&ndash;just <code>sudo apt-get install xmonad</code>, and then the LightDM login screen would give you a &ldquo;Login with XMonad Gnome&rdquo; (or something like that) option that, IIRC, just worked.</p>
-<p>But now for 14.04, it&rsquo;s back to just not working. I could probably figure it out, but Saucy spoiled me, and I now expect it to just work.</p>
-</li>
-</ol>
-<h2 id=tangent-tried-lubuntu>
-Tangent: Tried Lubuntu
-<a class=heading-link href=#tangent-tried-lubuntu>
-<i class="fa fa-link" aria-hidden=true></i>
-</a>
-</h2>
-<p>For Saucy, I had been using xmonad within <a href=http://lxde.org/>LXDE</a> (because the Gnome 2 panel stopped working, so I switched to <code>lxpanel</code>, which provided the basic top/bottom bar applets), but I&rsquo;d always used Xmonad after tweaking a stock Ubuntu that still had vestiges of Unity/etc. installed.</p>
-<p>This time around, I&rsquo;d just gotten a new, larger SSD, and so had an excuse to do a clean install of Ubuntu, instead of my regular Saucy -> Trusty in-place upgrade path.</p>
-<p>So, I thought that would be a good excuse to try <a href=http://lubuntu.net/>Lubuntu</a>, which is built on top of LXDE, and from a clean install and skip the &ldquo;bloat&rdquo; of Unity/etc. all together. Super lightweight!</p>
-<p>Good plans, but for whatever reason, it just didn&rsquo;t work out. For one, I was surprised at how different Lubuntu looked vs. stock LXDE. Granted, it was just theming.</p>
-<p>However, the biggest issue was that xmonad still didn&rsquo;t &ldquo;just work&rdquo;, even after changing the LXDE window manager from the default <code>openbox</code> to <code>xmonad</code>.</p>
-<p>This had worked before, pre-14.04, but did not in Lubuntu.</p>
-<p>So, I gave up on Lubuntu, and reinstalled the stock Ubuntu 14.04 as a clean install, but it <em>still</em> ran into the same problem of xmonad just not working.</p>
-<h2 id=enter-i3wm>
-Enter i3wm
-<a class=heading-link href=#enter-i3wm>
-<i class="fa fa-link" aria-hidden=true></i>
-</a>
-</h2>
-<p>After many gyrations, I ended up installing <a href=http://www.i3wm.org/>i3</a> and, so far, am very happy. For two reasons:</p>
-<ol>
-<li>
-<p>The config file is plain text!</p>
-<p>Here&rsquo;s a few lines from the my config file:</p>
-<pre tabindex=0><code># start a terminal
+Why Move From xmonad? Link to heading I really enjoyed xmonad, and want to still highly recommend it, but I consistently ran into two issues:"><meta property="og:type" content="article"><meta property="og:url" content="https://www.draconianoverlord.com/2014/05/26/from-xmonad-to-i3-on-ubuntu-14.04.html/"><meta property="article:section" content="posts"><meta property="article:published_time" content="2014-05-26T00:00:00+00:00"><meta property="article:modified_time" content="2014-05-26T00:00:00+00:00"><link rel=canonical href=https://www.draconianoverlord.com/2014/05/26/from-xmonad-to-i3-on-ubuntu-14.04.html/><link rel=preload href="/fonts/forkawesome-webfont.woff2?v=1.2.0" as=font type=font/woff2 crossorigin><link rel=stylesheet href=/css/coder.min.65236a6d834b26194eed04a2a3b45e44d9194ef9e620253705d4bef03bd7ef81.css integrity="sha256-ZSNqbYNLJhlO7QSio7ReRNkZTvnmICU3BdS+8DvX74E=" crossorigin=anonymous media=screen><link rel=stylesheet href=/css/coder-dark.min.f6534b0b446b75d9b6ad77a97d43ede2ddaeff1b6e2361fb7198d6f8fcb7f83f.css integrity="sha256-9lNLC0Rrddm2rXepfUPt4t2u/xtuI2H7cZjW+Py3+D8=" crossorigin=anonymous media=screen><link rel=icon type=image/png href=/images/favicon-32x32.png sizes=32x32><link rel=icon type=image/png href=/images/favicon-16x16.png sizes=16x16><link rel=apple-touch-icon href=/images/apple-touch-icon.png><link rel=apple-touch-icon sizes=180x180 href=/images/apple-touch-icon.png><link rel=manifest href=/site.webmanifest><link rel=mask-icon href=/images/safari-pinned-tab.svg color=#5bbad5></head><body class="preload-transitions colorscheme-auto"><div class=float-container><a id=dark-mode-toggle class=colorscheme-toggle><i class="fa fa-adjust fa-fw" aria-hidden=true></i></a></div><main class=wrapper><nav class=navigation><section class=container><a class=navigation-title href=/>Draconian Overlord</a>
+Oppressing software entropy</section></nav><div class=content><section class="container post"><article><header><div class=post-title><h1 class=title><a class=title-link href=https://www.draconianoverlord.com/2014/05/26/from-xmonad-to-i3-on-ubuntu-14.04.html/>From xmonad to i3 on Ubuntu 14.04</a></h1></div><div class=post-meta><div class=date><span class=posted-on><i class="fa fa-calendar" aria-hidden=true></i>
+<time datetime=2014-05-26T00:00:00Z>May 26, 2014</time></span>
+<span class=reading-time><i class="fa fa-clock-o" aria-hidden=true></i>
+9-minute read</span></div><div class=categories><i class="fa fa-folder" aria-hidden=true></i>
+<a href=/categories/productivity/>Productivity</a></div></div></header><div class=post-content><p>For several years now, I&rsquo;ve been a faithful user of <a href=http://xmonad.org/ class=external-link target=_blank rel=noopener>xmonad</a>, the Linux tiling window manager that is written in Haskell but I just recently switched over to <a href=http://www.i3wm.org/ class=external-link target=_blank rel=noopener>i3</a>.</p><p>(Update Dec 2016: I&rsquo;m still using i3, and here are the links to my config files: <a href=/files/i3-config.txt>~/.i3/config</a>, <a href=/files/i3-status-config.txt>~/.config/i3status/config</a>, and <a href=/files/Xresources.txt>~/.Xresources</a>.</p><h2 id=why-move-from-xmonad>Why Move From xmonad?
+<a class=heading-link href=#why-move-from-xmonad><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h2><p>I really enjoyed xmonad, and want to still highly recommend it, but I consistently ran into two issues:</p><ol><li><p>I consider myself an expert-level programmer, but even after years of using xmonad, I simply did not understand how my xmonad config file (which is a Haskell program) actually worked.</p><p>Here is an example from my config file:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-haskell data-lang=haskell><span style=display:flex><span><span style=color:#a6e22e>myKeys</span> <span style=color:#f92672>=</span>
+</span></span><span style=display:flex><span>  [
+</span></span><span style=display:flex><span>    <span style=color:#75715e>-- additional keys</span>
+</span></span><span style=display:flex><span>  ]
+</span></span><span style=display:flex><span>  <span style=color:#f92672>++</span>
+</span></span><span style=display:flex><span>  [ (mask <span style=color:#f92672>++</span> <span style=color:#e6db74>&#34;M-&#34;</span> <span style=color:#f92672>++</span> [key], screenWorkspace scr <span style=color:#f92672>&gt;&gt;=</span> flip whenJust (windows <span style=color:#f92672>.</span> action))
+</span></span><span style=display:flex><span>    <span style=color:#f92672>|</span> (key, scr)  <span style=color:#f92672>&lt;-</span> zip <span style=color:#e6db74>&#34;wer&#34;</span> [<span style=color:#ae81ff>2</span>,<span style=color:#ae81ff>0</span>,<span style=color:#ae81ff>1</span>]
+</span></span><span style=display:flex><span>    , (action, mask) <span style=color:#f92672>&lt;-</span> [ (<span style=color:#66d9ef>W</span><span style=color:#f92672>.</span>view, <span style=color:#e6db74>&#34;&#34;</span>) , (<span style=color:#66d9ef>W</span><span style=color:#f92672>.</span>shift, <span style=color:#e6db74>&#34;S-&#34;</span>)]
+</span></span><span style=display:flex><span>  ]
+</span></span></code></pre></div><p>This snippet of code maps the three shortcuts <code>Mod-w</code>, <code>Mod-e</code>, and <code>Mod-r</code> to my left, center, and right monitors, which unfortunately are not just magically in the right order when detected by machine at boot.</p><p>I like to think I &ldquo;get&rdquo; functional programming&ndash;I know what <code>zip</code> does, I can guess that <code>++</code> is list concat&mldr;but otherwise the rest of this Haskell code is basically Greek to me.</p><p>For several years I manged to use xmonad by copy/pasting and cargo culting code from other people&rsquo;s config files. But even trivial tasks, like &ldquo;take snippet 1 and combine it with snippet 2&rdquo;, I just couldn&rsquo;t do.</p><p>Eventually I resigned myself from &ldquo;I&rsquo;m sure I&rsquo;ll understand this soon&mldr;&rdquo; to &ldquo;&mldr;okay, this just isn&rsquo;t going to happen without a significant time investment&rdquo;.</p></li><li><p>xmonad just stopped working for Ubuntu 14.04</p><p>xmonad has always been painful to setup, mostly due to my own admittedly personal preference of not running xmonad &ldquo;bare bones&rdquo;, but as the window manager within a still-basically-Gnome environment.</p><p>Basically, I still wanted the Gnome panel (which is the top/bottom bar in an OS window environment that has the wireless status, message notifications, etc.), and I wanted that primarily because (somewhat embarrassingly) unless the Gnome panel started, the Network Manager applet wouldn&rsquo;t start, and so my wireless wouldn&rsquo;t connect.</p><p>Yes, I must admit that I am not, nor really want to be, 1337 enough to manage my wireless connection solely from the CLI.</p><p>Previously that was fine, as I&rsquo;d always been able to, eventually, get xmonad running within whatever Gnome environment was within Ubuntu (e.g. <a href=http://www.haskell.org/haskellwiki/Xmonad/Using_xmonad_in_Gnome class=external-link target=_blank rel=noopener>Using xmonad in Gnome</a>), and was quite happy.</p><p>In Saucy, the xmonad install was actually really slick&ndash;just <code>sudo apt-get install xmonad</code>, and then the LightDM login screen would give you a &ldquo;Login with XMonad Gnome&rdquo; (or something like that) option that, IIRC, just worked.</p><p>But now for 14.04, it&rsquo;s back to just not working. I could probably figure it out, but Saucy spoiled me, and I now expect it to just work.</p></li></ol><h2 id=tangent-tried-lubuntu>Tangent: Tried Lubuntu
+<a class=heading-link href=#tangent-tried-lubuntu><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h2><p>For Saucy, I had been using xmonad within <a href=http://lxde.org/ class=external-link target=_blank rel=noopener>LXDE</a> (because the Gnome 2 panel stopped working, so I switched to <code>lxpanel</code>, which provided the basic top/bottom bar applets), but I&rsquo;d always used Xmonad after tweaking a stock Ubuntu that still had vestiges of Unity/etc. installed.</p><p>This time around, I&rsquo;d just gotten a new, larger SSD, and so had an excuse to do a clean install of Ubuntu, instead of my regular Saucy -> Trusty in-place upgrade path.</p><p>So, I thought that would be a good excuse to try <a href=http://lubuntu.net/ class=external-link target=_blank rel=noopener>Lubuntu</a>, which is built on top of LXDE, and from a clean install and skip the &ldquo;bloat&rdquo; of Unity/etc. all together. Super lightweight!</p><p>Good plans, but for whatever reason, it just didn&rsquo;t work out. For one, I was surprised at how different Lubuntu looked vs. stock LXDE. Granted, it was just theming.</p><p>However, the biggest issue was that xmonad still didn&rsquo;t &ldquo;just work&rdquo;, even after changing the LXDE window manager from the default <code>openbox</code> to <code>xmonad</code>.</p><p>This had worked before, pre-14.04, but did not in Lubuntu.</p><p>So, I gave up on Lubuntu, and reinstalled the stock Ubuntu 14.04 as a clean install, but it <em>still</em> ran into the same problem of xmonad just not working.</p><h2 id=enter-i3wm>Enter i3wm
+<a class=heading-link href=#enter-i3wm><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h2><p>After many gyrations, I ended up installing <a href=http://www.i3wm.org/ class=external-link target=_blank rel=noopener>i3</a> and, so far, am very happy. For two reasons:</p><ol><li><p>The config file is plain text!</p><p>Here&rsquo;s a few lines from the my config file:</p><pre tabindex=0><code># start a terminal
 bindsym $mod+Shift+Return exec i3-sensible-terminal
 
 # kill focused window
 bindsym $mod+Shift+c kill
-</code></pre><p>How readable!</p>
-</li>
-<li>
-<p>It works out-of-the-box!</p>
-<p>After doing <code>sudo apt-get install i3</code>, LightDM shows a &ldquo;Login with i3&rdquo; option, and, the first time I logged in, <code>i3</code> even noticed I didn&rsquo;t have an i3 config file yet, so went through a few prompts to create a default one.</p>
-<p>And then it just worked. The <code>sudo apt-get install i3</code> was literally all it took. Amazing.</p>
-<p>(Notice how both of these are exactly the opposite of what I disliked about xmonad.)</p>
-</li>
-<li>
-<p>As a bonus, i3 runs panel-less (so no futzing with Gnome/LXDE/etc.) but is still newbie-friendly because it includes a basic applet-friendly status bar out-of-the-box.</p>
-<p>Per before, I was never brave enough to run xmonad without a &ldquo;basically Gnome&rdquo; panel, and so always went to the pain of having the Gnome/LXDE panels available for the various applets/etc. This was always the most annoying part of getting xmonad setup.</p>
-<p>What real power users of xmonad use, instead of a panel, is a separate, non-Gnome/etc., &ldquo;status bar&rdquo; (like <a href=http://projects.haskell.org/xmobar/>xmobar</a>), which sits in the same place as the panel, but differentiates itself by being primarily text-based, and super-extensible.</p>
-<p>Which, for xmonad, &ldquo;super-extensible&rdquo; meant &ldquo;not there by default&rdquo; which meant &ldquo;intimidating for new users&rdquo;, so I never set one up.</p>
-<p>With i3, it runs panel-less (as in no heavyweight Gnome/LXDE/etc. panel), but has an out-of-the-box status bar (<a href=http://i3wm.org/i3status/>i3status</a>) that &ldquo;just works&rdquo; and is sufficiently-configurable (plain text) that, for now, I see no reason to switch.</p>
-</li>
-<li>
-<p>As a bonus bonus, per <a href=http://www.brentwalther.net/blog/how-to-replace-unity-with-i3-window-manager-on-ubuntu-1204>this post</a>, I was even able to uninstall the Unity and Compiz packages.</p>
-<p>Granted, having them uninstalled doesn&rsquo;t really matter, given I wasn&rsquo;t using them anyway, but it&rsquo;s still fun.</p>
-</li>
-</ol>
-<p>I was quite pleased.</p>
-<h2 id=tweaking-i3>
-Tweaking i3
-<a class=heading-link href=#tweaking-i3>
-<i class="fa fa-link" aria-hidden=true></i>
-</a>
-</h2>
-<p>So, while i3 worked right out of the box, it has taken me a few days of playing with it to get familiar and tweak it to my liking. I&rsquo;ve done a few customizations:</p>
-<ol>
-<li>
-<p>Tweaked the key bindings to be more like xmonad since that is what I like/am used to (especially for the common ones, like new terminal, kill window, etc.).</p>
-</li>
-<li>
-<p>Added <code>nm-applet</code> to run on startup so I am not helpless:</p>
-<pre tabindex=0><code>exec --no-startup-id nm-applet
-</code></pre></li>
-<li>
-<p>Installed <a href=https://github.com/davidbrazdil/volnoti><code>volnoti</code></a> to get the sexiest volume up/down setup I&rsquo;ve had since switching to Linux</p>
-</li>
-<li>
-<p>Tweaked fonts/sizes/etc. (I&rsquo;m a fan of <a href=https://github.com/adobe/source-code-pro>Source Code Pro</a> these days).</p>
-</li>
-<li>
-<p>Discovered i3&rsquo;s <a href=http://build.i3wm.org/docs/userguide.html#_scratchpad>scratchpad</a>&ndash;very awesome.</p>
-</li>
-<li>
-<p>Turns out <a href=http://www.knopwob.org/dunst/>dunst</a> is installed with i3 to handle DBus notifications, but the default theme is so minimal, even for me, that I didn&rsquo;t realize it was installed until I built dunst from source and it wouldn&rsquo;t start two instances at once.</p>
-<p><a href=http://www.knopwob.org/dunst/dunstrc.1.0.0-1>This</a> is a nice <code>dunstrc</code> to start from, and shows some of the nifty things it can do based on the content/etc. of the notifications.</p>
-</li>
-</ol>
-<p>Window resizing is still taking some getting used to. I liked xmonad&rsquo;s approach better, but that is probably because I still am not fully adjusted to i3 yet. I&rsquo;d like to get the equivalent of <code>Mod-enter</code> == &ldquo;switch current window into the main content area&rdquo;, but I don&rsquo;t think that&rsquo;s exactly how i3 works&mldr;there isn&rsquo;t really a &ldquo;main&rdquo; content area. Dunno, we&rsquo;ll see.</p>
-<h2 id=various-dpi-shenanigans>
-Various DPI Shenanigans
-<a class=heading-link href=#various-dpi-shenanigans>
-<i class="fa fa-link" aria-hidden=true></i>
-</a>
-</h2>
-<p>So, while i3 just worked, and I&rsquo;ve spent an acceptable amount of time tweaking i3, I&rsquo;ve spent an inordinate amount of time tweaking (or even finding) the stupid DPI settings for X/GTK/Linux/whatever&ndash;&ldquo;stuff that goes on the screen&rdquo;.</p>
-<p>I am admittedly slightly OCD about having the OS use my laptop&rsquo;s native 143 DPI (yes, it&rsquo;s not a MBP; although there are 200+ DPI ThinkPads out these days&mldr;).</p>
-<p>Previously, I was in enough of a &ldquo;mainstream&rdquo; environment (those panels) that <code>gnome-tweak-tool</code>/etc. was enough to, AFAICT, throb the right hidden font/DPI settings.</p>
-<p>But now that I&rsquo;m in a more bare-bones environment, with no real master UI preferences/appearance control panel, it took quite a bit of fussing to get right, but I finally found what I believe is the magic incantation:</p>
-<ol>
-<li>
-<p><code>~/.Xresources</code></p>
-<p>This is the magic file that, AFAICT, is one of the main (?) DPI settings for (all/most?) programs:</p>
-<p>I have just one line in <code>~/.Xresources</code>:</p>
-<pre tabindex=0><code>Xft.dpi: 143
-</code></pre><p>You&rsquo;ll know this is working if you can run:</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>$ xrdb -query | grep dpi
-</code></pre></div><p>And see your configured DPI as the output.</p>
-<p>I had seen various posts about potentially configuring this as the LightDM-level, but I couldn&rsquo;t really understand if then it would apply to the LightDM X session, or any X session spawned by LightDM, or what.</p>
-</li>
-<li>
-<p><code>xrandr</code></p>
-<p>While <code>~/.Xresources</code> was kind of hard to find, most forums/posts mention <code>xrandr</code> as the primary place to set your DPI:</p>
-<pre tabindex=0><code>xrandr --dpi 143
-</code></pre><p>You can verify this by running:</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell>    $ xdpyinfo | grep dots
-</code></pre></div><p>And you should again see your configured resolution.</p>
-<p>For me, I put this into my <code>~/.i3/config</code> file to run on login:</p>
-<pre tabindex=0><code>exec --no-startup-id xrandr --dpi 143
-</code></pre><p>I believe editing an <code>X.org</code> config file (e.g. off in <code>/etc/X11/...</code>) is another, more permanent way to do this, but I&rsquo;ve always been too scared of severely messing up my X11 config and never being able to log in again to mess with those.</p>
-</li>
-<li>
-<p>GTK Settings</p>
-<p>These are not technically for DPI settings, but just general default fonts/sizes/etc.</p>
-<p>GTK2 and GTK3 have separate settings files:</p>
-<ul>
-<li><code>~/.gtkrc-2.0</code></li>
-<li><code>~/.config/gtk-3.0/settings.ini</code></li>
-</ul>
-<p>Which is annoying, but it turns out the LXAppearance tool will keep both up to date.</p>
-<p>However, I still don&rsquo;t really know where the system-wide (or toolkit-wide?) default monospace font is configured&mldr;</p>
-</li>
-</ol>
-<p>As a disclaimer, this works for me, and I&rsquo;m happy with the size/display of my fonts, but I must admit I don&rsquo;t really know what&rsquo;s going on.</p>
-<p>I don&rsquo;t know why <code>xrandr</code> has one DPI setting, and <code>.Xresources</code> has another. There could be several other DPI settings for all I know. There are likely other default font/size locations for Qt/KDE/etc.</p>
-<p>This is just what works for me.</p>
-<h2 id=muststoptweaking>
-Must&mldr;Stop&mldr;Tweaking&mldr;
-<a class=heading-link href=#muststoptweaking>
-<i class="fa fa-link" aria-hidden=true></i>
-</a>
-</h2>
-<p>I&rsquo;ve had a lot of fun over the last few days, getting i3 setup, and tweaking various parts of my environment. But for now I need to be done and satisfied.</p>
-<p>At least until I go back to work and my desktop&mldr;which is still running xmonad.</p>
-<p>Hopefully I can avoid driving myself crazy using both xmonad and i3 until I get a chance to switch the desktop over.</p>
-</div>
-<footer>
-<div id=disqus_thread></div>
-<script type=application/javascript>var disqus_config=function(){};(function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById('disqus_thread').innerHTML='Disqus comments not available by default when the website is previewed locally.';return}var b=document,a=b.createElement('script');a.async=!0,a.src='//draconianoverlord.disqus.com/embed.js',a.setAttribute('data-timestamp',+new Date),(b.head||b.body).appendChild(a)})()</script>
-<noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript>
-<a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a>
-</footer>
-</article>
-</section>
-</div>
-<footer class=footer>
-<section class=container>
-©
+</code></pre><p>How readable!</p></li><li><p>It works out-of-the-box!</p><p>After doing <code>sudo apt-get install i3</code>, LightDM shows a &ldquo;Login with i3&rdquo; option, and, the first time I logged in, <code>i3</code> even noticed I didn&rsquo;t have an i3 config file yet, so went through a few prompts to create a default one.</p><p>And then it just worked. The <code>sudo apt-get install i3</code> was literally all it took. Amazing.</p><p>(Notice how both of these are exactly the opposite of what I disliked about xmonad.)</p></li><li><p>As a bonus, i3 runs panel-less (so no futzing with Gnome/LXDE/etc.) but is still newbie-friendly because it includes a basic applet-friendly status bar out-of-the-box.</p><p>Per before, I was never brave enough to run xmonad without a &ldquo;basically Gnome&rdquo; panel, and so always went to the pain of having the Gnome/LXDE panels available for the various applets/etc. This was always the most annoying part of getting xmonad setup.</p><p>What real power users of xmonad use, instead of a panel, is a separate, non-Gnome/etc., &ldquo;status bar&rdquo; (like <a href=http://projects.haskell.org/xmobar/ class=external-link target=_blank rel=noopener>xmobar</a>), which sits in the same place as the panel, but differentiates itself by being primarily text-based, and super-extensible.</p><p>Which, for xmonad, &ldquo;super-extensible&rdquo; meant &ldquo;not there by default&rdquo; which meant &ldquo;intimidating for new users&rdquo;, so I never set one up.</p><p>With i3, it runs panel-less (as in no heavyweight Gnome/LXDE/etc. panel), but has an out-of-the-box status bar (<a href=http://i3wm.org/i3status/ class=external-link target=_blank rel=noopener>i3status</a>) that &ldquo;just works&rdquo; and is sufficiently-configurable (plain text) that, for now, I see no reason to switch.</p></li><li><p>As a bonus bonus, per <a href=http://www.brentwalther.net/blog/how-to-replace-unity-with-i3-window-manager-on-ubuntu-1204 class=external-link target=_blank rel=noopener>this post</a>, I was even able to uninstall the Unity and Compiz packages.</p><p>Granted, having them uninstalled doesn&rsquo;t really matter, given I wasn&rsquo;t using them anyway, but it&rsquo;s still fun.</p></li></ol><p>I was quite pleased.</p><h2 id=tweaking-i3>Tweaking i3
+<a class=heading-link href=#tweaking-i3><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h2><p>So, while i3 worked right out of the box, it has taken me a few days of playing with it to get familiar and tweak it to my liking. I&rsquo;ve done a few customizations:</p><ol><li><p>Tweaked the key bindings to be more like xmonad since that is what I like/am used to (especially for the common ones, like new terminal, kill window, etc.).</p></li><li><p>Added <code>nm-applet</code> to run on startup so I am not helpless:</p><pre tabindex=0><code>exec --no-startup-id nm-applet
+</code></pre></li><li><p>Installed <a href=https://github.com/davidbrazdil/volnoti class=external-link target=_blank rel=noopener><code>volnoti</code></a> to get the sexiest volume up/down setup I&rsquo;ve had since switching to Linux</p></li><li><p>Tweaked fonts/sizes/etc. (I&rsquo;m a fan of <a href=https://github.com/adobe/source-code-pro class=external-link target=_blank rel=noopener>Source Code Pro</a> these days).</p></li><li><p>Discovered i3&rsquo;s <a href=http://build.i3wm.org/docs/userguide.html#_scratchpad class=external-link target=_blank rel=noopener>scratchpad</a>&ndash;very awesome.</p></li><li><p>Turns out <a href=http://www.knopwob.org/dunst/ class=external-link target=_blank rel=noopener>dunst</a> is installed with i3 to handle DBus notifications, but the default theme is so minimal, even for me, that I didn&rsquo;t realize it was installed until I built dunst from source and it wouldn&rsquo;t start two instances at once.</p><p><a href=http://www.knopwob.org/dunst/dunstrc.1.0.0-1 class=external-link target=_blank rel=noopener>This</a> is a nice <code>dunstrc</code> to start from, and shows some of the nifty things it can do based on the content/etc. of the notifications.</p></li></ol><p>Window resizing is still taking some getting used to. I liked xmonad&rsquo;s approach better, but that is probably because I still am not fully adjusted to i3 yet. I&rsquo;d like to get the equivalent of <code>Mod-enter</code> == &ldquo;switch current window into the main content area&rdquo;, but I don&rsquo;t think that&rsquo;s exactly how i3 works&mldr;there isn&rsquo;t really a &ldquo;main&rdquo; content area. Dunno, we&rsquo;ll see.</p><h2 id=various-dpi-shenanigans>Various DPI Shenanigans
+<a class=heading-link href=#various-dpi-shenanigans><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h2><p>So, while i3 just worked, and I&rsquo;ve spent an acceptable amount of time tweaking i3, I&rsquo;ve spent an inordinate amount of time tweaking (or even finding) the stupid DPI settings for X/GTK/Linux/whatever&ndash;&ldquo;stuff that goes on the screen&rdquo;.</p><p>I am admittedly slightly OCD about having the OS use my laptop&rsquo;s native 143 DPI (yes, it&rsquo;s not a MBP; although there are 200+ DPI ThinkPads out these days&mldr;).</p><p>Previously, I was in enough of a &ldquo;mainstream&rdquo; environment (those panels) that <code>gnome-tweak-tool</code>/etc. was enough to, AFAICT, throb the right hidden font/DPI settings.</p><p>But now that I&rsquo;m in a more bare-bones environment, with no real master UI preferences/appearance control panel, it took quite a bit of fussing to get right, but I finally found what I believe is the magic incantation:</p><ol><li><p><code>~/.Xresources</code></p><p>This is the magic file that, AFAICT, is one of the main (?) DPI settings for (all/most?) programs:</p><p>I have just one line in <code>~/.Xresources</code>:</p><pre tabindex=0><code>Xft.dpi: 143
+</code></pre><p>You&rsquo;ll know this is working if you can run:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span>$ xrdb -query | grep dpi
+</span></span></code></pre></div><p>And see your configured DPI as the output.</p><p>I had seen various posts about potentially configuring this as the LightDM-level, but I couldn&rsquo;t really understand if then it would apply to the LightDM X session, or any X session spawned by LightDM, or what.</p></li><li><p><code>xrandr</code></p><p>While <code>~/.Xresources</code> was kind of hard to find, most forums/posts mention <code>xrandr</code> as the primary place to set your DPI:</p><pre tabindex=0><code>xrandr --dpi 143
+</code></pre><p>You can verify this by running:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell><span style=display:flex><span>    $ xdpyinfo | grep dots
+</span></span></code></pre></div><p>And you should again see your configured resolution.</p><p>For me, I put this into my <code>~/.i3/config</code> file to run on login:</p><pre tabindex=0><code>exec --no-startup-id xrandr --dpi 143
+</code></pre><p>I believe editing an <code>X.org</code> config file (e.g. off in <code>/etc/X11/...</code>) is another, more permanent way to do this, but I&rsquo;ve always been too scared of severely messing up my X11 config and never being able to log in again to mess with those.</p></li><li><p>GTK Settings</p><p>These are not technically for DPI settings, but just general default fonts/sizes/etc.</p><p>GTK2 and GTK3 have separate settings files:</p><ul><li><code>~/.gtkrc-2.0</code></li><li><code>~/.config/gtk-3.0/settings.ini</code></li></ul><p>Which is annoying, but it turns out the LXAppearance tool will keep both up to date.</p><p>However, I still don&rsquo;t really know where the system-wide (or toolkit-wide?) default monospace font is configured&mldr;</p></li></ol><p>As a disclaimer, this works for me, and I&rsquo;m happy with the size/display of my fonts, but I must admit I don&rsquo;t really know what&rsquo;s going on.</p><p>I don&rsquo;t know why <code>xrandr</code> has one DPI setting, and <code>.Xresources</code> has another. There could be several other DPI settings for all I know. There are likely other default font/size locations for Qt/KDE/etc.</p><p>This is just what works for me.</p><h2 id=muststoptweaking>Must&mldr;Stop&mldr;Tweaking&mldr;
+<a class=heading-link href=#muststoptweaking><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h2><p>I&rsquo;ve had a lot of fun over the last few days, getting i3 setup, and tweaking various parts of my environment. But for now I need to be done and satisfied.</p><p>At least until I go back to work and my desktop&mldr;which is still running xmonad.</p><p>Hopefully I can avoid driving myself crazy using both xmonad and i3 until I get a chance to switch the desktop over.</p></div><footer><div id=disqus_thread></div><script>window.disqus_config=function(){},function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById("disqus_thread").innerHTML="Disqus comments not available by default when the website is previewed locally.";return}var t=document,e=t.createElement("script");e.async=!0,e.src="//draconianoverlord.disqus.com/embed.js",e.setAttribute("data-timestamp",+new Date),(t.head||t.body).appendChild(e)}(),document.addEventListener("themeChanged",function(){document.readyState=="complete"&&DISQUS.reset({reload:!0,config:disqus_config})})</script></footer></article></section></div><footer class=footer><section class=container>©
 2008 -
-2022
+2023
 Stephen Haberman
 ·
-Powered by <a href=https://gohugo.io/>Hugo</a> & <a href=https://github.com/luizdepra/hugo-coder/>Coder</a>.
-</section>
-</footer>
-</main>
-<script src=/js/coder.min.03b17769f4f91ae35667e1f2a1ca8c16f50562576cf90ff32b3179926914daa5.js integrity="sha256-A7F3afT5GuNWZ+HyocqMFvUFYlds+Q/zKzF5kmkU2qU="></script>
-</body>
-</html>
+Powered by <a href=https://gohugo.io/ target=_blank rel=noopener>Hugo</a> & <a href=https://github.com/luizdepra/hugo-coder/ target=_blank rel=noopener>Coder</a>.</section></footer></main><script src=/js/coder.min.6ae284be93d2d19dad1f02b0039508d9aab3180a12a06dcc71b0b0ef7825a317.js integrity="sha256-auKEvpPS0Z2tHwKwA5UI2aqzGAoSoG3McbCw73gloxc="></script></body></html>

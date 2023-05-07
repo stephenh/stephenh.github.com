@@ -1,234 +1,59 @@
-<!doctype html><html lang=en>
-<head>
-<meta charset=utf-8>
-<meta name=viewport content="width=device-width,initial-scale=1">
-<meta http-equiv=content-language content="en">
-<meta name=color-scheme content="light dark">
-<meta name=author content="Stephen Haberman">
-<meta name=description content="(Cross-posted on the Bizo dev blog.)
+<!doctype html><html lang=en><head><title>What Makes Spark Exciting · Draconian Overlord</title><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=color-scheme content="light dark"><meta name=author content="Stephen Haberman"><meta name=description content="(Cross-posted on the Bizo dev blog.)
 At Bizo, we&rsquo;re currently evaluating/prototyping Spark as a replacement for Hive for our batch reports.
-As a brief intro, Spark is an alternative to Hadoop. It provides a cluster computing framework for running distributed jobs. Similar to Hadoop, you provide Spark with jobs to run, and it handles splitting up the job into small tasks, assigning those tasks to machines (optionally with Hadoop-style data locality), issuing retries if tasks fail transiently, etc.">
-<meta name=keywords content="blog,developer,personal">
-<meta name=twitter:card content="summary">
-<meta name=twitter:title content="What Makes Spark Exciting">
-<meta name=twitter:description content="(Cross-posted on the Bizo dev blog.)
+As a brief intro, Spark is an alternative to Hadoop. It provides a cluster computing framework for running distributed jobs. Similar to Hadoop, you provide Spark with jobs to run, and it handles splitting up the job into small tasks, assigning those tasks to machines (optionally with Hadoop-style data locality), issuing retries if tasks fail transiently, etc."><meta name=keywords content="blog,developer,personal"><meta name=twitter:card content="summary"><meta name=twitter:title content="What Makes Spark Exciting"><meta name=twitter:description content="(Cross-posted on the Bizo dev blog.)
 At Bizo, we&rsquo;re currently evaluating/prototyping Spark as a replacement for Hive for our batch reports.
-As a brief intro, Spark is an alternative to Hadoop. It provides a cluster computing framework for running distributed jobs. Similar to Hadoop, you provide Spark with jobs to run, and it handles splitting up the job into small tasks, assigning those tasks to machines (optionally with Hadoop-style data locality), issuing retries if tasks fail transiently, etc.">
-<meta property="og:title" content="What Makes Spark Exciting">
-<meta property="og:description" content="(Cross-posted on the Bizo dev blog.)
+As a brief intro, Spark is an alternative to Hadoop. It provides a cluster computing framework for running distributed jobs. Similar to Hadoop, you provide Spark with jobs to run, and it handles splitting up the job into small tasks, assigning those tasks to machines (optionally with Hadoop-style data locality), issuing retries if tasks fail transiently, etc."><meta property="og:title" content="What Makes Spark Exciting"><meta property="og:description" content="(Cross-posted on the Bizo dev blog.)
 At Bizo, we&rsquo;re currently evaluating/prototyping Spark as a replacement for Hive for our batch reports.
-As a brief intro, Spark is an alternative to Hadoop. It provides a cluster computing framework for running distributed jobs. Similar to Hadoop, you provide Spark with jobs to run, and it handles splitting up the job into small tasks, assigning those tasks to machines (optionally with Hadoop-style data locality), issuing retries if tasks fail transiently, etc.">
-<meta property="og:type" content="article">
-<meta property="og:url" content="https://www.draconianoverlord.com/2013/01/22/what-makes-spark-exciting.html/"><meta property="article:section" content="posts">
-<meta property="article:published_time" content="2013-01-22T00:00:00+00:00">
-<meta property="article:modified_time" content="2013-01-22T00:00:00+00:00">
-<title>
-What Makes Spark Exciting · Draconian Overlord
-</title>
-<link rel=canonical href=https://www.draconianoverlord.com/2013/01/22/what-makes-spark-exciting.html/>
-<link rel=preload href="/fonts/forkawesome-webfont.woff2?v=1.2.0" as=font type=font/woff2 crossorigin>
-<link rel=stylesheet href=/css/coder.min.d9fddbffe6f27e69985dc5fe0471cdb0e57fbf4775714bc3d847accb08f4a1f6.css integrity="sha256-2f3b/+byfmmYXcX+BHHNsOV/v0d1cUvD2Eesywj0ofY=" crossorigin=anonymous media=screen>
-<link rel=stylesheet href=/css/coder-dark.min.aa883b9ce35a8ff4a2a5008619005175e842bb18a8a9f9cc2bbcf44dab2d91fa.css integrity="sha256-qog7nONaj/SipQCGGQBRdehCuxioqfnMK7z0Tastkfo=" crossorigin=anonymous media=screen>
-<link rel=icon type=image/png href=/images/favicon-32x32.png sizes=32x32>
-<link rel=icon type=image/png href=/images/favicon-16x16.png sizes=16x16>
-<link rel=apple-touch-icon href=/images/apple-touch-icon.png>
-<link rel=apple-touch-icon sizes=180x180 href=/images/apple-touch-icon.png>
-<meta name=generator content="Hugo 0.92.0">
-</head>
-<body class="preload-transitions colorscheme-auto">
-<div class=float-container>
-<a id=dark-mode-toggle class=colorscheme-toggle>
-<i class="fa fa-adjust fa-fw" aria-hidden=true></i>
-</a>
-</div>
-<main class=wrapper>
-<nav class=navigation>
-<section class=container>
-<a class=navigation-title href=/>Draconian Overlord</a>
-Oppressing software entropy
-</section>
-</nav>
-<div class=content>
-<section class="container post">
-<article>
-<header>
-<div class=post-title>
-<h1 class=title>
-<a class=title-link href=https://www.draconianoverlord.com/2013/01/22/what-makes-spark-exciting.html/>
-What Makes Spark Exciting
-</a>
-</h1>
-</div>
-<div class=post-meta>
-<div class=date>
-<span class=posted-on>
-<i class="fa fa-calendar" aria-hidden=true></i>
-<time datetime=2013-01-22T00:00:00Z>
-January 22, 2013
-</time>
-</span>
-<span class=reading-time>
-<i class="fa fa-clock-o" aria-hidden=true></i>
-7-minute read
-</span>
-</div>
-<div class=categories>
-<i class="fa fa-folder" aria-hidden=true></i>
-<a href=/categories/scala/>Scala</a></div>
-</div>
-</header>
-<div>
-<p>(<a href=http://dev.bizo.com/2013/01/what-makes-spark-exciting.html>Cross-posted</a> on the Bizo <a href=http://dev.bizo.com/>dev blog</a>.)</p>
-<p>At <a href=http://www.bizo.com>Bizo</a>, we&rsquo;re currently evaluating/prototyping <a href=http://www.spark-project.org>Spark</a> as a replacement for <a href=http://hive.apache.org/>Hive</a> for our batch reports.</p>
-<p>As a brief intro, Spark is an alternative to Hadoop. It provides a cluster computing framework for running distributed jobs. Similar to Hadoop, you provide Spark with jobs to run, and it handles splitting up the job into small tasks, assigning those tasks to machines (optionally with Hadoop-style data locality), issuing retries if tasks fail transiently, etc.</p>
-<p>In our case, these jobs are processing a non-trivial amount of data (log files) on a regular basis, for which we currently use Hive.</p>
-<h2 id=why-replace-hive>
-Why Replace Hive?
-<a class=heading-link href=#why-replace-hive>
-<i class="fa fa-link" aria-hidden=true></i>
-</a>
-</h2>
-<p>Admittedly, Hive has served us well for quite awhile now. (One of our engineers even built a custom &ldquo;Hadoop on demand&rdquo; framework for running periodic on-demand Hadoop/Hive jobs in EC2 several months before <a href=http://aws.amazon.com/elasticmapreduce/>Amazon Elastic Map Reduce</a> came out.)</p>
-<p>Without Hive, it would have been hard for us to provide the same functionality, probably at all, let alone in the same time frame.</p>
-<p>That said, it has gotten to the point where Hive is more frequently invoked in negative contexts (&ldquo;damn it, Hive&rdquo;) than positive.</p>
-<p>Personally, I admittedly even try to avoid tasks that involve working with Hive. I find it to be frustrating and, well, just not a lot of fun. Why? Two primary reasons:</p>
-<h4 id=1-hive-jobs-are-hard-to-test>
-1. Hive jobs are hard to test
-<a class=heading-link href=#1-hive-jobs-are-hard-to-test>
-<i class="fa fa-link" aria-hidden=true></i>
-</a>
-</h4>
-<p>Bizo has a culture of excellence, and for engineering one of the things this means is testing. We really like tests. Especially unit tests, which are quick to run and enable a fast TDD cycle.</p>
-<p>Unfortunately, Hive makes unit testing basically impossible. For several reasons:</p>
-<ul>
-<li>
-<p>Hive scripts must be run in a local Hadoop/Hive installation.</p>
-<p>Ironically, very few developers at Bizo have local Hadoop installations. We are admittedly spoiled by Elastic Map Reduce, such that most of us (myself anyway) wouldn&rsquo;t even know how to setup Hadoop off the top of our heads. We just fire up an EMR cluster.</p>
-</li>
-<li>
-<p>Hive scripts have production locations embedded in them.</p>
-<p>Both our log files and report output are stored in S3, so our Hive scripts end up with lots of &ldquo;s3://&rdquo; paths scattered throughout in them.</p>
-<p>While we do run dev versions of reports with &ldquo;-dev&rdquo; S3 buckets, still relying on S3 and raw log files (that are usually in a compressed/binary-ish format) is not conducive to setting up lots of really small, simplified scenarios to unit test each boundary case.</p>
-</li>
-<li>
-<p>Hive scripts do not provide any abstraction&ndash;they are just one big HiveQL file. This means its hard to break up a large report into small, individually testable steps.</p>
-</li>
-</ul>
-<p>Despite these limitations, about a year ago we had a developer dedicate some effort to prototyping an approach that would run Hive scripts within our CI workflow. In the end, while his prototype worked, the workflow was wonky enough that we never adopted it for production projects.</p>
-<p>The result? Our Hive reports are basically untested. This sucks.</p>
-<h4 id=2-hive-is-hard-to-extend>
-2. Hive is hard to extend
-<a class=heading-link href=#2-hive-is-hard-to-extend>
-<i class="fa fa-link" aria-hidden=true></i>
-</a>
-</h4>
-<p>Extending Hive via custom functions (UDFs and UDAFs) is possible, and we do it all the time&ndash;but it&rsquo;s a pain in the ass.</p>
-<p>Perhaps this is not Hive&rsquo;s fault, and it&rsquo;s some Hadoop internals leaking into Hive, but the various <a href=http://hive.apache.org/docs/r0.5.0/api/org/apache/hadoop/hive/serde2/objectinspector/ObjectInspector.html>ObjectInspector</a> hoops, to me, always seemed annoying to deal with.</p>
-<p>Given these shortcomings, Bizo has been looking for a Hive-successor for awhile, even going so far as to prototype <a href=https://github.com/aboisvert/revolute>revolute</a>, a Scala DSL on top of <a href=http://www.cascading.org/>Cascading</a>, but had not yet found something we were really excited about.</p>
-<h2 id=enter-spark>
-Enter Spark!
-<a class=heading-link href=#enter-spark>
-<i class="fa fa-link" aria-hidden=true></i>
-</a>
-</h2>
-<p>We had heard about Spark, but did not start trying it until being so impressed by the Spark presentation at AWS re:Invent (the talk received <a href=https://amplab.cs.berkeley.edu/news/sparkshark-a-big-hit-at-aws-reinvent/>the highest rating of all non-keynote sessions</a>) that we wanted to learn more.</p>
-<p>One of Spark&rsquo;s touted strengths is being able to load and keep data in
-memory, so your queries aren&rsquo;t always I/O bound.</p>
-<p>That is great, but the exciting aspect for us at Bizo is how Spark,
+As a brief intro, Spark is an alternative to Hadoop. It provides a cluster computing framework for running distributed jobs. Similar to Hadoop, you provide Spark with jobs to run, and it handles splitting up the job into small tasks, assigning those tasks to machines (optionally with Hadoop-style data locality), issuing retries if tasks fail transiently, etc."><meta property="og:type" content="article"><meta property="og:url" content="https://www.draconianoverlord.com/2013/01/22/what-makes-spark-exciting.html/"><meta property="article:section" content="posts"><meta property="article:published_time" content="2013-01-22T00:00:00+00:00"><meta property="article:modified_time" content="2013-01-22T00:00:00+00:00"><link rel=canonical href=https://www.draconianoverlord.com/2013/01/22/what-makes-spark-exciting.html/><link rel=preload href="/fonts/forkawesome-webfont.woff2?v=1.2.0" as=font type=font/woff2 crossorigin><link rel=stylesheet href=/css/coder.min.65236a6d834b26194eed04a2a3b45e44d9194ef9e620253705d4bef03bd7ef81.css integrity="sha256-ZSNqbYNLJhlO7QSio7ReRNkZTvnmICU3BdS+8DvX74E=" crossorigin=anonymous media=screen><link rel=stylesheet href=/css/coder-dark.min.f6534b0b446b75d9b6ad77a97d43ede2ddaeff1b6e2361fb7198d6f8fcb7f83f.css integrity="sha256-9lNLC0Rrddm2rXepfUPt4t2u/xtuI2H7cZjW+Py3+D8=" crossorigin=anonymous media=screen><link rel=icon type=image/png href=/images/favicon-32x32.png sizes=32x32><link rel=icon type=image/png href=/images/favicon-16x16.png sizes=16x16><link rel=apple-touch-icon href=/images/apple-touch-icon.png><link rel=apple-touch-icon sizes=180x180 href=/images/apple-touch-icon.png><link rel=manifest href=/site.webmanifest><link rel=mask-icon href=/images/safari-pinned-tab.svg color=#5bbad5></head><body class="preload-transitions colorscheme-auto"><div class=float-container><a id=dark-mode-toggle class=colorscheme-toggle><i class="fa fa-adjust fa-fw" aria-hidden=true></i></a></div><main class=wrapper><nav class=navigation><section class=container><a class=navigation-title href=/>Draconian Overlord</a>
+Oppressing software entropy</section></nav><div class=content><section class="container post"><article><header><div class=post-title><h1 class=title><a class=title-link href=https://www.draconianoverlord.com/2013/01/22/what-makes-spark-exciting.html/>What Makes Spark Exciting</a></h1></div><div class=post-meta><div class=date><span class=posted-on><i class="fa fa-calendar" aria-hidden=true></i>
+<time datetime=2013-01-22T00:00:00Z>January 22, 2013</time></span>
+<span class=reading-time><i class="fa fa-clock-o" aria-hidden=true></i>
+8-minute read</span></div><div class=categories><i class="fa fa-folder" aria-hidden=true></i>
+<a href=/categories/scala/>Scala</a></div></div></header><div class=post-content><p>(<a href=http://dev.bizo.com/2013/01/what-makes-spark-exciting.html class=external-link target=_blank rel=noopener>Cross-posted</a> on the Bizo <a href=http://dev.bizo.com/ class=external-link target=_blank rel=noopener>dev blog</a>.)</p><p>At <a href=http://www.bizo.com class=external-link target=_blank rel=noopener>Bizo</a>, we&rsquo;re currently evaluating/prototyping <a href=http://www.spark-project.org class=external-link target=_blank rel=noopener>Spark</a> as a replacement for <a href=http://hive.apache.org/ class=external-link target=_blank rel=noopener>Hive</a> for our batch reports.</p><p>As a brief intro, Spark is an alternative to Hadoop. It provides a cluster computing framework for running distributed jobs. Similar to Hadoop, you provide Spark with jobs to run, and it handles splitting up the job into small tasks, assigning those tasks to machines (optionally with Hadoop-style data locality), issuing retries if tasks fail transiently, etc.</p><p>In our case, these jobs are processing a non-trivial amount of data (log files) on a regular basis, for which we currently use Hive.</p><h2 id=why-replace-hive>Why Replace Hive?
+<a class=heading-link href=#why-replace-hive><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h2><p>Admittedly, Hive has served us well for quite awhile now. (One of our engineers even built a custom &ldquo;Hadoop on demand&rdquo; framework for running periodic on-demand Hadoop/Hive jobs in EC2 several months before <a href=http://aws.amazon.com/elasticmapreduce/ class=external-link target=_blank rel=noopener>Amazon Elastic Map Reduce</a> came out.)</p><p>Without Hive, it would have been hard for us to provide the same functionality, probably at all, let alone in the same time frame.</p><p>That said, it has gotten to the point where Hive is more frequently invoked in negative contexts (&ldquo;damn it, Hive&rdquo;) than positive.</p><p>Personally, I admittedly even try to avoid tasks that involve working with Hive. I find it to be frustrating and, well, just not a lot of fun. Why? Two primary reasons:</p><h4 id=1-hive-jobs-are-hard-to-test>1. Hive jobs are hard to test
+<a class=heading-link href=#1-hive-jobs-are-hard-to-test><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h4><p>Bizo has a culture of excellence, and for engineering one of the things this means is testing. We really like tests. Especially unit tests, which are quick to run and enable a fast TDD cycle.</p><p>Unfortunately, Hive makes unit testing basically impossible. For several reasons:</p><ul><li><p>Hive scripts must be run in a local Hadoop/Hive installation.</p><p>Ironically, very few developers at Bizo have local Hadoop installations. We are admittedly spoiled by Elastic Map Reduce, such that most of us (myself anyway) wouldn&rsquo;t even know how to setup Hadoop off the top of our heads. We just fire up an EMR cluster.</p></li><li><p>Hive scripts have production locations embedded in them.</p><p>Both our log files and report output are stored in S3, so our Hive scripts end up with lots of &ldquo;s3://&rdquo; paths scattered throughout in them.</p><p>While we do run dev versions of reports with &ldquo;-dev&rdquo; S3 buckets, still relying on S3 and raw log files (that are usually in a compressed/binary-ish format) is not conducive to setting up lots of really small, simplified scenarios to unit test each boundary case.</p></li><li><p>Hive scripts do not provide any abstraction&ndash;they are just one big HiveQL file. This means its hard to break up a large report into small, individually testable steps.</p></li></ul><p>Despite these limitations, about a year ago we had a developer dedicate some effort to prototyping an approach that would run Hive scripts within our CI workflow. In the end, while his prototype worked, the workflow was wonky enough that we never adopted it for production projects.</p><p>The result? Our Hive reports are basically untested. This sucks.</p><h4 id=2-hive-is-hard-to-extend>2. Hive is hard to extend
+<a class=heading-link href=#2-hive-is-hard-to-extend><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h4><p>Extending Hive via custom functions (UDFs and UDAFs) is possible, and we do it all the time&ndash;but it&rsquo;s a pain in the ass.</p><p>Perhaps this is not Hive&rsquo;s fault, and it&rsquo;s some Hadoop internals leaking into Hive, but the various <a href=http://hive.apache.org/docs/r0.5.0/api/org/apache/hadoop/hive/serde2/objectinspector/ObjectInspector.html class=external-link target=_blank rel=noopener>ObjectInspector</a> hoops, to me, always seemed annoying to deal with.</p><p>Given these shortcomings, Bizo has been looking for a Hive-successor for awhile, even going so far as to prototype <a href=https://github.com/aboisvert/revolute class=external-link target=_blank rel=noopener>revolute</a>, a Scala DSL on top of <a href=http://www.cascading.org/ class=external-link target=_blank rel=noopener>Cascading</a>, but had not yet found something we were really excited about.</p><h2 id=enter-spark>Enter Spark!
+<a class=heading-link href=#enter-spark><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h2><p>We had heard about Spark, but did not start trying it until being so impressed by the Spark presentation at AWS re:Invent (the talk received <a href=https://amplab.cs.berkeley.edu/news/sparkshark-a-big-hit-at-aws-reinvent/ class=external-link target=_blank rel=noopener>the highest rating of all non-keynote sessions</a>) that we wanted to learn more.</p><p>One of Spark&rsquo;s touted strengths is being able to load and keep data in
+memory, so your queries aren&rsquo;t always I/O bound.</p><p>That is great, but the exciting aspect for us at Bizo is how Spark,
 either intentionally or serendipitously, addresses both of Hive&rsquo;s
-primary shortcomings, and turns them into huge strengths. Specifically:</p>
-<h4 id=1-spark-jobs-are-amazingly-easy-to-test>
-1. Spark jobs are amazingly easy to test
-<a class=heading-link href=#1-spark-jobs-are-amazingly-easy-to-test>
-<i class="fa fa-link" aria-hidden=true></i>
-</a>
-</h4>
-<p>Writing a test in Spark is as easy as:</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-scala data-lang=scala><span style=color:#66d9ef>class</span> <span style=color:#a6e22e>SparkTest</span> <span style=color:#f92672>{</span>
-  <span style=color:#a6e22e>@Test</span>
-  <span style=color:#66d9ef>def</span> test<span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
-    <span style=color:#75715e>// this is real code...
-</span><span style=color:#75715e></span>    <span style=color:#66d9ef>val</span> sc <span style=color:#66d9ef>=</span> <span style=color:#66d9ef>new</span> <span style=color:#a6e22e>SparkContext</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;local&#34;</span><span style=color:#f92672>,</span> <span style=color:#960050;background-color:#1e0010>&#34;</span><span style=color:#a6e22e>MyUnitTest</span><span style=color:#960050;background-color:#1e0010>&#39;</span><span style=color:#f92672>)</span>
-    <span style=color:#75715e>// and now some psuedo code...
-</span><span style=color:#75715e></span>    <span style=color:#66d9ef>val</span> output <span style=color:#66d9ef>=</span> runYourCodeThatUsesSpark<span style=color:#f92672>(</span>sc<span style=color:#f92672>)</span>
-    assertAgainst<span style=color:#f92672>(</span>output<span style=color:#f92672>)</span>
-  <span style=color:#f92672>}</span>
-<span style=color:#f92672>}</span>
-</code></pre></div><p>(I will go into more detail about <code>runYourCodeThatUsesSpark</code> in a future post.)</p>
-<p>This one liner starts up a new <a href=http://spark-project.org/docs/latest/api/core/index.html#spark.SparkContext>SparkContext</a>, which is all your program needs to execute Spark jobs. There is no local installation required (just have the Spark jar on your classpath, e.g. via Maven or Ivy), no local server to start/stop. It just works.</p>
-<p>As a technical aside, this &ldquo;local&rdquo; mode starts up an in-process Spark instance, backed by a thread-pool, and actually opens up a few ports and temp directories, because it&rsquo;s a real, live Spark instance.</p>
-<p>Granted, this is usually more work than you want to be done in an unit test (which ideally would not hit any file or network I/O), but the redeeming quality is that it&rsquo;s <em>fast</em>. Tests run in ~2 seconds.</p>
-<p>Okay, yes, this is slow compared to pure, traditional unit tests, but is such a huge revolution compared to Hive that we&rsquo;ll gladly take it.</p>
-<h4 id=2-spark-is-easy-to-extend>
-2. Spark is easy to extend
-<a class=heading-link href=#2-spark-is-easy-to-extend>
-<i class="fa fa-link" aria-hidden=true></i>
-</a>
-</h4>
-<p>Spark&rsquo;s primary API is a Scala DSL, oriented around what they call an <a href=http://www.spark-project.org/docs/0.6.0/api/core/#spark.RDD><code>RDD</code></a>, or Resilient Distributed Dataset, which is basically a collection that only supports bulk/aggregate transforms (so methods like <code>map</code>, <code>filter</code>, and <code>groupBy</code>, which can be seen as transforming the entire collection, but no methods like <code>get</code> or <code>take</code> which assume in-memory/random access).</p>
-<p>Some really short, made up example code is:</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-scala data-lang=scala><span style=color:#75715e>// RDD[String] is like a collection of lines
-</span><span style=color:#75715e></span><span style=color:#66d9ef>val</span> in<span style=color:#66d9ef>:</span> <span style=color:#66d9ef>RDD</span><span style=color:#f92672>[</span><span style=color:#66d9ef>String</span><span style=color:#f92672>]</span> <span style=color:#66d9ef>=</span> sc<span style=color:#f92672>.</span>textFile<span style=color:#f92672>(</span><span style=color:#e6db74>&#34;s3://bucket/path/&#34;</span><span style=color:#f92672>)</span>
-<span style=color:#75715e>// perform some operation on each line
-</span><span style=color:#75715e></span><span style=color:#66d9ef>val</span> suffixed <span style=color:#66d9ef>=</span> in<span style=color:#f92672>.</span>map <span style=color:#f92672>{</span> line <span style=color:#66d9ef>=&gt;</span> line <span style=color:#f92672>+</span> <span style=color:#e6db74>&#34;some suffix&#34;</span> <span style=color:#f92672>}</span>
-<span style=color:#75715e>// now save the new lines back out
-</span><span style=color:#75715e></span>suffixed<span style=color:#f92672>.</span>saveAsTextFile<span style=color:#f92672>(</span><span style=color:#e6db74>&#34;s3://bucket/path2&#34;</span><span style=color:#f92672>)</span>
-</code></pre></div><p>Spark&rsquo;s job is to package up your <code>map</code> closure, and run it against that extra large text file across your cluster. And it does so by, after shuffling the code and data around, <em>actually calling your closure</em> (i.e. there is no <a href=http://msdn.microsoft.com/en-us/library/vstudio/bb397926.aspx>LINQ</a>-like introspection of the closure&rsquo;s AST).</p>
-<p>This may seem minor, but it&rsquo;s huge, because it means there is no framework code or APIs standing between your running closure and any custom functions you&rsquo;d want to run. Let&rsquo;s say you want to use <code>SomeUtilityClass</code> (or the venerable <a href=http://commons.apache.org/lang/api-2.5/org/apache/commons/lang/StringUtils.html><code>StringUtils</code></a>), just do:</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-scala data-lang=scala><span style=color:#66d9ef>import</span> com.company.SomeUtilityClass
-<span style=color:#66d9ef>val</span> in<span style=color:#66d9ef>:</span> <span style=color:#66d9ef>RDD</span><span style=color:#f92672>[</span><span style=color:#66d9ef>String</span><span style=color:#f92672>]</span> <span style=color:#66d9ef>=</span> sc<span style=color:#f92672>.</span>textFile<span style=color:#f92672>(</span><span style=color:#e6db74>&#34;s3://bucket/path/&#34;</span><span style=color:#f92672>)</span>
-<span style=color:#66d9ef>val</span> processed <span style=color:#66d9ef>=</span> in<span style=color:#f92672>.</span>map <span style=color:#f92672>{</span> line <span style=color:#66d9ef>=&gt;</span>
-  <span style=color:#75715e>// just call it, it&#39;s a normal method call
-</span><span style=color:#75715e></span>  <span style=color:#a6e22e>SomeUtilityClass</span><span style=color:#f92672>.</span>process<span style=color:#f92672>(</span>line<span style=color:#f92672>)</span> 
-<span style=color:#f92672>}</span>
-processed<span style=color:#f92672>.</span>saveAsTextFile<span style=color:#f92672>(</span><span style=color:#e6db74>&#34;s3://bucket/path2&#34;</span><span style=color:#f92672>)</span>
-</code></pre></div><p>Notice how <code>SomeUtilityClass</code> doesn&rsquo;t have to know it&rsquo;s running within a Spark RDD in the cluster. It just takes a String. Done.</p>
-<p>Similarly, Spark doesn&rsquo;t need to know anything about the code you use witin the closure, it just needs to be available on the classpath of each machine in the cluster (which is easy to do as part of your cluster/job setup, you just copy some jars around).</p>
-<p>This seamless hop between the RDD and custom Java/Scala code is very nice, and means your Spark jobs end up reading just like regular, normal Scala code (which to us is a good thing!).</p>
-<h2 id=is-spark-perfect>
-Is Spark Perfect?
-<a class=heading-link href=#is-spark-perfect>
-<i class="fa fa-link" aria-hidden=true></i>
-</a>
-</h2>
-<p>As full disclosure, we&rsquo;re still in the early stages of testing Spark, so we can&rsquo;t yet say whether Spark will be a wholesale replacement for Hive within Bizo. We haven&rsquo;t gotten to any serious performance comparisons or written large, complex reports to see if Spark can take whatever we throw at it.</p>
-<p>Personally, I am also admittedly somewhat infutuated with Spark at this point, so that could be clouding my judgement about the pros/cons and the tradeoffs with Hive.</p>
-<p>One Spark con so far is that Spark is pre-1.0, and it can show. I&rsquo;ve seen some stack traces that shouldn&rsquo;t happen, and some usability warts, that hopefully will be cleared up by 1.0. (That said, even as a newbie I find the codebase small and very easy to read, such that I&rsquo;ve had <a href=https://github.com/mesos/spark/pull/352>several</a> <a href=https://github.com/mesos/spark/pull/351>small</a> <a href=https://github.com/mesos/spark/pull/362>pull requests</a> accepted already&ndash;which is a nice consolation compared to the daunting codebases of Hadoop and Hive.)</p>
-<p>We have also seen that, for our first Spark job, moving from &ldquo;Spark job written&rdquo; to &ldquo;Spark job running in production&rdquo; is taking longer than expected. But given that Spark is a new tool to us, we expect this to be a one-time cost.</p>
-<h2 id=more-to-come>
-More to Come
-<a class=heading-link href=#more-to-come>
-<i class="fa fa-link" aria-hidden=true></i>
-</a>
-</h2>
-<p>I have a few more posts coming up which explain our approach to Spark in more detail, for example:</p>
-<ul>
-<li>Testing best practices</li>
-<li>Running Spark in EMR</li>
-<li>Accessing partitioned S3 logs</li>
-</ul>
-<p>To see those when they come out, make sure to subscribe to the blog, or, better yet, <a href=http://bizo.theresumator.com/>come work at Bizo</a> and help us out!</p>
-</div>
-<footer>
-<div id=disqus_thread></div>
-<script type=application/javascript>var disqus_config=function(){};(function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById('disqus_thread').innerHTML='Disqus comments not available by default when the website is previewed locally.';return}var b=document,a=b.createElement('script');a.async=!0,a.src='//draconianoverlord.disqus.com/embed.js',a.setAttribute('data-timestamp',+new Date),(b.head||b.body).appendChild(a)})()</script>
-<noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript>
-<a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a>
-</footer>
-</article>
-</section>
-</div>
-<footer class=footer>
-<section class=container>
-©
+primary shortcomings, and turns them into huge strengths. Specifically:</p><h4 id=1-spark-jobs-are-amazingly-easy-to-test>1. Spark jobs are amazingly easy to test
+<a class=heading-link href=#1-spark-jobs-are-amazingly-easy-to-test><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h4><p>Writing a test in Spark is as easy as:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-scala data-lang=scala><span style=display:flex><span><span style=color:#66d9ef>class</span> <span style=color:#a6e22e>SparkTest</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>  <span style=color:#a6e22e>@Test</span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>def</span> test<span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>    <span style=color:#75715e>// this is real code...
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>    <span style=color:#66d9ef>val</span> sc <span style=color:#66d9ef>=</span> <span style=color:#66d9ef>new</span> <span style=color:#a6e22e>SparkContext</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;local&#34;</span><span style=color:#f92672>,</span> <span style=color:#960050;background-color:#1e0010>&#34;</span><span style=color:#a6e22e>MyUnitTest</span><span style=color:#960050;background-color:#1e0010>&#39;</span><span style=color:#f92672>)</span>
+</span></span><span style=display:flex><span>    <span style=color:#75715e>// and now some psuedo code...
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>    <span style=color:#66d9ef>val</span> output <span style=color:#66d9ef>=</span> runYourCodeThatUsesSpark<span style=color:#f92672>(</span>sc<span style=color:#f92672>)</span>
+</span></span><span style=display:flex><span>    assertAgainst<span style=color:#f92672>(</span>output<span style=color:#f92672>)</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>}</span>
+</span></span></code></pre></div><p>(I will go into more detail about <code>runYourCodeThatUsesSpark</code> in a future post.)</p><p>This one liner starts up a new <a href=http://spark-project.org/docs/latest/api/core/index.html#spark.SparkContext class=external-link target=_blank rel=noopener>SparkContext</a>, which is all your program needs to execute Spark jobs. There is no local installation required (just have the Spark jar on your classpath, e.g. via Maven or Ivy), no local server to start/stop. It just works.</p><p>As a technical aside, this &ldquo;local&rdquo; mode starts up an in-process Spark instance, backed by a thread-pool, and actually opens up a few ports and temp directories, because it&rsquo;s a real, live Spark instance.</p><p>Granted, this is usually more work than you want to be done in an unit test (which ideally would not hit any file or network I/O), but the redeeming quality is that it&rsquo;s <em>fast</em>. Tests run in ~2 seconds.</p><p>Okay, yes, this is slow compared to pure, traditional unit tests, but is such a huge revolution compared to Hive that we&rsquo;ll gladly take it.</p><h4 id=2-spark-is-easy-to-extend>2. Spark is easy to extend
+<a class=heading-link href=#2-spark-is-easy-to-extend><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h4><p>Spark&rsquo;s primary API is a Scala DSL, oriented around what they call an <a href=http://www.spark-project.org/docs/0.6.0/api/core/#spark.RDD class=external-link target=_blank rel=noopener><code>RDD</code></a>, or Resilient Distributed Dataset, which is basically a collection that only supports bulk/aggregate transforms (so methods like <code>map</code>, <code>filter</code>, and <code>groupBy</code>, which can be seen as transforming the entire collection, but no methods like <code>get</code> or <code>take</code> which assume in-memory/random access).</p><p>Some really short, made up example code is:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-scala data-lang=scala><span style=display:flex><span><span style=color:#75715e>// RDD[String] is like a collection of lines
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span><span style=color:#66d9ef>val</span> in<span style=color:#66d9ef>:</span> <span style=color:#66d9ef>RDD</span><span style=color:#f92672>[</span><span style=color:#66d9ef>String</span><span style=color:#f92672>]</span> <span style=color:#66d9ef>=</span> sc<span style=color:#f92672>.</span>textFile<span style=color:#f92672>(</span><span style=color:#e6db74>&#34;s3://bucket/path/&#34;</span><span style=color:#f92672>)</span>
+</span></span><span style=display:flex><span><span style=color:#75715e>// perform some operation on each line
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span><span style=color:#66d9ef>val</span> suffixed <span style=color:#66d9ef>=</span> in<span style=color:#f92672>.</span>map <span style=color:#f92672>{</span> line <span style=color:#66d9ef>=&gt;</span> line <span style=color:#f92672>+</span> <span style=color:#e6db74>&#34;some suffix&#34;</span> <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span><span style=color:#75715e>// now save the new lines back out
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>suffixed<span style=color:#f92672>.</span>saveAsTextFile<span style=color:#f92672>(</span><span style=color:#e6db74>&#34;s3://bucket/path2&#34;</span><span style=color:#f92672>)</span>
+</span></span></code></pre></div><p>Spark&rsquo;s job is to package up your <code>map</code> closure, and run it against that extra large text file across your cluster. And it does so by, after shuffling the code and data around, <em>actually calling your closure</em> (i.e. there is no <a href=http://msdn.microsoft.com/en-us/library/vstudio/bb397926.aspx class=external-link target=_blank rel=noopener>LINQ</a>-like introspection of the closure&rsquo;s AST).</p><p>This may seem minor, but it&rsquo;s huge, because it means there is no framework code or APIs standing between your running closure and any custom functions you&rsquo;d want to run. Let&rsquo;s say you want to use <code>SomeUtilityClass</code> (or the venerable <a href=http://commons.apache.org/lang/api-2.5/org/apache/commons/lang/StringUtils.html class=external-link target=_blank rel=noopener><code>StringUtils</code></a>), just do:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-scala data-lang=scala><span style=display:flex><span><span style=color:#66d9ef>import</span> com.company.SomeUtilityClass
+</span></span><span style=display:flex><span><span style=color:#66d9ef>val</span> in<span style=color:#66d9ef>:</span> <span style=color:#66d9ef>RDD</span><span style=color:#f92672>[</span><span style=color:#66d9ef>String</span><span style=color:#f92672>]</span> <span style=color:#66d9ef>=</span> sc<span style=color:#f92672>.</span>textFile<span style=color:#f92672>(</span><span style=color:#e6db74>&#34;s3://bucket/path/&#34;</span><span style=color:#f92672>)</span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>val</span> processed <span style=color:#66d9ef>=</span> in<span style=color:#f92672>.</span>map <span style=color:#f92672>{</span> line <span style=color:#66d9ef>=&gt;</span>
+</span></span><span style=display:flex><span>  <span style=color:#75715e>// just call it, it&#39;s a normal method call
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>  <span style=color:#a6e22e>SomeUtilityClass</span><span style=color:#f92672>.</span>process<span style=color:#f92672>(</span>line<span style=color:#f92672>)</span> 
+</span></span><span style=display:flex><span><span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>processed<span style=color:#f92672>.</span>saveAsTextFile<span style=color:#f92672>(</span><span style=color:#e6db74>&#34;s3://bucket/path2&#34;</span><span style=color:#f92672>)</span>
+</span></span></code></pre></div><p>Notice how <code>SomeUtilityClass</code> doesn&rsquo;t have to know it&rsquo;s running within a Spark RDD in the cluster. It just takes a String. Done.</p><p>Similarly, Spark doesn&rsquo;t need to know anything about the code you use witin the closure, it just needs to be available on the classpath of each machine in the cluster (which is easy to do as part of your cluster/job setup, you just copy some jars around).</p><p>This seamless hop between the RDD and custom Java/Scala code is very nice, and means your Spark jobs end up reading just like regular, normal Scala code (which to us is a good thing!).</p><h2 id=is-spark-perfect>Is Spark Perfect?
+<a class=heading-link href=#is-spark-perfect><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h2><p>As full disclosure, we&rsquo;re still in the early stages of testing Spark, so we can&rsquo;t yet say whether Spark will be a wholesale replacement for Hive within Bizo. We haven&rsquo;t gotten to any serious performance comparisons or written large, complex reports to see if Spark can take whatever we throw at it.</p><p>Personally, I am also admittedly somewhat infutuated with Spark at this point, so that could be clouding my judgement about the pros/cons and the tradeoffs with Hive.</p><p>One Spark con so far is that Spark is pre-1.0, and it can show. I&rsquo;ve seen some stack traces that shouldn&rsquo;t happen, and some usability warts, that hopefully will be cleared up by 1.0. (That said, even as a newbie I find the codebase small and very easy to read, such that I&rsquo;ve had <a href=https://github.com/mesos/spark/pull/352 class=external-link target=_blank rel=noopener>several</a> <a href=https://github.com/mesos/spark/pull/351 class=external-link target=_blank rel=noopener>small</a> <a href=https://github.com/mesos/spark/pull/362 class=external-link target=_blank rel=noopener>pull requests</a> accepted already&ndash;which is a nice consolation compared to the daunting codebases of Hadoop and Hive.)</p><p>We have also seen that, for our first Spark job, moving from &ldquo;Spark job written&rdquo; to &ldquo;Spark job running in production&rdquo; is taking longer than expected. But given that Spark is a new tool to us, we expect this to be a one-time cost.</p><h2 id=more-to-come>More to Come
+<a class=heading-link href=#more-to-come><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h2><p>I have a few more posts coming up which explain our approach to Spark in more detail, for example:</p><ul><li>Testing best practices</li><li>Running Spark in EMR</li><li>Accessing partitioned S3 logs</li></ul><p>To see those when they come out, make sure to subscribe to the blog, or, better yet, <a href=http://bizo.theresumator.com/ class=external-link target=_blank rel=noopener>come work at Bizo</a> and help us out!</p></div><footer><div id=disqus_thread></div><script>window.disqus_config=function(){},function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById("disqus_thread").innerHTML="Disqus comments not available by default when the website is previewed locally.";return}var t=document,e=t.createElement("script");e.async=!0,e.src="//draconianoverlord.disqus.com/embed.js",e.setAttribute("data-timestamp",+new Date),(t.head||t.body).appendChild(e)}(),document.addEventListener("themeChanged",function(){document.readyState=="complete"&&DISQUS.reset({reload:!0,config:disqus_config})})</script></footer></article></section></div><footer class=footer><section class=container>©
 2008 -
-2022
+2023
 Stephen Haberman
 ·
-Powered by <a href=https://gohugo.io/>Hugo</a> & <a href=https://github.com/luizdepra/hugo-coder/>Coder</a>.
-</section>
-</footer>
-</main>
-<script src=/js/coder.min.03b17769f4f91ae35667e1f2a1ca8c16f50562576cf90ff32b3179926914daa5.js integrity="sha256-A7F3afT5GuNWZ+HyocqMFvUFYlds+Q/zKzF5kmkU2qU="></script>
-</body>
-</html>
+Powered by <a href=https://gohugo.io/ target=_blank rel=noopener>Hugo</a> & <a href=https://github.com/luizdepra/hugo-coder/ target=_blank rel=noopener>Coder</a>.</section></footer></main><script src=/js/coder.min.6ae284be93d2d19dad1f02b0039508d9aab3180a12a06dcc71b0b0ef7825a317.js integrity="sha256-auKEvpPS0Z2tHwKwA5UI2aqzGAoSoG3McbCw73gloxc="></script></body></html>

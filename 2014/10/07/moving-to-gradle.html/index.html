@@ -1,191 +1,34 @@
-<!doctype html><html lang=en>
-<head>
-<meta charset=utf-8>
-<meta name=viewport content="width=device-width,initial-scale=1">
-<meta http-equiv=content-language content="en">
-<meta name=color-scheme content="light dark">
-<meta name=author content="Stephen Haberman">
-<meta name=description content="For my open source projects, for awhile I&rsquo;ve been using Ant + Ivy + IvyDE, and more recently buildr + Ivy + IvyDE, as my preferred build environment.
+<!doctype html><html lang=en><head><title>Moving to Gradle · Draconian Overlord</title><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=color-scheme content="light dark"><meta name=author content="Stephen Haberman"><meta name=description content="For my open source projects, for awhile I&rsquo;ve been using Ant + Ivy + IvyDE, and more recently buildr + Ivy + IvyDE, as my preferred build environment.
 There were several things I liked about this setup:
-  With Ant, I always knew exactly what was happening, and why, and could fix it within minutes, albeit with some more lines of XML.
-(As surprising as it is, even to me, at work we actually have a well-organized, low-boilerplate Ant-based build system that is a fork of the Spring&rsquo;s common-build project.">
-<meta name=keywords content="blog,developer,personal">
-<meta name=twitter:card content="summary">
-<meta name=twitter:title content="Moving to Gradle">
-<meta name=twitter:description content="For my open source projects, for awhile I&rsquo;ve been using Ant + Ivy + IvyDE, and more recently buildr + Ivy + IvyDE, as my preferred build environment.
+With Ant, I always knew exactly what was happening, and why, and could fix it within minutes, albeit with some more lines of XML.
+(As surprising as it is, even to me, at work we actually have a well-organized, low-boilerplate Ant-based build system that is a fork of the Spring&rsquo;s common-build project."><meta name=keywords content="blog,developer,personal"><meta name=twitter:card content="summary"><meta name=twitter:title content="Moving to Gradle"><meta name=twitter:description content="For my open source projects, for awhile I&rsquo;ve been using Ant + Ivy + IvyDE, and more recently buildr + Ivy + IvyDE, as my preferred build environment.
 There were several things I liked about this setup:
-  With Ant, I always knew exactly what was happening, and why, and could fix it within minutes, albeit with some more lines of XML.
-(As surprising as it is, even to me, at work we actually have a well-organized, low-boilerplate Ant-based build system that is a fork of the Spring&rsquo;s common-build project.">
-<meta property="og:title" content="Moving to Gradle">
-<meta property="og:description" content="For my open source projects, for awhile I&rsquo;ve been using Ant + Ivy + IvyDE, and more recently buildr + Ivy + IvyDE, as my preferred build environment.
+With Ant, I always knew exactly what was happening, and why, and could fix it within minutes, albeit with some more lines of XML.
+(As surprising as it is, even to me, at work we actually have a well-organized, low-boilerplate Ant-based build system that is a fork of the Spring&rsquo;s common-build project."><meta property="og:title" content="Moving to Gradle"><meta property="og:description" content="For my open source projects, for awhile I&rsquo;ve been using Ant + Ivy + IvyDE, and more recently buildr + Ivy + IvyDE, as my preferred build environment.
 There were several things I liked about this setup:
-  With Ant, I always knew exactly what was happening, and why, and could fix it within minutes, albeit with some more lines of XML.
-(As surprising as it is, even to me, at work we actually have a well-organized, low-boilerplate Ant-based build system that is a fork of the Spring&rsquo;s common-build project.">
-<meta property="og:type" content="article">
-<meta property="og:url" content="https://www.draconianoverlord.com/2014/10/07/moving-to-gradle.html/"><meta property="article:section" content="posts">
-<meta property="article:published_time" content="2014-10-07T00:00:00+00:00">
-<meta property="article:modified_time" content="2014-10-07T00:00:00+00:00">
-<title>
-Moving to Gradle · Draconian Overlord
-</title>
-<link rel=canonical href=https://www.draconianoverlord.com/2014/10/07/moving-to-gradle.html/>
-<link rel=preload href="/fonts/forkawesome-webfont.woff2?v=1.2.0" as=font type=font/woff2 crossorigin>
-<link rel=stylesheet href=/css/coder.min.d9fddbffe6f27e69985dc5fe0471cdb0e57fbf4775714bc3d847accb08f4a1f6.css integrity="sha256-2f3b/+byfmmYXcX+BHHNsOV/v0d1cUvD2Eesywj0ofY=" crossorigin=anonymous media=screen>
-<link rel=stylesheet href=/css/coder-dark.min.aa883b9ce35a8ff4a2a5008619005175e842bb18a8a9f9cc2bbcf44dab2d91fa.css integrity="sha256-qog7nONaj/SipQCGGQBRdehCuxioqfnMK7z0Tastkfo=" crossorigin=anonymous media=screen>
-<link rel=icon type=image/png href=/images/favicon-32x32.png sizes=32x32>
-<link rel=icon type=image/png href=/images/favicon-16x16.png sizes=16x16>
-<link rel=apple-touch-icon href=/images/apple-touch-icon.png>
-<link rel=apple-touch-icon sizes=180x180 href=/images/apple-touch-icon.png>
-<meta name=generator content="Hugo 0.92.0">
-</head>
-<body class="preload-transitions colorscheme-auto">
-<div class=float-container>
-<a id=dark-mode-toggle class=colorscheme-toggle>
-<i class="fa fa-adjust fa-fw" aria-hidden=true></i>
-</a>
-</div>
-<main class=wrapper>
-<nav class=navigation>
-<section class=container>
-<a class=navigation-title href=/>Draconian Overlord</a>
-Oppressing software entropy
-</section>
-</nav>
-<div class=content>
-<section class="container post">
-<article>
-<header>
-<div class=post-title>
-<h1 class=title>
-<a class=title-link href=https://www.draconianoverlord.com/2014/10/07/moving-to-gradle.html/>
-Moving to Gradle
-</a>
-</h1>
-</div>
-<div class=post-meta>
-<div class=date>
-<span class=posted-on>
-<i class="fa fa-calendar" aria-hidden=true></i>
-<time datetime=2014-10-07T00:00:00Z>
-October 7, 2014
-</time>
-</span>
-<span class=reading-time>
-<i class="fa fa-clock-o" aria-hidden=true></i>
-7-minute read
-</span>
-</div>
-<div class=categories>
-<i class="fa fa-folder" aria-hidden=true></i>
-<a href=/categories/java/>Java</a></div>
-</div>
-</header>
-<div>
-<p>For my open source projects, for awhile I&rsquo;ve been using <a href=http://ant.apache.org>Ant</a> + <a href=http://ant.apache.org/ivy/>Ivy</a> + <a href=http://ant.apache.org/ivy/ivyde/>IvyDE</a>, and more recently <a href=http://buildr.apache.org>buildr</a> + Ivy + IvyDE, as my preferred build environment.</p>
-<p>There were several things I liked about this setup:</p>
-<ol>
-<li>
-<p>With Ant, I always knew exactly what was happening, and why, and could fix it within minutes, albeit with some more lines of XML.</p>
-<p>(As surprising as it is, even to me, at work we actually have a well-organized, low-boilerplate Ant-based build system that is a fork of the Spring&rsquo;s <a href=https://github.com/astubbs/spring-modules/tree/master/projects/common-build>common-build</a> project. Spring&rsquo;s <code>common-build</code> has been long since abandoned, but it basically used Maven-style conventions so that 90%+ of a project&rsquo;s build logic could be imported for free.)</p>
-</li>
-<li>
-<p>With Ivy, I could get at Maven&rsquo;s transitive dependencies and repositories, without actually using Maven.</p>
-</li>
-<li>
-<p>With IvyDE, I could open projects in Eclipse and have cross-project references automatically hooked up.</p>
-</li>
-</ol>
-<p>All nice.</p>
-<p>However, there was one major downside: <strong>basically no one else used my setup</strong>.</p>
-<p>Especially IvyDE, which is not a widely-used/&ldquo;most Java programmers already have it&rdquo; Eclipse plugin.</p>
-<p>Nonetheless, for a few years, I persisted, rationalizing that the setup was &ldquo;good enough for me&rdquo; (because it was), and I had not found an obviously better alternative (buildr was close; if buildr had seen the uptake that Gradle has, I&rsquo;d be happy with it).</p>
-<p>I am not entirely sure what changed, maybe it was the recent surge in new build systems (Gradle getting momentum, Pants from Twitter, and Buck from Facebook), or Ivy being a frustratingly dwindling community (despite it powering the Maven side of many of these new build systems, like Gradle; which is frustrating, because it should have a really robust community because of this huge shadow usage, but instead the Ivy dev community is small and slow).</p>
-<p>But whatever the catalyst, I decided to try growing as a person, and use Gradle for a few projects.</p>
-<p>Even more surprising, I eschewed a hacked-together &ldquo;Gradle + Ivy + IvyDE&rdquo; setup (because on principle I think dependencies should be in their own file, and not mixed into build script logic), and used stock Gradle.</p>
-<p>Turns out it does not suck.</p>
-<p>The first project I converted was <a href=https://github.com/stephenh/pageobjects>pageobjects</a>, since it&rsquo;s very small and would be a could canary project. I also got it building on Travis, which due to wanting to <code>scp</code> the release artifacts to my Maven repo, was actually the most frustrating part (I needed the right combination of wagon ssh (not <code>sshexe</code>), <code>ssh-keygen</code> to white list the host as known, and using a password without a space in it; see <a href=https://github.com/stephenh/pageobjects/blob/master/build.gradle>here</a> and <a href=https://github.com/stephenh/pageobjects/blob/master/.travis.yml>here</a>).</p>
-<p>After that, I converted <a href=https://github.com/stephenh/todomvc-tessell>todomvc-tessell</a> to see how a GWT/Tessell project would go (fine), and then after that, <a href=http://www.tessell.org>Tessell</a> proper. So far, so good.</p>
-<p>I think the most differentiating thing about Gradle (especially vs. my prior preferred build setup) is: <strong>Lots of other people actually use it.</strong></p>
-<p>Which of course means there are Stack Overflow articles, and forum posts, and active bug trackers, and great docs, and all sorts of goodies that make learning easy.</p>
-<p>This is actually annoying for me to admit, because I have several open source projects with zero community, because I don&rsquo;t invest the time in docs, or making getting started easy, or any community building.</p>
-<p>So, anyway, with that, here are my Gradle-so-far notes/gripes:</p>
-<ol>
-<li>
-<p>Holy shit the <a href=http://www.gradle.org/docs/current/userguide/gradle_daemon.html>daemon setting</a> should be the default, because it turns Gradle from &ldquo;how do people use this?&rdquo; slow to &ldquo;basically as fast as buildr&rdquo;.</p>
-<p>I understand CI servers blah blah (can Gradle auto-detect when running in a terminal vs. headless?), but the out of the box experience without this flag is really awful.</p>
-<p><strong>Update Sept 2016:</strong> The gradle daemon is now the default behavior, which is great.</p>
-</li>
-<li>
-<p>Publishing source jars isn&rsquo;t the default, and isn&rsquo;t even a one-line opt-in. Wtf?</p>
-<p>It makes me think I&rsquo;m missing something, as currently these eight lines will be in every <code>build.gradle</code> of my projects:</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-gradle data-lang=gradle>task <span style=color:#a6e22e>sourcesJar</span><span style=color:#f92672>(</span>type: Jar<span style=color:#f92672>,</span> dependsOn: classes<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
-  classifier <span style=color:#e6db74>&#39;sources&#39;</span>
-  from sourceSets<span style=color:#f92672>.</span><span style=color:#a6e22e>main</span><span style=color:#f92672>.</span><span style=color:#a6e22e>allSource</span>
-<span style=color:#f92672>}</span>
-
-artifacts <span style=color:#f92672>{</span>
-  archives sourcesJar
-<span style=color:#f92672>}</span>
-</code></pre></div><p>Not exactly great, but not a huge deal.</p>
-</li>
-<li>
-<p>For projects that use either <a href=http://www.tessell.org>Tessell</a> or <a href=http://www.dtonator.org>dtonator</a>, I setup Eclipse to use <a href=https://www.ibm.com/developerworks/opensource/tutorials/os-eclipse-tools/>External Tool Builders</a> to run their code generators.</p>
-<p>This is basically a way for Eclipse to run your code generator anytime the user saves a file (within a certain directory in the workspace), but without writing an Eclipse plugin. It&rsquo;s really handy.</p>
-<p>Previously, I&rsquo;d have Eclipse run a <code>java</code> command, with the classpath set to whatever jars Ivy/IvyDE had copied into my local project <code>./lib</code> directory, e.g.:</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-plain data-lang=plain>java -cp ./lib/&#39;*&#39; com.foo.MyGenerator some args
-</code></pre></div><p>This worked well, as invoking <code>java</code> is quick, and the jars are already copied to lib, so it&rsquo;s fast enough to be ran on file save, and not get annoying.</p>
-<p>However, Gradle does not copy the libs to the local project directory, and even if the CLI build could be scripted to do it, I doubt the Eclipse Gradle could be similarly instrumented (I prefer to have projects setup where, if a developer is using Eclipse, they can stay only in Eclipse, and not have to sometimes toggle this Eclipse button, and other times toggle this CLI command).</p>
-<p>Fortunately, and very surprisingly, solely to do the should-be-the-default daemon flag, Gradle is actually fast enough to just run the entire gradle command on each wave, e.g. an external tool builder that runs:</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-plain data-lang=plain>./gradlew my-codegen-target
-</code></pre></div><p>Every time is technically slower, but still acceptably fast, and has the bonus of reusing the <code>my-codegen-target</code> logic that the CLI build is going to need anyway.</p>
-<p>(I am almost disappointed this worked, because the alternative was that I was going to have to finally write an Eclipse plugin to run the Tessell/dtonator code generators, which, despite likely being a huge PITA, I&rsquo;d like to do for at least one of my projects at some point.)</p>
-</li>
-<li>
-<p>The Eclipse/STS Gradle plugin works well; it definitely has more of a &ldquo;just works&rdquo; feel than any Ivy/IvyDE setup I&rsquo;ve used before.</p>
-<p>However, it&rsquo;s slightly behind IvyDE on features (and, granted, likely always will be given Ivy&rsquo;s tendency to be over-configurable), most particularly in terms of hooking up in-workspace projects (see <a href=https://issuetracker.springsource.com/browse/STS-2834>STS-2834</a>).</p>
-<p>At work, we have several hundred projects, too many for a traditional multi-project Maven/Gradle build (and the projects are too unrelated for it to make sense anyway), so we heavily rely on IvyDE being able to dynamically hook up only the N projects you actually have open.</p>
-<p>So, that is a key feature for us/me, although I don&rsquo;t anticipate it being very hard for STS Gradle to do, and the issue is fairly well voted/watched. And it doesn&rsquo;t affect any of my open source projects.</p>
-</li>
-<li>
-<p>I am not a Gradle expert, but so far I&rsquo;m impressed by the architectural choice of Gradle differentiating the planning phase vs. the execution phase, which allows IDEs like Eclipse/IntelliJ to invoke a tooling API to probe the planning phase, but then do their own thing for the execution phase. Makes sense.</p>
-</li>
-<li>
-<p>Travis is cool; I especially like how it will build both a regular <a href=https://travis-ci.org/stephenh/tessell/builds/37016388>&ldquo;pushed a branch&rdquo; build</a>, and then also another <a href=https://travis-ci.org/stephenh/tessell/builds/37016386>&ldquo;pushed a tag&rdquo; build</a> (even if the tag&rsquo;s commit hash had already been built as part of a &ldquo;pushed a branch&rdquo; build).</p>
-<p>What this allows is some conditional logic in the <code>.travis.yml</code> file to only publish artifacts for builds that are for a tag (e.g. the <code>TRAVIS_TAG</code> variable is set):</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=color:#f92672>after_success</span>:
-  - <span style=color:#ae81ff>test -n &#34;$TRAVIS_TAG&#34;</span>
-     <span style=color:#75715e>&amp;&amp;</span> <span style=color:#ae81ff>ssh-keyscan -H repo.joist.ws &gt;&gt; ~/.ssh/known_hosts</span>
-     <span style=color:#75715e>&amp;&amp;</span> <span style=color:#ae81ff>gradle uploadArchives</span>
-</code></pre></div><p>This means I can make a change, push master, and see if it builds. Then, and only then, once it&rsquo;s built, I can make a tag, and push the tag, and it will also get built (without needing a new commit).</p>
-<p>This is really nice because I can avoid burning tags on commits that won&rsquo;t build (e.g. if, like my Hudson setup before, I had to tag a revision before pushing it to the server, and so could end up tagging an inherently broken revision).</p>
-</li>
-<li>
-<p>I still am not cool enough to be publishing to Maven central. Some day.</p>
-</li>
-</ol>
-<p>So, that&rsquo;s it for now.</p>
-<p>Unlike most of my Ivy/IvyDE posts, I don&rsquo;t have any hard-won snippets of &ldquo;wow, this was hard to figure out, so here&rsquo;s what posterity needs to know&rdquo;. Instead everything I&rsquo;m doing with Gradle, even if it&rsquo;s immediately out-of-the-box, was pretty easy to Google for and find answers. Which is basically the point.</p>
-</div>
-<footer>
-<div id=disqus_thread></div>
-<script type=application/javascript>var disqus_config=function(){};(function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById('disqus_thread').innerHTML='Disqus comments not available by default when the website is previewed locally.';return}var b=document,a=b.createElement('script');a.async=!0,a.src='//draconianoverlord.disqus.com/embed.js',a.setAttribute('data-timestamp',+new Date),(b.head||b.body).appendChild(a)})()</script>
-<noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript>
-<a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a>
-</footer>
-</article>
-</section>
-</div>
-<footer class=footer>
-<section class=container>
-©
+With Ant, I always knew exactly what was happening, and why, and could fix it within minutes, albeit with some more lines of XML.
+(As surprising as it is, even to me, at work we actually have a well-organized, low-boilerplate Ant-based build system that is a fork of the Spring&rsquo;s common-build project."><meta property="og:type" content="article"><meta property="og:url" content="https://www.draconianoverlord.com/2014/10/07/moving-to-gradle.html/"><meta property="article:section" content="posts"><meta property="article:published_time" content="2014-10-07T00:00:00+00:00"><meta property="article:modified_time" content="2014-10-07T00:00:00+00:00"><link rel=canonical href=https://www.draconianoverlord.com/2014/10/07/moving-to-gradle.html/><link rel=preload href="/fonts/forkawesome-webfont.woff2?v=1.2.0" as=font type=font/woff2 crossorigin><link rel=stylesheet href=/css/coder.min.65236a6d834b26194eed04a2a3b45e44d9194ef9e620253705d4bef03bd7ef81.css integrity="sha256-ZSNqbYNLJhlO7QSio7ReRNkZTvnmICU3BdS+8DvX74E=" crossorigin=anonymous media=screen><link rel=stylesheet href=/css/coder-dark.min.f6534b0b446b75d9b6ad77a97d43ede2ddaeff1b6e2361fb7198d6f8fcb7f83f.css integrity="sha256-9lNLC0Rrddm2rXepfUPt4t2u/xtuI2H7cZjW+Py3+D8=" crossorigin=anonymous media=screen><link rel=icon type=image/png href=/images/favicon-32x32.png sizes=32x32><link rel=icon type=image/png href=/images/favicon-16x16.png sizes=16x16><link rel=apple-touch-icon href=/images/apple-touch-icon.png><link rel=apple-touch-icon sizes=180x180 href=/images/apple-touch-icon.png><link rel=manifest href=/site.webmanifest><link rel=mask-icon href=/images/safari-pinned-tab.svg color=#5bbad5></head><body class="preload-transitions colorscheme-auto"><div class=float-container><a id=dark-mode-toggle class=colorscheme-toggle><i class="fa fa-adjust fa-fw" aria-hidden=true></i></a></div><main class=wrapper><nav class=navigation><section class=container><a class=navigation-title href=/>Draconian Overlord</a>
+Oppressing software entropy</section></nav><div class=content><section class="container post"><article><header><div class=post-title><h1 class=title><a class=title-link href=https://www.draconianoverlord.com/2014/10/07/moving-to-gradle.html/>Moving to Gradle</a></h1></div><div class=post-meta><div class=date><span class=posted-on><i class="fa fa-calendar" aria-hidden=true></i>
+<time datetime=2014-10-07T00:00:00Z>October 7, 2014</time></span>
+<span class=reading-time><i class="fa fa-clock-o" aria-hidden=true></i>
+7-minute read</span></div><div class=categories><i class="fa fa-folder" aria-hidden=true></i>
+<a href=/categories/java/>Java</a></div></div></header><div class=post-content><p>For my open source projects, for awhile I&rsquo;ve been using <a href=http://ant.apache.org class=external-link target=_blank rel=noopener>Ant</a> + <a href=http://ant.apache.org/ivy/ class=external-link target=_blank rel=noopener>Ivy</a> + <a href=http://ant.apache.org/ivy/ivyde/ class=external-link target=_blank rel=noopener>IvyDE</a>, and more recently <a href=http://buildr.apache.org class=external-link target=_blank rel=noopener>buildr</a> + Ivy + IvyDE, as my preferred build environment.</p><p>There were several things I liked about this setup:</p><ol><li><p>With Ant, I always knew exactly what was happening, and why, and could fix it within minutes, albeit with some more lines of XML.</p><p>(As surprising as it is, even to me, at work we actually have a well-organized, low-boilerplate Ant-based build system that is a fork of the Spring&rsquo;s <a href=https://github.com/astubbs/spring-modules/tree/master/projects/common-build class=external-link target=_blank rel=noopener>common-build</a> project. Spring&rsquo;s <code>common-build</code> has been long since abandoned, but it basically used Maven-style conventions so that 90%+ of a project&rsquo;s build logic could be imported for free.)</p></li><li><p>With Ivy, I could get at Maven&rsquo;s transitive dependencies and repositories, without actually using Maven.</p></li><li><p>With IvyDE, I could open projects in Eclipse and have cross-project references automatically hooked up.</p></li></ol><p>All nice.</p><p>However, there was one major downside: <strong>basically no one else used my setup</strong>.</p><p>Especially IvyDE, which is not a widely-used/&ldquo;most Java programmers already have it&rdquo; Eclipse plugin.</p><p>Nonetheless, for a few years, I persisted, rationalizing that the setup was &ldquo;good enough for me&rdquo; (because it was), and I had not found an obviously better alternative (buildr was close; if buildr had seen the uptake that Gradle has, I&rsquo;d be happy with it).</p><p>I am not entirely sure what changed, maybe it was the recent surge in new build systems (Gradle getting momentum, Pants from Twitter, and Buck from Facebook), or Ivy being a frustratingly dwindling community (despite it powering the Maven side of many of these new build systems, like Gradle; which is frustrating, because it should have a really robust community because of this huge shadow usage, but instead the Ivy dev community is small and slow).</p><p>But whatever the catalyst, I decided to try growing as a person, and use Gradle for a few projects.</p><p>Even more surprising, I eschewed a hacked-together &ldquo;Gradle + Ivy + IvyDE&rdquo; setup (because on principle I think dependencies should be in their own file, and not mixed into build script logic), and used stock Gradle.</p><p>Turns out it does not suck.</p><p>The first project I converted was <a href=https://github.com/stephenh/pageobjects class=external-link target=_blank rel=noopener>pageobjects</a>, since it&rsquo;s very small and would be a could canary project. I also got it building on Travis, which due to wanting to <code>scp</code> the release artifacts to my Maven repo, was actually the most frustrating part (I needed the right combination of wagon ssh (not <code>sshexe</code>), <code>ssh-keygen</code> to white list the host as known, and using a password without a space in it; see <a href=https://github.com/stephenh/pageobjects/blob/master/build.gradle class=external-link target=_blank rel=noopener>here</a> and <a href=https://github.com/stephenh/pageobjects/blob/master/.travis.yml class=external-link target=_blank rel=noopener>here</a>).</p><p>After that, I converted <a href=https://github.com/stephenh/todomvc-tessell class=external-link target=_blank rel=noopener>todomvc-tessell</a> to see how a GWT/Tessell project would go (fine), and then after that, <a href=http://www.tessell.org class=external-link target=_blank rel=noopener>Tessell</a> proper. So far, so good.</p><p>I think the most differentiating thing about Gradle (especially vs. my prior preferred build setup) is: <strong>Lots of other people actually use it.</strong></p><p>Which of course means there are Stack Overflow articles, and forum posts, and active bug trackers, and great docs, and all sorts of goodies that make learning easy.</p><p>This is actually annoying for me to admit, because I have several open source projects with zero community, because I don&rsquo;t invest the time in docs, or making getting started easy, or any community building.</p><p>So, anyway, with that, here are my Gradle-so-far notes/gripes:</p><ol><li><p>Holy shit the <a href=http://www.gradle.org/docs/current/userguide/gradle_daemon.html class=external-link target=_blank rel=noopener>daemon setting</a> should be the default, because it turns Gradle from &ldquo;how do people use this?&rdquo; slow to &ldquo;basically as fast as buildr&rdquo;.</p><p>I understand CI servers blah blah (can Gradle auto-detect when running in a terminal vs. headless?), but the out of the box experience without this flag is really awful.</p><p><strong>Update Sept 2016:</strong> The gradle daemon is now the default behavior, which is great.</p></li><li><p>Publishing source jars isn&rsquo;t the default, and isn&rsquo;t even a one-line opt-in. Wtf?</p><p>It makes me think I&rsquo;m missing something, as currently these eight lines will be in every <code>build.gradle</code> of my projects:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-gradle data-lang=gradle><span style=display:flex><span>task <span style=color:#a6e22e>sourcesJar</span><span style=color:#f92672>(</span>type: Jar<span style=color:#f92672>,</span> dependsOn: classes<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>  classifier <span style=color:#e6db74>&#39;sources&#39;</span>
+</span></span><span style=display:flex><span>  from sourceSets<span style=color:#f92672>.</span><span style=color:#a6e22e>main</span><span style=color:#f92672>.</span><span style=color:#a6e22e>allSource</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>artifacts <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>  archives sourcesJar
+</span></span><span style=display:flex><span><span style=color:#f92672>}</span>
+</span></span></code></pre></div><p>Not exactly great, but not a huge deal.</p></li><li><p>For projects that use either <a href=http://www.tessell.org class=external-link target=_blank rel=noopener>Tessell</a> or <a href=http://www.dtonator.org class=external-link target=_blank rel=noopener>dtonator</a>, I setup Eclipse to use <a href=https://www.ibm.com/developerworks/opensource/tutorials/os-eclipse-tools/ class=external-link target=_blank rel=noopener>External Tool Builders</a> to run their code generators.</p><p>This is basically a way for Eclipse to run your code generator anytime the user saves a file (within a certain directory in the workspace), but without writing an Eclipse plugin. It&rsquo;s really handy.</p><p>Previously, I&rsquo;d have Eclipse run a <code>java</code> command, with the classpath set to whatever jars Ivy/IvyDE had copied into my local project <code>./lib</code> directory, e.g.:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-plain data-lang=plain><span style=display:flex><span>java -cp ./lib/&#39;*&#39; com.foo.MyGenerator some args
+</span></span></code></pre></div><p>This worked well, as invoking <code>java</code> is quick, and the jars are already copied to lib, so it&rsquo;s fast enough to be ran on file save, and not get annoying.</p><p>However, Gradle does not copy the libs to the local project directory, and even if the CLI build could be scripted to do it, I doubt the Eclipse Gradle could be similarly instrumented (I prefer to have projects setup where, if a developer is using Eclipse, they can stay only in Eclipse, and not have to sometimes toggle this Eclipse button, and other times toggle this CLI command).</p><p>Fortunately, and very surprisingly, solely to do the should-be-the-default daemon flag, Gradle is actually fast enough to just run the entire gradle command on each wave, e.g. an external tool builder that runs:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-plain data-lang=plain><span style=display:flex><span>./gradlew my-codegen-target
+</span></span></code></pre></div><p>Every time is technically slower, but still acceptably fast, and has the bonus of reusing the <code>my-codegen-target</code> logic that the CLI build is going to need anyway.</p><p>(I am almost disappointed this worked, because the alternative was that I was going to have to finally write an Eclipse plugin to run the Tessell/dtonator code generators, which, despite likely being a huge PITA, I&rsquo;d like to do for at least one of my projects at some point.)</p></li><li><p>The Eclipse/STS Gradle plugin works well; it definitely has more of a &ldquo;just works&rdquo; feel than any Ivy/IvyDE setup I&rsquo;ve used before.</p><p>However, it&rsquo;s slightly behind IvyDE on features (and, granted, likely always will be given Ivy&rsquo;s tendency to be over-configurable), most particularly in terms of hooking up in-workspace projects (see <a href=https://issuetracker.springsource.com/browse/STS-2834 class=external-link target=_blank rel=noopener>STS-2834</a>).</p><p>At work, we have several hundred projects, too many for a traditional multi-project Maven/Gradle build (and the projects are too unrelated for it to make sense anyway), so we heavily rely on IvyDE being able to dynamically hook up only the N projects you actually have open.</p><p>So, that is a key feature for us/me, although I don&rsquo;t anticipate it being very hard for STS Gradle to do, and the issue is fairly well voted/watched. And it doesn&rsquo;t affect any of my open source projects.</p></li><li><p>I am not a Gradle expert, but so far I&rsquo;m impressed by the architectural choice of Gradle differentiating the planning phase vs. the execution phase, which allows IDEs like Eclipse/IntelliJ to invoke a tooling API to probe the planning phase, but then do their own thing for the execution phase. Makes sense.</p></li><li><p>Travis is cool; I especially like how it will build both a regular <a href=https://travis-ci.org/stephenh/tessell/builds/37016388 class=external-link target=_blank rel=noopener>&ldquo;pushed a branch&rdquo; build</a>, and then also another <a href=https://travis-ci.org/stephenh/tessell/builds/37016386 class=external-link target=_blank rel=noopener>&ldquo;pushed a tag&rdquo; build</a> (even if the tag&rsquo;s commit hash had already been built as part of a &ldquo;pushed a branch&rdquo; build).</p><p>What this allows is some conditional logic in the <code>.travis.yml</code> file to only publish artifacts for builds that are for a tag (e.g. the <code>TRAVIS_TAG</code> variable is set):</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#f92672>after_success</span>:
+</span></span><span style=display:flex><span>  - <span style=color:#ae81ff>test -n &#34;$TRAVIS_TAG&#34;</span>
+</span></span><span style=display:flex><span>     <span style=color:#75715e>&amp;&amp;</span> <span style=color:#ae81ff>ssh-keyscan -H repo.joist.ws &gt;&gt; ~/.ssh/known_hosts</span>
+</span></span><span style=display:flex><span>     <span style=color:#75715e>&amp;&amp;</span> <span style=color:#ae81ff>gradle uploadArchives</span>
+</span></span></code></pre></div><p>This means I can make a change, push master, and see if it builds. Then, and only then, once it&rsquo;s built, I can make a tag, and push the tag, and it will also get built (without needing a new commit).</p><p>This is really nice because I can avoid burning tags on commits that won&rsquo;t build (e.g. if, like my Hudson setup before, I had to tag a revision before pushing it to the server, and so could end up tagging an inherently broken revision).</p></li><li><p>I still am not cool enough to be publishing to Maven central. Some day.</p></li></ol><p>So, that&rsquo;s it for now.</p><p>Unlike most of my Ivy/IvyDE posts, I don&rsquo;t have any hard-won snippets of &ldquo;wow, this was hard to figure out, so here&rsquo;s what posterity needs to know&rdquo;. Instead everything I&rsquo;m doing with Gradle, even if it&rsquo;s immediately out-of-the-box, was pretty easy to Google for and find answers. Which is basically the point.</p></div><footer><div id=disqus_thread></div><script>window.disqus_config=function(){},function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById("disqus_thread").innerHTML="Disqus comments not available by default when the website is previewed locally.";return}var t=document,e=t.createElement("script");e.async=!0,e.src="//draconianoverlord.disqus.com/embed.js",e.setAttribute("data-timestamp",+new Date),(t.head||t.body).appendChild(e)}(),document.addEventListener("themeChanged",function(){document.readyState=="complete"&&DISQUS.reset({reload:!0,config:disqus_config})})</script></footer></article></section></div><footer class=footer><section class=container>©
 2008 -
-2022
+2023
 Stephen Haberman
 ·
-Powered by <a href=https://gohugo.io/>Hugo</a> & <a href=https://github.com/luizdepra/hugo-coder/>Coder</a>.
-</section>
-</footer>
-</main>
-<script src=/js/coder.min.03b17769f4f91ae35667e1f2a1ca8c16f50562576cf90ff32b3179926914daa5.js integrity="sha256-A7F3afT5GuNWZ+HyocqMFvUFYlds+Q/zKzF5kmkU2qU="></script>
-</body>
-</html>
+Powered by <a href=https://gohugo.io/ target=_blank rel=noopener>Hugo</a> & <a href=https://github.com/luizdepra/hugo-coder/ target=_blank rel=noopener>Coder</a>.</section></footer></main><script src=/js/coder.min.6ae284be93d2d19dad1f02b0039508d9aab3180a12a06dcc71b0b0ef7825a317.js integrity="sha256-auKEvpPS0Z2tHwKwA5UI2aqzGAoSoG3McbCw73gloxc="></script></body></html>
