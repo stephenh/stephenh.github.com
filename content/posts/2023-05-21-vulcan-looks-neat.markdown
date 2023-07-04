@@ -15,7 +15,7 @@ At first, I didn't see how the CRDTs of "collaborative rich text editing" would 
 
 I'm very familiar with traditional audit logs like [CyanAudit](https://pgxn.org/dist/cyanaudit/), which are a) centrally-/backend-controlled, b) record writes _after_ they happen, and c) always march forward in time (w/inserts ordered by like the Postgres `NOW()` function)--but how can these solve offline sync?
 
-The primary "trick" with James's approach is that the `history` table is allowed to out-of-order-to-us rows added to it, whenever we receive events from any offline peers (the server receiving client `history` rows, or the client receiving server `history` rows). But then as long as both sides use [logical clocks](https://martinfowler.com/articles/patterns-of-distributed-systems/hybrid-clock.html) to order their copies of the `history` table, and update their primary entity tables based on that ordering, they will both converge to the same values.
+The primary "trick" with James's approach is that the `history` table is allowed to have out-of-order-to-us rows added to it, whenever we receive events from any offline peers (i.e. the server receiving client `history` rows, or the client receiving server `history` rows). But then as long as both sides use [logical clocks](https://martinfowler.com/articles/patterns-of-distributed-systems/hybrid-clock.html) to order their copies of the `history` table, and update their primary entity tables based on that ordering, they will both converge to the same values.
 
 And that's basically it: the `history` table is now a deterministic CRDT by treating each entity row as a "LWW Map" (last-write-wins map).
 
@@ -26,7 +26,7 @@ I suppose this is (grossly) similar to using an `updated_at` column to decide "l
 
 And the best part is that, while writes need to go through the `history` table (essentially like a CQRS stream of write events--albeit ordered by logical clocks), the rest of the app gets stock entity/database tables, like `authors`, `books`, etc. to do its reads from, and can be blithely unaware/decoupled from the complicated/offline sync part of the system.
 
-Coincidentally, the wrinkle of "send all writes through the `history` table" is something that [Joist](https://joist-orm.io/) could do very easily--instead of issuing `INSERT`s during `em.flush`, it could do the appropriate `writeHistory(...)` rows and then both the application's read business logic _and_ write business logic would be decoupled from the offline sync logic.
+Coincidentally, the wrinkle of "send all writes through the `history` table" is something that [Joist](https://joist-orm.io/) could do very easily--instead of issuing `INSERT`s directly to the `authors`, `books`, etc. tables during `em.flush`, it could do the appropriate `writeHistory('authors', 'title', ...)` operations and then both the application's read business logic _and_ write business logic would be decoupled from the offline sync logic.
 
 Granted, all of this so far is just me catching up to what James built three years ago. :-) 
 
