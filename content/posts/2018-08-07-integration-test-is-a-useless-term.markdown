@@ -130,7 +130,7 @@ I also have more thoughts on the fast/single-layer and fast/multi-layer dichotom
 
 If you like this topic, I've written several other posts about integration tests (mostly that they suck), albeit with my prior terminology:
 
-* [The Futility of Cross-System Integration Testing](/2017/08/23/futility-of-cross-system-integration-testing.html) is how slow/uncontrolled/multi-layer tests should be avoided at all costs (with perhaps very slight exception for less than 10 smoke tests).
+* [The Futility of Cross-System Integration Testing](/2017/08/23/the-futility-of-cross-system-integration-testing.html) is how slow/uncontrolled/multi-layer tests should be avoided at all costs (with perhaps very slight exception for less than 10 smoke tests).
 * [Skepticism About Record/Replay Tests](/2018/06/20/skepticism-about-record-replay-tests.html) is my raised-eyebrow around trying to paper over the uncontrolled aspect of slow/uncontrolled tests by recording results.
 * [Microservice Testing At Scale](/2018/01/21/microserving-testing-at-scale.html) is armchair musing about clawing the traditional slow/uncontrolled microservice testing mess within a large engineering org (e.g. that is large enough to need/afford/build the bespoke tooling) into the slow/controlled cell by replacing or stubbing I/O higher up the stack.
 

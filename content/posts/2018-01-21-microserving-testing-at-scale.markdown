@@ -12,7 +12,7 @@ Micro-services have an interesting problem that, personally, I haven't seen solv
 
 Where by "in the large", I mean testing with many micro-services (100s to 1000s), not testing with large data (that maybe useful in certain contexts, but not what I'm focusing on).
 
-See my other post, [The Futility of Cross-System Integration Testing](/2017/08/23/futility-of-cross-system-integration-testing.html), for more on the topic, but none of the systems I've personally worked on (which, granted, is a small `n`) have solved having cross-system tests that provide 100% isolation and control of each test's input data.
+See my other post, [The Futility of Cross-System Integration Testing](/2017/08/23/the-futility-of-cross-system-integration-testing.html), for more on the topic, but none of the systems I've personally worked on (which, granted, is a small `n`) have solved having cross-system tests that provide 100% isolation and control of each test's input data.
 
 Not being able to provide this isolation and control, for me, is non-negotiable, as otherwise your test suites are invariably flaky and usually slow, and actually become a burden to development velocity instead of an acceleration.
 
