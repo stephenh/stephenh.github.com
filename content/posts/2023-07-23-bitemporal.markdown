@@ -206,3 +206,5 @@ This makes bitemporal-ness a lot more pedestrian:
 And that's it.
 
 Which makes me unclear/skeptical of what a "bitemporal database" like XTDB would bring to the table--granted, it would be great to have system time/auditing built into the database (instead of using a 3rd party solution like CyanAudit)...but, other than that, any notion of "effectiveness" or "business logic needs to access old values" (known-ness) I think I'd want modeled as first-class notions in the schema, and not metadata passed around as query params.
+
+If you think you need to "cross system-time" to perform business logic (i.e. not auditing), you likely have a hidden entity (contract versions, change orders), that you should model explicitly in your domain.
