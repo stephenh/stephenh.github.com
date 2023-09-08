@@ -5,6 +5,7 @@ languageCode = "en-us"
 defaultContentLanguage = "en"
 paginate = 20
 disqusShortname = "draconianoverlord"
+enableEmoji = true
 
 [params]
 author = "Stephen Haberman"
