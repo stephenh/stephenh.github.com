@@ -1,0 +1,96 @@
+---
+date: "2024-01-15T00:00:00Z"
+title: Death to Hooks, Long Live Hooks
+categories:
+  - Architecture
+  - Joist
+---
+
+## Context
+
+At [work](https://www.homebound.com/), we have several codebases that drive our business's internal processes, and are basically stereotypical "enterprise spreadsheets".
+
+Several of the codebases use [Joist](https://joist-orm.io/), which is a stereotypical (with some novelties) ORM for building [non-anemic](https://martinfowler.com/bliki/AnemicDomainModel.html), Domain Driven Design-ish, [ActiveRecord](https://guides.rubyonrails.org/active_record_basics.html)-style rich domain models on top of relational databases (Postgres).
+
+A common feature of domain models are lifecycle hooks, or [callbacks](https://guides.rubyonrails.org/active_record_callbacks.html) in ActiveRecord, that invoke code as the domain models change.
+
+Stereotypical use cases of hooks are:
+
+* When a new user signs up (the `User` model is created), automatically send an email
+* When an invoice line item amount changes, update the parent invoice's "total amount" field
+* When a book status changes to "signed", set the "signedOn" field
+
+An example of a Joist hook, that fires on any change to a `Task` model:
+
+```ts
+/** Cutoffs and milestones are placeholder tasks that must always be complete. */
+config.beforeFlush((task) => {
+  if (task.isCutoff || task.isKeyMilestone) {
+    task.status = TaskStatus.Complete;
+  }
+});
+```
+
+As our codebases have grown, we've seen the usual challenges with lifecycle hooks:
+
+1. Confusion about when/why hooks are invoked
+2. Frustration with them being triggered by unrelated changes
+
+Both of which lead to a feeling of "gah hooks", and the sense that we should avoid hooks at all costs, i.e. that the pattern is fundamentally flawed.
+
+Ironically, as the primary author of Joist (which provides hooks), I also *dislike the confusing aspects hooks*, but pragmatically consider them the **current least-terrible option** for many domain modeling use cases, and something to be iteratively improved, instead of abandoned entirely. 
+
+This post is a thought experiment on the pros/cons/alternatives and ideas for making hooks suck as little as possible.
+
+* https://twitter.com/dhh/status/1203721512366116866?lang=en
+
+## What's the Goal?
+
+Taking a step back, I think we should ask why are hooks added to a codebase in a first place?
+
+In my opinion, the goal when an engineer types `beforeFlush` is to *implement requested features*, specifically **reactive features of the form "when X happens, do Y"**.
+
+(Tangent: features of an enterprise spreadsheet: store data, retrieve data, provide insights, drive real-world workflows & outcomes.)
+
+As such, I think we need to fundamentally start with the goal: the goal is to implement features that require reactivity, and then ask what are the various ways we could implement this?
+
+Fundamentally hooks are an implementation approach--so what are we really being asked to implement?
+
+* Reactivity. When X changes, do Y.
+
+The goal achieve is implementing features that depend on **reactivity**.
+
+What are the two components of reactivity?
+
+* A trigger
+* An effect
+  - Is the effect idempotent?
+  - Is the effect synchronous or asynchronous?
+
+## Implementation Approaches
+
+What are the various ways we could implement this?
+
+* Transaction scripts pull the reactivity out to an outer-layer, i.e. controllers or endpoints
+  * Pro: easy to understand within a single endpoint
+  * Pro: doesn't trigger on other endpoints
+  * Con: doesn't trigger on other endpoints
+  * Con: spaghetti code as other endpoints remember to invoke the effect (cross-endpoint coupling, repetition)
+  * Con: easy to miss if trigger happens in an endpoint
+* Events push the reactivity into queues, where business logic is invoked via decoupled consumers
+  * Pro: Decoupling between trigger & effect
+  * Con: Hard to understand (defacto side-effect of decoupling)
+  * Con: Hard to test (effects are in a different repo, defacto side-effect of decoupling)
+  * Con: Brittle (...and you don't know when you break it)
+* Hooks push the reactivity into the domain models themselves
+  * Pro: Always invoked
+  * Con: Always invoked
+  * Pro: Easy to test (trigger & effect are in the same repo)
+  * Con: Brittle (...but you know when you break it)
+
+## What Improvements Can We Make?
+
+* Easy to understand
+* Easy to declare
+* Easy to visualize
+
