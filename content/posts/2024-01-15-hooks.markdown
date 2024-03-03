@@ -34,11 +34,11 @@ config.beforeFlush((task) => {
 As our codebases have grown, we've seen the usual challenges with lifecycle hooks:
 
 1. Confusion about when/why hooks are invoked
-2. Frustration with them being triggered by unrelated changes
+2. Frustration with them being triggered by seemingly-unrelated changes
 
-Both of which lead to a feeling of "gah hooks", and the sense that we should avoid hooks at all costs, i.e. that the pattern is fundamentally flawed.
+Both of which can lead to feeling "gah hooks", and the sense that we should avoid hooks at all costs, i.e. that the pattern is fundamentally flawed.
 
-Ironically, as the primary author of Joist (which provides hooks), I also *dislike the confusing aspects hooks*, but pragmatically consider them the **current least-terrible option** for many domain modeling use cases, and something to be iteratively improved, instead of abandoned entirely. 
+Ironically, as the primary author of Joist (which provides hooks), I also *dislike the confusing aspects hooks* (and am actively trying to build "better than hooks" reactivity abstractions), but also pragmatically consider them the **current least-terrible option** for many domain modeling use cases, and something to be iteratively improved, instead of abandoned entirely. 
 
 This post is a thought experiment on the pros/cons/alternatives and ideas for making hooks suck as little as possible.
 
@@ -46,9 +46,13 @@ This post is a thought experiment on the pros/cons/alternatives and ideas for ma
 
 ## What's the Goal?
 
-Taking a step back, I think we should ask why are hooks added to a codebase in a first place?
+Taking a step back, we should ask why are hooks added to a codebase in a first place?
 
-In my opinion, the goal when an engineer types `beforeFlush` is to *implement requested features*, specifically **reactive features of the form "when X happens, do Y"**.
+In my opinion, the goal when an engineer types `beforeFlush` or `beforeCreate` is to *implement a requested feature*, specifically **reactive features of the form "when X happens, do Y"**.
+
+...have to create an event for each crud operation...
+
+...or generic events that couple your consumers to your schema...
 
 (Tangent: features of an enterprise spreadsheet: store data, retrieve data, provide insights, drive real-world workflows & outcomes.)
 
