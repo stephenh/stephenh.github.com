@@ -13,7 +13,7 @@ At [work](https://www.homebound.com), we've had a system in production for long 
 While continual improvement is exciting, given each v1 feature is in active use, we end up "changing the wings of the airplane while in flight".
 
 <div style="font-style: italic; display: flex; flex-direction: column; align-items: center">
-  <img src="/images/sti/changing-wings.jpeg" style="width:30em;"/>
+  <img src="/images/sti/changing-wings.jpeg" style="width:40em;"/>
   Changing the wings of the airplane while in flight, courtesy of Gemini
 </div>
 
