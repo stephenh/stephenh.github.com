@@ -190,15 +190,17 @@ Because of the pros/cons discussed above, we've historically preferred using CTI
 
 ## Adding STI Support to Joist
 
-One wrinkle was that our in-house ORM, Joist, did not support STI at the time we were evaluating approaches.
+One wrinkle was that our in-house ORM, Joist, did not support STI when we were evaluating approaches.
 
-This introduced initial risk into the decision, but thankfully it was ~a hack day of effort to [add support for STI](https://github.com/stephenh/joist-ts/pull/966). This was primarily because Joist already had CTI support, which is generally the harder of the two models to implement, so adding STI was a relatively minor effort.
+This introduced initial risk into the decision, but thankfully it was a proverbial "hack day of effort" to [add support for STI](https://github.com/stephenh/joist-ts/pull/966). This was primarily because Joist already had CTI support, which is generally the harder of the two models to implement, so adding STI was a relatively minor effort.
 
 While building the STI support in Joist, we implemented a few features to make it "more CTI-ish":
 
-* Domain-level enforcement of not null
+* Domain-level enforcement of not null subtype columns
 
-  To mitigate the lack of `NOT NULL` constraints in the database itself, we added support for `stiNotNull: true` flags in the `joist-config.json` file, for Joist to do domain-level enforcement of not-null fields, as well as mark the field as required / non-optional in the type system.
+  To mitigate the lack of `NOT NULL` constraints in the database itself (for subtype-specific columns), we added a `stiNotNull: true` setting in `joist-config.json`, for Joist to add a domain-level validation rule to enforce non-null values, as well as mark the field as required / non-optional in the type system.
+
+  (Ideally we can also enforce this `NOT NULL` validation with a conditional `CHECK` constraint in the database, and teach Joist to infer the `stiNotNull`-ness by recognizing the check constraint at codegen time, but that's a future improvement.)
 
 * Tagging of FKs for "v1" or "v2" tasks
 
@@ -208,16 +210,18 @@ While building the STI support in Joist, we implemented a few features to make i
 
    To mitigate this, we added support for tagging incoming foreign keys with `stiType: "TaskV1" | "TaskV2"` in `joist-config.json`, which Joist will then use to: a) validate the FK value is the correct type at runtime, and b) use the respective `TaskV1` / `TaskV2` type in the type system.
 
+   (This is probably not something we can enforce at the database level, because there isn't a way to distinguish between v1 & v2 ids from the referencing side of the FK, so the `joist-config.json` hint will be good enough.)
+
 Both of these features made the STI-based `Task` base types and subtypes much more "CTI-ish" in dev ergonomics, which we liked.
 
 ## Tangent on Naming
 
-While I've used `TaskV1` and `TaskV2` as the "v1" and "v2" entity names in this post, having "v1" and "v2" in entity names is admittedly kind of gross, so we brainstormed some alternative names and ended up:
+While I've used `TaskV1` and `TaskV2` as the "v1" and "v2" subtype names in this post, having "v1" and "v2" in entity names is admittedly kind of gross, so we brainstormed some alternative names and ended up:
 
 * `ScheduleTask` as the "v1" task name, which worked well because the previous system was very "schedule-centric", and
 * `PlanTask` as the "v2" task name, as the new system is more "probabilistic planning-centric".
 
-These are admittedly somewhat arbitrary, but we liked the idea of, a year from now when we've aged the `ScheduleTask` / v1 feature entirely out of the system (fingers crossed!), we'll be left with a good/proper name for `PlanTask`.
+These are admittedly somewhat arbitrary, but we liked the idea that, a year from now when we've aged the `ScheduleTask` / v1 feature entirely out of the system (fingers crossed!), we'll be left with a good/proper name for `PlanTask`.
 
 ## Implementation Steps
 
