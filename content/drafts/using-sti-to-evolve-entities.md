@@ -22,11 +22,11 @@ For smaller changes, we can handle this with short-lived feature flags, and gene
 
 But v2 features are often big enough changes that they are a) time-consuming to roll out, and b) sufficiently different from their v1 data models that clear upgrade paths may not exist for the existing production data.
 
-Our latest Schedules v3 initiative was a particularly acute example of this, and in this post we'll talk through how we diagnosed and solved the problem, specifically evolving the core `Task` entity using [Single Table Inheritance (STI)](https://martinfowler.com/eaaCatalog/singleTableInheritance.html) with [Joist](https://joist-orm.io/docs/advanced/single-table-inheritance), our in-house ORM.
+Our latest Schedules v2 initiative was a particularly acute example of this, and in this post we'll talk through how we diagnosed and solved the problem, specifically evolving the core `Task` entity using [Single Table Inheritance (STI)](https://martinfowler.com/eaaCatalog/singleTableInheritance.html) with [Joist](https://joist-orm.io/docs/advanced/single-table-inheritance), our in-house ORM.
 
 ## The Challenge
 
-Without covering too many specifics, our Schedules v3 project involved moving from more static/old-school PERT-based scheduling, to more dynamic, probabilistic-based scheduling (i.e. using Monte Carlo simulations both within and across multiple schedules).
+Without covering too many specifics, our Schedules v2 project involved moving from more static/old-school PERT-based scheduling, to more dynamic, probabilistic-based scheduling (i.e. using Monte Carlo simulations both within and across multiple schedules).
 
 While very cool by itself, with various greenfield features & sub-entities, the revamped schedule feature was also going to cause a lot of churn in our core `Task` entity, which stores things like which Trade is performing the work, on what date, for what expected duration, etc., as the `Task` entity is used for:
 
