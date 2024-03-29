@@ -8,9 +8,9 @@ draft: true
 
 ## Context
 
-At [work](https://www.homebound.com), we've had a system in production for long enough that now we get the pleasure of building v2-s (...or v3-s...) of our features.
+At [work](https://www.homebound.com), we've had a system in production for long enough that now we get the pleasure of building v2-s (or v3-s) of our features.
 
-While continual improvement is exciting, given each v1 feature is in active use, when building v2 features, we often end up "changing the wings of the airplane while in flight".
+While continual improvement is exciting, given each v1 feature is in active use, when building v2 features we often end up "changing the wings of the airplane while in flight".
 
 <div style="font-style: italic; display: flex; flex-direction: column; align-items: center">
   <img src="/images/sti/changing-wings.jpeg" style="width:40em;"/>
@@ -18,9 +18,9 @@ While continual improvement is exciting, given each v1 feature is in active use,
 </div>
 
 
-For smaller changes, we can handle this with short-lived feature flags, and generally immediately migrating the whole system to the latest & greatest code/features.
+For smaller changes, we can handle this with short-lived feature flags, and generally immediately migrating the whole system (and existing production data) to the latest & greatest code/features.
 
-But v2 features are often big enough changes that they are a) time-consuming to roll out, and b) sufficiently different from their v1 that clear upgrade paths may not exist for existing production data.
+But v2 features are often big enough changes that they are a) time-consuming to roll out, and b) sufficiently different from their v1 data models that clear upgrade paths may not exist for the existing production data.
 
 Our latest Schedules v3 initiative was a particularly acute example of this, and in this post we'll talk through how we diagnosed and solved the problem, specifically evolving the core `Task` entity using [Single Table Inheritance (STI)](https://martinfowler.com/eaaCatalog/singleTableInheritance.html) with [Joist](https://joist-orm.io/docs/advanced/single-table-inheritance), our in-house ORM.
 
@@ -28,33 +28,37 @@ Our latest Schedules v3 initiative was a particularly acute example of this, and
 
 Without covering too many specifics, our Schedules v3 project involved moving from more static/old-school PERT-based scheduling, to more dynamic, probabilistic-based scheduling (i.e. using Monte Carlo simulations both within and across multiple schedules).
 
-While cool in-and-of-itself, with various greenfield features & entities, the new approach was also going to cause a lot of churn in our core `Task` entity (which stores things like who is doing what, on what date, for what expected duration, etc), which is a core part of both the old & new schedules, as it handles:
+While very cool by itself, with various greenfield features & sub-entities, the revamped schedule feature was also going to cause a lot of churn in our core `Task` entity, which stores things like which Trade is performing the work, on what date, for what expected duration, etc., as the `Task` entity is used for:
 
-1. Core scheduling features (PERT planning, Gantt charts, assignees, etc.), as well as
-2. Schedule-adjacent features like task checklists, required sign-off documentation, and trade cost/client revenue information.
-3. And, of course, drives various data-lake business intelligence reports.
+1. Core scheduling features (PERT planning, Gantt charts, assignees, etc.),
+2. Schedule-adjacent features like task checklists, required sign-off documentation, and trade cost/client revenue information, and
+3. Miscellaneous data-lake business intelligence reports.
 
-The challenge is that the new scheduling feature wanted to **replace ~50% of the "core scheduling feature"** / `Task` entity` with a very different, probabilistic-based scheduling approach, but keep: a) the __other 50%__ of "core scheduling", as well as b) all the "schedule-adjacent" features, and c) BI reports all as unaware-as-possible about the new scheduling approach.
+The challenge is that the new scheduling feature **replaced ~50% of the "core scheduling" data and relations"** of `Task` with different, probabilistic-based scheduling, but a) __kept the other 50% of "core scheduling" data__ (like basic start/end/durations), as well as b) needed __continued integration with many the "schedule-adjacent" features__ and BI reporting.
 
 ### ...this seems coupled?
 
-There is a tangent/future post about "how/why is `Task` co-mingled with the other schedule-adjacent features?", but my tldr is that cross-feature cohesion is essentially the raison d'etre (reason for being) for custom software systems, because it lets users, and data, stay highly-contextual & interconnected.
+A fair ask is "how/why is the `Task` entity co-mingled with the other schedule-adjacent features?", but my tldr is that, personally, I generally think that cross-feature **domain model** cohesion is the primary raison d'etre (reason for being) for custom software systems, because it lets users, and data, stay highly-contextual & interconnected.
 
-Granted, there's also the tangent of whether this coupling should happen via FKs in a monolith, or APIs in microservices, both of which will face the same v1/v2 migration challenge but with different pros & cons, but, again, that's a separate post. :-)
+Basically they're all in a single entity graph, which is how the business & end-users of "a single product", or "a single line of business" want to think of the system; and so we should strive to keep that graph connected as long as possible, i.e. until you hit post-IPO/FAANG-level size of teams/data/entities.
+
+That said, outside the connected domain model, neither the code for our core scheduling algorithms (like PERT's earliest start/earliest finish) or the new Monte Carlo simulations lives directly in the entities/domain model `Task.ts` itself, but instead are either utility libraries or, for Monte Carlo sims, a separate stateless microservice dedicated to running the simulations (it turns out JavaScript is not the best language for "run this simulation many times in a tight loop"). 
 
 ## Goals
 
-So our goals were to:
+Back to the `Task` entity, our goals were to:
 
 1. Leave existing data/projects using Task v1 largely in-place,
 
    Thankfully both our product team & field ops were onboard with leaving all existing projects on the tasks/schedule v1 feature, as the v1 -> v2 migration for existing data would be painful/extremely expensive/and likely create nonsense/unuseful data anyway. Instead, we'll just let all existing projects run-out on v1.
 
-2. Setup new data/projects using Task v2 (when released),
-3. Have the "Task v1" and "Task v2" features know as little about the other as possible, and
-4. Have rest of the system's `Task`-adjacent features be largely agnostic about the v1/v2 dichotomy
+2. Setup only net-new data/projects using Task v2 (when released),
 
-And, of course, minimize both our short-term and long-term pain.
+3. Have the "Task v1" and "Task v2" features know as little about the other as possible, and
+
+4. Have rest of the system's `Task`-adjacent features be largely agnostic about the v1/v2 dichotomy.
+
+And, of course, minimize both our short-term implementation and long-term maintenance pain.
 
 ## Auditing Existing Usage
 
@@ -122,11 +126,11 @@ We generally had three approaches to consider:
 2. Reuse the existing `tasks` / `Task` table/entity, and somehow manage the v1/v2 differentiation
 3. Split the new entity/feature out into an entirely new service/its own domain model
 
-The 3rd option was both too expensive to tackle immediately, and also lacked consensus on being the best long-term approach, so we focused on the first two approaches: how to evolve the `Task` entity within our current domain model.
+The 3rd option was both too expensive to tackle immediately, and also lacked consensus on being the best long-term approach (per my prior preference of keeping a unified entity graph as long as possible), so we focused on the first two approaches: how to evolve the `Task` entity within our current domain model.
 
 ### Approach 1. Create a new `TaskV2` Entity
 
-In this approach, we'd create a new `tasks_v2` / `TaskV2` entity, which would have a clean-slate implementation.
+In this approach, we'd create a new `tasks_v2` / `TaskV2` entity, totally separate from the existing `tasks` table, which would have a clean-slate implementation (brand new rows, columns, etc.).
 
 * Pro: Clean slate for the new Task v2 feature
 
@@ -164,7 +168,7 @@ Given these two pros, that there is a single `Task` concept that both users and 
 
 Within Approach 2 itself (reusing the `Task` entity), there were also several tactical options:
 
-1. Add adhoc `if/else` handling to each v1-/v2-specific location within `Task.ts` & our `Task`-related GraphQL resolvers.
+1. Add adhoc `if v1/else v2` handling to each v1-/v2-specific location within `Task.ts` & our `Task`-related GraphQL resolvers.
 
    In this approach, we'd add the v2-specific columns to the `tasks` table, deprecate the v1-specific columns in the `tasks` table, and then just generally add "if v1/v2" checks at random spots in the codebase. Like `tasks.old_column` is required for v1 tasks, `tasks.new_column` is required for v2 tasks.
 
@@ -214,13 +218,15 @@ While building the STI support in Joist, we implemented a few features to make i
 
    When an incoming foreign key points to the `tasks` table, i.e. something like `trade_payment.task_id`, it can be useful to know whether the FK was meant to point at "any task" or a specific v1/v2 subtype (which, per above, is a "pro" of CTI that STI lacks).
 
-   I.e. usually FKs that are implementation details of the v1 feature should point to "only v1 tasks", while implementation details of the v2 feature should only to "only v2 tasks". 
+   I.e. usually FKs that are implementation details of the v1 feature should point to "only v1 tasks rows", while implementation details of the v2 feature should only to "only v2 tasks rows". 
 
    To mitigate this, we added support for tagging incoming foreign keys with `stiType: "TaskV1" | "TaskV2"` in `joist-config.json`, which Joist will then use to: a) validate the FK value is the correct type at runtime, and b) use the respective `TaskV1` / `TaskV2` type in the type system.
 
+   Concretely in our `TradePayment.task` example, it meant that `TradePayment.task` was typed as `TaskV1` and could only be read/written by code that knew it was coupled to `TaskV1` functionality.
+
    (This is probably not something we can enforce at the database level, because there isn't a way to distinguish between v1 & v2 ids from the referencing side of the FK, so the `joist-config.json` hint will be good enough.)
 
-Both of these features made the STI-based `Task` base types and subtypes much more "CTI-ish" in dev ergonomics, which we liked.
+Both of these features made the STI-based `Task` base types and subtypes much more "CTI-ish" in terms of  developer ergonomics, which was a big win.
 
 ## Choosing Good Long-Term Names
 
@@ -233,12 +239,40 @@ These names were admittedly somewhat arbitrary, given they're just slightly diff
 
 ## Implementation Steps
 
-With the high-level approach (reusing `Task`) and tactical implementation (STI) chosen, we sketched out the following implementation steps:
+With the high-level approach (evolving the `Task` entity) and tactical implementation (STI) chosen, we took the following implementation steps:
 
-1. Add type_id to `tasks`, default it to v1
-2. Add `TaskV1` as the sole STI subtype
-* Move initial V1-specific columns into `TaskV1` subtype
-* Keep as many callers as possible using the `newTask` base type
-* Move callers/tests that break to `newTaskV1` subtype
-* Introduce `TaskV2` as second STI subtype
+1. Push nearly all columns/relations from `Task` down into `TaskV1`
+2. Start implementing new features in `TaskV2`
+3. Eventually pull shared functionality from `TaskV1` back "up" into `Task`
 
+Particularly step 1, "push all columns/relations down into `TaskV1`" was not our initial approach; we'd assumed that, from the get to, we'd keep all the "to be shared" functionality in the base `Task` table.
+
+However, after some prototyping, it became apparent that, due to the amount of code changes involved, the lowest-risk approach was actually to "clean cut" the entire system over to "always blithely create (old) `TaskV1` and assume `TaskV1` is the 'only task' in the system". This involved tedious but extremely routine changes like "call `em.create(TaskV1)` instead of `em.create(Task)`".
+
+This let us get over the biggest hurdle of "there are two tasks (...but really the whole codebase just uses the first one...)" merged into production in the shortest amount of time, basically a week.
+
+Compared to other "feature v2" migrations we've done in the past, which have had long-lived feature branches (something we rarely do), this immediate merge was a big relief.
+
+Once this initial, big Step 1 was complete, the rest of the changes became smaller and more routine:
+
+* Step 2 was using the `TaskV2` "clean-ish slate" (that doesn't have any of the `TaskV1` relations on it, but is "still a `Task`") to built out the new scheduling domain model, and
+* Step 3 was, while doing Step 2, nudge some of the `TaskV1` relations down into `Task` as needed.
+
+Both of these steps could be performed incrementally & iteratively, on a relation-by-relation basis, as the schedules project progresses.
+
+Which meant we'd achieved the goal of unblocking the engineering squad to deliver the new feature, without having to rebuild all the historical integrations.
+
+## Conclusion
+
+Wrapping up, this was probably the longest post I've written in awhile, but we covered how we took what is the blessing & curse of every software developer: "a new feature! ...that also must integrate with the existing features" and so going through a process of:
+
+* Evaluating whether create-new or evolve-existing domain entities
+  * Look at number of usages; if there's more than a handful, probably evolve 
+  * Consider whether this is really a new domain concept, or just an evolution of an existing one
+* Evaluating whether to use STI or CTI for "v1/v2" entity evolution
+  * CTI is more pure, but STI can be more pragmatic
+  * CTI is better for new domain concepts, STI is better for evolving implementations
+
+## Acknowledgments
+
+Many thanks to Ben Lamboitte and Zach Gavin, who were instrumental in researching, evaluating, and prototyping the "new or evolve?" approaches & trade-offs, and Ben in particular for doing basically all the "take theory to practice" work in rolling these changes out to the system.

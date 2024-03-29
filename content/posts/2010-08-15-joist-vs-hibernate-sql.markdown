@@ -1,7 +1,7 @@
 ---
 date: "2010-08-15T00:00:00Z"
 categories:
-  - Joist
+  - Joist-Java
 title: Joist vs. Hibernate SQL
 ---
 
