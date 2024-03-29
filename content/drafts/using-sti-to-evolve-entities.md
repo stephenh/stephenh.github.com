@@ -184,7 +184,7 @@ Within Approach 2 itself (reusing the `Task` entity), there were also several ta
 
    We like judiciously using CTI, because it has very clean modeling of "this entity has polymorphic subtypes" within both the database schema and the domain model. For example, it lets each subtype have strong database-level constraints and subtype-specific FKs (both outgoing & incoming); (the Joist STI documentation goes more into these details).
    
-   However, needing to move the v1 columns into a `tasks_v1` table (to satisfy CTI's table-per-subtype) would defeat the goal of minimizing outside observability of the change (particularly to the data lake), and also we don't really want "TaskV1" and "TaskV2" concepts in our domain model, which is what CTI is best suited for. We're looking more of an implementation hack. 
+   However, needing to move the v1 columns into a `tasks_v1` table (to satisfy CTI's table-per-subtype) would defeat the goal of minimizing outside observability of the change (particularly to the data lake), and also we don't really want "TaskV1" and "TaskV2" concepts in our domain model, which is what CTI is best suited for. We're looking for more of an implementation hack. 
 
    * Pro: Code-level differentiation between `TaskV1` and `TaskV2` subtypes
    * Pro: Allows keeping task v1/v2-specific columns not-nullable (dedicated CTI sub-tables)
