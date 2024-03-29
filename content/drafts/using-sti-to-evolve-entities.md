@@ -275,4 +275,4 @@ Wrapping up, this was probably the longest post I've written in awhile, but we c
 
 ## Acknowledgments
 
-Many thanks to Ben Lamboitte and Zach Gavin, who were instrumental in researching, evaluating, and prototyping the "new or evolve?" approaches & trade-offs, and Ben in particular for doing basically all the "take theory to practice" work in rolling these changes out to the system.
+Many thanks to Ben Lambillotte and Zach Gavin, who were instrumental in researching, evaluating, and prototyping the "new or evolve?" approaches & trade-offs, and Ben in particular for doing basically all the "take theory to practice" work in rolling these changes out to the system.
