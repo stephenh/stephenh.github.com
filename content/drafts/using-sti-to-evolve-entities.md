@@ -89,7 +89,7 @@ export interface TaskOpts {
 }
 ```
 
-Joist also produces a "reactivity report" that further shows how `Task` is connected to the rest of the system, beyond the immediate foreign keys, via Joist's reactive rules & reactive fields features:
+Joist also produces a "reactivity report" (that we've not technically open-sourced yet) that further shows how `Task` is connected to the rest of the domain model, beyond the immediate foreign keys, via Joist's reactive rules & reactive fields features:
 
 ```txt
 Task will trigger reactions in:
