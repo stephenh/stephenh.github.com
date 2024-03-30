@@ -262,6 +262,8 @@ Both of these steps could be performed incrementally & iteratively, on a relatio
 
 Which meant we'd achieved the goal of unblocking the engineering squad to deliver the new feature, without having to rebuild all the historical integrations.
 
+At time of this writing, the project is still early, but the first major stage (teaching the system about the two STI subtypes without completely breaking/rewriting everything) is complete, and we're cautiously optimistic about the rest.
+
 ## Conclusion
 
 Wrapping up, this was probably the longest post I've written in awhile, but we covered how we took what is the blessing & curse of every software developer: "a new feature! ...that also must integrate with the existing features" and so going through a process of:
