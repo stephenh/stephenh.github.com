@@ -1,7 +1,7 @@
 ---
 date: "2010-08-22T00:00:00Z"
 categories:
-  - Joist
+  - Joist-Java
 title: Joist Tip, Fast Database Resets
 ---
 

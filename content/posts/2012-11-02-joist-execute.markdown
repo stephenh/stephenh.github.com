@@ -1,7 +1,7 @@
 ---
 date: "2012-11-02T00:00:00Z"
 categories:
-  - Joist
+  - Joist-Java
 title: Joist Execute Class
 ---
 

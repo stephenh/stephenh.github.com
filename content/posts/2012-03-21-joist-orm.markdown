@@ -1,7 +1,7 @@
 ---
 date: "2012-03-21T00:00:00Z"
 categories:
-  - Joist
+  - Joist-Java
 title: Joist, the Java ORM for Me
 ---
 

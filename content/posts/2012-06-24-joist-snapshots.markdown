@@ -1,7 +1,7 @@
 ---
 date: "2012-06-24T00:00:00Z"
 categories:
-  - Joist
+  - Joist-Java
 title: Joist Snapshots, A 2nd-Level Cache Alternative
 ---
 

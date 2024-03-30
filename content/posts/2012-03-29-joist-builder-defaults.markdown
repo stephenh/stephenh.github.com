@@ -1,7 +1,7 @@
 ---
 date: "2012-03-29T00:00:00Z"
 categories:
-  - Joist
+  - Joist-Java
 title: Joist Builder Defaults
 ---
 
