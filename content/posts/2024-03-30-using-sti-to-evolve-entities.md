@@ -1,9 +1,8 @@
 ---
-date: "2024-03-04T00:00:00Z"
+date: "2024-03-30T00:00:00Z"
 title: Using Single Table Inheritance to Evolve Entities
 categories:
   - Joist
-draft: true
 ---
 
 ## Context
