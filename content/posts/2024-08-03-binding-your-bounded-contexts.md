@@ -5,6 +5,14 @@ categories:
   - Architecture
 ---
 
+
+Todo:
+
+* Incorporate https://martinfowler.com/bliki/BoundedContext.html
+* Incorporate https://www.domainlanguage.com/wp-content/uploads/2016/04/GettingStartedWithDDDWhenSurroundedByLegacySystemsV1.pdf
+* The main point I want to convey is that each UI is a single user mental model, single product
+* Bounded Contexts are for cleaving off new self-contained domains & products, not "carving up tables just to be stitched back together by a BFF"
+
 I generally consider myself a fan and practitioner of Domain-Driven Design (DDD).
 
 I really like ubiquitous language. I really like domain models.
@@ -35,7 +43,7 @@ This is all fine, and completely expected. We each have our own concept of `Auth
 
 For me, this is the **most clear**, **most unambiguous**, example of "bounded contexts"--I have my `Author` and you have yours.
 
-And, as our applications talk to each other (i.e. via either asynchronous or synchronous API calls), we need to use the DDD pattern Access Control Layer pattern (whether explicitly or implicitly called that in our codebases) to translate "my `Author`" into "your `Author`", as we cross boundaries.
+And, as our applications talk to each other (i.e. via either asynchronous events or synchronous API calls), we each use DDD's Access Control Layer pattern (whether explicitly or implicitly called that in our codebases) to translate "my `Author`" into "your `Author`", as we cross boundaries.
 
 Makes sense!
 
@@ -45,7 +53,7 @@ With that "good bounds" established as our north star, what would "bad bounds" b
 
 For me, the "ack" moment comes when the term "bounded context" is used to split up what is fundamentally a single domain model.
 
-For example, within our singular library management system, we decide our domain model "is too big", and decide to split it up, by attempting to draw "the least terrible" grouping possible, i.e.:
+For example, within our singular library management system, we decide our domain model "is too big", and decide to split it up, by attempting to draw "the least terrible" grouping of entities possible, i.e.:
 
 * The `Author` entity is now part of the "authorship service" (a purported bounded context), and
 * The `Book` entity is now part of the "reading service" (another asserted bounded context)
@@ -54,10 +62,10 @@ And the assertion is "the authorship service" **must have no notion of "a Book"*
 
 The rationale for this split is numerous...
 
-* "Separation of concerns",
-* "Single responsibility principle",
-* "Decoupling"
-* "Team ownership"
+* Separation of concerns,
+* Single responsibility principle,
+* Decoupling
+* Team ownership
 * Etc, etc.
 
 These rationale are debatable, but even if they were all true, they miss the point: at the end of the day, there is still a **single library management system** that wants **a singular definition of an author**.
@@ -82,7 +90,7 @@ I don't think bounded contexts were meant to "carve up domain models"; they were
 
 I.e. within a Fortune 500 company, with 100s/1000s of applications, we can't expect everyone to "have the same `Author` model". 
 
-But, *within a given application*, each application should have its "most canonical" definition of "its `Author`", to keep its codebase as clean and idiomatic as possible, and then isolate the "translation between my `Author` and the shit-show of 10s/100s of other applications' `Author`s" to an isolated "edge", "gateway" layer on the externals of the system (the Access Control Layer).
+But, *within a given application*, each application should have its "most canonical" definition of "its `Author`", to keep its codebase as clean and idiomatic as possible, and then isolate the "translation between my `Author` and the morass of 10s/100s of other applications' `Author`s" to an isolated "edge", "gateway" layer on the externals of the system (i.e. the Access Control Layer translator).
 
 ### Rules of Thumb
 
