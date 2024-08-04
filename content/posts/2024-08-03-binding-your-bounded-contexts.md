@@ -106,7 +106,7 @@ If you don't have "truly separate products", and hence not "truly separate domai
 
 In my opinion, you should realize that **you're still creating a single domain model**, and it *will* be a monolith--you're just deciding whether you want "a monolith in a single codebase" or "a monolith that is distributed across codebases", and then I'll leave it as an exercise to the reader which of those two choices you personally prefer.
 
-### Appendix 1: Misc Rebuttals
+### Appendix 1: Misc Back-and-Forth
 
 *Isn't splitting a domain model just an extension of our usual "extract this method / file / class / module" approach to code organization? It's just another layer of abstraction.*
 
