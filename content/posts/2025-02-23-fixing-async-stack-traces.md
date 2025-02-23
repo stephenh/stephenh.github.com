@@ -11,9 +11,9 @@ However, when prototyping [Joist](https://joist-orm.io/) support for the [postgr
 
 ```
 PostgresError: syntax error at or near ")"
-    at ErrorResponse (/home/stephen/other/joist-orm/node_modules/postgres/cjs/src/connection.js:790:26)
-    at handle (/home/stephen/other/joist-orm/node_modules/postgres/cjs/src/connection.js:476:6)
-    at Socket.data (/home/stephen/other/joist-orm/node_modules/postgres/cjs/src/connection.js:317:9)
+    at ErrorResponse (/home/stephen/joist-orm/node_modules/postgres/cjs/src/connection.js:790:26)
+    at handle (/home/stephen/joist-orm/node_modules/postgres/cjs/src/connection.js:476:6)
+    at Socket.data (/home/stephen/joist-orm/node_modules/postgres/cjs/src/connection.js:317:9)
     at Socket.emit (node:events:507:28)
     at addChunk (node:internal/streams/readable:559:12)
     at readableAddChunkPushByteMode (node:internal/streams/readable:510:3)
@@ -77,11 +77,11 @@ Stacktrace:
 
 ```
 Error: oops
-    at zaz (file:///home/stephen/other/joist-orm/packages/orm/src/stacks.mjs:9:11)
-    at bar (file:///home/stephen/other/joist-orm/packages/orm/src/stacks.mjs:6:11)
-    at foo (file:///home/stephen/other/joist-orm/packages/orm/src/stacks.mjs:3:11)
-    at allAwaits (file:///home/stephen/other/joist-orm/packages/orm/src/stacks.mjs:11:9)
-    at file:///home/stephen/other/joist-orm/packages/orm/src/stacks.mjs:156:11
+    at zaz (file:///home/stephen/joist-orm/stacks.mjs:9:11)
+    at bar (file:///home/stephen/joist-orm/stacks.mjs:6:11)
+    at foo (file:///home/stephen/joist-orm/stacks.mjs:3:11)
+    at allAwaits (file:///home/stephen/joist-orm/stacks.mjs:11:9)
+    at file:///home/stephen/joist-orm/stacks.mjs:156:11
     at ModuleJob.run (node:internal/modules/esm/module_job:268:25)
     at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:543:26)
     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:116:5)
@@ -118,13 +118,13 @@ Stacktrace:
 
 ```
 Error: oops
-    at handle file:///home/stephen/other/joist-orm/packages/orm/src/stacks.mjs:22:52
+    at handle file:///home/stephen/joist-orm/stacks.mjs:22:52
     at new Promise (<anonymous>)
-    at zaz (file:///home/stephen/other/joist-orm/packages/orm/src/stacks.mjs:22:12)
-    at bar (file:///home/stephen/other/joist-orm/packages/orm/src/stacks.mjs:19:12)
-    at foo (file:///home/stephen/other/joist-orm/packages/orm/src/stacks.mjs:16:12)
-    at allPromises (file:///home/stephen/other/joist-orm/packages/orm/src/stacks.mjs:24:10)
-    at file:///home/stephen/other/joist-orm/packages/orm/src/stacks.mjs:156:11
+    at zaz (file:///home/stephen/joist-orm/stacks.mjs:22:12)
+    at bar (file:///home/stephen/joist-orm/stacks.mjs:19:12)
+    at foo (file:///home/stephen/joist-orm/stacks.mjs:16:12)
+    at allPromises (file:///home/stephen/joist-orm/stacks.mjs:24:10)
+    at file:///home/stephen/joist-orm/stacks.mjs:156:11
 
 ```
 
@@ -163,7 +163,7 @@ Stacktrace:
 ```
 allAwaitsTimeout
 Error: oops
-    at Timeout._onTimeout (file:///home/stephen/other/joist-orm/packages/orm/src/stacks.mjs:36:31)
+    at Timeout._onTimeout (file:///home/stephen/joist-orm/stacks.mjs:36:31)
     at listOnTimeout (node:internal/timers:614:17)
     at process.processTimers (node:internal/timers:549:7)
 ```
@@ -200,14 +200,14 @@ Stacktrace:
 
 ```
 Error: oops
-    at Timeout._onTimeout (file:///home/stephen/other/joist-orm/packages/orm/src/stacks.mjs:70:31)
+    at Timeout._onTimeout (file:///home/stephen/joist-orm/stacks.mjs:70:31)
     at listOnTimeout (node:internal/timers:614:17)
     at process.processTimers (node:internal/timers:549:7)
-    at zaz (file:///home/stephen/other/joist-orm/packages/orm/src/stacks.mjs:72:30)
-    at async bar (file:///home/stephen/other/joist-orm/packages/orm/src/stacks.mjs:66:5)
-    at async foo (file:///home/stephen/other/joist-orm/packages/orm/src/stacks.mjs:63:5)
-    at async allAwaitsTimeoutCatch (file:///home/stephen/other/joist-orm/packages/orm/src/stacks.mjs:75:3)
-    at async file:///home/stephen/other/joist-orm/packages/orm/src/stacks.mjs:160:5
+    at zaz (file:///home/stephen/joist-orm/stacks.mjs:72:30)
+    at async bar (file:///home/stephen/joist-orm/stacks.mjs:66:5)
+    at async foo (file:///home/stephen/joist-orm/stacks.mjs:63:5)
+    at async allAwaitsTimeoutCatch (file:///home/stephen/joist-orm/stacks.mjs:75:3)
+    at async file:///home/stephen/joist-orm/stacks.mjs:160:5
 ```
 
 We've got it!
@@ -239,11 +239,11 @@ Stacktrace:
 
 ```
 Error: oops
-    at Timeout._onTimeout (file:///home/stephen/other/joist-orm/packages/orm/src/stacks.mjs:3:29)
+    at Timeout._onTimeout (file:///home/stephen/joist-orm/stacks.mjs:3:29)
     at listOnTimeout (node:internal/timers:614:17)
     at process.processTimers (node:internal/timers:549:7)
-    at zaz (file:///home/stephen/other/joist-orm/packages/orm/src/stacks.mjs:119:30)
-    at async file:///home/stephen/other/joist-orm/packages/orm/src/stacks.mjs:156:5
+    at zaz (file:///home/stephen/joist-orm/stacks.mjs:119:30)
+    at async file:///home/stephen/joist-orm/stacks.mjs:156:5
 ```
 
 This is interesting--it's definitely better than `allPromisesTimeout` (we can see `zaz` from our `stacks.mjs` file), *but* we're missing `foo` -> `bar` -> `zaz`.
@@ -279,13 +279,13 @@ Stacktrace:
 ```
 allAsyncOneMissingAwaitTimeoutCatch
 Error: oops
-    at Timeout._onTimeout (file:///home/stephen/other/joist-orm/packages/orm/src/stacks.mjs:3:29)
+    at Timeout._onTimeout (file:///home/stephen/joist-orm/stacks.mjs:3:29)
     at listOnTimeout (node:internal/timers:614:17)
     at process.processTimers (node:internal/timers:549:7)
-    at zaz (file:///home/stephen/other/joist-orm/packages/orm/src/stacks.mjs:134:30)
-    at async foo (file:///home/stephen/other/joist-orm/packages/orm/src/stacks.mjs:127:5)
-    at async allAsyncOneMissingAwaitTimeoutCatch (file:///home/stephen/other/joist-orm/packages/orm/src/stacks.mjs:137:3)
-    at async file:///home/stephen/other/joist-orm/packages/orm/src/stacks.mjs:154:5
+    at zaz (file:///home/stephen/joist-orm/stacks.mjs:134:30)
+    at async foo (file:///home/stephen/joist-orm/stacks.mjs:127:5)
+    at async allAsyncOneMissingAwaitTimeoutCatch (file:///home/stephen/joist-orm/stacks.mjs:137:3)
+    at async file:///home/stephen/joist-orm/stacks.mjs:154:5
 ```
 
 We see both `foo` and `zaz` in the stack, but not `bar`!
