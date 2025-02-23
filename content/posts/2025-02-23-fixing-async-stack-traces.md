@@ -27,7 +27,17 @@ I was kind of dumbfounded that such a bad DX could still happen in 2025, so I st
 
 ## Root Cause: The Run Loop
 
-Stepping back a bit, understandable why node does this -- run loop with a collection of lambdas.
+Before diving in, it's useful to understand why Node/JavaScript has this quirk, where as the old-school Java, C#, etc. languages typically did not.
+
+The reason is JavaScript's async/single-thread nature.
+
+In a traditional language, as we make function calls, i.e. `foo` calls `bar` calls `zaz`, not only does each function get added to the stack (good), but if one of them "blocks on I/O", i.e. `zaz` makes a call to the database that takes 10 seconds to return, all of the functions stay "on the stack"--the whole stack is just left as-is, in-memory, until the operating system
+(red threads) or the language runtime (green threads) resumes the stack when the I/O is complete.
+
+This is great, because if an error happens "after the database call", the Error stack trace naturally has the calling methods (`foo` and `bar`) still on the stack.
+
+j
+
 
 Example of program broken up into tiny lambda, with "invoke next", "invoke next".
 
@@ -56,7 +66,7 @@ export function appendStack(err, dummy) {
 
 ## Example: allAwaits
 
-Starting with the simplest example I could think of, I wanted to chain a series of `async` functions (i.e. `foo` calls `bar` which calls `zaz`), have the 3rd one (`zaz`) fail, and see what happens:
+Starting with the simplest example I could think of, I wanted to chain a series of async functions (i.e. `foo` calls `bar` which calls `zaz`), have the 3rd one (`zaz`) fail, and see what happens:
 
 ```ts
 async function allAwaits() {
@@ -90,11 +100,13 @@ Error: oops
 
 This seems good! We see all three of `foo` -> `bar` -> `zaz` in the trace.
 
-However, we're cheating a little bit by throwing the `Error` immediately within the `zaz` function.
+However, we're cheating by throwing the `Error` immediately within the `zaz` function--this has kept all the functions as synchronous/immediately invoked (we've not done any yielding to the event loop), so when `new Error` is called, of course they're all still on the stack.
+
+Which is good to know, but let's move on.
 
 ## Example: allPromises
 
-Before resolving our "cheating" issue, here's an example uses raw Promises instead of async/await:
+Before resolving our "immediately failing is kind of cheating" issue, here's an example that uses raw Promises instead of async/await:
 
 ```ts
 function allPromises() {
@@ -128,13 +140,13 @@ Error: oops
 
 ```
 
-Initially, I was surprised Node handled this well, b/c I assumed the `await` keyword was helping keep our previous stacktrace intact (which, as we'll see later, can be the case in other scenarios).
-
-However, in retrospect, the `foo` -> `bar` -> `zaz` -> `handle` functions are all immediately invoked (within the same invocation of the run loop calling `foo`), so the stack "just works" for free.
+Initially, I was surprised Node handled this well, but in retrospect it's for the same reason--when `new Promise` is called, it *immediately* invokes the `handle` function, so again when `new Error` is called, the entire `foo` -> `bar` -> `zaz` -> `handle` chain is naturally on the stack.
 
 ## Example: allAwaitsTimeout
 
-Now, to resolve the cheating issue, instead of *immediately* failing (within the `handle` function), we'll wait to reject our promise from a "different context", specifically a `setTimeout` callback, which will emulate "the database response callback coming back":
+Now, instead of *immediately* failing (i.e. synchronously calling `reject` without yielding to the event loop), we'll wait to reject our promise from a "different context", specifically a `setTimeout` callback.
+
+This is how real I/O calls work: after asking the database to "please do something" (sending the request), our app just stops for a little bit, and waits for the callback to be invoked with the database's response.
 
 ```ts
 // Emulates a wire call to the database returning an error
@@ -144,6 +156,7 @@ function badDatabaseCall() {
   });
 }
 
+// zaz makes the wire call and returns its soon-to-be-rejected Promise
 async function allAwaitsTimeout() {
   async function foo() {
     await bar();
@@ -176,7 +189,7 @@ But we've reproduced the issue, and now can work on fixing it.
 
 ## Example: allAwaitsTimeoutCatch
 
-This example using the "catch + append stack" pattern:
+As covered above, this example will use the "catch + append stack" pattern to fixup the stack trace:
 
 ```ts
 async function allAwaitsTimeoutCatch() {
@@ -216,7 +229,7 @@ We can see the `foo` -> `bar` -> `zaz` -> `onTimeout` progression.
 
 ## Example: allPromisesTimeoutCatch
 
-Since the `appendStack` worked so well for our async functions, let's try it with our raw Promises:
+Since the `appendStack` worked so well for our async functions, let's try it with our raw Promises example:
 
 ```ts
 function allPromisesTimeoutCatch() {
@@ -246,15 +259,15 @@ Error: oops
     at async file:///home/stephen/joist-orm/stacks.mjs:156:5
 ```
 
-This is interesting--it's definitely better than `allPromisesTimeout` (we can see `zaz` from our `stacks.mjs` file), *but* we're missing `foo` -> `bar` -> `zaz`.
+This is interesting--it's definitely better than the original `allPromisesTimeout` example, because we can see `zaz` from our `stacks.mjs` file, *but* we're missing `foo` -> `bar` -> `zaz`.
 
-This shows an interesting wrinkle with async/await: when we capture a new stack in `function zaz`'s `new Error()`, Node/v8 is can find the `async` functions (i.e. `foo` and `bar` from the previous example), but not regular functions that lack the async/await keywords.
+This shows an interesting wrinkle with async/await: when we capture the current stack in `function zaz`'s `new Error()`, Node/v8 can find the upstream async functions (i.e. `foo` and `bar` from the previous example), but this example's regular functions that lack the async/await keywords.
 
 I'm curious though, is it the `async` keyword or the `await` keyword that is driving the better stack traces?
 
 ## Example: allAsyncOneMissingAwaitTimeoutCatch
 
-Here we update `bar` to keep the `async` keyword, but remove the `await` keyword:
+Here we update the middle function `bar` to keep the `async` keyword, but remove the `await` keyword:
 
 ```ts
 async function allAsyncOneMissingAwaitTimeoutCatch() {
@@ -262,7 +275,7 @@ async function allAsyncOneMissingAwaitTimeoutCatch() {
     await bar();
   }
   async function bar() {
-    // Notice we'remissing an `await`
+    // Notice we removing an `await`
     return zaz();
   }
   async function zaz() {
