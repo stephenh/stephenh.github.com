@@ -11,21 +11,23 @@ However, when prototyping [Joist](https://joist-orm.io/) support for the [postgr
 
 ```
 PostgresError: syntax error at or near ")"
-    at ErrorResponse (/home/stephen/joist-orm/node_modules/postgres/cjs/src/connection.js:790:26)
-    at handle (/home/stephen/joist-orm/node_modules/postgres/cjs/src/connection.js:476:6)
-    at Socket.data (/home/stephen/joist-orm/node_modules/postgres/cjs/src/connection.js:317:9)
+    at ErrorResponse (/home/joist-orm/node_modules/postgres/cjs/src/connection.js:790:26)
+    at handle (/home/joist-orm/node_modules/postgres/cjs/src/connection.js:476:6)
+    at Socket.data (/home/joist-orm/node_modules/postgres/cjs/src/connection.js:317:9)
     at Socket.emit (node:events:507:28)
     at addChunk (node:internal/streams/readable:559:12)
     at readableAddChunkPushByteMode (node:internal/streams/readable:510:3)
     at Socket.Readable.push (node:internal/streams/readable:390:5)
     at TCP.onStreamRead (node:internal/stream_base_commons:189:23)
+    
+     ^-- none of these functions are "my code"!
 ```
 
 This trace correctly reports the syntax error, but there is no indication of "who called this" / "who caused this", which in a large/complicated codebase or test run can be infuriating to not know where to begin debugging the issue.
 
 I was kind of dumbfounded that such a bad DX could still happen in 2025, so I started digging.
 
-*Disclaimer*: this is a longer post, documenting what I learned, but it **does not have any novel solutions**--I'm just explaining how prior-art fixes like [this node-pg fix](https://github.com/brianc/node-postgres/pull/2983) work, and most off-the-shelf libraries like node-pg & postgres.js already have these fixes integrated. :tada:
+*Disclaimer*: this is a longer post, documenting what I learned, and it **does not have any novel solutions**--I'm just explaining how prior-art fixes like [this node-pg fix](https://github.com/brianc/node-postgres/pull/2983) work, and note that most off-the-shelf libraries like node-pg & postgres.js **already have these fixes integrated**. :tada:
 
 ## Root Cause: JavaScript is Non-Blocking
 
@@ -96,7 +98,7 @@ So how do we fix this?
 
 We'll get to the examples section next, which will show the "default terrible" stack traces, and then progressively fix them up.
 
-The key fix that we'll use is realizing when we "our code" is active again (i.e. we've hit a `.catch` callback, in the step 4 above), and appending "our stack" to the existing error object.
+The key fix we'll use is realizing when we "our code" is active again (i.e. we've hit a `.catch` callback, in the step 4 above), and appending "our stack" to the existing `Error` stack.
 
 ```ts
 // err is the Error created by the database driver, without any of "our code" in its stack
@@ -109,7 +111,7 @@ export function appendStack(rawError, dummyErr) {
 }
 ```
 
-With this `appendStack`u tility available, let's get to the examples.
+With this `appendStack` utility available, let's get to the examples.
 
 ## Example: allAwaitsSync
 
@@ -145,7 +147,7 @@ Error: oops
 
 ```
 
-This seems good! We see all three of `foo` -> `bar` -> `zaz` in the trace.
+This seems good! We see all three of `foo` -> `bar` -> `zaz` in the trace, right up at the top.
 
 However, we're cheating by throwing the `Error` immediately within the `zaz` function--this has kept all the functions as synchronous/immediately invoked, so when `new Error` is called, of course they're all still on the stack.
 
@@ -197,7 +199,7 @@ We still don't have any async behavior, so let's introduce that next.
 
 Now, instead of *immediately* failing (i.e. synchronously calling `reject`), we'll wait to reject our promise from a "different context", specifically a `setTimeout` callback.
 
-This is how real I/O calls work: after asking the database to "please do something" (sending the request), our app just stops for a little bit, and waits for the callback to be invoked with the database's response.
+This is how real I/O calls work: after asking the database to "please do something" (sending the request), our app just stops for a little bit (without anything "paused on the stack"), and waits for the callback to be invoked with the database's response.
 
 ```ts
 // Emulates a wire call to the database returning an error
@@ -314,7 +316,7 @@ Error: oops
 
 This is interesting--it's definitely better than the original `allPromisesTimeout` example, because we can see `zaz` from our `stacks.mjs` file, *but* we're missing `foo` -> `bar` -> `zaz`.
 
-This shows an interesting wrinkle with async/await: when we capture the current stack in `function zaz`'s `new Error()`, Node/v8 can find the upstream async functions (i.e. `foo` and `bar` from the previous example), but this example's regular functions that lack the async/await keywords.
+This shows an interesting wrinkle with async/await: when we capture the current stack in `function zaz`'s `new Error()`, Node/v8 **can find the upstream async functions** (i.e. `foo` and `bar` from the previous example), but this example's regular functions that lack the async/await keywords.
 
 I'm curious though, is it the `async` keyword or the `await` keyword that is driving the better stack traces?
 
@@ -354,7 +356,7 @@ Error: oops
     at async file:///home/stephen/joist-orm/stacks.mjs:154:5
 ```
 
-We see both `foo` and `zaz` in the stack, but not `bar`!
+We see both `foo` and `zaz` in the stack, but not the "middle" `bar`!
 
 So even though `bar` is an `async function`, without `await` the `zaz` promise, `bar` is not making it's way into the stack trace.
 
@@ -366,13 +368,13 @@ Having worked through our examples, we can come away with some recommendations:
 
   Whenever you're crossing a boundary from "a raw Promise" or callback (i.e. a low-level TCP/wire call) to "your async/await business logic", consider `appendStack`-ing the error to ensure the stack trace is as helpful as possible.
 
-  This sounds tedious, but in practice applications have **a handful of "choke points"** which the majority of I/O calls go through, and **most low-level libraries should already do this for you**.
+  This sounds tedious, but in practice applications have **a handful of "choke points"** which the majority of I/O calls go through, and **most user-facing libraries should already do this for you**.
 
   For example, both the node-pg and postgres.js drivers already have `appendStack`-style fixes integrated, so most applications already get this for free.
 
-  For Joist, I happened to be using a) postgres.js's `sql.unsafe` API, and b) Facebook's dataloader auto-batching library, both of which expose raw, "not fixed up" Promises.
+  For my Joist work, I happened to be using a) postgres.js's `sql.unsafe` API, and b) Facebook's dataloader auto-batching library, both of which expose raw, "not fixed up" Promises.
 
-  Even then, Joist itself is a "choke point" for database calls, so Joist-using applications will now these fixups for free (see [this PR](https://github.com/joist-orm/joist-orm/pull/1384)).
+  Even then, Joist itself is a "choke point" for database calls, so Joist-based applications will now these fixups for free (see [this PR](https://github.com/joist-orm/joist-orm/pull/1384)). :tada:
 
 * Prefer async/await, even if it's "more expensive", the better DX is worth it.
 
