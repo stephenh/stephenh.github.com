@@ -4,7 +4,7 @@ function badDatabaseCall() {
   });
 }
 
-async function allAwaits() {
+async function allAwaitsSync() {
   async function foo() {
     await bar();
   }
@@ -17,7 +17,7 @@ async function allAwaits() {
   await foo();
 }
 
-function allPromises() {
+function allPromisesSync() {
   function foo() {
     return bar();
   }
@@ -58,7 +58,7 @@ function allPromisesTimeout() {
   return foo();
 }
 
-async function allAwaitsTimeoutCatch() {
+async function allAwaitsTimeoutAppend() {
   async function foo() {
     await bar();
   }
@@ -73,7 +73,7 @@ async function allAwaitsTimeoutCatch() {
   await foo();
 }
 
-async function allAwaitsTimeoutLambdaCatch() {
+async function allAwaitsTimeoutLambdaAppend() {
   async function foo() {
     await bar();
   }
@@ -96,14 +96,14 @@ async function allAwaitsTimeoutCause() {
     await zaz();
   }
   async function zaz() {
-    return new badDatabaseCall().catch((err) => {
+    return badDatabaseCall().catch((err) => {
       throw new Error(err.message, { cause: err });
     });
   }
   await foo();
 }
 
-function allPromisesTimeoutCatch() {
+function allPromisesTimeoutAppend() {
   function foo() {
     return bar();
   }
@@ -118,7 +118,7 @@ function allPromisesTimeoutCatch() {
   return foo();
 }
 
-async function allAsyncOneMissingAwaitTimeoutCatch() {
+async function allAsyncOneMissingAwaitTimeoutAppend() {
   async function foo() {
     await bar();
   }
@@ -134,14 +134,14 @@ async function allAsyncOneMissingAwaitTimeoutCatch() {
 }
 
 for (const fn of [
-  allAwaits,
-  allPromises,
+  allAwaitsSync,
+  allPromisesSync,
   allAwaitsTimeout,
   allPromisesTimeout,
-  allAwaitsTimeoutCatch,
-  allAwaitsTimeoutLambdaCatch,
-  allPromisesTimeoutCatch,
-  allAsyncOneMissingAwaitTimeoutCatch,
+  allAwaitsTimeoutAppend,
+  allAwaitsTimeoutLambdaAppend,
+  allPromisesTimeoutAppend,
+  allAsyncOneMissingAwaitTimeoutAppend,
   allAwaitsTimeoutCause,
 ]) {
   console.log("");
