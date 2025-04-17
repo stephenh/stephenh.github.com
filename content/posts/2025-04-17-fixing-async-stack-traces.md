@@ -1,5 +1,5 @@
 ---
-date: "2025-02-23T00:00:00Z"
+date: "2025-04-17T00:00:00Z"
 title: Fixing Async Stack Traces
 categories:
   - TypeScript
