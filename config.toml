@@ -3,7 +3,6 @@ title = "Draconian Overlord"
 theme = "hugo-coder"
 languageCode = "en-us"
 defaultContentLanguage = "en"
-paginate = 20
 disqusShortname = "draconianoverlord"
 enableEmoji = true
 
