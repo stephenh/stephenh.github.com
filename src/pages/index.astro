@@ -73,16 +73,13 @@ const projects: CollectionEntry<"projects">[] = (
             <h2 class="font-semibold text-black dark:text-white">
               Latest posts
             </h2>
-            <Link href="/posts"> See all posts </Link>
+            <div class="flex gap-x-2">
+              <Link href="/tags"> Posts by tag </Link>
+              <Link href="/posts"> All posts </Link>
+            </div>
           </div>
           <ul class="not-prose flex flex-col gap-4">
-            {
-              blog.map((post) => (
-                <li>
-                  <ArrowCard entry={post} />
-                </li>
-              ))
-            }
+            {blog.map((post) => (<li><ArrowCard entry={post} /></li>))}
           </ul>
         </section>
 
@@ -94,13 +91,7 @@ const projects: CollectionEntry<"projects">[] = (
             <Link href="/projects"> See all projects </Link>
           </div>
           <ul class="not-prose flex flex-col gap-4">
-            {
-              projects.map((project) => (
-                <li>
-                  <ArrowCard entry={project} />
-                </li>
-              ))
-            }
+            {projects.map((project) => (<li><ArrowCard entry={project} /></li>))}
           </ul>
         </section>
 
@@ -117,7 +108,7 @@ const projects: CollectionEntry<"projects">[] = (
           <ul class="not-prose flex flex-wrap gap-2">
             {
               SOCIALS.map((SOCIAL) => (
-                <li class="flex gap-x-2 text-nowrap">
+                <li class="flex gap-x-4 text-nowrap">
                   <Link
                     href={SOCIAL.HREF}
                     external
@@ -125,15 +116,11 @@ const projects: CollectionEntry<"projects">[] = (
                   >
                     {SOCIAL.NAME}
                   </Link>
-                  {"/"}
                 </li>
               ))
             }
             <li class="line-clamp-1">
-              <Link
-                href={`mailto:${SITE.EMAIL}`}
-                aria-label={`Email ${SITE.TITLE}`}
-              >
+              <Link href={`mailto:${SITE.EMAIL}`} aria-label={`Email ${SITE.TITLE}`}>
                 {SITE.EMAIL}
               </Link>
             </li>

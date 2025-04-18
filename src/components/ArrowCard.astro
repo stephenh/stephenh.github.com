@@ -11,7 +11,7 @@ const { entry } = Astro.props as {
 };
 
 // Generate URL based on collection type
-const url = getItemLink(entry);
+const url = getItemLink(entry, { leadingSlash: true });
 ---
 
 <a
