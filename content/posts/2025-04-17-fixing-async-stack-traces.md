@@ -31,7 +31,7 @@ I was kind of dumbfounded that such a bad DX could still happen in 2025, so I st
 
 ## Root Cause: JavaScript is Non-Blocking
 
-Before diving into the fix, it's helpful to understand why Node/JavaScript has this quirk ("default terrible" stack traces), where the old-school Java, C#, etc. languages generally do not.
+Before diving into the fix, it's helpful to understand why Node/JavaScript has this quirk ("terrible by default" stack traces), where the old-school Java, C#, etc. languages generally do not.
 
 The reason is JavaScript's single-threaded, **non-blocking** programming model.
 
@@ -76,15 +76,16 @@ These steps look like:
 2. The `.then` and `.catch` callbacks are registered to "run later"
    * This is our "what to do with the good & bad responses", respectively, logic
 3. `zaz` immediately returns, and `bar` and `foo` are all removed from the stack
+   * Because all the functions immediately return, our "traditional callstack" is completely gone
 
 Now, what happens when the database call fails?
 
-Our `.catch` callback is called with the error, but **called by who?** I.e. what is the callstack?
+Our `.catch` callback is called with the error (good), but **called by who?** I.e. what is the callstack?
 
 Who called the `.catch` callback looks like:
 
 1. The Node internal TCP library gets the DB wire response
-2. The database driver recognizes this as "failed" and creates a `new Error("invalid syntax")`
+2. The database driver recognizes the call "failed" and creates a `new Error("invalid syntax")`
 3. The driver rejects the `makeDatabaseCall` promise
 4. Our `.catch` callback is invoked
 
@@ -189,15 +190,15 @@ Error: oops
 
 ```
 
-This still looks good!
+This still looks good! ...but why?
 
-Initially, I was surprised Node handled this well, but in retrospect it's for the same reason--when `new Promise` is called, it *immediately* invokes the `handle` function, so again when `new Error` is called, the entire `foo` -> `bar` -> `zaz` -> `handle` chain is still on the stack.
+I was initially surprised Node handled this well, but in retrospect it's for the same reason as our prior example: when `new Promise` is called, it *immediately* invokes the `handle` function, so again when `new Error` is called, the entire `foo` -> `bar` -> `zaz` -> `handle` chain is still on the stack.
 
 We still don't have any async behavior, so let's introduce that next.
 
 ## Example: allAwaitsTimeout
 
-Now, instead of *immediately* failing (i.e. synchronously calling `reject`), we'll wait to reject our promise from a "different context", specifically a `setTimeout` callback.
+Now, instead of *immediately* failing (i.e. immediately `throw new Error` or synchronously calling `reject`), we'll wait to reject our promise from a "different context", specifically a `setTimeout` callback.
 
 This is how real I/O calls work: after asking the database to "please do something" (sending the request), our app just stops for a little bit (without anything "paused on the stack"), and waits for the callback to be invoked with the database's response.
 
@@ -316,7 +317,7 @@ Error: oops
 
 This is interesting--it's definitely better than the original `allPromisesTimeout` example, because we can see `zaz` from our `stacks.mjs` file, *but* we're missing `foo` -> `bar` -> `zaz`.
 
-This shows an interesting wrinkle with async/await: when we capture the current stack in `function zaz`'s `new Error()`, Node/v8 **can find the upstream async functions** (i.e. `foo` and `bar` from the previous example), but this example's regular functions that lack the async/await keywords.
+This shows an interesting wrinkle with async/await: when we capture the current stack in `function zaz`'s `new Error()`, Node/v8 **can find the upstream await points** (i.e. `foo` and `bar` from the previous example), but this example's regular functions that lack the async/await keywords.
 
 I'm curious though, is it the `async` keyword or the `await` keyword that is driving the better stack traces?
 
@@ -390,7 +391,7 @@ Having worked through our examples, we can come away with some recommendations:
 
 ## Bun: Still Needs Work
 
-The examples above all used Node & v8, and unfortunately the results for Bun are honestly pretty terrible, even for the examples that "use `async/await` keywords" that, at least in Node/v8, lead to "good by default" traces.
+The examples above all used Node & v8, and unfortunately the results for Bun are honestly pretty terrible, even for the examples that "use `async/await` keywords" that in Node/v8 lead to "good by default" traces.
 
 This is already a long post, so I'll refer to [this gist](https://gist.github.com/stephenh/0b4511b8766b3ea8289312623cfb9d39) with both the Node & Bun results, and the `stacks.mjs` file used for the examples, for any Bun users that want to dig in more.
 
@@ -405,7 +406,7 @@ If you're interested in this topic, you might enjoy:
   * What's surprising is that this PR didn't land until May 2023 (!)
 * [Joist PR that fixes dataloader stack traces](https://github.com/joist-orm/joist-orm/pull/1384)
   * Fixing up errors that occur for Joist's "auto-batched" / N+1-prevented queries
-* [postgres.js issue showing new Error is expense](https://github.com/porsager/postgres/issues/290)
+* [postgres.js issue showing new Error is expensive](https://github.com/porsager/postgres/issues/290)
   * I.e. we want to ensure the "dummy" `new Error` happens conditionally in `catch` blocks 
 * [postgres.js issue reporting unfixed traces](https://github.com/porsager/postgres/issues/963)
   * I believe the reporter is using postgres.js's `sql.unsafe` API (they don't specify), which currently requires manual `appendStack`-ing
