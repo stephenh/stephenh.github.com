@@ -16,12 +16,11 @@ export async function GET(context) {
     description: SITE.DESCRIPTION,
     site: context.site,
     items: items.map((item) => {
-      const link = getItemLink(item, true);
       return {
         title: item.data.title,
         description: item.data.description,
         pubDate: item.data.date,
-        link,
+        link: getItemLink(item, { leadingSlash: true }),
       };
     }),
   });
