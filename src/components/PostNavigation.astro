@@ -1,12 +1,12 @@
 ---
-import { generatePostUrl } from "@lib/utils";
+import { getItemLink } from "@lib/utils";
 
 const { prevPost, nextPost } = Astro.props;
 
 // Function to generate URL for a post
 function getPostUrl(post) {
   if (!post) return null;
-  return generatePostUrl(post.data.date, post.id);
+  return getItemLink(post);
 }
 
 const prevPostUrl = prevPost ? getPostUrl(prevPost) : null;

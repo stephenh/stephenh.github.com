@@ -1,6 +1,6 @@
 ---
 import type { CollectionEntry } from "astro:content";
-import { generatePostUrl } from "@lib/utils";
+import { getItemLink } from "@lib/utils";
 
 type Props = {
   entry: CollectionEntry<"blog"> | CollectionEntry<"projects">;
@@ -11,13 +11,7 @@ const { entry } = Astro.props as {
 };
 
 // Generate URL based on collection type
-let url = "";
-if (entry.collection === "blog") {
-  url = generatePostUrl(entry.data.date, entry.id);
-} else {
-  // For projects, keep the original URL structure
-  url = `/${entry.collection}/${entry.id}`;
-}
+const url = getItemLink(entry);
 ---
 
 <a

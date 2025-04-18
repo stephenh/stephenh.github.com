@@ -1,5 +1,6 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
+import type { CollectionEntry } from "astro:content";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -34,4 +35,17 @@ function getPostSlug(postId: string): string {
     slug = postId.replace(/^\d{4}-\d{2}-\d{2}-/, "");
   }
   return slug;
+}
+
+export function getItemLink(item: CollectionEntry<"blog"> | CollectionEntry<"projects">, includeTrailingSlash: boolean = false): string {
+  let link = "";
+  
+  if (item.collection === "blog") {
+    link = generatePostUrl(item.data.date, item.id);
+  } else {
+    // For other types like projects, keep original structure
+    link = `/${item.collection}/${item.id}`;
+  }
+  
+  return includeTrailingSlash ? link + '/' : link;
 }
