@@ -1,5 +1,6 @@
 ---
 import type { CollectionEntry } from "astro:content";
+import { generatePostUrl } from "@lib/utils";
 
 type Props = {
   entry: CollectionEntry<"blog"> | CollectionEntry<"projects">;
@@ -8,10 +9,19 @@ type Props = {
 const { entry } = Astro.props as {
   entry: CollectionEntry<"blog"> | CollectionEntry<"projects">;
 };
+
+// Generate URL based on collection type
+let url = "";
+if (entry.collection === "blog") {
+  url = generatePostUrl(entry.data.date, entry.id);
+} else {
+  // For projects, keep the original URL structure
+  url = `/${entry.collection}/${entry.id}`;
+}
 ---
 
 <a
-  href={`/${entry.collection}/${entry.id}`}
+  href={url}
   class="not-prose group relative flex flex-nowrap rounded-lg border border-black/15 px-4 py-3 pr-10 transition-colors duration-300 ease-in-out hover:bg-black/5 hover:text-black focus-visible:bg-black/5 focus-visible:text-black dark:border-white/20 dark:hover:bg-white/5 dark:hover:text-white dark:focus-visible:bg-white/5 dark:focus-visible:text-white"
 >
   <div class="flex flex-1 flex-col truncate">

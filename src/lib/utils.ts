@@ -19,3 +19,19 @@ export function readingTime(html: string) {
   const readingTimeMinutes = (wordCount / 200 + 1).toFixed();
   return `${readingTimeMinutes} min read`;
 }
+
+export function generatePostUrl(date: Date, postId: string): string {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  const slug = getPostSlug(postId);
+  return `/${year}/${month}/${day}/${slug}.html`;
+}
+
+function getPostSlug(postId: string): string {
+  let slug = postId;
+  if (postId.match(/^\d{4}-\d{2}-\d{2}-/)) {
+    slug = postId.replace(/^\d{4}-\d{2}-\d{2}-/, "");
+  }
+  return slug;
+}

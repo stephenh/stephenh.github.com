@@ -1,5 +1,6 @@
 import rss from "@astrojs/rss";
 import { SITE } from "@consts";
+import { generatePostUrl } from "@lib/utils";
 import { getCollection } from "astro:content";
 
 export async function GET(context) {
@@ -17,11 +18,22 @@ export async function GET(context) {
     title: SITE.TITLE,
     description: SITE.DESCRIPTION,
     site: context.site,
-    items: items.map((item) => ({
-      title: item.data.title,
-      description: item.data.description,
-      pubDate: item.data.date,
-      link: `/${item.collection}/${item.id}/`,
-    })),
+    items: items.map((item) => {
+      let link;
+
+      if (item.collection === "blog") {
+        link = generatePostUrl(item.data.date, item.id) + '/';
+      } else {
+        // For other types like projects, keep original structure
+        link = `/${item.collection}/${item.id}/`;
+      }
+
+      return {
+        title: item.data.title,
+        description: item.data.description,
+        pubDate: item.data.date,
+        link,
+      };
+    }),
   });
 }
