@@ -5,6 +5,10 @@ import TableOfContentsHeading from "./TableOfContentsHeading.astro";
 const { headings } = Astro.props;
 const toc = buildToc(headings);
 
+export interface Props {
+  headings: Heading[];
+}
+
 export interface Heading {
   depth: number;
   slug: string;
