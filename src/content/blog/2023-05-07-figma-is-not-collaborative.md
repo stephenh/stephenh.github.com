@@ -5,7 +5,6 @@ date: 2023-05-07T00:00:00Z
 tags: ["UX"]
 ---
 
-
 This post, [Give it the Craigslist Test](https://ericaheinz.com/notes/give-it-the-craigslist-test/), went by HackerNews and I thought it was a great read: succinct and to the point.
 
 Besides the author's two reasons for avoiding high-fidelity mocks in discovery (basically they distract from the outcome being delivered), I wanted to add my own: high-fidelity mocks (aka Figma) are not "deeply collaborative".
@@ -20,7 +19,7 @@ But this just isn't the same as "deeply collaborative" alternatives like physica
 - What are the most important fields for this page?
 - What's the best way to visualize this data?
 
-### But that's the designer's job
+## But that's the designer's job
 
 Granted, usually the push-back on "PMs/engs making mocks" is that it's "letting them do the designer's job", e.g. rephrased as "would engineering like it if a designer started committing code?". My thoughts here are:
 
@@ -32,7 +31,7 @@ Granted, usually the push-back on "PMs/engs making mocks" is that it's "letting 
 
   (Depending on the UX sophistication of your frontend engineers, you may be able to go straight from low-fidelity mocks to great-looking implementations, without a high-fidelity mock in between, but I think that capability is rare (I cannot do it), and so high-fidelity mocks are still useful to ensure the end-product still looks and functions amazing.)
 
-### But Figma is just as fast
+## But Figma is just as fast
 
 One other push-back I've heard is that "as a designer, I create Figmas just as quickly as I'd make low-fidelity mocks, so why not just use Figma, and get the bonus of high-fidelity from day one?".
 
@@ -41,7 +40,7 @@ I'm sure this statement is true, but I think my points would be:
 - See "The Craigslist Test" assertions that high-fidelity is a non-feature during discovery, but
 - A professional designer, _you_ can produce Figmas quickly, but no one else can. :-)
 
-### ...so Balsamiq?
+## ...so Balsamiq?
 
 Unfortunately my biggest disclaimer is that, due to the ubiquity of Figma in the industry, I've not actually used low-fidelity tools (...or a whiteboard...) in years.
 
