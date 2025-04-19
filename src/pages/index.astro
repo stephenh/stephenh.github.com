@@ -23,46 +23,29 @@ const projects: CollectionEntry<"projects">[] = (
 <Layout title={HOME.TITLE} description={HOME.DESCRIPTION}>
   <Container>
     <aside data-pagefind-ignore>
-      <h1 class="font-semibold text-black dark:text-white">
-        Introducing Astro Micro 🔬
-      </h1>
       <div class="space-y-16">
         <section>
           <article class="space-y-4">
             <span>
-              <p>
-                Astro Micro is an accessible theme for <Link
-                  href="https://astro.build/">Astro</Link
-                >. It's a fork of
-                <Link href="https://github.com/markhorn-dev">
-                  Mark Horn's
-                </Link> popular theme <Link
-                  href="https://astro.build/themes/details/astronano/"
-                  >Astro Nano</Link
-                >. Like Nano, Micro comes with zero frameworks installed.
+              <p>This is the blog of Stephen Haberman.</p>
+
+              <p>After years of thinking I didn't have much to contribute, my ego has convinced me otherwise--but we'll see if that's true or not.</p>
+
+              <p>Either way, I enjoy writing things up because it leads to more organized thoughts.</p>
+
+              <p>I started my career doing enterprise Java consulting, back when that was a thing,
+                but since 2008 have worked for startups,
+                first at an adtech startup <a href="http://www.bizo.com">Bizo</a>,
+                which was acquired by <a href="http://www.linkedin.com">LinkedIn</a>,
+                a short stint at <a href="http://www.remind.com">Remind</a>,
+                and now <a href="http://www.homebound.com">Homebound</a>.
               </p>
+
+              <p>I enjoy software development a little too much. It makes me good at what I
+              do, but it also brings out some of my draconian tendencies.</p>
+
               <p>
-                Micro adds features like <Link href="https://pagefind.app/"
-                  >Pagefind</Link
-                > for search, <Link href="https://giscus.app">Giscus</Link> for comments,
-                and more. For a full list of changes, see the <Link
-                  href="/posts">blog posts</Link
-                >.
-              </p>
-            </span>
-            <span class="animate">
-              <p>
-                Micro still comes with everything great about Nano — full type
-                safety, a sitemap, an RSS feed, and Markdown + MDX support.
-                Styled with TailwindCSS and preconfigured with system, light,
-                and dark themes.
-              </p>
-              <p>
-                Visit
-                <Link href="https://github.com/trevortylerlee/astro-micro">
-                  Astro Micro on GitHub
-                </Link>
-                to fork the repository to get started.
+                Feel free to email me about software things at <a href="mailto:stephen.haberman@gmail.com">stephen.haberman@gmail.com</a>.
               </p>
             </span>
           </article>
@@ -97,14 +80,8 @@ const projects: CollectionEntry<"projects">[] = (
 
         <section class="animate space-y-4">
           <h2 class="font-semibold text-black dark:text-white">
-            Let's Connect
+            Contact Info
           </h2>
-          <article>
-            <p>
-              If you want to get in touch with me about something or just to say
-              hi, reach out on social media or send me an email.
-            </p>
-          </article>
           <ul class="not-prose flex flex-wrap gap-2">
             {
               SOCIALS.map((SOCIAL) => (
