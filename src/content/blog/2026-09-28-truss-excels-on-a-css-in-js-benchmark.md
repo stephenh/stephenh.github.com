@@ -3,7 +3,7 @@ title: Truss Excels on a CSS-in-JS Benchmark
 description: "We ran some benchmarks on our niche CSS-in-JS library and it did really well"
 date: 2026-09-28T00:00:00Z
 tags: ["React"]
-draft: true
+draft: false
 ---
 
 ## What is Truss
