@@ -1,0 +1,772 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>What It Took to Land the Joist Migration</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        --ink: #f5f1e8;
+        --muted: #aaa69e;
+        --faint: #716e68;
+        --paper: #121311;
+        --panel: #191b18;
+        --line: #30332d;
+        --acid: #d8ff63;
+        --orange: #ff8f5b;
+        --blue: #72b7ff;
+        --violet: #c49aff;
+        --mint: #65e3b2;
+        --yellow: #ffd166;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        background: var(--paper);
+      }
+
+      body {
+        margin: 0;
+        color: var(--ink);
+        background:
+          linear-gradient(rgba(255, 255, 255, 0.018) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(255, 255, 255, 0.018) 1px, transparent 1px), var(--paper);
+        background-size: 28px 28px;
+        font-family:
+          Inter,
+          ui-sans-serif,
+          system-ui,
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          sans-serif;
+        line-height: 1.5;
+      }
+
+      main {
+        width: min(1180px, calc(100% - 40px));
+        margin: 0 auto;
+        padding: 64px 0 80px;
+      }
+
+      header {
+        display: grid;
+        grid-template-columns: minmax(0, 1.5fr) minmax(270px, 0.5fr);
+        gap: 48px;
+        align-items: end;
+        padding-bottom: 42px;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .kicker,
+      .eyebrow,
+      .metric-label,
+      .legend,
+      .session-date,
+      footer {
+        font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+        text-transform: uppercase;
+        letter-spacing: 0.09em;
+      }
+
+      .kicker {
+        margin: 0 0 14px;
+        color: var(--acid);
+        font-size: 12px;
+      }
+
+      h1 {
+        max-width: 850px;
+        margin: 0;
+        font-size: clamp(46px, 7vw, 92px);
+        line-height: 0.93;
+        letter-spacing: -0.065em;
+        font-weight: 800;
+      }
+
+      .header-note {
+        margin: 0;
+        padding: 18px 0 4px 22px;
+        color: var(--muted);
+        border-left: 3px solid var(--orange);
+        font-size: 16px;
+      }
+
+      .header-note strong {
+        color: var(--ink);
+      }
+
+      .metrics {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 1px;
+        margin: 28px 0 56px;
+        background: var(--line);
+        border: 1px solid var(--line);
+      }
+
+      .metric {
+        min-height: 184px;
+        padding: 24px;
+        background: var(--panel);
+      }
+
+      .metric-value {
+        display: block;
+        margin: 16px 0 8px;
+        color: var(--acid);
+        font-size: clamp(42px, 6vw, 72px);
+        line-height: 1;
+        letter-spacing: -0.06em;
+        font-weight: 750;
+      }
+
+      .metric:nth-child(2) .metric-value {
+        color: var(--orange);
+      }
+
+      .metric:nth-child(3) .metric-value {
+        color: var(--blue);
+      }
+
+      .metric:nth-child(4) .metric-value {
+        color: var(--violet);
+      }
+
+      .metric-label {
+        color: var(--muted);
+        font-size: 11px;
+      }
+
+      .metric p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      section {
+        margin-top: 72px;
+      }
+
+      .section-head {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 32px;
+        align-items: end;
+        margin-bottom: 28px;
+      }
+
+      .eyebrow {
+        margin: 0 0 10px;
+        color: var(--acid);
+        font-size: 11px;
+      }
+
+      h2 {
+        margin: 0;
+        font-size: clamp(30px, 4vw, 52px);
+        line-height: 1;
+        letter-spacing: -0.045em;
+      }
+
+      .section-head > p {
+        max-width: 520px;
+        margin: 0;
+        color: var(--muted);
+      }
+
+      .panel {
+        padding: 28px;
+        background: rgba(25, 27, 24, 0.94);
+        border: 1px solid var(--line);
+      }
+
+      .composition-grid {
+        display: grid;
+        grid-template-columns: minmax(0, 1.65fr) minmax(260px, 0.65fr);
+        gap: 20px;
+      }
+
+      svg {
+        display: block;
+        width: 100%;
+        height: auto;
+        overflow: visible;
+      }
+
+      .chart-label {
+        fill: var(--ink);
+        font:
+          13px "SFMono-Regular",
+          Consolas,
+          monospace;
+      }
+
+      .chart-value {
+        fill: var(--muted);
+        font:
+          12px "SFMono-Regular",
+          Consolas,
+          monospace;
+      }
+
+      .correction-callout {
+        display: flex;
+        min-height: 100%;
+        flex-direction: column;
+        justify-content: space-between;
+        background: var(--orange);
+        color: #17120f;
+      }
+
+      .correction-callout .eyebrow {
+        color: #5f2814;
+      }
+
+      .correction-callout strong {
+        display: block;
+        font-size: clamp(72px, 10vw, 128px);
+        line-height: 0.85;
+        letter-spacing: -0.08em;
+      }
+
+      .correction-callout p {
+        margin: 28px 0 0;
+        font-size: 17px;
+        font-weight: 650;
+      }
+
+      .timeline-panel {
+        padding: 34px 28px 24px;
+      }
+
+      .time-band {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 12px;
+        margin-top: 22px;
+      }
+
+      .time-band div {
+        padding-top: 12px;
+        border-top: 4px solid var(--faint);
+      }
+
+      .time-band div:nth-child(1) {
+        border-color: var(--mint);
+      }
+
+      .time-band div:nth-child(2) {
+        border-color: var(--blue);
+      }
+
+      .time-band div:nth-child(3) {
+        border-color: var(--yellow);
+      }
+
+      .time-band div:nth-child(4) {
+        border-color: var(--orange);
+      }
+
+      .time-band strong,
+      .time-band span {
+        display: block;
+      }
+
+      .time-band strong {
+        font-size: 21px;
+      }
+
+      .time-band span {
+        color: var(--muted);
+        font-size: 12px;
+      }
+
+      .sessions {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 16px;
+      }
+
+      .session {
+        position: relative;
+        min-height: 270px;
+        padding: 24px;
+        overflow: hidden;
+        background: var(--panel);
+        border: 1px solid var(--line);
+      }
+
+      .session::after {
+        position: absolute;
+        right: -20px;
+        bottom: -50px;
+        color: rgba(255, 255, 255, 0.035);
+        content: attr(data-prompts);
+        font-size: 150px;
+        line-height: 1;
+        letter-spacing: -0.08em;
+        font-weight: 800;
+      }
+
+      .session-date {
+        color: var(--muted);
+        font-size: 10px;
+      }
+
+      .session h3 {
+        max-width: 280px;
+        margin: 18px 0 40px;
+        font-size: 24px;
+        line-height: 1.12;
+        letter-spacing: -0.025em;
+      }
+
+      .session-stats {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        gap: 28px;
+      }
+
+      .session-stats strong,
+      .session-stats span {
+        display: block;
+      }
+
+      .session-stats strong {
+        color: var(--acid);
+        font-size: 28px;
+      }
+
+      .session-stats span {
+        color: var(--muted);
+        font-size: 11px;
+      }
+
+      .dx-grid {
+        display: grid;
+        grid-template-columns: 0.72fr 1.28fr;
+        gap: 20px;
+      }
+
+      .dx-number {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        color: #101713;
+        background: var(--mint);
+      }
+
+      .dx-number strong {
+        font-size: clamp(90px, 15vw, 180px);
+        line-height: 0.8;
+        letter-spacing: -0.09em;
+      }
+
+      .dx-number p {
+        max-width: 340px;
+        margin: 42px 0 0;
+        font-size: 17px;
+        font-weight: 700;
+      }
+
+      .dx-list {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0 28px;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+      }
+
+      .dx-list li {
+        padding: 13px 0;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .dx-list li::before {
+        margin-right: 9px;
+        color: var(--acid);
+        content: "↳";
+      }
+
+      .conclusion {
+        padding: 42px;
+        color: #13130f;
+        background: var(--acid);
+      }
+
+      .conclusion blockquote {
+        max-width: 1000px;
+        margin: 0;
+        font-size: clamp(28px, 4vw, 49px);
+        line-height: 1.08;
+        letter-spacing: -0.04em;
+        font-weight: 760;
+      }
+
+      .conclusion p {
+        max-width: 800px;
+        margin: 28px 0 0;
+        font-size: 17px;
+        font-weight: 560;
+      }
+
+      footer {
+        display: flex;
+        justify-content: space-between;
+        gap: 24px;
+        margin-top: 28px;
+        color: var(--faint);
+        font-size: 9px;
+      }
+
+      @media (max-width: 820px) {
+        main {
+          width: min(100% - 24px, 680px);
+          padding-top: 32px;
+        }
+
+        header,
+        .section-head,
+        .composition-grid,
+        .dx-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .metrics {
+          grid-template-columns: 1fr 1fr;
+        }
+
+        .sessions {
+          grid-template-columns: 1fr;
+        }
+
+        .time-band,
+        .dx-list {
+          grid-template-columns: 1fr 1fr;
+        }
+      }
+
+      @media (max-width: 500px) {
+        .metrics,
+        .time-band,
+        .dx-list {
+          grid-template-columns: 1fr;
+        }
+
+        h1 {
+          font-size: 48px;
+        }
+
+        .metric {
+          min-height: 145px;
+        }
+
+        .conclusion {
+          padding: 28px;
+        }
+
+        footer {
+          display: block;
+        }
+      }
+
+      @media print {
+        :root {
+          color-scheme: light;
+          --ink: #11130f;
+          --muted: #55584f;
+          --faint: #797c72;
+          --paper: #f7f5ee;
+          --panel: #eeece4;
+          --line: #c9c7bd;
+        }
+
+        body {
+          background: var(--paper);
+        }
+
+        main {
+          width: 100%;
+          padding: 20px;
+        }
+
+        section {
+          break-inside: avoid;
+          margin-top: 42px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <header>
+        <div>
+          <p class="kicker">OpenCode effort audit · Sep 11–19, 2026</p>
+          <h1>What it took to land the Joist migration.</h1>
+        </div>
+        <p class="header-note">
+          This was not “ask an LLM to migrate some queries.” It was an extended, high-touch review of
+          <strong>AI-written code</strong> while simultaneously finding gaps in the ORM beneath it.
+        </p>
+      </header>
+
+      <div class="metrics" aria-label="Headline metrics">
+        <article class="metric">
+          <span class="metric-label">User prompts</span>
+          <span class="metric-value">189</span>
+          <p>Distinct steering, review, correction, and workflow turns.</p>
+        </article>
+        <article class="metric">
+          <span class="metric-label">Corrective follow-ups</span>
+          <span class="metric-value">52%</span>
+          <p>About 99 prompts reacted to or corrected earlier AI output.</p>
+        </article>
+        <article class="metric">
+          <span class="metric-label">Likely active effort</span>
+          <span class="metric-value">22–33h</span>
+          <p>Approximately three to four full workdays.</p>
+        </article>
+        <article class="metric">
+          <span class="metric-label">Active / calendar days</span>
+          <span class="metric-value">7 / 9</span>
+          <p>Work appeared on seven distinct days across the span.</p>
+        </article>
+      </div>
+
+      <section>
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">01 · Where the prompts went</p>
+            <h2>Implementation was the small part.</h2>
+          </div>
+          <p>
+            Only 9 prompts were primarily first-order implementation. Most of the human effort was making AI-written
+            code reviewable, managing the landing workflow, and interrogating Joist behavior.
+          </p>
+        </div>
+
+        <div class="composition-grid">
+          <div class="panel">
+            <svg viewBox="0 0 760 340" role="img" aria-labelledby="composition-title composition-desc">
+              <title id="composition-title">Prompt composition</title>
+              <desc id="composition-desc">
+                Horizontal bars showing 69 code golf prompts, 47 workflow prompts, 36 Joist DX prompts, 16 status
+                prompts, 12 correctness prompts, and 9 implementation prompts.
+              </desc>
+              <g transform="translate(0 7)">
+                <text class="chart-label" x="0" y="18">Code golf / reviewability</text>
+                <rect x="0" y="30" width="621" height="22" rx="2" fill="#d8ff63" />
+                <text class="chart-value" x="635" y="46">69 · 36.5%</text>
+
+                <text class="chart-label" x="0" y="76">PR / JJ / review workflow</text>
+                <rect x="0" y="88" width="423" height="22" rx="2" fill="#ff8f5b" />
+                <text class="chart-value" x="437" y="104">47 · 24.9%</text>
+
+                <text class="chart-label" x="0" y="134">Joist DX investigation</text>
+                <rect x="0" y="146" width="324" height="22" rx="2" fill="#72b7ff" />
+                <text class="chart-value" x="338" y="162">36 · 19.0%</text>
+
+                <text class="chart-label" x="0" y="192">Status / continuation</text>
+                <rect x="0" y="204" width="144" height="22" rx="2" fill="#716e68" />
+                <text class="chart-value" x="158" y="220">16 · 8.5%</text>
+
+                <text class="chart-label" x="0" y="250">Correctness / debugging</text>
+                <rect x="0" y="262" width="108" height="22" rx="2" fill="#c49aff" />
+                <text class="chart-value" x="122" y="278">12 · 6.3%</text>
+
+                <text class="chart-label" x="0" y="308">Initial implementation</text>
+                <rect x="0" y="320" width="81" height="22" rx="2" fill="#65e3b2" />
+                <text class="chart-value" x="95" y="336">9 · 4.8%</text>
+              </g>
+            </svg>
+          </div>
+
+          <aside class="panel correction-callout">
+            <div>
+              <p class="eyebrow">The supervision tax</p>
+              <strong>99</strong>
+            </div>
+            <p>
+              Estimated prompts spent challenging, correcting, restoring, simplifying, moving, or redoing AI output.
+            </p>
+          </aside>
+        </div>
+      </section>
+
+      <section>
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">02 · Time</p>
+            <h2>Not a long afternoon.</h2>
+          </div>
+          <p>
+            The raw chronology spans 8 days and 5 hours. Idle-gap caps provide a more honest range for active review,
+            waiting, testing, and steering time.
+          </p>
+        </div>
+
+        <div class="panel timeline-panel">
+          <svg viewBox="0 0 1040 180" role="img" aria-labelledby="timeline-title timeline-desc">
+            <title id="timeline-title">Nine-day activity timeline</title>
+            <desc id="timeline-desc">
+              Activity occurred September 11, then September 14 through 19. September 12 and 13 were inactive.
+            </desc>
+            <line x1="58" y1="76" x2="982" y2="76" stroke="#454940" stroke-width="2" />
+            <g text-anchor="middle">
+              <g transform="translate(58 76)">
+                <circle r="16" fill="#d8ff63" />
+                <text class="chart-label" y="48">SEP 11</text>
+                <text class="chart-value" y="68">active</text>
+              </g>
+              <g transform="translate(173.5 76)">
+                <circle r="7" fill="#30332d" />
+                <text class="chart-label" y="48">12</text>
+                <text class="chart-value" y="68">idle</text>
+              </g>
+              <g transform="translate(289 76)">
+                <circle r="7" fill="#30332d" />
+                <text class="chart-label" y="48">13</text>
+                <text class="chart-value" y="68">idle</text>
+              </g>
+              <g transform="translate(404.5 76)">
+                <circle r="16" fill="#72b7ff" />
+                <text class="chart-label" y="48">14</text>
+                <text class="chart-value" y="68">active</text>
+              </g>
+              <g transform="translate(520 76)">
+                <circle r="16" fill="#72b7ff" />
+                <text class="chart-label" y="48">15</text>
+                <text class="chart-value" y="68">active</text>
+              </g>
+              <g transform="translate(635.5 76)">
+                <circle r="16" fill="#ff8f5b" />
+                <text class="chart-label" y="48">16</text>
+                <text class="chart-value" y="68">active</text>
+              </g>
+              <g transform="translate(751 76)">
+                <circle r="16" fill="#ff8f5b" />
+                <text class="chart-label" y="48">17</text>
+                <text class="chart-value" y="68">active</text>
+              </g>
+              <g transform="translate(866.5 76)">
+                <circle r="16" fill="#c49aff" />
+                <text class="chart-label" y="48">18</text>
+                <text class="chart-value" y="68">active</text>
+              </g>
+              <g transform="translate(982 76)">
+                <circle r="16" fill="#c49aff" />
+                <text class="chart-label" y="48">19</text>
+                <text class="chart-value" y="68">active</text>
+              </g>
+            </g>
+          </svg>
+
+          <div class="time-band">
+            <div><strong>17.6h</strong><span>strict floor · 10m gap cap</span></div>
+            <div><strong>22.0h</strong><span>conservative · 15m gap cap</span></div>
+            <div><strong>26.0h</strong><span>central · 20m gap cap</span></div>
+            <div><strong>32.6h</strong><span>inclusive · 30m gap cap</span></div>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">03 · Three sessions</p>
+            <h2>The review load accelerated.</h2>
+          </div>
+          <p>
+            Each session was already substantial. The final landing session was the largest and had the highest number
+            of corrective turns.
+          </p>
+        </div>
+
+        <div class="sessions">
+          <article class="session" data-prompts="56">
+            <span class="session-date">Sep 11–16 · 4 active days</span>
+            <h3>Joist bump and <code>em.query</code> groundwork</h3>
+            <div class="session-stats">
+              <div><strong>56</strong><span>prompts</span></div>
+              <div><strong>29</strong><span>corrective</span></div>
+            </div>
+          </article>
+          <article class="session" data-prompts="54">
+            <span class="session-date">Sep 16–17 · 2 active days</span>
+            <h3>Remaining Knex migrations</h3>
+            <div class="session-stats">
+              <div><strong>54</strong><span>prompts</span></div>
+              <div><strong>27</strong><span>corrective</span></div>
+            </div>
+          </article>
+          <article class="session" data-prompts="79">
+            <span class="session-date">Sep 17–19 · 3 active days</span>
+            <h3>PR cleanup and landing</h3>
+            <div class="session-stats">
+              <div><strong>79</strong><span>prompts</span></div>
+              <div><strong>43</strong><span>corrective</span></div>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">04 · Joist DX</p>
+            <h2>The ORM was part of the investigation.</h2>
+          </div>
+          <p>
+            Thirty-six prompts were primarily Joist DX work. More readability prompts overlapped with Joist, so this is
+            a lower bound rather than the full influence.
+          </p>
+        </div>
+
+        <div class="dx-grid">
+          <aside class="panel dx-number">
+            <strong>36</strong>
+            <p>direct prompts investigating or improving Joist semantics, APIs, and ergonomics.</p>
+          </aside>
+          <div class="panel">
+            <ul class="dx-list">
+              <li>Pagination and count-query ergonomics</li>
+              <li>Join pruning and <code>keepJoins</code></li>
+              <li>Relationship and subtype joins</li>
+              <li>CTI/STI entity-mode support</li>
+              <li>CTEs through <code>with</code></li>
+              <li><code>orderBy</code> expression ergonomics</li>
+              <li><code>inNonEmpty</code> and <code>queryMaybe</code></li>
+              <li><code>taggedId()</code> and query population</li>
+              <li>Empty condition pruning</li>
+              <li>Avoiding ID query + <code>loadAll</code></li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="conclusion">
+        <blockquote>
+          Landing this migration took about 190 steering interactions and roughly 25–30 hours of practical review and
+          supervision. More than half the interactions were corrective rework.
+        </blockquote>
+        <p>
+          The human job was not merely requesting code. It was continuously reviewing AI-written code, enforcing local
+          standards, catching regressions, managing a stacked landing sequence, and feeding newly discovered ORM
+          limitations back into Joist DX.
+        </p>
+      </section>
+
+      <footer>
+        <span>Source: local OpenCode SQLite history · three most recent related sessions</span>
+        <span>Method: one primary category per prompt · corrective classification is interpretive</span>
+      </footer>
+    </main>
+  </body>
+</html>
