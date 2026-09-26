@@ -10,7 +10,7 @@ draft: true
 
 [Truss](https://github.com/homebound-team/truss) is our niche CSS-in-JS library that **I do not expect anyone else to use** 😅, and only exists because:
 
-1. We started several large apps in ~2020 before Tailwinds won, and at the time preferred Tachyons syntax
+1. We started a large React SPA in ~2020 before Tailwinds won, and at the time preferred Tachyons syntax (shorter atomic class names)
 2. The original Truss v1 used Emotion for very robust style combination across component library/application boundaries that Tailwinds could not easily handle at the time
 3. We sat out the Next.js wave of hype & kept our boring React SPA architecture where Emotion just kept working. 💪
 4. When StyleX came out, Truss v2 cribbed its architectural approach, and is now build-time CSS like all the other cool kids 🎉
@@ -41,97 +41,29 @@ So it's a convenient surprise that we actually do pretty well. :-)
 
 The explanation for why we win, particularly against S-tier optimized libraries like StyleX, is very simple: **our class names are shorter than everyone else's**.
 
-I.e. while StyleX hashes its atomic class names to `.css-123123` because "that is the correct thing to do at Facebook scale", Truss leans into our Tachyons abbreviations like `Css.df.mt2.$` that _already have to be unique_ and so just outputs class names like `df mt2`.
+I.e. while StyleX hashes its atomic class names to `.css-123123` because "that is the correct thing to do at Facebook scale" (or something like that 😅), Truss leans into our Tachyons abbreviations like `Css.df.mt2.$` that _already have to be unique_ and so just outputs class names like `df mt2`.
 
 And that's it -- nothing actually that magical. 🤷
 
-**AND TOTALLY WRONG!**
+**AND ALSO TOTALLY WRONG!**
 
-Overall StyleX's hashed class names are actually _shorter_ than Truss, b/c after Truss's "cutely short `mt2`" class names, the rest of our still-human-readable class names end up averaging higher overall.
+Overall StyleX's hashed class names are actually _shorter_ than Truss, b/c after Truss's "cutely short" `mt2` class names, the rest of our semi-human-readable class names end up _having a longer average overall_.
 
-Instead, we are smaller because of a more nuanced reason: different CSS specificity solutions.
+So the _real reason we win_: our even longer class names actually _compress shorter_ because, being semi-human-readable, they have less entropy. 🤯
 
-### Specificity What?
+I.e. StyleX's hashed names are essentially "too random", and just don't compress as well as our semi-human-readable abbreviations that repeat a lot of the same patterns & prefixes.
 
-Atomic's CSS "every unique class name defines a singular style rule" seems safe: if an element's `class` attribute has 20 class names, each class contributes its own style rule (one sets `margin`, another `color`, another `padding`, etc), and that's it.
+I will admit I had no idea this "use `mt2` for output class names" would positively affect compression size when starting Truss v2--it just seemed like a neat idea. 😅
 
-But sometimes the classes actually define properties that "overlap", or define the same(ish) CSS property like `margin`, and we have to decide "which `margin` value wins"?
+## CSS Specificity Tangent
 
-Initially it seems like a bug for a programmer to put "two margins" in a single `class` attribute, and expect rationale behavior, but there are two scenarios where it happens often:
+I originally went down an "ALSO WRONG!" rabbit trail about how StyleX vs. Truss output sizes were different because of their different handling/encoding of CSS specificity rules. And that was also a nothingburger.
 
-- CSS shorthands (`margin`) vs. longhands (`margin-top`), and
-- media queries.
+Truss purposefully uses/steals StyleX's priority approach nearly verbatim, and the only difference is that we (maybe naively) lean into total control of output order (so can let last definition win), & don't use either of StyleX's `:not` or `@layer` approaches.
 
-The first case is longhands, i.e. given this example:
+Initially I thought this mattered, and nudged Truss ahead of StyleX, but both StyleX's `:not` specificity nudge (even when repeated ~2-4x on every rule, basically emulating `@layer`s) and `@layout` themselves compress _very well_ and so don't really matter
 
-```html
-<style>
-.a { margin: 2px }
-.b { margin-top: 4px }
-</style>
-<div class="a b" />
-```
-
-The author's intent is for the "longhand" `margin-top: 4px` to win over the "shorthand" `margin: 2px`.
-
-But given the `div class` has _both_ class names, how does the browser know to apply `margin-top: 2px` implied by `a` or `margin-top: 4px` set explicitly by `b`?
-
-The other example is media queries, i.e. in this example:
-
-```html
-<style>
-.c { color: black }
-@media screen and (max-width: 900px) {
-  .d { color: blue }
-}
-</style>
-<div class="c d" />
-```
-
-Here we want `c` to win, except on mobile, then `d` should win, without having to change the `class` attribute via JavaScript.
-
-### CSS Specificity
-
-So how does the browser decide which `margin-top` or which `color` wins in these examples?
-
-CSS uses its specificity algorithm, which uses three number triplets like `(x, y, z)` where:
-
-- `x` is the number of `#id` selectors in the rule,
-- `y` is the number of classes, attributes, and pseudo-classes
-- `z` are type selectors like `div` and `a`
-
-Example selector rules mapped to their triplet:
-
-```css
-div                 /* (0,0,1) - one type selector */
-.accent             /* (0,1,0) - one class */
-.accent:hover       /* (0,2,0) - one class + one psuedo */
-.accent.accent      /* (0,2,0) - two classes */
-#sidebar            /* (1,0,0) - one id selector */
-```
-
-If two rules tie, then **source order (last definition) wins**.
-
-This source order ends up being important.
-
-### Longhands
-
-So, going back to our longhand example, if we "want `b` to win", how can we make it higher specificity?
-
-Basically we look for ways to "increase its score" ideally in a way that _doesn't materially change the selector_.
-
-StyleX does this by using a `:not(#\#)`, where the 1st `#` is "an ID selector" (highest priority slot), and `\#` means "a dummy id", such that `:not(a dummy id)` becomes a noop that increases the score.
-
-So, for longhands, 
-
-```css
-.a:not(#\#)                            { margin: 0; }          /* (1,1,0) */
-.b:not(#\#):not(#\#)                   { margin-inline: auto; }/* (2,1,0) */
-.c:not(#\#):not(#\#):not(#\#):not(#\#) { margin-bottom: 14px; }/* (4,1,0) */
-```
-
-### Media Queries
-
+I.e. `:not`s would add ~25% of raw CSS overhead to StyleX output (which is why it initially seemed very material to me), but it would disappear in the brotli compression (because it was just the same string repeated ~1000s of times as a rule suffix, so actually cheap).
 
 ## What about Tailwinds?
 
@@ -143,9 +75,10 @@ But we still win all the output size metrics, where Tailwinds is one of the lagg
 
 ![CSS size results comparing Truss and Tailwind with Bamboo, StyleX, and Panda](/images/truss-benchark-tw-size.png)
 
+Honestly I haven't taken the time to ask the LLM "why is Tailwinds a laggard", when in theory it'd use ~relatively similar "lots of repeated patterns" names like Truss, and so should compress really well, primarily b/c it's easy to "just ask the LLM", but very hard to then trust/audit that it was accurate (i.e. my earlier CSS specificity tangent was directly from me trusting an overly-confident LLM on its first few assertions).
+
 The medals we lost were to build-time/dev-time metrics, where the Tailwinds compiler is ~10-30% faster than Truss, but on small enough numbers that 🤷 I think it's a wash.
 
 Disclaimer, I did try & benchmark hack our build times to beat Tailwinds, and we got closer 🏃, but couldn't actually pull ahead, at least with the current Babel/JS pipeline. Maybe next hack day! 😅
-
 
 
