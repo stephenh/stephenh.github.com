@@ -45,35 +45,33 @@ I.e. while StyleX hashes its atomic class names to `.x1u7kmwd` because "that is 
 
 And that's it -- nothing actually that magical. 🤷
 
-**AND ALSO TOTALLY WRONG!**
+**AND ALSO TOTALLY WRONG!** 🤦
 
-Our names _are_ dramatically shorter than Bamboo's and Panda's, which average ~16 characters because they encode the property & value directly into the name.
+Our names are shorter than Bamboo's and Panda's, which average ~16 characters because they encode the property & value directly into the name.
 
-But StyleX's hashes average ~7 characters, and ours average ~9. So after our "cutely short" `mt2` class names, the rest of our semi-human-readable class names end up _having a longer average overall_ than StyleX's.
+But StyleX's hashed names average ~7 characters, and Truss's names average ~9. So after our initial "cutely short" `mt2` class names, the rest of our semi-human-readable class names end up _longer_ overall.
 
-So the _real reason we win_: our even longer class names actually _compress shorter_ because, being semi-human-readable, they have less entropy. 🤯
+So the real reason we win? Our even longer class names actually _compress shorter_ because, being semi-human-readable, they have less entropy. 🤯
 
-I.e. StyleX's hashed names are essentially "too random", and just don't compress as well as our semi-human-readable abbreviations that repeat a lot of the same patterns & prefixes.
+I.e. StyleX's hashed names are essentially "too random", and don't compress as well as Truss's semi-human-readable abbreviations that repeat a lot of the same patterns & prefixes.
 
-The way to confirm this is to take the entropy away: rename every class in both stylesheets to the _same_ scheme, and re-compress. Once both engines use random 8-character hashes, our 21% lead (1,355 bytes brotli) collapses to ~1.5% (96 bytes). So ~90% of our compressed win is the class names, and basically none of it is the CSS itself.
+We confirmed this by renaming Truss's class names, in its existing/otherwise as-is benchmark output file, to match StyleX's random 8-character hashes, re-compressing, and the result was nearly identical compressed output sizes.
 
-Which is admittedly humbling, because on _raw_, uncompressed bytes StyleX emits slightly _less_ stylesheet than we do (~22.1kb of rules vs. our ~23.9kb). We don't win by emitting less CSS; we win because our CSS compresses better.
-
-I will admit I had no idea this "use `mt2` for output class names" would positively affect compression size when starting Truss v2--it just seemed like a neat idea. 😅
+I will admit I had no idea this "use `mt2` for class names" would positively affect compression size when starting Truss v2--it just seemed like a neat idea, and honestly I was doing it for better DX (seeing `mt2` in Chrome DevTools) and the fact we got better compression as a free bonus, I did not even realize until writing up this blog post. 😅
 
 ## CSS Specificity Tangent
 
-I originally went down an "ALSO WRONG!" rabbit trail about how StyleX vs. Truss output sizes were different because of their different handling/encoding of CSS specificity rules. And that was also a nothingburger.
+I originally went down an "ALSO WRONG!" rabbit trail about how StyleX vs. Truss output sizes were different because of their different handling/encoding of CSS specificity rules. But that was also a nothingburger.
 
-Truss purposefully uses/steals StyleX's priority approach nearly verbatim: we classify every property against the same CSS shorthand graph, and land on the same tiers (shorthand-of-shorthands, shorthand-of-longhands, logical longhand, physical longhand), so that e.g. `margin-top` reliably beats `margin`.
+Truss purposefully uses/steals StyleX's specificity approach nearly verbatim: we categorize every CSS property into StyleX's same CSS shorthand vs. longhand tiers (i.e. an atomic class name setting `margin-top` should override a class name setting `margin`, which the browser won't necessarily do by default).
 
-The only real difference is _where each of us puts that priority number_. StyleX encodes it into the selector; we (maybe naively) lean into total control of output order, and just sort the stylesheet by it, so the last definition wins.
+That said, we use the assigned priority differently--StyleX encodes the priority into the selector itself (either via a `@layer` or the repeated `:not(#\#)` hack), while for Truss we (maybe naively) lean into total control of output order, and just sort the stylesheet by the priority order, so the last definition wins.
 
-Although we're not entirely free of specificity hacks either -- we do double the class name (i.e. `.sm_g0.sm_g0`) on media query rules, specifically so that specificity _stops_ deciding, and our sort order can.
+Initially I thought this difference in "selector encoding" vs. "output ordering" mattered, and that it was what nudged Truss ahead of StyleX in terms of lower output size.
 
-Initially I thought this mattered, and nudged Truss ahead of StyleX. But StyleX's `:not(#\#)` nudge (repeated 1-7x per rule, depending on the property's tier) is literally its `@layer` polyfill, and both it and real `@layer`s compress _very well_, so neither really matters.
+But even StyleX's `:not(#\#)` hack (which might be repeated 1-7x per rule, depending on the property's tier, effectively acting as a `@layer` polyfill), compresses _very well_. Specifically, there were 1,440 copies of `:not(#\#)` in StyleX's original benchmark output, but dropping them all by enabling the `useCSSLayers` flag saved a grand total of **70 bytes**.
 
-I.e. the `:not`s add ~25% of raw CSS overhead to StyleX's output (9,960 bytes, which is why it initially seemed very material to me), but nearly all of it disappears under brotli: flipping StyleX's `useCSSLayers` flag on removes all 1,440 copies, and saves a grand total of **70 bytes**. It was just the same 10-character string repeated 1,440 times as a rule suffix, so it was already essentially free.
+I.e. as a mental model takeway, the same 10-character string repeated 1,000s of times in a file ends up, post-compression, being essentially free.
 
 ## What about Tailwind?
 
