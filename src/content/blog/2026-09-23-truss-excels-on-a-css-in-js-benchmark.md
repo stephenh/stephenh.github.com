@@ -55,23 +55,25 @@ So the real reason we win? Our even longer class names actually _compress shorte
 
 I.e. StyleX's hashed names are essentially "too random", and don't compress as well as Truss's semi-human-readable abbreviations that repeat a lot of the same patterns & prefixes.
 
-We confirmed this by renaming Truss's class names, in its existing/otherwise as-is benchmark output file, to match StyleX's random 8-character hashes, re-compressing, and the result was nearly identical compressed output sizes.
+We confirmed this by renaming the class names in _both_ benchmark output files to the same random 8-character hashes, and re-compressing: once the naming scheme is the same, Truss's ~20% compressed lead shrinks to ~1%.
 
-I will admit I had no idea this "use `mt2` for class names" would positively affect compression size when starting Truss v2--it just seemed like a neat idea, and honestly I was doing it for better DX (seeing `mt2` in Chrome DevTools) and the fact we got better compression as a free bonus, I did not even realize until writing up this blog post. 😅
+I will admit I had no idea this "use `mt2` for class names" would positively affect compression size when starting Truss v2--it just seemed like a neat idea, and honestly I was doing it for better DX (seeing `mt2` in Chrome DevTools). That we got better compression as a free bonus, I did not even realize until writing up this blog post. 😅
 
 ## CSS Specificity Tangent
 
 I originally went down an "ALSO WRONG!" rabbit trail about how StyleX vs. Truss output sizes were different because of their different handling/encoding of CSS specificity rules. But that was also a nothingburger.
 
-Truss purposefully uses/steals StyleX's specificity approach nearly verbatim: we categorize every CSS property into StyleX's same CSS shorthand vs. longhand tiers (i.e. an atomic class name setting `margin-top` should override a class name setting `margin`, which the browser won't necessarily do by default).
+Truss purposefully uses/steals StyleX's specificity approach nearly verbatim: we categorize every CSS property into the same CSS shorthand vs. longhand tiers StyleX uses (i.e. an atomic class name setting `margin-top` should override a class name setting `margin`, which the browser won't necessarily do by default).
 
 That said, we use the assigned priority differently--StyleX encodes the priority into the selector itself (either via a `@layer` or the repeated `:not(#\#)` hack), while for Truss we (maybe naively) lean into total control of output order, and just sort the stylesheet by the priority order, so the last definition wins.
+
+(Although we're not entirely hack-free either--Truss doubles the class name, i.e. `.sm_g0.sm_g0`, on media query rules, exactly as StyleX does.)
 
 Initially I thought this difference in "selector encoding" vs. "output ordering" mattered, and that it was what nudged Truss ahead of StyleX in terms of lower output size.
 
 But even StyleX's `:not(#\#)` hack (which might be repeated 1-7x per rule, depending on the property's tier, effectively acting as a `@layer` polyfill), compresses _very well_. Specifically, there were 1,440 copies of `:not(#\#)` in StyleX's original benchmark output, but dropping them all by enabling the `useCSSLayers` flag saved a grand total of **70 bytes**.
 
-I.e. as a mental model takeway, the same 10-character string repeated 1,000s of times in a file ends up, post-compression, being essentially free.
+I.e. as a mental model takeaway, the same 10-character string repeated 1,000s times in a file ends up, post-compression, being essentially free.
 
 ## What about Tailwind?
 
