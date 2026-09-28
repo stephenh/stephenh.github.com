@@ -1,0 +1,637 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+
+<style>
+  /* Stands in for the reset the artifact host injects, so this file renders the
+     same opened straight from disk. */
+  :root { color-scheme: light; }
+  body { margin: 0; font: 14px ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+         background: #faf9f7; }
+  img { max-width: 100%; }
+  [hidden] { display: none !important; }
+</style>
+<title>Atomic CSS Priority Hacks</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+
+<style>
+/* ---------------------------------------------------------------- tokens */
+:root {
+  --ground:   #f4f6f9;
+  --surface:  #ffffff;
+  --sunken:   #eaedf2;
+  --ink:      #16191f;
+  --muted:    #5b6472;
+  --rule:     #d8dee7;
+  --stylex:   #4c5bd4;
+  --truss:    #0f7a5a;
+  --win:      #a8690b;
+  --lose:     #9aa3b0;
+
+  --serif: "Source Serif 4", Georgia, "Times New Roman", serif;
+  --sans:  ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --mono:  "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --ground:  #101318;  --surface: #181c23;  --sunken: #0b0e12;
+    --ink:     #e6e9ee;  --muted:   #97a1b0;  --rule:   #2b323c;
+    --stylex:  #9aa5f5;  --truss:   #5fc9a3;  --win:    #e0a54a;  --lose: #6b7484;
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --ground:  #101318;  --surface: #181c23;  --sunken: #0b0e12;
+  --ink:     #e6e9ee;  --muted:   #97a1b0;  --rule:   #2b323c;
+  --stylex:  #9aa5f5;  --truss:   #5fc9a3;  --win:    #e0a54a;  --lose: #6b7484;
+}
+
+/* ---------------------------------------------------------------- shell */
+body { background: var(--ground); color: var(--ink); font-family: var(--sans); }
+.page { max-width: 1040px; margin: 0 auto; padding-inline: 20px; padding-block: 48px 72px; }
+
+h1 { font-family: var(--serif); font-weight: 600; font-size: clamp(30px, 5vw, 44px);
+     line-height: 1.1; margin: 0 0 12px; text-wrap: balance; letter-spacing: -0.015em; }
+h2 { font-family: var(--serif); font-weight: 600; font-size: clamp(22px, 3.4vw, 28px);
+     margin: 0 0 6px; text-wrap: balance; }
+h3 { font-size: 13px; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase;
+     margin: 0 0 10px; color: var(--muted); }
+p  { line-height: 1.6; max-width: 66ch; margin: 0 0 14px; color: var(--ink); }
+.lede { font-size: 17px; color: var(--muted); }
+.eyebrow { font-family: var(--mono); font-size: 12px; letter-spacing: 0.1em;
+           text-transform: uppercase; color: var(--muted); margin: 0 0 8px; }
+code { font-family: var(--mono); font-size: 0.92em; }
+
+/* ------------------------------------------------- specificity scoreboard */
+/* Three cells = the three numbers a browser scores a selector with. */
+.spec { display: inline-flex; gap: 2px; vertical-align: -2px; font-family: var(--mono);
+        font-size: 11px; font-variant-numeric: tabular-nums; }
+.spec b { display: grid; place-items: center; min-width: 19px; height: 19px; font-weight: 400;
+          background: var(--sunken); color: var(--muted); border-radius: 3px; }
+.spec b.hit { background: var(--win); color: #fff; font-weight: 700; }
+
+/* ---------------------------------------------------------------- primer */
+.primer { background: var(--surface); border: 1px solid var(--rule); border-radius: 10px;
+          padding: 22px; margin: 32px 0 44px; }
+.legend { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin: 16px 0 20px; }
+.legend div { border-top: 2px solid var(--rule); padding-top: 9px; }
+.legend .pos { font-family: var(--mono); font-size: 12px; color: var(--win); font-weight: 700; }
+.legend .what { font-size: 14px; margin-top: 3px; }
+.legend .eg { font-family: var(--mono); font-size: 12px; color: var(--muted); margin-top: 5px; }
+.examples { display: grid; gap: 7px; }
+.examples .row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+                 font-family: var(--mono); font-size: 13px; }
+.examples .row .sel { min-width: 200px; }
+
+/* --------------------------------------------------------------- section */
+.scenario { border-top: 1px solid var(--rule); padding-top: 34px; margin-top: 46px; }
+
+/* stage = the live demo */
+.stage-wrap { background: var(--surface); border: 1px solid var(--rule); border-radius: 10px;
+              padding: 20px; margin: 20px 0 28px; }
+.stage { background: var(--sunken); border-radius: 7px; padding: 14px; }
+.blk { background: var(--stylex); color: #fff; font-family: var(--mono); font-size: 12px;
+       padding: 9px 12px; border-radius: 5px; }
+.blk.b2 { background: var(--lose); }
+.rowdemo { background: var(--sunken); border-radius: 7px; padding: 14px; display: flex; }
+.rowdemo .cell { background: var(--truss); color: #fff; font-family: var(--mono); font-size: 12px;
+                 padding: 9px 12px; border-radius: 5px; flex: 1; text-align: center; }
+
+.readout { display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+           margin-top: 13px; font-size: 13px; }
+.chip { font-family: var(--mono); font-size: 12px; padding: 3px 9px; border-radius: 99px;
+        border: 1px solid currentColor; }
+.chip.ok   { color: var(--truss); }
+.chip.bad  { color: #c0271f; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .chip.bad { color: #f87171; } }
+:root[data-theme="dark"] .chip.bad { color: #f87171; }
+
+.toggle { display: inline-flex; align-items: center; gap: 9px; cursor: pointer;
+          font-size: 14px; margin-top: 15px; }
+.toggle input { width: 17px; height: 17px; accent-color: var(--win); cursor: pointer; }
+
+/* --------------------------------------------------------------- columns */
+.split { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+@media (max-width: 760px) { .split { grid-template-columns: 1fr; } }
+
+.col { background: var(--surface); border: 1px solid var(--rule); border-radius: 10px;
+       padding: 18px; display: flex; flex-direction: column; gap: 12px; }
+.col .engine { font-family: var(--mono); font-size: 12px; font-weight: 700;
+               letter-spacing: 0.06em; text-transform: uppercase; }
+.col.sx .engine { color: var(--stylex); }
+.col.tr .engine { color: var(--truss); }
+.col p { font-size: 14px; margin: 0; }
+
+pre { font-family: var(--mono); font-size: 12px; line-height: 1.65; margin: 0;
+      background: var(--sunken); border-radius: 7px; padding: 13px;
+      overflow-x: auto; white-space: pre; }
+pre .c { color: var(--muted); }             /* comment  */
+pre .pad { color: var(--win); font-weight: 700; }  /* the hack itself */
+pre .dim { color: var(--lose); }
+pre b { font-weight: 700; }
+
+.verdict { font-size: 13px; line-height: 1.55; color: var(--muted);
+           border-left: 2px solid var(--win); padding-left: 11px; }
+
+/* aside */
+.aside { background: var(--surface); border: 1px solid var(--rule); border-radius: 10px;
+         padding: 22px; margin-top: 46px; }
+
+p.sourced { font-size: 13px; line-height: 1.6; color: var(--muted);
+            border-left: 2px solid var(--rule); padding-left: 13px; }
+
+/* entropy bars */
+.bars { display: grid; gap: 20px; margin: 24px 0 6px; }
+.barrow .cap { font-size: 13px; font-weight: 700; margin-bottom: 8px; }
+.barrow .note { font-size: 13px; color: var(--muted); font-weight: 400; }
+.bar { display: flex; align-items: center; gap: 10px; margin-bottom: 5px;
+       font-family: var(--mono); font-size: 12px; }
+.bar .who { width: 52px; color: var(--muted); flex: none; }
+.bar .track { flex: 1; min-width: 0; }
+.bar .fill { height: 20px; border-radius: 4px; }
+.bar .fill.sx { background: var(--stylex); }
+.bar .fill.tr { background: var(--truss); }
+.bar .val { width: 86px; flex: none; text-align: right;
+            font-variant-numeric: tabular-nums; color: var(--ink); }
+
+/* ----------------------------------------------------------------- close */
+.cost { margin-top: 48px; border-top: 1px solid var(--rule); padding-top: 26px; }
+table { border-collapse: collapse; font-size: 14px; margin-top: 12px; width: 100%;
+        max-width: 560px; font-variant-numeric: tabular-nums; }
+table.wide { max-width: 100%; }
+.tablescroll { overflow-x: auto; }
+th, td { text-align: left; padding: 8px 14px 8px 0; border-bottom: 1px solid var(--rule); }
+th { font-size: 12px; text-transform: uppercase; letter-spacing: 0.07em; color: var(--muted); }
+td.num { text-align: right; padding-right: 0; font-family: var(--mono); }
+
+@media (prefers-reduced-motion: no-preference) { .blk, .rowdemo { transition: margin .2s, gap .2s; } }
+
+/* ================================================================== */
+/* THE ACTUAL DEMO RULES — these are what the page is teaching.       */
+/* ================================================================== */
+
+/* --- Scenario 1, StyleX, as shipped ------------------------------ */
+/* The longhand is written FIRST here on purpose. If source order decided,
+   `margin: 0` would win and the gap would vanish. It doesn't, because each
+   :not(#\#) adds an ID's worth of weight — 4 of them beat 1. */
+.sxL:not(#\#):not(#\#):not(#\#):not(#\#) { margin-bottom: 14px; }   /* (4,1,0) */
+.sxS:not(#\#)                            { margin: 0; }             /* (1,1,0) */
+
+/* --- Scenario 1, StyleX, hack removed ---------------------------- */
+/* Same two rules, same order, padding gone. Now both score (0,1,0), the tie
+   breaks on source order, and the shorthand wipes out the longhand. */
+.npL { margin-bottom: 14px; }
+.npS { margin: 0; }
+
+/* --- Scenario 1, Truss ------------------------------------------- */
+/* Four longhands, no shorthand anywhere. Nothing to arbitrate. */
+.t-mt0 { margin-top: 0; }
+.t-mr0 { margin-right: 0; }
+.t-ml0 { margin-left: 0; }
+.t-mb14 { margin-bottom: 14px; }
+
+/* --- Scenario 2, the media variant ------------------------------- */
+/* Doubled class = (0,2,0), beats the base (0,1,0). Written BEFORE the base
+   rule to show the doubling — not the order — is what decides it. */
+.simg0.simg0 { gap: 0px; }
+.nodbl       { gap: 0px; }        /* undoubled: (0,1,0), ties, loses on order */
+.g22         { gap: 22px; }       /* the base rule, deliberately last */
+
+/* The real thing, for anyone who narrows the window below 900px. */
+@media (max-width: 900px) {
+  .realg0.realg0 { gap: 0px; }
+}
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <p class="eyebrow">Atomic CSS · cascade mechanics</p>
+  <h1>How atomic CSS engines force one rule to beat another</h1>
+  <p class="lede">
+    StyleX and Truss both ship one class per declaration, so two classes on the same element can
+    end up fighting over the same property. Both resolve it with the <i>same</i> priority number,
+    computed from the same CSS shorthand graph — but StyleX expresses that number in the
+    <i>cascade</i> and Truss expresses it in <i>emission order</i>. Here is what that costs, live.
+  </p>
+
+  <!-- ============================================================ PRIMER -->
+  <section class="primer">
+    <h3>Specificity, in three numbers</h3>
+    <p>
+      When two rules set the same property on one element, the browser scores each selector as a
+      triple and compares it <b>left to right, like a version number</b>. It never carries: one ID
+      outranks any number of classes.
+    </p>
+
+    <div class="legend">
+      <div>
+        <div class="pos">first — a</div>
+        <div class="what">ID selectors</div>
+        <div class="eg">#sidebar</div>
+      </div>
+      <div>
+        <div class="pos">second — b</div>
+        <div class="what">classes, attributes, pseudo-<i>classes</i></div>
+        <div class="eg">.card &nbsp; [href] &nbsp; :hover</div>
+      </div>
+      <div>
+        <div class="pos">third — c</div>
+        <div class="what">elements and pseudo-<i>elements</i></div>
+        <div class="eg">div &nbsp; ::after</div>
+      </div>
+    </div>
+
+    <div class="examples">
+      <div class="row"><span class="sel">div</span>
+        <span class="spec"><b>0</b><b>0</b><b>1</b></span></div>
+      <div class="row"><span class="sel">.accent</span>
+        <span class="spec"><b>0</b><b>1</b><b>0</b></span></div>
+      <div class="row"><span class="sel">.accent:hover</span>
+        <span class="spec"><b>0</b><b>2</b><b>0</b></span>
+        <span style="font-family:var(--sans);font-size:13px;color:var(--muted)">a pseudo-class counts</span></div>
+      <div class="row"><span class="sel">.accent.accent</span>
+        <span class="spec"><b>0</b><b>2</b><b>0</b></span>
+        <span style="font-family:var(--sans);font-size:13px;color:var(--muted)">so does the same class twice</span></div>
+      <div class="row"><span class="sel">#sidebar</span>
+        <span class="spec"><b>1</b><b>0</b><b>0</b></span></div>
+      <div class="row"><span class="sel">:not(#\#)</span>
+        <span class="spec"><b>1</b><b>0</b><b>0</b></span>
+        <span style="font-family:var(--sans);font-size:13px;color:var(--muted)">matches everything, still scores as an ID</span></div>
+    </div>
+
+    <p style="margin-top:16px;margin-bottom:0">
+      That last one is the whole hack. <code>#\#</code> is an escaped <code>#</code>, so it means
+      "an element whose id is literally <code>#</code>". Nothing has that id, so
+      <code>:not(#\#)</code> excludes nothing and matches every element — but the browser still
+      counts the ID inside it. It buys weight and changes nothing else. <b>Only a tie falls through
+      to source order</b>, last rule wins.
+    </p>
+  </section>
+
+  <!-- ======================================================== SCENARIO 1 -->
+  <section class="scenario">
+    <p class="eyebrow">Scenario 1</p>
+    <h2>A longhand has to beat a shorthand</h2>
+    <p>
+      The author writes <code>margin: 0</code> and then <code>margin-bottom: 14px</code>. In an
+      atomic engine those are two separate classes, and <code>margin</code> and
+      <code>marginBottom</code> are different keys — so neither can cancel the other in JavaScript.
+      Both classes land on the element and CSS has to pick a winner.
+    </p>
+
+    <div class="stage-wrap">
+      <div class="stage">
+        <div class="blk sxS sxL" id="box1">margin: 0 · margin-bottom: 14px</div>
+        <div class="blk b2">the next block</div>
+      </div>
+      <div class="readout">
+        <span id="chip1" class="chip ok">margin-bottom: 14px wins — 14px gap</span>
+        <span style="color:var(--muted)">
+          <span class="spec" id="s1a"><b class="hit">4</b><b>1</b><b>0</b></span> longhand
+          &nbsp;vs&nbsp;
+          <span class="spec" id="s1b"><b>1</b><b>1</b><b>0</b></span> shorthand
+        </span>
+      </div>
+      <label class="toggle">
+        <input type="checkbox" id="t1">
+        <span>Strip the <code>:not(#\#)</code> padding off StyleX's rules</span>
+      </label>
+    </div>
+
+    <div class="split">
+      <div class="col sx">
+        <div class="engine">StyleX</div>
+        <p>Encodes a priority number into every selector. Longhands sit at 3–4, shorthands at 1–2, so
+          the longhand outranks whatever order they get emitted in. This is StyleX's
+          <code>@layer</code> polyfill — the same downlevelling Lightning CSS does.</p>
+<pre><span class="c">/* longhand — written first on purpose */</span>
+.x1u7kmwd<span class="pad">:not(#\#):not(#\#)</span>
+<span class="pad">         :not(#\#):not(#\#)</span> {
+  margin-bottom: 14px;   <span class="c">/* (4,1,0) */</span>
+}
+
+<span class="c">/* shorthand — later in the file, and</span>
+<span class="c">   still loses */</span>
+.x1ghz6dp<span class="pad">:not(#\#)</span> {
+  margin: 0;             <span class="c">/* (1,1,0) */</span>
+}</pre>
+        <div class="verdict">
+          4 beats 1 at the first position, so the comparison stops there. Source order never gets
+          consulted. Cost: 10 characters per copy, 1,440 copies across the stylesheet.
+        </div>
+      </div>
+
+      <div class="col tr">
+        <div class="engine">Truss</div>
+        <p>Never emits the shorthand at all. <code>m0</code> expands to four longhands in the config,
+          so the collision happens on the <i>same</i> JavaScript key and the loser is gone before a
+          class name is ever chosen.</p>
+<pre><span class="c">// Css.json — m0 is not `margin: 0`</span>
+<b>"m0"</b>: { "defs": {
+  "marginTop": 0,  "marginRight": 0,
+  "marginBottom": 0, "marginLeft": 0 } }
+
+<span class="c">// Css.m0.mb_14px.$ → Object.assign</span>
+{ marginTop: 0, marginRight: 0,
+  marginLeft: 0,
+  <span class="dim">marginBottom: 0,</span>        <span class="c">// overwritten</span>
+  <b>marginBottom: "14px"</b> }     <span class="c">// survives</span>
+
+<span class="c">/* four plain classes, no conflict */</span>
+.t-mt0  { margin-top: 0; }     <span class="c">/* (0,1,0) */</span>
+.t-mb_14px { margin-bottom: 14px; }</pre>
+        <div class="verdict">
+          No two classes ever set the same property, so there is nothing to arbitrate. For the
+          shorthands Truss <i>does</i> keep — <code>gap</code>, <code>border-color</code>,
+          <code>inset</code> — it sorts the stylesheet by priority instead. Same answer, zero bytes.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================================================== SCENARIO 2 -->
+  <section class="scenario">
+    <p class="eyebrow">Scenario 2</p>
+    <h2>A media-query variant has to beat its base rule</h2>
+    <p>
+      <code>gap: 22px</code> normally, <code>gap: 0</code> under 900px. Here's the catch:
+      <b>wrapping a rule in <code>@media</code> adds no specificity at all.</b> The variant and the
+      base rule score identically. Both engines fix it the same way — and it isn't
+      <code>:not(#\#)</code>: they repeat the class name.
+    </p>
+
+    <div class="stage-wrap">
+      <div class="rowdemo g22 realg0" id="row2">
+        <div class="cell">one</div><div class="cell">two</div><div class="cell">three</div>
+      </div>
+      <div class="readout">
+        <span id="chip2" class="chip ok">base rule applies — gap: 22px</span>
+        <span style="color:var(--muted)">
+          <span class="spec" id="s2a"><b>0</b><b class="hit">2</b><b>0</b></span> variant
+          &nbsp;vs&nbsp;
+          <span class="spec"><b>0</b><b>1</b><b>0</b></span> base
+        </span>
+      </div>
+      <label class="toggle">
+        <input type="checkbox" id="t2">
+        <span>Simulate a narrow viewport</span>
+      </label>
+      <label class="toggle" style="margin-left:18px">
+        <input type="checkbox" id="t3">
+        <span>…and un-double the variant's class</span>
+      </label>
+      <p style="font-size:13px;color:var(--muted);margin:12px 0 0">
+        The real <code>@media</code> rule is live too — narrow this window past 900px and the gap
+        closes on its own.
+      </p>
+    </div>
+
+    <div class="split">
+      <div class="col sx">
+        <div class="engine">StyleX</div>
+        <p>Repeats the class name. It already carries the property-tier padding from scenario 1;
+          the doubling is what settles base versus variant.</p>
+<pre>.xmt3bw4<span class="pad">:not(#\#):not(#\#)</span> {
+  gap: 22px;          <span class="c">/* (2,1,0) */</span>
+}
+
+@media (max-width: 900px) {
+  <b>.x1dengtm.x1dengtm</b><span class="pad">:not(#\#)</span>
+  <span class="pad">                  :not(#\#)</span> {
+    gap: 0px;         <span class="c">/* (2,2,0) */</span>
+  }
+}</pre>
+        <div class="verdict">
+          Same tier at position one; the doubled class breaks it at position two.
+        </div>
+      </div>
+
+      <div class="col tr">
+        <div class="engine">Truss</div>
+        <p>Repeats the class name. Identical technique — and since there's no property tier to carry,
+          that's the entire selector.</p>
+<pre>.g_22px {
+  gap: 22px;          <span class="c">/* (0,1,0) */</span>
+}
+
+@media screen and (max-width: 900px) {
+  <b>.tabletanddown_g_0px</b>
+  <b>.tabletanddown_g_0px</b> {
+    gap: 0px;         <span class="c">/* (0,2,0) */</span>
+  }
+}</pre>
+        <div class="verdict">
+          Doubling a name already in the selector costs the length of that name; appending
+          <code>:not(#\#)</code> costs a flat 10 characters every time.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================== WHY DOUBLE AT ALL -->
+  <section class="aside">
+    <h3>Wait — if Truss sorts the stylesheet, why double anything?</h3>
+    <p>
+      Because sorting only decides a tie. Truss's stylesheet is ordered by a priority key in which
+      <code>@media</code> scores +200 and <code>:hover</code> scores +130, so a media rule is
+      <i>meant</i> to beat a hover rule. But specificity is checked first, and it doesn't care about
+      that key:
+    </p>
+    <div class="examples" style="margin:14px 0">
+      <div class="row"><span class="sel">.h_red:hover</span>
+        <span class="spec"><b>0</b><b class="hit">2</b><b>0</b></span>
+        <span style="font-family:var(--sans);font-size:13px;color:var(--muted)">wins on specificity…</span></div>
+      <div class="row"><span class="sel">@media { .sm_blue }</span>
+        <span class="spec"><b>0</b><b>1</b><b>0</b></span>
+        <span style="font-family:var(--sans);font-size:13px;color:var(--muted)">…however late it appears</span></div>
+      <div class="row"><span class="sel">@media { .sm_blue.sm_blue }</span>
+        <span class="spec"><b>0</b><b class="hit">2</b><b>0</b></span>
+        <span style="font-family:var(--sans);font-size:13px;color:var(--muted)">now tied — the sort decides</span></div>
+    </div>
+    <p style="margin-bottom:0">
+      So the doubling isn't there to win. It's there to <b>stop specificity from deciding</b>, so
+      that the priority sort can. That's the whole Truss model in one line: specificity is levelled,
+      and order carries the meaning. StyleX inverts it — specificity carries the meaning, and order
+      is made irrelevant.
+    </p>
+  </section>
+
+  <!-- ============================================================= CLOSE -->
+  <section class="cost">
+    <h3>Same scheme, two different media</h3>
+    <p>
+      Neither engine improvised. Both classify every property against the CSS shorthand graph and
+      assign it a priority, and they land on <b>the same ladder</b> — StyleX's tier <i>n</i> is
+      Truss's priority <i>n</i>&nbsp;×&nbsp;1000.
+    </p>
+    <table class="wide">
+      <thead>
+        <tr><th>Property class</th><th>Example</th><th class="num">StyleX</th><th class="num">Truss</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>shorthand of shorthands</td><td><code>margin</code>, <code>border</code></td><td class="num">tier 1</td><td class="num">1000</td></tr>
+        <tr><td>shorthand of longhands</td><td><code>gap</code>, <code>inset</code></td><td class="num">tier 2</td><td class="num">2000</td></tr>
+        <tr><td>logical longhand</td><td><code>margin-block-end</code></td><td class="num">tier 3</td><td class="num">3000</td></tr>
+        <tr><td>physical longhand</td><td><code>margin-bottom</code>, <code>top</code></td><td class="num">tier 4</td><td class="num">4000</td></tr>
+        <tr><td>pseudo-element</td><td><code>::after</code></td><td class="num">+5…7</td><td class="num">+5000</td></tr>
+      </tbody>
+    </table>
+    <p style="margin-top:20px">
+      The difference is where that number lives. <b>StyleX puts it in the cascade.</b> With
+      <code>useCSSLayers</code> switched on it emits real <code>@layer stylex.priority1 { … }</code>
+      blocks; switched off — the default for every bundler plugin but Bun — it downlevels those
+      layers into repeated <code>:not(#\#)</code>, exactly the way Lightning CSS and PostCSS
+      polyfill layers. Either way the priority rides inside the selector, where emission order
+      can't disturb it. Layers aren't free either: layered CSS always loses to unlayered CSS, so
+      turning them on lets a plain reset stylesheet override StyleX.
+    </p>
+    <p>
+      <b>Truss puts it in emission order.</b> It emits one stylesheet and re-orders that stylesheet
+      itself, so source order is something it owns and the priority can live in a sort key that
+      costs nothing. It reaches for specificity only where specificity would otherwise overrule
+      that key — the doubled class above.
+    </p>
+    <p class="sourced">
+      The documented reason for StyleX's priorities is correctness, not build layout:
+      <i>"the layers exist to ensure that various different styles have the right specificity. We
+      need <code>margin-top</code> to win over <code>margin</code> for example."</i> — nmn, StyleX
+      maintainer. Order-independence is a property of the approach; StyleX doesn't state it as the
+      motivation.
+    </p>
+    <table>
+      <thead>
+        <tr><th>Engine</th><th>Rules padded</th><th class="num">Raw bytes</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>StyleX</td><td>448 of 448 — every generated rule</td><td class="num">12,960</td></tr>
+        <tr><td>Truss</td><td>40 of 445 — media variants only</td><td class="num">951</td></tr>
+      </tbody>
+    </table>
+    <p style="font-size:13px;color:var(--muted);margin-top:14px;margin-bottom:0">
+      Measured on the same six-page app built with each engine. Both compress well — the gap is
+      about 230 bytes after brotli — so this shows up in raw stylesheet size far more than in what
+      the browser downloads. StyleX's cost scales with rule count, though: 5.5 bytes per
+      declaration against Truss's 1.8.
+    </p>
+  </section>
+  <!-- ======================================================== POSTSCRIPT -->
+  <section class="scenario">
+    <p class="eyebrow">Postscript</p>
+    <h2>None of this is what decides the size</h2>
+    <p>
+      StyleX has a switch that removes the whole hack. Set
+      <code>useCSSLayers</code> and it emits real <code>@layer</code> blocks instead — all 1,440
+      copies of <code>:not(#\#)</code> vanish, and every one of the 499 rules is otherwise
+      byte-identical. Here is what that buys:
+    </p>
+    <table>
+      <thead>
+        <tr><th>StyleX</th><th class="num">Raw</th><th class="num">Brotli</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>specificity padding (default)</td><td class="num">40,430</td><td class="num">7,008</td></tr>
+        <tr><td><code>useCSSLayers</code></td><td class="num">30,470</td><td class="num">6,938</td></tr>
+        <tr><td><b>saving</b></td><td class="num"><b>−9,960 (−24.6%)</b></td><td class="num"><b>−70 (−1.0%)</b></td></tr>
+      </tbody>
+    </table>
+    <p style="margin-top:18px">
+      A quarter of the raw stylesheet — and <b>seventy bytes</b> on the wire. 1,440 copies of one
+      10-character literal is the most compressible thing you can put in a file. So the hack this
+      whole page is about is close to irrelevant to what a browser downloads.
+    </p>
+
+    <h3 style="margin-top:32px">What actually decides it: class-name entropy</h3>
+    <p>
+      Truss still ships a smaller stylesheet than StyleX-on-layers — 5,064 against 6,419 brotli.
+      Give both engines <b>the same naming scheme</b> and almost all of that gap disappears.
+    </p>
+
+    <div class="bars">
+      <div class="barrow">
+        <div class="cap">As shipped <span class="note">— hashes vs abbreviations</span></div>
+        <div class="bar"><span class="who">StyleX</span><span class="track"><span class="fill sx" style="display:block;width:98.8%"></span></span><span class="val">6,419</span></div>
+        <div class="bar"><span class="who">Truss</span><span class="track"><span class="fill tr" style="display:block;width:77.9%"></span></span><span class="val">5,064</span></div>
+        <div class="bar"><span class="who"></span><span class="track" style="color:var(--win);font-weight:700">gap 1,355 B — 21%</span><span class="val"></span></div>
+      </div>
+      <div class="barrow">
+        <div class="cap">Both given random 8-char hashes</div>
+        <div class="bar"><span class="who">StyleX</span><span class="track"><span class="fill sx" style="display:block;width:100%"></span></span><span class="val">6,496</span></div>
+        <div class="bar"><span class="who">Truss</span><span class="track"><span class="fill tr" style="display:block;width:98.5%"></span></span><span class="val">6,400</span></div>
+        <div class="bar"><span class="who"></span><span class="track" style="color:var(--truss);font-weight:700">gap 96 B — 1.5%</span><span class="val"></span></div>
+      </div>
+      <div class="barrow">
+        <div class="cap">Both given names derived from their declaration</div>
+        <div class="bar"><span class="who">StyleX</span><span class="track"><span class="fill sx" style="display:block;width:81.1%"></span></span><span class="val">5,269</span></div>
+        <div class="bar"><span class="who">Truss</span><span class="track"><span class="fill tr" style="display:block;width:79.2%"></span></span><span class="val">5,144</span></div>
+        <div class="bar"><span class="who"></span><span class="track" style="color:var(--truss);font-weight:700">gap 125 B — 2.4%</span><span class="val"></span></div>
+      </div>
+    </div>
+
+    <p style="margin-top:22px">
+      <b>Roughly 91–93% of the compressed gap is naming, not CSS.</b> And the raw numbers point the
+      other way: StyleX emits <i>less</i> stylesheet than Truss in every condition — 22,111 bytes of
+      canonical rules against 23,906. Its content is more compact. It loses on encoding alone.
+    </p>
+    <p>
+      StyleX's ~490 class names are 8-character content hashes — <code>x1u7kmwd</code>,
+      <code>xmt3bw4</code>, <code>x1dengtm</code>. Near-maximal entropy: no shared substrings,
+      no relationship to anything else in the file, about 4 KB that a compressor cannot touch.
+      Truss's are <code>mb_14px</code>, <code>mb_16px</code>, <code>mb_18px</code>,
+      <code>g_22px</code>. They share prefixes with one another, and each one restates the
+      declaration it heads — <code>.mb_14px { margin-bottom: 14px; }</code> hands the dictionary
+      the same fact twice.
+    </p>
+    <p class="sourced">
+      So the intuition that <i>short</i> class names win is the wrong reading. Truss's names are
+      <b>longer</b> than StyleX's — 9.2 characters against 7.2 — and they make the uncompressed
+      stylesheet bigger. They win because they are <b>predictable</b>, which is the opposite
+      property from short. Hashing is what makes a name incompressible, and hashing is what you do
+      to make names short.
+    </p>
+  </section>
+</div>
+
+<script>
+  // Scenario 1 — swap between the padded rule pair and the unpadded one.
+  var t1 = document.getElementById("t1"), box1 = document.getElementById("box1");
+  var chip1 = document.getElementById("chip1"), s1a = document.getElementById("s1a"), s1b = document.getElementById("s1b");
+  t1.addEventListener("change", function () {
+    var off = t1.checked;
+    box1.className = "blk " + (off ? "npS npL" : "sxS sxL");
+    chip1.className = "chip " + (off ? "bad" : "ok");
+    chip1.textContent = off ? "margin: 0 wins on source order — gap gone" : "margin-bottom: 14px wins — 14px gap";
+    s1a.innerHTML = off ? "<b>0</b><b>1</b><b>0</b>" : "<b class='hit'>4</b><b>1</b><b>0</b>";
+    s1b.innerHTML = off ? "<b>0</b><b class='hit'>1</b><b>0</b>" : "<b>1</b><b>1</b><b>0</b>";
+  });
+
+  // Scenario 2 — simulate the narrow viewport, then optionally un-double the class.
+  var t2 = document.getElementById("t2"), t3 = document.getElementById("t3");
+  var row2 = document.getElementById("row2"), chip2 = document.getElementById("chip2"), s2a = document.getElementById("s2a");
+  function sync2() {
+    var narrow = t2.checked, undoubled = t3.checked;
+    row2.className = "rowdemo g22 realg0" + (narrow ? (undoubled ? " nodbl" : " simg0") : "");
+    t3.disabled = !narrow;
+    if (!narrow) {
+      chip2.className = "chip ok"; chip2.textContent = "base rule applies — gap: 22px";
+      s2a.innerHTML = "<b>0</b><b class='hit'>2</b><b>0</b>";
+    } else if (undoubled) {
+      chip2.className = "chip bad"; chip2.textContent = "variant ties and loses on order — gap still 22px";
+      s2a.innerHTML = "<b>0</b><b>1</b><b>0</b>";
+    } else {
+      chip2.className = "chip ok"; chip2.textContent = "variant wins — gap: 0";
+      s2a.innerHTML = "<b>0</b><b class='hit'>2</b><b>0</b>";
+    }
+  }
+  t2.addEventListener("change", sync2);
+  t3.addEventListener("change", sync2);
+  sync2();
+</script>
+</body>
+</html>
