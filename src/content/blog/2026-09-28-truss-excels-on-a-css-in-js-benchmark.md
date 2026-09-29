@@ -8,11 +8,22 @@ draft: false
 
 ## What is Truss
 
-[Truss](https://github.com/homebound-team/truss) is our niche CSS-in-JS library that **I do not expect anyone else to use** 😅, and only exists because:
+[Truss](https://github.com/homebound-team/truss) is our niche CSS-in-JS library for doing inline, atomic CSS styling:
+
+```tsx
+import { Css } from "src/Css.ts";
+function Header() {
+  return (
+    <h1 css={Css.df.f24.black.br2.$}>Truss styled text</h1>
+  );
+}
+```
+
+Which started life as a small DSL on top of Emotion's `css` prop, but continues to exist because:
 
 1. We started a large React SPA in 2020 before Tailwind won, and at the time preferred Tachyons syntax (shorter atomic class names)
-2. Truss v1, built as a small DSL on top of Emotion, supported very robust **cross-component library / application boundary** styling that our apps still leverage 
-3. When StyleX came out, Truss v2 cribbed its architectural approach, and is now build-time CSS like all the other cool kids 🎉
+2. Truss v1, leveraging Emotion's runtime flexibility, supported very robust **cross-component library / application boundary** styling that our apps still leverage 
+3. When StyleX came out, Truss v2 cribbed its overall approach, and is now build-time CSS like all the other cool kids 🎉
 4. Now AIs are smart enough to write React UIs in Truss as well as Tailwind 😅, so our productivity is still up. 🚀
 
 And also we just really like it. 😀
