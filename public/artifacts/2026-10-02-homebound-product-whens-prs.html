@@ -1,0 +1,1506 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light" />
+    <title>PR review and stack effort · Ready Plan option conditions</title>
+    <style>
+      :root {
+        --ink: #172b36;
+        --muted: #52646d;
+        --paper: #f8f7f3;
+        --white: #fff;
+        --rule: #d9dfdc;
+        --blue: #173f50;
+        --teal: #087b70;
+        --teal-light: #e5f3ee;
+        --gold: #ffe2a4;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      html {
+        scroll-behavior: smooth;
+      }
+      body {
+        margin: 0;
+        background: var(--paper);
+        color: var(--ink);
+        font:
+          16px/1.6 system-ui,
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          sans-serif;
+      }
+      a {
+        color: #086b70;
+        text-underline-offset: 3px;
+      }
+      a:hover {
+        color: #034e52;
+      }
+      a:focus-visible {
+        outline: 3px solid #f0b23c;
+        outline-offset: 3px;
+      }
+      .shell {
+        width: min(1120px, calc(100% - 44px));
+        margin: 0 auto;
+      }
+      .hero {
+        background: var(--blue);
+        color: var(--white);
+        padding: 58px 0 52px;
+      }
+      .eyebrow {
+        margin: 0 0 12px;
+        color: #9ee0cc;
+        font-size: 0.75rem;
+        font-weight: 800;
+        letter-spacing: 0.17em;
+        text-transform: uppercase;
+      }
+      h1,
+      h2,
+      h3,
+      p {
+        margin-top: 0;
+      }
+      h1 {
+        max-width: 850px;
+        margin-bottom: 18px;
+        font-size: clamp(2.35rem, 6vw, 4.35rem);
+        line-height: 1.1;
+        letter-spacing: -0.045em;
+      }
+      .hero .lede {
+        max-width: 790px;
+        margin: 0;
+        color: #d9e9e7;
+        font-size: 1.17rem;
+      }
+      .hero a {
+        color: #b6f4df;
+      }
+      .meta {
+        margin-top: 27px;
+        color: #c3d6d4;
+        font-size: 0.85rem;
+      }
+      main {
+        padding: 34px 0 60px;
+      }
+      .metrics {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
+        margin-bottom: 30px;
+      }
+      .metric {
+        min-height: 137px;
+        padding: 19px 21px;
+        background: var(--white);
+        border: 1px solid var(--rule);
+        border-radius: 12px;
+      }
+      .metric strong {
+        display: block;
+        font-size: clamp(1.9rem, 3vw, 2.6rem);
+        line-height: 1.15;
+        letter-spacing: -0.045em;
+        color: var(--blue);
+      }
+      .metric span {
+        display: block;
+        margin-top: 5px;
+        font-weight: 700;
+      }
+      .metric small {
+        display: block;
+        margin-top: 4px;
+        color: var(--muted);
+        font-size: 0.78rem;
+      }
+      section {
+        margin-top: 39px;
+      }
+      h2 {
+        margin-bottom: 13px;
+        font-size: 1.62rem;
+        line-height: 1.2;
+        letter-spacing: -0.02em;
+      }
+      h3 {
+        font-size: 1.07rem;
+        margin-bottom: 6px;
+      }
+      .intro {
+        max-width: 860px;
+        font-size: 1.07rem;
+      }
+      .callout {
+        padding: 19px 22px;
+        background: var(--teal-light);
+        border-left: 5px solid var(--teal);
+        border-radius: 0 10px 10px 0;
+      }
+      .callout p:last-child,
+      .note p:last-child {
+        margin-bottom: 0;
+      }
+      .table-wrap {
+        overflow-x: auto;
+        background: var(--white);
+        border: 1px solid var(--rule);
+        border-radius: 12px;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 730px;
+      }
+      th,
+      td {
+        padding: 14px 16px;
+        border-bottom: 1px solid var(--rule);
+        vertical-align: top;
+        text-align: left;
+      }
+      th {
+        color: var(--muted);
+        font-size: 0.76rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        background: #f1f5f2;
+      }
+      tbody tr:last-child td {
+        border-bottom: 0;
+      }
+      td:nth-child(n + 3),
+      th:nth-child(n + 3) {
+        text-align: right;
+        white-space: nowrap;
+      }
+      .pr-title {
+        font-weight: 700;
+      }
+      .sub {
+        display: block;
+        color: var(--muted);
+        font-size: 0.84rem;
+        line-height: 1.4;
+      }
+      .note {
+        padding: 15px 19px;
+        background: #fffbef;
+        border: 1px solid #ecdcb3;
+        border-radius: 10px;
+        font-size: 0.88rem;
+      }
+      .detail-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+      }
+      .detail {
+        background: var(--white);
+        border: 1px solid var(--rule);
+        border-radius: 12px;
+        padding: 21px 23px;
+      }
+      .detail ul,
+      .timeline {
+        padding-left: 20px;
+        margin-bottom: 0;
+      }
+      .detail li + li,
+      .timeline li + li {
+        margin-top: 11px;
+      }
+      .timeline {
+        border-left: 2px solid var(--rule);
+        list-style: none;
+        padding: 0 0 0 22px;
+        margin: 18px 0 0 7px;
+      }
+      .timeline li {
+        position: relative;
+        padding-bottom: 11px;
+      }
+      .timeline li::before {
+        content: "";
+        position: absolute;
+        left: -30px;
+        top: 7px;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background: var(--teal);
+        border: 3px solid var(--paper);
+      }
+      .when {
+        display: block;
+        color: var(--teal);
+        font-size: 0.82rem;
+        font-weight: 800;
+        letter-spacing: 0.02em;
+      }
+      .sources {
+        font-size: 0.86rem;
+        color: var(--muted);
+      }
+      .day {
+        margin: 10px 0;
+        background: var(--white);
+        border: 1px solid var(--rule);
+        border-radius: 10px;
+      }
+      .day > summary {
+        cursor: pointer;
+        padding: 14px 18px;
+        font-weight: 750;
+        color: var(--blue);
+      }
+      .day > summary:hover {
+        background: var(--teal-light);
+      }
+      .entries {
+        list-style: none;
+        padding: 0 18px 10px;
+        margin: 0;
+      }
+      .entry {
+        padding: 14px 0;
+        border-top: 1px solid var(--rule);
+      }
+      .entry-head {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px 12px;
+        align-items: baseline;
+        margin-bottom: 7px;
+      }
+      .entry time {
+        font-variant-numeric: tabular-nums;
+        font-weight: 800;
+        color: var(--blue);
+      }
+      .entry .context {
+        color: var(--muted);
+        font-size: 0.83rem;
+        overflow-wrap: anywhere;
+      }
+      .entry pre,
+      .entry blockquote {
+        margin: 0;
+        padding: 0;
+        border: 0;
+        background: none;
+        color: var(--ink);
+        font: inherit;
+        font-size: 0.9rem;
+        white-space: pre-wrap;
+        overflow-wrap: anywhere;
+      }
+      .entry blockquote {
+        /* Prettier wraps HTML text nodes; let the browser collapse those formatting-only line breaks. */
+        white-space: normal;
+      }
+      .entry .assistant-tag {
+        padding: 1px 6px;
+        border-radius: 4px;
+        background: #e8eee9;
+        font-size: 0.75rem;
+        color: var(--muted);
+      }
+      .sources ul {
+        margin-bottom: 0;
+        padding-left: 20px;
+      }
+      .sources li + li {
+        margin-top: 5px;
+      }
+      footer {
+        border-top: 1px solid var(--rule);
+        padding: 22px 0 32px;
+        color: var(--muted);
+        font-size: 0.82rem;
+      }
+      @media (max-width: 700px) {
+        .shell {
+          width: min(calc(100% - 28px), 1120px);
+        }
+        .hero {
+          padding: 42px 0;
+        }
+        .metrics {
+          grid-template-columns: repeat(2, 1fr);
+        }
+        .detail-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+      @media (max-width: 460px) {
+        .metrics {
+          grid-template-columns: 1fr;
+        }
+      }
+      @media print {
+        body {
+          background: white;
+          font-size: 11pt;
+        }
+        .shell {
+          width: 100%;
+        }
+        .hero {
+          background: white;
+          color: var(--ink);
+          padding: 0 0 22px;
+          border-bottom: 3px solid var(--blue);
+        }
+        .hero .lede,
+        .hero .meta,
+        .eyebrow {
+          color: var(--ink);
+        }
+        .hero a {
+          color: var(--teal);
+        }
+        main {
+          padding-top: 20px;
+        }
+        .metric,
+        .detail,
+        .callout,
+        .note,
+        .table-wrap {
+          break-inside: avoid;
+        }
+        section {
+          break-inside: avoid;
+        }
+        a {
+          color: var(--ink);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="hero">
+      <div class="shell">
+        <p class="eyebrow">Engineering review · observed activity</p>
+        <h1>PR review and stack effort</h1>
+        <p class="lede">
+          The Ready Plan option-conditions stack moved from precomputed package products through historical backfill,
+          removal of checkout fallbacks, and version-aware lazy JSON fields. The review went deep on scope math,
+          ItemSlots, test realism, and historical correctness.
+        </p>
+        <p class="meta">
+          GitHub account: <strong>@stephenh</strong> · Four linked PRs · Snapshot:
+          <time datetime="2026-10-02T11:08:00Z">2 Oct 2026, 11:08 UTC</time>
+        </p>
+      </div>
+    </header>
+    <main class="shell">
+      <div class="metrics" aria-label="Activity at a glance">
+        <div class="metric">
+          <strong>50</strong><span>Direct review notes</span
+          ><small>48 top-level inline comments + 2 reviewer follow-ups on #10677</small>
+        </div>
+        <div class="metric">
+          <strong>41</strong><span>Timestamped prompts</span
+          ><small>Every user-authored prompt in this OpenCode session</small>
+        </div>
+        <div class="metric">
+          <strong>48h 06m</strong><span>Elapsed review span</span
+          ><small>First to latest inline note; not hours worked</small>
+        </div>
+        <div class="metric">
+          <strong>4</strong><span>Stacked pull requests</span
+          ><small>Product conditions → backfill → fallback removal → lazy reads</small>
+        </div>
+        <div class="metric">
+          <strong>19</strong><span>Published commits</span
+          ><small>Current stack history; includes follow-up feedback commits</small>
+        </div>
+        <div class="metric">
+          <strong>58</strong><span>Distinct changed files</span
+          ><small>Combined main-to-stack diff, including generated files</small>
+        </div>
+      </div>
+
+      <section aria-labelledby="readout">
+        <h2 id="readout">What this says about the effort</h2>
+        <p class="intro">
+          This was a sustained, line-by-line review of a four-stage backend change, not just a final approval pass. The
+          most visible work is <strong>50 reviewer-authored inline notes</strong> on the foundation PR across three UTC
+          days and eight code paths, plus <strong>41 timestamped prompts</strong> in this working session. Thirty-nine
+          review notes focused on the derivation implementation and its tests.
+        </p>
+        <div class="callout">
+          <p>
+            <strong>Important distinction:</strong> GitHub timestamps measure an elapsed window, not time spent
+            reviewing. No timesheet is available, so this report does not convert the 48-hour span—or backfill
+            runtime—into claimed person-hours. The chat prompts and PR comments below show iterations, not a stopwatch.
+          </p>
+        </div>
+      </section>
+
+      <section aria-labelledby="stack">
+        <h2 id="stack">The stack you built and reviewed</h2>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th scope="col">PR / stage</th>
+                <th scope="col">What changed</th>
+                <th scope="col">Commits</th>
+                <th scope="col">Files</th>
+                <th scope="col">+ / − lines</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>
+                  <a class="pr-title" href="https://github.com/homebound-team/graphql-service/pull/10677"
+                    >#10677 · Products when</a
+                  ><span class="sub">Base: main · opened 27 Sep</span>
+                </td>
+                <td>Derive saved package products and conditions from final ItemSlot scope; read them at checkout.</td>
+                <td>15</td>
+                <td>24</td>
+                <td>987 / 202</td>
+              </tr>
+              <tr>
+                <td>
+                  <a class="pr-title" href="https://github.com/homebound-team/graphql-service/pull/10718"
+                    >#10718 · Historical backfill</a
+                  ><span class="sub">On #10677 · opened 30 Sep</span>
+                </td>
+                <td>
+                  Fill conditions for readable aggregate versions, with safe version-row splicing and rerun behavior.
+                </td>
+                <td>2</td>
+                <td>10</td>
+                <td>756 / 30</td>
+              </tr>
+              <tr>
+                <td>
+                  <a class="pr-title" href="https://github.com/homebound-team/graphql-service/pull/10719"
+                    >#10719 · Remove fallbacks</a
+                  ><span class="sub">On #10718 · opened 30 Sep</span>
+                </td>
+                <td>Delete per-request TLI product/scope fallback calculations after the backfill.</td>
+                <td>1</td>
+                <td>22</td>
+                <td>72 / 1,048</td>
+              </tr>
+              <tr>
+                <td>
+                  <a class="pr-title" href="https://github.com/homebound-team/graphql-service/pull/10725"
+                    >#10725 · Lazy fields</a
+                  ><span class="sub">On #10719 · opened 30 Sep</span>
+                </td>
+                <td>Load large identity/version JSON fields on demand while preserving pinned-version semantics.</td>
+                <td>1</td>
+                <td>45</td>
+                <td>416 / 338</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="sources">
+          The
+          <a href="https://github.com/homebound-team/graphql-service/compare/main...chore/lazy-ready-plan-when"
+            >combined stack diff</a
+          >
+          is <strong>1,973 added / 1,361 deleted lines across 58 distinct files</strong>. Per-PR file counts overlap;
+          adding them would double-count files. Diff size includes generated output and is not a measure of time.
+        </p>
+      </section>
+
+      <section aria-labelledby="review">
+        <h2 id="review">Where the review went deep</h2>
+        <div class="detail-grid">
+          <div class="detail">
+            <h3>Scope and product semantics</h3>
+            <ul>
+              <li>
+                Pressed on whether a
+                <a href="https://github.com/homebound-team/graphql-service/pull/10677#discussion_r4160158706"
+                  >material used in two ItemSlots</a
+                >
+                was being counted across slots; the result needed per-slot quantity math and cross-slot condition
+                merging.
+              </li>
+              <li>
+                Asked for a
+                <a href="https://github.com/homebound-team/graphql-service/pull/10677#discussion_r4157078242"
+                  >worked negative-quantity example</a
+                >
+                distinguishing an invalid slot total from one negative material in an otherwise positive slot.
+              </li>
+              <li>
+                Examined whether <code>availableWhen</code> and <code>productsWhen</code> were derived in one pass, then
+                saved as separate outputs.
+              </li>
+            </ul>
+          </div>
+          <div class="detail">
+            <h3>Tests and maintainability</h3>
+            <ul>
+              <li>
+                Requested leaner test graphs:
+                <a href="https://github.com/homebound-team/graphql-service/pull/10677#discussion_r4156881064"
+                  >inline the two-use fixture</a
+                >, share TLI setup, and test both package options.
+              </li>
+              <li>
+                Challenged unnecessary location/UOM construction and factory overrides while retaining the fields needed
+                to keep two variants in one ItemSlot.
+              </li>
+              <li>
+                Refined names, examples, and error diagnostics so future readers can distinguish a candidate option, an
+                effective selection, and the slot being evaluated.
+              </li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section aria-labelledby="beyond-review">
+        <h2 id="beyond-review">Evidence beyond comment counts</h2>
+        <div class="detail-grid">
+          <div class="detail">
+            <h3>Performance and result comparison</h3>
+            <p>
+              The
+              <a href="https://github.com/homebound-team/graphql-service/pull/10677">foundation PR description</a>
+              reports a local production-copy comparison across five offerings and
+              <strong>1,907 package options</strong>. It records a roughly <strong>8–24×</strong> improvement versus the
+              warm previous resolver, while disclosing seven differing product results and order changes for roughly 4%
+              of options.
+            </p>
+          </div>
+          <div class="detail">
+            <h3>Historical migration validation</h3>
+            <p>
+              The
+              <a href="https://github.com/homebound-team/graphql-service/pull/10718">backfill PR description</a> reports
+              running the job over <strong>94 Product Offerings</strong> and checking the version rows read by
+              <strong>1,175 target aggregate versions</strong>. Its approximately 55-minute job runtime is execution
+              time, <em>not</em> estimated engineering time.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section aria-labelledby="timeline">
+        <h2 id="timeline">Visible timeline <span class="sub">All times UTC</span></h2>
+        <ol class="timeline">
+          <li>
+            <span class="when">27 Sep</span>#10677 opened: save product conditions instead of recalculating package
+            products at request time.
+          </li>
+          <li>
+            <span class="when">30 Sep, 01:38–04:03</span>First inline review window on naming, derivation, and tests;
+            #10718 and #10719 opened later that morning.
+          </li>
+          <li>
+            <span class="when">30 Sep, 12:40–13:24</span>Second review window focused on rules, factory defaults, test
+            scope, and terminology. #10725 opened later that day.
+          </li>
+          <li>
+            <span class="when">1 Oct, 14:19–15:21</span>Review and follow-up iterations on product swap tests, ItemSlot
+            setup, grouped material quantities, and negative-scope behavior.
+          </li>
+          <li>
+            <span class="when">1 Oct, 20:30 · 2 Oct, 01:44</span>Later clarification on cross-slot quantity math,
+            preserving the old calculation for versions without saved conditions, and what changed in the combined scope
+            calculation.
+          </li>
+        </ol>
+      </section>
+
+      <section id="prompts" aria-labelledby="prompt-heading">
+        <h2 id="prompt-heading">Your prompts · 41 timestamped turns</h2>
+        <p>
+          Verbatim user-authored text from this OpenCode session, in UTC order. Expand each day to follow the iteration;
+          automatic file-read attachments are not prompts.
+        </p>
+        <details class="day">
+          <summary>30 Sep 2026 · 10 prompts</summary>
+          <ol class="entries">
+            <li class="entry">
+              <div class="entry-head"><time datetime="2026-09-30T14:08:03Z">14:08:03 UTC</time></div>
+              <pre>
+we've just added @src/entities/ReadyPlanOptionGroup.ts requiredWhen, @src/entities/ReadyPlanOption.ts availableWhen and productsWhen, that are all potentially large jsonb columns. i would like to use joist's LazyField feature in @joist-config.json to mark them as lazy, both on the main "identity" tables as well as their "version" tables i.e. see @src/utils/versioning/aggregateVersion.md which means updating @src/utils/versioning/aggregateVersionPlugin.ts to skip the lazy columns initially but then still be able to load version-aware versions of them lazily. work on implementing this in a new PR stack on our current PRs.</pre>
+            </li>
+            <li class="entry">
+              <div class="entry-head"><time datetime="2026-09-30T15:48:27Z">15:48:27 UTC</time></div>
+              <pre>why did you stop? jfc</pre>
+            </li>
+            <li class="entry">
+              <div class="entry-head"><time datetime="2026-09-30T18:07:29Z">18:07:29 UTC</time></div>
+              <pre>
+PR #10677 is failing codegen check Changes not staged for commit:
+  (use "git add &lt;file&gt;..." to update what will be committed)
+  (use "git restore &lt;file&gt;..." to discard changes in working directory)
+        modified:   src/entities/codegen/ReadyPlanOptionVersionCodegen.ts
+        modified:   src/entities/codegen/metadata.ts  -- might need to redb/recodegen</pre>
+            </li>
+            <li class="entry">
+              <div class="entry-head"><time datetime="2026-09-30T18:37:38Z">18:37:38 UTC</time></div>
+              <pre>whoa whoa where the fuck did merge commits come from? what the fuck did you do?</pre>
+            </li>
+            <li class="entry">
+              <div class="entry-head"><time datetime="2026-09-30T18:38:21Z">18:38:21 UTC</time></div>
+              <pre>yes, go back to a linear stack with rebase and force-push. jfc.</pre>
+            </li>
+            <li class="entry">
+              <div class="entry-head"><time datetime="2026-09-30T18:50:42Z">18:50:42 UTC</time></div>
+              <pre>
+in `  it.withCtx("hides a product when an addon removes it", async (ctx) =&gt; {
+` why are we using runWithEntities? we shouldn't need a separate EM like this, try removing it from all of those tests.</pre>
+            </li>
+            <li class="entry">
+              <div class="entry-head"><time datetime="2026-09-30T18:52:32Z">18:52:32 UTC</time></div>
+              <pre>
+i would like a version of this test ```  it.withCtx("hides a product when an addon removes it", async (ctx) =&gt; {
+``` but where the addon changes which product we show</pre>
+            </li>
+            <li class="entry">
+              <div class="entry-head"><time datetime="2026-09-30T18:56:11Z">18:56:11 UTC</time></div>
+              <pre>
+i wonder if we could make a new `newTakeoffLineItems` that takes 1 em, 1 "shared args", and then `N` "per TLI" args, and then returns the N TLIs -- like would that clean up creating these "almost similar" TLIs?</pre>
+            </li>
+            <li class="entry">
+              <div class="entry-head"><time datetime="2026-09-30T18:58:51Z">18:58:51 UTC</time></div>
+              <pre>can you move `newTakeoffLineItems` into the @src/entities/factories/newTakeoffLineItem.ts file?</pre>
+            </li>
+            <li class="entry">
+              <div class="entry-head"><time datetime="2026-09-30T18:59:21Z">18:59:21 UTC</time></div>
+              <pre>could we inline the `const slot` now, or maybe just not use `newScopeSlot` at all?</pre>
+            </li>
+          </ol>
+        </details>
+        <details class="day">
+          <summary>1 Oct 2026 · 20 prompts</summary>
+          <ol class="entries">
+            <li class="entry">
+              <div class="entry-head"><time datetime="2026-10-01T01:43:06Z">01:43:06 UTC</time></div>
+              <pre>good put this commit into `chore/rpo-products-when` and then rebase the stack on that</pre>
+            </li>
+            <li class="entry">
+              <div class="entry-head"><time datetime="2026-10-01T05:00:20Z">05:00:20 UTC</time></div>
+              <pre>
+i just rebased on main and have some conflicts in the stacked PRs, resolve them and push the fixed linear stack</pre>
+            </li>
+            <li class="entry">
+              <div class="entry-head"><time datetime="2026-10-01T14:40:27Z">14:40:27 UTC</time></div>
+              <pre>
+i've added comments to https://github.com/homebound-team/graphql-service/pull/10677/changes#r4156545494 -- address them as a new PR feedback commit for that PR/stack</pre>
+            </li>
+            <li class="entry">
+              <div class="entry-head"><time datetime="2026-10-01T14:59:10Z">14:59:10 UTC</time></div>
+              <pre>okay, i've added some more comments, do the same thing</pre>
+            </li>
+            <li class="entry">
+              <div class="entry-head"><time datetime="2026-10-01T15:15:08Z">15:15:08 UTC</time></div>
+              <pre>okay, i've added more comments, do it again</pre>
+            </li>
+            <li class="entry">
+              <div class="entry-head"><time datetime="2026-10-01T20:30:35Z">20:30:35 UTC</time></div>
+              <pre>
+what about this question https://github.com/homebound-team/graphql-service/pull/10677/changes#r4160158706</pre>
+            </li>
+            <li class="entry">
+              <div class="entry-head"><time datetime="2026-10-01T21:16:35Z">21:16:35 UTC</time></div>
+              <pre>
+```const productWarnings = usesQuantity
+    ? tlisByMaterial
+        .map(([mvId, tlis]) =&gt; ({ mvId, net: tlis.sum((tli) =&gt; tli.quantity ?? 1) }))
+        .filter((material) =&gt; material.net &lt; 0) ``` isn't this code summing quantity across slots b/c tlisByMaterial has cross-slot TLIs in its list?</pre>
+            </li>
+            <li class="entry">
+              <div class="entry-head"><time datetime="2026-10-01T21:18:32Z">21:18:32 UTC</time></div>
+              <pre>
+...oh, i guess our incoming `slotTlis` into this function is fundamentally "products within a singular slot"?</pre>
+            </li>
+            <li class="entry">
+              <div class="entry-head"><time datetime="2026-10-01T22:00:30Z">22:00:30 UTC</time></div>
+              <pre>
+i rewrote of the jsdoc for `evaluateSlotProducts` to `/** Given _a single slot of TLIs_ (which might be separate materials), eval it for overall live-ness and visible products. */
+` -- check that for accuracy, and add a bullet point list of some same tlis we might be passed, i.e. sample location/material/options</pre>
+            </li>
+            <li class="entry">
+              <div class="entry-head"><time datetime="2026-10-01T22:44:48Z">22:44:48 UTC</time></div>
+              <pre>
+i think the example locations should be `type=scope` i.e. have an `s:...` in them, look at other examples</pre>
+            </li>
+            <li class="entry">
+              <div class="entry-head"><time datetime="2026-10-01T22:49:29Z">22:49:29 UTC</time></div>
+              <pre>should `RequiredWhenSelection.effectiveOptions` be a Set?</pre>
+            </li>
+            <li class="entry">
+              <div class="entry-head"><time datetime="2026-10-01T22:59:40Z">22:59:40 UTC</time></div>
+              <pre>
+for this ```// The slot is relevant to the group, but this candidate option must supply its own matching material line.
+  if (!matching.some((tli) =&gt; isMaterialAddedByOption(tli, option))) {
+    return { available: false, products: [], productWarnings: [] };
+  } ``` i'm surprised by the time we get here, we've not already filtered out labor / non-option tlis?</pre>
+            </li>
+            <li class="entry">
+              <div class="entry-head"><time datetime="2026-10-01T23:06:44Z">23:06:44 UTC</time></div>
+              <pre>
+if we had a remove in play, then matching would be empty, that's fine, why do we need the `.some(material added by option)`?</pre>
+            </li>
+            <li class="entry">
+              <div class="entry-head"><time datetime="2026-10-01T23:08:58Z">23:08:58 UTC</time></div>
+              <pre>
+i feel like you're just wanting to check "is there a TLI with a material set" but isMaterialAddedByOption is also checking tli.options.get, but i assume our slotTlis were already filtered to "the tli.options includes the rpo"?</pre>
+            </li>
+            <li class="entry">
+              <div class="entry-head"><time datetime="2026-10-01T23:09:35Z">23:09:35 UTC</time></div>
+              <pre>what is "the cancellation path"?</pre>
+            </li>
+            <li class="entry">
+              <div class="entry-head"><time datetime="2026-10-01T23:12:15Z">23:12:15 UTC</time></div>
+              <pre>
+is this rewrite accurate ```// Make sure at least 1 of the matched TLIs in this slot a) has a material, b) is controlled by this option,
+  // otherwise if not this slot should be considered `off` / no products for this particular `option`. ```</pre>
+            </li>
+            <li class="entry">
+              <div class="entry-head"><time datetime="2026-10-01T23:15:28Z">23:15:28 UTC</time></div>
+              <pre>
+"off means for this option" -- yes that's why i said "consider off/no products for this particular option"</pre>
+            </li>
+            <li class="entry">
+              <div class="entry-head"><time datetime="2026-10-01T23:17:37Z">23:17:37 UTC</time></div>
+              <pre>
+for `      const message = `${rpog} has negative net quantity ${net} in slot ${matching[0].slot.id}`;
+` shouldn't we mention the option as well? and like the particular combo of options that triggered it?</pre>
+            </li>
+            <li class="entry">
+              <div class="entry-head"><time datetime="2026-10-01T23:24:04Z">23:24:04 UTC</time></div>
+              <pre>
+what does `      // Checkout's TLI calculations treat the slot as backed out, but still display the products that net positive
+` handle?</pre>
+            </li>
+            <li class="entry">
+              <div class="entry-head"><time datetime="2026-10-01T23:59:51Z">23:59:51 UTC</time></div>
+              <pre>that seems very subtle , make that more clear jfc</pre>
+            </li>
+          </ol>
+        </details>
+        <details class="day">
+          <summary>2 Oct 2026 · 11 prompts</summary>
+          <ol class="entries">
+            <li class="entry">
+              <div class="entry-head"><time datetime="2026-10-02T00:05:06Z">00:05:06 UTC</time></div>
+              <pre>
+i've refactored it check for accuracy -- and then add an inline comment about why the fuck we're re-checking `hasLiveQuanitytScope` after we've just checked `net &lt; 0`. jfc</pre>
+            </li>
+            <li class="entry">
+              <div class="entry-head"><time datetime="2026-10-02T00:07:02Z">00:07:02 UTC</time></div>
+              <pre>
+didn't `makeRemovedScopeFilter` already check all this `hasLiveQuantityScope`? like you keep wanting to check quantity math like 20 fucking times -- do you really need this?</pre>
+            </li>
+            <li class="entry">
+              <div class="entry-head"><time datetime="2026-10-02T00:10:00Z">00:10:00 UTC</time></div>
+              <pre>
+i updated the comment, check for accuracy, and you can put back the `hasLiveQuantityScope` since i get it now</pre>
+            </li>
+            <li class="entry">
+              <div class="entry-head"><time datetime="2026-10-02T00:11:42Z">00:11:42 UTC</time></div>
+              <pre>
+are you really sure when we sum quantities we should be doing `tli.quantity ?? 1`? ... i feel like `applyProjectItem` / @src/entities/ProjectItemLike.ts may not do the same `?? 1`?</pre>
+            </li>
+            <li class="entry">
+              <div class="entry-head"><time datetime="2026-10-02T00:19:09Z">00:19:09 UTC</time></div>
+              <pre>instead of having `quantityTlis` could we have had `tli.quantity ?? 0`?</pre>
+            </li>
+            <li class="entry">
+              <div class="entry-head"><time datetime="2026-10-02T00:19:49Z">00:19:49 UTC</time></div>
+              <pre>but we're within `usesQuantity` which means we're not lump sum</pre>
+            </li>
+            <li class="entry">
+              <div class="entry-head"><time datetime="2026-10-02T00:21:24Z">00:21:24 UTC</time></div>
+              <pre>
+but we're inside an `if (usesQuantity)` where the `hasLiveQuantityScope` lump-sum behavior doesn't matter</pre>
+            </li>
+            <li class="entry">
+              <div class="entry-head"><time datetime="2026-10-02T00:22:08Z">00:22:08 UTC</time></div>
+              <pre>we won't have 1, -1, undefined in a quantity-based slot please stop fucking arguing with me jfc</pre>
+            </li>
+            <li class="entry">
+              <div class="entry-head"><time datetime="2026-10-02T00:26:15Z">00:26:15 UTC</time></div>
+              <pre>okay, squash these into #10677</pre>
+            </li>
+            <li class="entry">
+              <div class="entry-head"><time datetime="2026-10-02T01:04:40Z">01:04:40 UTC</time></div>
+              <pre>
+summarize how much effort i've put into this PR review, this stack of PRs, into a single-html file report</pre>
+            </li>
+            <li class="entry">
+              <div class="entry-head"><time datetime="2026-10-02T11:08:03Z">11:08:03 UTC</time></div>
+              <pre>
+can you do the same thing but also include all of my prompts with timestamps, and also PR comments, i'm trying to show how much iteration went in to this series of PRs</pre>
+            </li>
+          </ol>
+        </details>
+      </section>
+
+      <section id="comments" aria-labelledby="comment-heading">
+        <h2 id="comment-heading">PR review comments · 54 timestamped entries</h2>
+        <p>
+          Every inline comment on #10677, linked to its GitHub thread and shown in UTC order. The other three PRs had no
+          inline or top-level PR comments at this snapshot. Four assistant-posted replies using the same GitHub account
+          are labelled and excluded from the 50 direct reviewer notes.
+        </p>
+        <details class="day">
+          <summary>30 Sep 2026 · 22 comments</summary>
+          <ol class="entries">
+            <li class="entry">
+              <div class="entry-head">
+                <time datetime="2026-09-30T01:38:28Z">01:38:28 UTC</time
+                ><a href="https://github.com/homebound-team/graphql-service/pull/10677#discussion_r4140003984"
+                  >r4140003984</a
+                ><span class="context">readyPlanConfigLikeUtils.ts</span>
+              </div>
+              <blockquote>
+                If you "hide whitespace" everything from here down is 95% indentation changes to the old impl that we're
+                removing, except for where I'll comment.
+              </blockquote>
+            </li>
+            <li class="entry">
+              <div class="entry-head">
+                <time datetime="2026-09-30T01:38:55Z">01:38:55 UTC</time
+                ><a href="https://github.com/homebound-team/graphql-service/pull/10677#discussion_r4140006083"
+                  >r4140006083</a
+                ><span class="context">readyPlanConfigLikeUtils.ts</span>
+              </div>
+              <blockquote>
+                I dropped `toatlCostInCents` from both old/new b/c the `personalizationSlotOrder` is definitive / has
+                been for awhile.
+              </blockquote>
+            </li>
+            <li class="entry">
+              <div class="entry-head">
+                <time datetime="2026-09-30T02:34:18Z">02:34:18 UTC</time
+                ><a href="https://github.com/homebound-team/graphql-service/pull/10677#discussion_r4140274160"
+                  >r4140274160</a
+                ><span class="context">deriveRequiredWhen.ts</span>
+              </div>
+              <blockquote>I think we should rename `appearances` to `products`? Wdyt?</blockquote>
+            </li>
+            <li class="entry">
+              <div class="entry-head">
+                <time datetime="2026-09-30T02:34:45Z">02:34:45 UTC</time
+                ><a href="https://github.com/homebound-team/graphql-service/pull/10677#discussion_r4140275929"
+                  >r4140275929</a
+                ><span class="context">deriveRequiredWhen.ts</span>
+              </div>
+              <blockquote>
+                I'd like to rename this to just `available`, wydt? Also I'd like to rename
+                `ReadyPlanOptionGroupRequiredWhenClause` to just a `WhenClause` since we're using it for RPOs as well.
+              </blockquote>
+            </li>
+            <li class="entry">
+              <div class="entry-head">
+                <time datetime="2026-09-30T02:36:33Z">02:36:33 UTC</time
+                ><a href="https://github.com/homebound-team/graphql-service/pull/10677#discussion_r4140285369"
+                  >r4140285369</a
+                ><span class="context">deriveRequiredWhen.ts</span>
+              </div>
+              <blockquote>
+                Put an inline comment above this that after we've calculated the full `conditionsByOption`, we derive
+                the `availableWhen` and `productsWhen` based from that.
+              </blockquote>
+            </li>
+            <li class="entry">
+              <div class="entry-head">
+                <time datetime="2026-09-30T02:39:02Z">02:39:02 UTC</time
+                ><a href="https://github.com/homebound-team/graphql-service/pull/10677#discussion_r4140299873"
+                  >r4140299873</a
+                ><span class="context">deriveRequiredWhen.ts</span>
+              </div>
+              <blockquote>
+                Just sort by `appearance.mvId` as a string, I don't really care about lexical etc it shouldn't matter at
+                this point.
+              </blockquote>
+            </li>
+            <li class="entry">
+              <div class="entry-head">
+                <time datetime="2026-09-30T02:39:51Z">02:39:51 UTC</time
+                ><a href="https://github.com/homebound-team/graphql-service/pull/10677#discussion_r4140304120"
+                  >r4140304120</a
+                ><span class="context">deriveRequiredWhen.ts</span>
+              </div>
+              <blockquote>This method seems so simple we could probably just inline it? Wdyt?</blockquote>
+            </li>
+            <li class="entry">
+              <div class="entry-head">
+                <time datetime="2026-09-30T03:42:39Z">03:42:39 UTC</time
+                ><a href="https://github.com/homebound-team/graphql-service/pull/10677#discussion_r4140601149"
+                  >r4140601149</a
+                ><span class="context">ReadyPlanOption.test.ts</span>
+              </div>
+              <blockquote>This test doesn't really test anything, remove it</blockquote>
+            </li>
+            <li class="entry">
+              <div class="entry-head">
+                <time datetime="2026-09-30T03:42:50Z">03:42:50 UTC</time
+                ><a href="https://github.com/homebound-team/graphql-service/pull/10677#discussion_r4140601935"
+                  >r4140601935</a
+                ><span class="context">ReadyPlanOption.test.ts</span>
+              </div>
+              <blockquote>This test doesn't really test anything, remove it</blockquote>
+            </li>
+            <li class="entry">
+              <div class="entry-head">
+                <time datetime="2026-09-30T04:03:45Z">04:03:45 UTC</time
+                ><a href="https://github.com/homebound-team/graphql-service/pull/10677#discussion_r4140695832"
+                  >r4140695832</a
+                ><span class="context">ReadyPlanOptionGroup.requiredWhen.ts</span>
+              </div>
+              <blockquote>Rename to just `evaluateWhenClauses`</blockquote>
+            </li>
+            <li class="entry">
+              <div class="entry-head">
+                <time datetime="2026-09-30T12:40:49Z">12:40:49 UTC</time
+                ><a href="https://github.com/homebound-team/graphql-service/pull/10677#discussion_r4144658408"
+                  >r4144658408</a
+                ><span class="context">ReadyPlanOption.ts</span>
+              </div>
+              <blockquote>
+                This rule is long, but everything it's checking seems worthwhile, and the code is ~relatively chunked
+                out well.
+              </blockquote>
+            </li>
+            <li class="entry">
+              <div class="entry-head">
+                <time datetime="2026-09-30T12:41:31Z">12:41:31 UTC</time
+                ><a href="https://github.com/homebound-team/graphql-service/pull/10677#discussion_r4144664006"
+                  >r4144664006</a
+                ><span class="context">ReadyPlanOptionGroup.requiredWhen.ts</span>
+              </div>
+              <blockquote>
+                Renamed this `WhenClause` to be shorter b/c we now use it for 3 different fields (required when,
+                available when, products when).
+              </blockquote>
+            </li>
+            <li class="entry">
+              <div class="entry-head">
+                <time datetime="2026-09-30T12:43:09Z">12:43:09 UTC</time
+                ><a href="https://github.com/homebound-team/graphql-service/pull/10677#discussion_r4144677906"
+                  >r4144677906</a
+                ><span class="context">ReadyPlanOptionGroup.requiredWhen.ts</span>
+              </div>
+              <blockquote>These are just lines that formatted as 1-lien with the shorter name</blockquote>
+            </li>
+            <li class="entry">
+              <div class="entry-head">
+                <time datetime="2026-09-30T12:45:33Z">12:45:33 UTC</time
+                ><a href="https://github.com/homebound-team/graphql-service/pull/10677#discussion_r4144698180"
+                  >r4144698180</a
+                ><span class="context">ReadyPlanOptionVersion.test.ts</span>
+              </div>
+              <blockquote>We can rename this to "versions the productsWhen column"</blockquote>
+            </li>
+            <li class="entry">
+              <div class="entry-head">
+                <time datetime="2026-09-30T13:15:49Z">13:15:49 UTC</time
+                ><a href="https://github.com/homebound-team/graphql-service/pull/10677#discussion_r4144977578"
+                  >r4144977578</a
+                ><span class="context">copyDesignAndPlanToOffering.ts</span>
+              </div>
+              <blockquote>
+                This code is essentially the same, except now we have the new `productsWhen` to set as well.
+              </blockquote>
+            </li>
+            <li class="entry">
+              <div class="entry-head">
+                <time datetime="2026-09-30T13:17:31Z">13:17:31 UTC</time
+                ><a href="https://github.com/homebound-team/graphql-service/pull/10677#discussion_r4144995040"
+                  >r4144995040</a
+                ><span class="context">deriveRequiredWhen.test.ts</span>
+              </div>
+              <blockquote>Make these groups inline in the `newProductOffering` call above.</blockquote>
+            </li>
+            <li class="entry">
+              <div class="entry-head">
+                <time datetime="2026-09-30T13:18:40Z">13:18:40 UTC</time
+                ><a href="https://github.com/homebound-team/graphql-service/pull/10677#discussion_r4145006401"
+                  >r4145006401</a
+                ><span class="context">deriveRequiredWhen.test.ts</span>
+              </div>
+              <blockquote>Can we use `const [mv1, mv2] = twoOf(...)` to create these?</blockquote>
+            </li>
+            <li class="entry">
+              <div class="entry-head">
+                <time datetime="2026-09-30T13:19:41Z">13:19:41 UTC</time
+                ><a href="https://github.com/homebound-team/graphql-service/pull/10677#discussion_r4145015822"
+                  >r4145015822</a
+                ><span class="context">deriveRequiredWhen.test.ts</span>
+              </div>
+              <blockquote>Rename this to "hides a product when an addon removes it"</blockquote>
+            </li>
+            <li class="entry">
+              <div class="entry-head">
+                <time datetime="2026-09-30T13:24:06Z">13:24:06 UTC</time
+                ><a href="https://github.com/homebound-team/graphql-service/pull/10677#discussion_r4145061460"
+                  >r4145061460</a
+                ><span class="context">deriveRequiredWhen.test.ts · reviewer follow-up</span>
+              </div>
+              <blockquote>Do similar cleanups to the other tests</blockquote>
+            </li>
+            <li class="entry">
+              <div class="entry-head">
+                <time datetime="2026-09-30T13:24:08Z">13:24:08 UTC</time
+                ><a href="https://github.com/homebound-team/graphql-service/pull/10677#discussion_r4145061913"
+                  >r4145061913</a
+                ><span class="context">deriveRequiredWhen.test.ts · reviewer follow-up</span>
+              </div>
+              <blockquote>Do similar cleanups to the other tests</blockquote>
+            </li>
+            <li class="entry">
+              <div class="entry-head">
+                <time datetime="2026-09-30T13:24:38Z">13:24:38 UTC</time
+                ><a href="https://github.com/homebound-team/graphql-service/pull/10677#discussion_r4145066893"
+                  >r4145066893</a
+                ><span class="context">deriveRequiredWhen.test.ts</span>
+              </div>
+              <blockquote>Declare the groups inline `newproductoffering`</blockquote>
+            </li>
+            <li class="entry">
+              <div class="entry-head">
+                <time datetime="2026-09-30T13:24:48Z">13:24:48 UTC</time
+                ><a href="https://github.com/homebound-team/graphql-service/pull/10677#discussion_r4145068374"
+                  >r4145068374</a
+                ><span class="context">deriveRequiredWhen.test.ts</span>
+              </div>
+              <blockquote>Use `const [mv1, mv2]`</blockquote>
+            </li>
+          </ol>
+        </details>
+        <details class="day">
+          <summary>1 Oct 2026 · 30 comments</summary>
+          <ol class="entries">
+            <li class="entry">
+              <div class="entry-head">
+                <time datetime="2026-10-01T14:19:45Z">14:19:45 UTC</time
+                ><a href="https://github.com/homebound-team/graphql-service/pull/10677#discussion_r4156468182"
+                  >r4156468182</a
+                ><span class="context">deriveRequiredWhen.test.ts</span>
+              </div>
+              <blockquote>
+                Added a new `newTakeoffLineItems` plural to setup "groups of similar TLIs" more easily.
+              </blockquote>
+            </li>
+            <li class="entry">
+              <div class="entry-head">
+                <time datetime="2026-10-01T14:21:13Z">14:21:13 UTC</time
+                ><a href="https://github.com/homebound-team/graphql-service/pull/10677#discussion_r4156483747"
+                  >r4156483747</a
+                ><span class="context">deriveRequiredWhen.test.ts</span>
+              </div>
+              <blockquote>
+                Say "never does ... because its not a personalization group, so we don't calc productWhens for it"
+              </blockquote>
+            </li>
+            <li class="entry">
+              <div class="entry-head">
+                <time datetime="2026-10-01T14:21:33Z">14:21:33 UTC</time
+                ><a href="https://github.com/homebound-team/graphql-service/pull/10677#discussion_r4156487343"
+                  >r4156487343</a
+                ><span class="context">deriveRequiredWhen.test.ts</span>
+              </div>
+              <blockquote>
+                Do we need `newLocation` and `newUOM` here or can we just do `location: { withPath: "... }`
+              </blockquote>
+            </li>
+            <li class="entry">
+              <div class="entry-head">
+                <time datetime="2026-10-01T14:22:11Z">14:22:11 UTC</time
+                ><a href="https://github.com/homebound-team/graphql-service/pull/10677#discussion_r4156494165"
+                  >r4156494165</a
+                ><span class="context">deriveRequiredWhen.test.ts</span>
+              </div>
+              <blockquote>
+                Inline this `productsWhen` const and add another assertion for the `premium` option
+              </blockquote>
+            </li>
+            <li class="entry">
+              <div class="entry-head">
+                <time datetime="2026-10-01T14:22:54Z">14:22:54 UTC</time
+                ><a href="https://github.com/homebound-team/graphql-service/pull/10677#discussion_r4156501633"
+                  >r4156501633</a
+                ><span class="context">deriveRequiredWhen.test.ts</span>
+              </div>
+              <blockquote>Can we use the `newTakeoffLineItems` here to create these ~3-4 TLIs</blockquote>
+            </li>
+            <li class="entry">
+              <div class="entry-head">
+                <time datetime="2026-10-01T14:25:01Z">14:25:01 UTC</time
+                ><a href="https://github.com/homebound-team/graphql-service/pull/10677#discussion_r4156524278"
+                  >r4156524278</a
+                ><span class="context">deriveRequiredWhen.test.ts</span>
+              </div>
+              <blockquote>
+                Can we rename this to `shows products based on earlier stacked personalization option`?
+              </blockquote>
+            </li>
+            <li class="entry">
+              <div class="entry-head">
+                <time datetime="2026-10-01T14:26:54Z">14:26:54 UTC</time
+                ><a href="https://github.com/homebound-team/graphql-service/pull/10677#discussion_r4156543822"
+                  >r4156543822</a
+                ><span class="context">deriveRequiredWhen.test.ts</span>
+              </div>
+              <blockquote>
+                Shouldn't these be `addBath1` and `addBath3`. And rename `packageOption` to `chooseSku1`
+              </blockquote>
+            </li>
+            <li class="entry">
+              <div class="entry-head">
+                <time datetime="2026-10-01T14:27:04Z">14:27:04 UTC</time
+                ><a href="https://github.com/homebound-team/graphql-service/pull/10677#discussion_r4156545494"
+                  >r4156545494</a
+                ><span class="context">deriveRequiredWhen.test.ts</span>
+              </div>
+              <blockquote>Do we need `newLocation` here?</blockquote>
+            </li>
+            <li class="entry">
+              <div class="entry-head">
+                <time datetime="2026-10-01T14:53:32Z">14:53:32 UTC</time
+                ><a href="https://github.com/homebound-team/graphql-service/pull/10677#discussion_r4156836127"
+                  >r4156836127</a
+                ><span class="context">deriveRequiredWhen.test.ts</span>
+              </div>
+              <blockquote>Rename this to "each option in a group shows its own materials"</blockquote>
+            </li>
+            <li class="entry">
+              <div class="entry-head">
+                <time datetime="2026-10-01T14:55:38Z">14:55:38 UTC</time
+                ><a href="https://github.com/homebound-team/graphql-service/pull/10677#discussion_r4156858364"
+                  >r4156858364</a
+                ><span class="context">deriveRequiredWhen.test.ts</span>
+              </div>
+              <blockquote>Rename this to "swaps materials based on an addon being selected"</blockquote>
+            </li>
+            <li class="entry">
+              <div class="entry-head">
+                <time datetime="2026-10-01T14:55:49Z">14:55:49 UTC</time
+                ><a href="https://github.com/homebound-team/graphql-service/pull/10677#discussion_r4156860864"
+                  >r4156860864</a
+                ><span class="context">deriveRequiredWhen.test.ts</span>
+              </div>
+              <blockquote>Use `mv1`, `mv2` for these const names.</blockquote>
+            </li>
+            <li class="entry">
+              <div class="entry-head">
+                <time datetime="2026-10-01T14:56:11Z">14:56:11 UTC</time
+                ><a href="https://github.com/homebound-team/graphql-service/pull/10677#discussion_r4156865452"
+                  >r4156865452</a
+                ><span class="context">deriveRequiredWhen.test.ts</span>
+              </div>
+              <blockquote>
+                Do we really need `modelNumber, `mavs: []`, and `name: Product` all set? we should use as many factory
+                defaults as possible.
+              </blockquote>
+            </li>
+            <li class="entry">
+              <div class="entry-head">
+                <time datetime="2026-10-01T14:56:31Z">14:56:31 UTC</time
+                ><a href="https://github.com/homebound-team/graphql-service/pull/10677#discussion_r4156870329"
+                  >r4156870329</a
+                ><span class="context">deriveRequiredWhen.test.ts</span>
+              </div>
+              <blockquote>Same remove these extra fields if we don't need them.</blockquote>
+            </li>
+            <li class="entry">
+              <div class="entry-head">
+                <time datetime="2026-10-01T14:57:18Z">14:57:18 UTC</time
+                ><a href="https://github.com/homebound-team/graphql-service/pull/10677#discussion_r4156881064"
+                  >r4156881064</a
+                ><span class="context">deriveRequiredWhen.test.ts</span>
+              </div>
+              <blockquote>
+                Honestly this is only used twice, usually we can make test setup code _even simpler_ by just doing this
+                in the test, and make the `// Given` setup as specific to the test as possible, and not reusing generic
+                fixtures -- try that.
+              </blockquote>
+            </li>
+            <li class="entry">
+              <div class="entry-head">
+                <time datetime="2026-10-01T14:58:07Z">14:58:07 UTC</time
+                ><a href="https://github.com/homebound-team/graphql-service/pull/10677#discussion_r4156891829"
+                  >r4156891829</a
+                ><span class="context">deriveRequiredWhen.ts</span>
+              </div>
+              <blockquote>
+                Our "calc the combos of scope" now tracks both `availableWhen` + `products`, so this puts those two
+                together.
+              </blockquote>
+            </li>
+            <li class="entry">
+              <div class="entry-head">
+                <time datetime="2026-10-01T14:58:59Z">14:58:59 UTC</time
+                ><a href="https://github.com/homebound-team/graphql-service/pull/10677#discussion_r4156901898"
+                  >r4156901898</a
+                ><span class="context">deriveRequiredWhen.ts</span>
+              </div>
+              <blockquote>
+                This is our return value from the "calc combos of scope", we return the `productsWhen` now as well.
+              </blockquote>
+            </li>
+            <li class="entry">
+              <div class="entry-head">
+                <time datetime="2026-10-01T14:59:52Z">14:59:52 UTC</time
+                ><a href="https://github.com/homebound-team/graphql-service/pull/10677#discussion_r4156913846"
+                  >r4156913846</a
+                ><span class="context">deriveRequiredWhen.ts</span>
+              </div>
+              <blockquote>
+                This code is largely the same, we're just tracking "a bag of available+products conditions" now instead
+                of hte previous "just clauses / just available whens".
+              </blockquote>
+            </li>
+            <li class="entry">
+              <div class="entry-head">
+                <time datetime="2026-10-01T15:00:35Z">15:00:35 UTC</time
+                ><a href="https://github.com/homebound-team/graphql-service/pull/10677#discussion_r4156922867"
+                  >r4156922867</a
+                ><span class="context">deriveRequiredWhen.ts</span>
+              </div>
+              <blockquote>
+                Basically what the comment says, we did 1 calc pass to calc both availableWhen / productsWhen, and now
+                we split that singular result out into the two separate return values.
+              </blockquote>
+            </li>
+            <li class="entry">
+              <div class="entry-head">
+                <time datetime="2026-10-01T15:00:53Z">15:00:53 UTC</time
+                ><a href="https://github.com/homebound-team/graphql-service/pull/10677#discussion_r4156926601"
+                  >r4156926601</a
+                ><span class="context">deriveRequiredWhen.ts</span>
+              </div>
+              <blockquote>More mechanical changes of "we track both available + products now".</blockquote>
+            </li>
+            <li class="entry">
+              <div class="entry-head">
+                <time datetime="2026-10-01T15:01:25Z">15:01:25 UTC</time
+                ><a href="https://github.com/homebound-team/graphql-service/pull/10677#discussion_r4156932577"
+                  >r4156932577</a
+                ><span class="context">deriveRequiredWhen.ts</span>
+              </div>
+              <blockquote>
+                This `evaluateSlotProducts` is the old `isSLotLive` combo calc but now "does both" available when +
+                products.
+              </blockquote>
+            </li>
+            <li class="entry">
+              <div class="entry-head">
+                <time datetime="2026-10-01T15:01:46Z">15:01:46 UTC</time
+                ><a href="https://github.com/homebound-team/graphql-service/pull/10677#discussion_r4156936070"
+                  >r4156936070</a
+                ><span class="context">deriveRequiredWhen.ts</span>
+              </div>
+              <blockquote>Just shorter/less line wrapping</blockquote>
+            </li>
+            <li class="entry">
+              <div class="entry-head">
+                <time datetime="2026-10-01T15:10:54Z">15:10:54 UTC</time
+                ><a href="https://github.com/homebound-team/graphql-service/pull/10677#discussion_r4157032843"
+                  >r4157032843</a
+                ><span class="assistant-tag">Assistant reply</span
+                ><span class="context">deriveRequiredWhen.test.ts</span>
+              </div>
+              <blockquote>
+                I tried removing these: factory-default listing names and MAVs give the two TLIs different ItemSlot
+                names, and removing modelNumber as well makes the MaterialVariant codes collide. All three settings are
+                needed to keep distinct variants in the same slot; I added a comment explaining that constraint.
+              </blockquote>
+            </li>
+            <li class="entry">
+              <div class="entry-head">
+                <time datetime="2026-10-01T15:10:56Z">15:10:56 UTC</time
+                ><a href="https://github.com/homebound-team/graphql-service/pull/10677#discussion_r4157033139"
+                  >r4157033139</a
+                ><span class="assistant-tag">Assistant reply</span
+                ><span class="context">deriveRequiredWhen.test.ts</span>
+              </div>
+              <blockquote>
+                Same constraint here: the two variants must have one ItemSlot name but distinct codes. I inlined the
+                setup into this test and kept the three fields needed for that behavior.
+              </blockquote>
+            </li>
+            <li class="entry">
+              <div class="entry-head">
+                <time datetime="2026-10-01T15:14:02Z">15:14:02 UTC</time
+                ><a href="https://github.com/homebound-team/graphql-service/pull/10677#discussion_r4157066981"
+                  >r4157066981</a
+                ><span class="context">deriveRequiredWhen.ts</span>
+              </div>
+              <blockquote>
+                Rename this to `tlisByMaterial` and reword the comment to say "A material might be used across several
+                slots controlled by this option, but we only need a single 'show mv:1 when ...' clause, so we group the
+                TLIs per MV and do a per MV calc".
+              </blockquote>
+            </li>
+            <li class="entry">
+              <div class="entry-head">
+                <time datetime="2026-10-01T15:14:16Z">15:14:16 UTC</time
+                ><a href="https://github.com/homebound-team/graphql-service/pull/10677#discussion_r4157069493"
+                  >r4157069493</a
+                ><span class="context">deriveRequiredWhen.ts</span>
+              </div>
+              <blockquote>Rename `materialTlis` to just `tlis`</blockquote>
+            </li>
+            <li class="entry">
+              <div class="entry-head">
+                <time datetime="2026-10-01T15:14:25Z">15:14:25 UTC</time
+                ><a href="https://github.com/homebound-team/graphql-service/pull/10677#discussion_r4157071084"
+                  >r4157071084</a
+                ><span class="context">deriveRequiredWhen.ts</span>
+              </div>
+              <blockquote>Rename this to `mvId` and `tlis`</blockquote>
+            </li>
+            <li class="entry">
+              <div class="entry-head">
+                <time datetime="2026-10-01T15:15:02Z">15:15:02 UTC</time
+                ><a href="https://github.com/homebound-team/graphql-service/pull/10677#discussion_r4157078242"
+                  >r4157078242</a
+                ><span class="context">deriveRequiredWhen.ts</span>
+              </div>
+              <blockquote>
+                I don't really understand why this negative check is `throw new Error` but the other negative check is
+                "just a warning" -- what's the difference? Give a concrete example.
+              </blockquote>
+            </li>
+            <li class="entry">
+              <div class="entry-head">
+                <time datetime="2026-10-01T15:21:38Z">15:21:38 UTC</time
+                ><a href="https://github.com/homebound-team/graphql-service/pull/10677#discussion_r4157157972"
+                  >r4157157972</a
+                ><span class="assistant-tag">Assistant reply</span><span class="context">deriveRequiredWhen.ts</span>
+              </div>
+              <blockquote>
+                The two checks use different totals: a slot with MV1 +1 and a Remove -2, with no replacement, nets -1
+                overall, so the copy job cannot publish valid live scope and throws. If MV2 also adds +2 in that slot,
+                the slot nets +1; only MV1 is negative (-1), so we hide MV1, warn about it, and still show MV2. I added
+                this concrete example beside the checks.
+              </blockquote>
+            </li>
+            <li class="entry">
+              <div class="entry-head">
+                <time datetime="2026-10-01T20:30:20Z">20:30:20 UTC</time
+                ><a href="https://github.com/homebound-team/graphql-service/pull/10677#discussion_r4160158706"
+                  >r4160158706</a
+                ><span class="context">deriveRequiredWhen.ts</span>
+              </div>
+              <blockquote>
+                I really don't understand why we're combining materials across slows and _then_ doing quantity math --
+                slots are individual "left door" / "right door" locations in a home, why would we ever do math across
+                those?
+              </blockquote>
+            </li>
+            <li class="entry">
+              <div class="entry-head">
+                <time datetime="2026-10-01T20:33:20Z">20:33:20 UTC</time
+                ><a href="https://github.com/homebound-team/graphql-service/pull/10677#discussion_r4160185418"
+                  >r4160185418</a
+                ><span class="assistant-tag">Assistant reply</span><span class="context">deriveRequiredWhen.ts</span>
+              </div>
+              <blockquote>
+                Agreed; we should never sum quantities across ItemSlots. `slotTlis` is one entry from `tlisBySlot`, so
+                `matching.sum(...)` and the MV grouping here only see TLIs from one slot (e.g. left door). After that
+                per-slot evaluation, `combineConditions` ORs the resulting "show this MV when ..." clauses for a
+                material used in left door and right door; it never combines their quantities. I changed the comments to
+                make that boundary explicit.
+              </blockquote>
+            </li>
+          </ol>
+        </details>
+        <details class="day">
+          <summary>2 Oct 2026 · 2 comments</summary>
+          <ol class="entries">
+            <li class="entry">
+              <div class="entry-head">
+                <time datetime="2026-10-02T01:00:18Z">01:00:18 UTC</time
+                ><a href="https://github.com/homebound-team/graphql-service/pull/10677#discussion_r4161947801"
+                  >r4161947801</a
+                ><span class="context">readyPlanConfigLikeUtils.ts</span>
+              </div>
+              <blockquote>
+                We keep the old code when `productsWhen` is not set; the old code is moved to a helper method below
+              </blockquote>
+            </li>
+            <li class="entry">
+              <div class="entry-head">
+                <time datetime="2026-10-02T01:44:18Z">01:44:18 UTC</time
+                ><a href="https://github.com/homebound-team/graphql-service/pull/10677#discussion_r4162149295"
+                  >r4162149295</a
+                ><span class="context">deriveRequiredWhen.ts</span>
+              </div>
+              <blockquote>
+                This is the biggest change of the PR -- instead of just the old `isSLotLiveForOption`, we still do the
+                ~same quantity math _and_ also return "what materials were shown".
+              </blockquote>
+            </li>
+          </ol>
+        </details>
+      </section>
+
+      <section class="sources" aria-labelledby="method">
+        <h2 id="method">Counting and sources</h2>
+        <div class="note">
+          <p>
+            <strong>Review count:</strong> GitHub currently shows 54 inline thread entries on
+            <a href="https://github.com/homebound-team/graphql-service/pull/10677">#10677</a>: 48 top-level notes and
+            six replies. Two replies were additional reviewer instructions; four were assistant-posted responses through
+            the same GitHub account during this collaboration and are excluded from the 50 direct review notes. The 54
+            COMMENTED review events largely correspond one-to-one to those thread entries; they are not 54 separate
+            review cycles. The first note was <time datetime="2026-09-30T01:38:28Z">30 Sep 01:38 UTC</time>; the latest
+            was <time datetime="2026-10-02T01:44:18Z">2 Oct 01:44 UTC</time>.
+          </p>
+          <p>
+            <strong>Stack scope:</strong> PR metadata, changed-line counts, and current commit counts come from the four
+            linked GitHub PRs; distinct files and combined lines come from the
+            <a href="https://github.com/homebound-team/graphql-service/compare/main...chore/lazy-ready-plan-when"
+              >main-to-stack comparison</a
+            >. Benchmark and backfill figures are reported by the PR descriptions, not independently reproduced for this
+            report. Prompt times come from this OpenCode session's message timestamps (UTC); auto-attached file reads
+            are excluded. All 41 user-authored prompt texts and all 54 GitHub inline comment bodies are reproduced in
+            the timelines above. Local uncommitted edits, reading time, and actual hands-on hours are not measured here.
+          </p>
+        </div>
+        <ul>
+          <li>
+            <a href="https://github.com/homebound-team/graphql-service/pull/10677/files"
+              >#10677 files and review threads</a
+            >
+            · <a href="https://github.com/homebound-team/graphql-service/pull/10718">#10718</a> ·
+            <a href="https://github.com/homebound-team/graphql-service/pull/10719">#10719</a> ·
+            <a href="https://github.com/homebound-team/graphql-service/pull/10725">#10725</a>
+          </li>
+        </ul>
+      </section>
+    </main>
+    <footer>
+      <div class="shell">
+        PR review and stack effort · Self-contained HTML · GitHub + OpenCode snapshot, 2 Oct 2026 at 11:08 UTC
+      </div>
+    </footer>
+    <script>
+      // Prettier places a newline after <pre> for long prompts; that newline is not part of the user's text.
+      for (const prompt of document.querySelectorAll("#prompts pre")) {
+        prompt.textContent = prompt.textContent?.replace(/^\n/, "") ?? "";
+      }
+    </script>
+  </body>
+</html>
