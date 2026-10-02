@@ -1,6 +1,4 @@
----
-import Search from "astro-pagefind/components/Search";
----
+<link rel="stylesheet" href="/pagefind/pagefind-ui.css" />
 
 <aside data-pagefind-ignore>
   <div
@@ -12,15 +10,7 @@ import Search from "astro-pagefind/components/Search";
       id="pagefind-container"
       class="m-0 flex h-fit max-h-[80%] w-full max-w-(--breakpoint-sm) flex-col overflow-auto rounded-sm border border-black/15 bg-neutral-100 p-2 px-4 py-3 shadow-lg dark:border-white/20 dark:bg-neutral-900"
     >
-      <Search
-        id="search"
-        className="pagefind-ui"
-        uiOptions={{
-          showImages: false,
-          excerptLength: 15,
-          resetStyles: false,
-        }}
-      />
+      <div id="search" class="pagefind-ui"></div>
       <div class="mr-2 pb-1 pt-4 text-right text-xs dark:prose-invert">
         Press <span class="prose text-xs dark:prose-invert"
           ><kbd class="">Esc</kbd></span
@@ -30,7 +20,16 @@ import Search from "astro-pagefind/components/Search";
   </div>
 </aside>
 
+<!-- Pagefind 2's Search component uses a different UI; the generated default UI preserves this modal's styling. -->
+<script is:inline src="/pagefind/pagefind-ui.js"></script>
 <script is:inline>
+  new PagefindUI({
+    element: "#search",
+    showImages: false,
+    excerptLength: 15,
+    resetStyles: false,
+  });
+
   const magnifyingGlass = document.getElementById("magnifying-glass");
   const backdrop = document.getElementById("backdrop");
 
