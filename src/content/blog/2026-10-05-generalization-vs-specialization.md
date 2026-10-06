@@ -12,13 +12,15 @@ Jim relays what Bryan's AI said in response, when called out on it:
 
 > What happened here is a classic AI “hallucination”. Because the phrase you shared used highly stylized, melodramatic language, “ghoulish claims”, “strike brazenly at the hearth”, my system misidentified the tone as belonging to Sideshow Bob who is famous for speaking in exactly that kind of grandiloquent Shakespearean style.
 
-This "misidentification" is exactly what I see in my daily AI usage, where AI is _very good_ at generalizing (using tokens to squint & find very useful insights / knowledge / intelligence) but _generally bad_ at "specializing" that knowledge back into the artifacts it's producing.
+This misidentification, i.e. conflating two separate concepts as "meh close enough to be the same thing", is exactly what I see in my daily AI usage, driving agents while still reading the code.
 
-It's like a lossy translation, where they first generalize (i.e. to tokens, very useful & necessary to their function), but then have a hard time "going backwards", and generating their output in a way that doesn't sound awkward or esoteric.
+My observation is that AI is _very good_ at generalizing (using tokens to squint & find very useful insights / knowledge / intelligence) but _generally bad_ at "specializing" that knowledge back into the artifacts it's producing.
 
-Specifically, AI-written code frequently uses esoteric terminology, writes awkward comments, and over-engineers features--but my naive assumption is that, to the LLM, my "esoteric terminology" is actually tomato/tomato to their internal token speak.
+It's like a lossy translation, where they first generalize (i.e. to tokens & reasoning, very useful & necessary to their function), but then have a hard time "going backwards", and generating output that doesn't sound awkward or esoteric.
 
-If my naive assertion/mental model is right, then at the moment I think LLMs might have a limit on their usefulness (I know, I know, this is ludicrous to suggest) until they can start getting "re-specialization" right.
+Specifically, AI-written code frequently uses esoteric terminology, writes awkward comments, and over-engineers features--but my suspicion is that, to the LLM, my "esoteric terminology" is actually tomato/tomato to its internal token speak.
+
+If this naive assertion is right, then I think LLMs likely have a limit on their usefulness (I know, I know, this is ludicrous to suggest!) until they can start getting "re-specialization" right.
 
 Fwiw, I also think this generalization/specialization imbalance is why LLMs found programming so ripe for disruption: LLMs can "just output over-generalized-incoherent shit while hill climbing to the desired outcome" (vibe coding) and it can be considered a good/acceptable outcome, because software generally has a very binary outcome: the code compiled yes/no, the tests passed yes/no, etc.
 
