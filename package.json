@@ -10,26 +10,27 @@
     "astro": "TZ=UTC astro"
   },
   "dependencies": {
-    "@astrojs/check": "0.9.8",
-    "@astrojs/mdx": "5.0.3",
-    "@astrojs/rss": "4.0.18",
-    "@astrojs/sitemap": "3.7.2",
-    "@fontsource/geist-mono": "^5.2.7",
-    "@fontsource/geist-sans": "^5.2.5",
-    "@tailwindcss/vite": "^4.2.2",
-    "astro": "6.1.2",
-    "astro-pagefind": "^1.8.6",
+    "@astrojs/check": "0.9.10",
+    "@astrojs/mdx": "8.0.2",
+    "@astrojs/rss": "4.0.19",
+    "@astrojs/sitemap": "3.7.4",
+    "@fontsource/geist-mono": "^5.3.0",
+    "@fontsource/geist-sans": "^5.3.0",
+    "@tailwindcss/vite": "^4.3.3",
+    "astro": "7.3.5",
+    "astro-pagefind": "^2.0.1",
     "clsx": "^2.1.1",
-    "tailwind-merge": "^3.5.0",
-    "tailwindcss": "^4.2.2",
-    "typescript": "^6.0.2"
+    "tailwind-merge": "^3.7.0",
+    "tailwindcss": "^4.3.3",
+    "typescript": "^6.0.3"
   },
   "devDependencies": {
-    "@tailwindcss/typography": "^0.5.19",
-    "pagefind": "^1.4.0",
-    "prettier": "^3.8.1",
-    "prettier-plugin-astro": "^0.14.1",
-    "prettier-plugin-tailwindcss": "^0.7.2"
+    "@tailwindcss/typography": "^0.5.20",
+    "pagefind": "^1.5.2",
+    "prettier": "^3.9.9",
+    "prettier-plugin-astro": "^1.1.0",
+    "prettier-plugin-tailwindcss": "^0.8.1",
+    "vite": "^8.3.2"
   },
   "packageManager": "yarn@4.18.1"
 }
