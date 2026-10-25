@@ -2,7 +2,6 @@
 title: Rewriting Comments by Hand
 description: "Effective reps on AI generated content"
 date: 2026-10-22T00:00:00Z
-draft: true
 ---
 
 Of course I use AI to write all my code lately 🤖, but I'm still in the camp of reading the code 📔 (outside of vibe-coded hobby projects, where I _mostly_ don't look at the code 😅).
