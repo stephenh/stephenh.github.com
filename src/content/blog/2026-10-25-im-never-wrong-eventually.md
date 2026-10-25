@@ -2,7 +2,6 @@
 title: "I'm Never Wrong...Eventually"
 description: "On collaboration & ego best practices"
 date: 2026-10-25T00:00:00Z
-draft: true
 ---
 
 Okay, the title is of course clickbait, because obviously I'm wrong all the time.
